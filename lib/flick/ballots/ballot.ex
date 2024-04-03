@@ -22,7 +22,10 @@ defmodule Flick.Ballots.Ballot do
   schema "ballots" do
     field :title, :string
 
-    has_many :questions, Question, on_replace: :delete
+    # We might want to revert this to an embeds_many if we want to keep the questions with the ballot. Questions probably should not have identiy unto themselves maybe.
+    # has_many :questions, Question, on_replace: :delete
+
+    embeds_many :questions, Question, on_replace: :delete
 
     timestamps(type: :utc_datetime_usec)
   end
@@ -34,6 +37,6 @@ defmodule Flick.Ballots.Ballot do
     ballot
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
-    |> cast_assoc(:questions, with: &Question.changeset/2)
+    |> cast_embed(:questions, with: &Question.changeset/2)
   end
 end

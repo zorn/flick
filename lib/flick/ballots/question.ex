@@ -1,21 +1,21 @@
 defmodule Flick.Ballots.Question do
+  @moduledoc """
+  A prompt for the user, presented inside a ballot, that requests a response.
+  """
+
   use Ecto.Schema
 
   import Ecto.Changeset
 
-  @type id :: Ecto.UUID.t()
-
+  # The Ecto implementation of `embeds_many` will store a `id` value for each
+  # question, but that should not be considered a public long-lived identity,
+  # and so you won't find it in the typespec below.
   @type t :: %__MODULE__{
-          id: Ecto.UUID.t(),
           title: String.t()
         }
 
-  @primary_key {:id, :binary_id, autogenerate: true}
-  schema "questions" do
+  embedded_schema do
     field :title, :string
-    field :ballot_id, :binary_id
-
-    timestamps(type: :utc_datetime_usec)
   end
 
   @required_fields [:title]
