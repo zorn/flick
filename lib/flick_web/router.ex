@@ -17,7 +17,8 @@ defmodule FlickWeb.Router do
   scope "/", FlickWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live "/", IndexLive, :index
+    live "/ballots", Ballots.IndexLive, :index
     live "/ballots/new", Ballots.EditorLive, :new
   end
 
