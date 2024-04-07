@@ -4,7 +4,9 @@ defmodule FlickWeb.Ballots.EditorLive do
   `Flick.Ballots.Ballot`.
   """
 
-  # TODO: Normalize a better way to say "Ballot" and have it link without showing the full module path. Maybe come up with a typing shortcut to help me?
+  # TODO: Normalize a better way to say "Ballot" and have it link without
+  # showing the full module path. Maybe come up with a typing shortcut to help
+  # me?
 
   use FlickWeb, :live_view
 
