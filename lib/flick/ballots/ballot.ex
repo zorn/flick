@@ -2,7 +2,9 @@ defmodule Flick.Ballots.Ballot do
   @moduledoc """
   A ballot is a collection of questions.
 
-  TOOD: We may need to keep track of a "published_at" and disallow changes to questions after that event.
+  TODO: We may need to keep track of a "published_at" value and disallow changes
+  to ballot and questions after it is considered published to help maintain data
+  integrity.
   """
 
   use Ecto.Schema
@@ -21,12 +23,7 @@ defmodule Flick.Ballots.Ballot do
   @primary_key {:id, :binary_id, autogenerate: true}
   schema "ballots" do
     field :title, :string
-
-    # We might want to revert this to an embeds_many if we want to keep the questions with the ballot. Questions probably should not have identiy unto themselves maybe.
-    # has_many :questions, Question, on_replace: :delete
-
     embeds_many :questions, Question, on_replace: :delete
-
     timestamps(type: :utc_datetime_usec)
   end
 

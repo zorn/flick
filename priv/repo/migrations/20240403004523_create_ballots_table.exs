@@ -10,7 +10,7 @@ defmodule Flick.Repo.Migrations.CreateBallotsTable do
       # database which will store the questions as an ordered list.
       add :questions, :map
 
-      timestamps(type: :timestamptz)
+      timestamps(type: :utc_datetime_usec)
     end
   end
 end
