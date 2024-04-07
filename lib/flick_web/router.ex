@@ -18,7 +18,7 @@ defmodule FlickWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
-    get "/ballots/new", Ballots.EditorLive, :new
+    live "/ballots/new", Ballots.EditorLive, :new
   end
 
   # Other scopes may use custom stacks.
