@@ -12,6 +12,7 @@ defmodule FlickWeb.Ballots.IndexLive do
   def mount(_params, _session, socket) do
     socket
     |> assign(:page_title, "Ballot Index")
+    |> assign(:ballots, Flick.Ballots.list_ballots())
     |> ok()
   end
 
@@ -23,6 +24,10 @@ defmodule FlickWeb.Ballots.IndexLive do
         <.link navigate={~p"/ballots/new"} class="underline">Create a new ballot.</.link>
       </p>
       <p>A list of known ballots.</p>
+      <.table id="ballots" rows={@ballots}>
+        <:col :let={ballot} label="id"><%= ballot.id %></:col>
+        <:col :let={ballot} label="title"><%= ballot.title %></:col>
+      </.table>
     </div>
     """
   end
