@@ -37,4 +37,17 @@ defmodule Flick.BallotsTest do
     assert {:error, changeset} = Ballots.create_ballot("My first ballot", [])
     assert "can't be blank" in errors_on(changeset).questions
   end
+
+  describe "list_ballots/1" do
+    test "success: lists ballots" do
+      ballot_a = ballot_fixture()
+      ballot_b = ballot_fixture()
+
+      assert ballots = Ballots.list_ballots()
+
+      assert length(ballots) == 2
+      assert Enum.find(ballots, &match?(^ballot_a, &1))
+      assert Enum.find(ballots, &match?(^ballot_b, &1))
+    end
+  end
 end

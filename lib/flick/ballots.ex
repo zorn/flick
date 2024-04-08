@@ -24,4 +24,14 @@ defmodule Flick.Ballots do
     |> Ballot.changeset(attrs)
     |> Repo.insert()
   end
+
+  @doc """
+  Returns a list of all `Flick.Ballots.Ballot` entities.
+  """
+  def list_ballots() do
+    # TODO: Currently there is no expectation regarding the order of the
+    # returned list. We should add something.
+
+    Repo.all(Ballot)
+  end
 end
