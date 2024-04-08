@@ -12,14 +12,20 @@ defmodule FlickWeb.Ballots.EditorLive do
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    {:ok, socket}
+    socket
+    # TODO: Update page title to be more editor centric when I add editing.
+    |> assign(:page_title, "Create a Ballot")
+    |> ok()
   end
 
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <div>
-      Hello world.
+      <p>
+        <.back navigate={~p"/ballots"}>Back to ballots</.back>
+      </p>
+      <p>Hello world.</p>
     </div>
     """
   end

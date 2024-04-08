@@ -10,14 +10,19 @@ defmodule FlickWeb.Ballots.IndexLive do
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    {:ok, socket}
+    socket
+    |> assign(:page_title, "Ballot Index")
+    |> ok()
   end
 
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <div>
-      A list of known ballots.
+      <p>
+        <.link patch={~p"/ballots/new"} class="underline">Create a new ballot.</.link>
+      </p>
+      <p>A list of known ballots.</p>
     </div>
     """
   end
