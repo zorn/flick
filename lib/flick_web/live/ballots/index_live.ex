@@ -20,7 +20,7 @@ defmodule FlickWeb.Ballots.IndexLive do
     ~H"""
     <div>
       <p>
-        <.link patch={~p"/ballots/new"} class="underline">Create a new ballot.</.link>
+        <.link navigate={~p"/ballots/new"} class="underline">Create a new ballot.</.link>
       </p>
       <p>A list of known ballots.</p>
     </div>
