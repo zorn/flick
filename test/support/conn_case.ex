@@ -28,6 +28,10 @@ defmodule FlickWeb.ConnCase do
       import Plug.Conn
       import Phoenix.ConnTest
       import FlickWeb.ConnCase
+      import Phoenix.LiveViewTest
+
+      import Support.Fixtures.BallotFixtures
+      import Support.Fixtures.QuestionFixture
     end
   end
 
