@@ -29,6 +29,7 @@ defmodule FlickWeb.Ballots.ViewerLive do
         <.back navigate={~p"/ballots"}>Back to ballots</.back>
       </p>
       <p>Some ballot detail page.</p>
+      <p id="ballot-title"><%= @ballot.title %></p>
       <div>
         <pre><%= inspect(@ballot, pretty: true) %></pre>
       </div>
