@@ -19,8 +19,8 @@ defmodule FlickWeb.Router do
 
     live "/", IndexLive, :index
     live "/ballots", Ballots.IndexLive, :index
-    live "/ballots/:ballot_id", Ballots.ViewerLive, :show
     live "/ballots/new", Ballots.EditorLive, :new
+    live "/ballots/:ballot_id", Ballots.ViewerLive, :show
   end
 
   # Other scopes may use custom stacks.
