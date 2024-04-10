@@ -25,7 +25,7 @@ defmodule FlickWeb.Ballots.EditorLive do
       <p>
         <.back navigate={~p"/ballots"}>Back to ballots</.back>
       </p>
-      <p>Hello world.</p>
+      <p id="ballot-form">Some form experience.</p>
     </div>
     """
   end
