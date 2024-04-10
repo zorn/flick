@@ -24,7 +24,7 @@ defmodule FlickWeb.Ballots.IndexLive do
         <.link navigate={~p"/ballots/new"} class="underline">Create a new ballot.</.link>
       </p>
       <p>A list of known ballots.</p>
-      <.table id="ballots" rows={@ballots}>
+      <.table id="ballots" rows={@ballots} row_id={&"ballot-row-#{&1.id}"}>
         <:col :let={ballot} label="id"><%= ballot.id %></:col>
         <:col :let={ballot} label="title">
           <.link navigate={~p"/ballots/#{ballot.id}"}><%= ballot.title %></.link>
