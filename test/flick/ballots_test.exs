@@ -1,5 +1,5 @@
 defmodule Flick.BallotsTest do
-  use Flick.DataCase
+  use Flick.DataCase, async: true
 
   alias Flick.Ballots
   alias Flick.Ballots.Ballot
