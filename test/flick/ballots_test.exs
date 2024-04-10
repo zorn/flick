@@ -50,4 +50,28 @@ defmodule Flick.BallotsTest do
       assert Enum.find(ballots, &match?(^ballot_b, &1))
     end
   end
+
+  describe "get_ballot!/1" do
+    test "success: returns a ballot" do
+      %Ballot{id: id, title: title} = ballot_fixture()
+      assert %Ballot{id: ^id, title: ^title} = Ballots.get_ballot!(id)
+    end
+
+    test "failure: raises when the ballot does not exist" do
+      assert_raise Ecto.NoResultsError, fn ->
+        Ballots.get_ballot!(Ecto.UUID.generate())
+      end
+    end
+  end
+
+  describe "fetch_ballot/1" do
+    test "success: returns a ballot" do
+      %Ballot{id: id, title: title} = ballot_fixture()
+      assert {:ok, %Ballot{id: ^id, title: ^title}} = Ballots.fetch_ballot(id)
+    end
+
+    test "failure: returns `:not_found` when the ballot does not exist" do
+      assert :not_found = Ballots.fetch_ballot(Ecto.UUID.generate())
+    end
+  end
 end

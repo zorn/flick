@@ -1,4 +1,8 @@
 defmodule Flick.Ballots do
+  @moduledoc """
+  Provides functions related to managing `Flick.Ballots.Ballot` entities.
+  """
+
   alias Flick.Ballots.Ballot
   alias Flick.Repo
 
@@ -33,5 +37,26 @@ defmodule Flick.Ballots do
     # returned list. We should add something.
 
     Repo.all(Ballot)
+  end
+
+  @doc """
+  Returns a `Flick.Ballots.Ballot` entity for the given id.
+
+  Raises `Ecto.NoResultsError` if no entity was found.
+  """
+  @spec get_ballot!(Ballot.id()) :: Board.t()
+  def get_ballot!(ballot_id) do
+    Repo.get!(Ballot, ballot_id)
+  end
+
+  @doc """
+  Fetches a `Flick.Ballots.Ballot` entity for the given id.
+  """
+  @spec fetch_ballot(Ballot.id()) :: {:ok, Ballot.t()} | :not_found
+  def fetch_ballot(ballot_id) do
+    case Repo.get(Ballot, ballot_id) do
+      nil -> :not_found
+      ballot -> {:ok, ballot}
+    end
   end
 end
