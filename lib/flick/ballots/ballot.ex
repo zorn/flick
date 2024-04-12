@@ -15,10 +15,22 @@ defmodule Flick.Ballots.Ballot do
 
   @type id :: Ecto.UUID.t()
 
+  @typedoc """
+  A type for a persisted `Flick.Ballots.Ballot` entity.
+  """
   @type t :: %__MODULE__{
           id: Ecto.UUID.t(),
-          title: String.t()
+          title: String.t(),
+          questions: list(Question.t())
         }
+
+  @typedoc """
+  A type for the base `Flick.Ballots.Ballot` struct.
+
+  This type is helpful when you want to typespec a function that needs to accept
+  a non-persisted `Flick.Ballots.Ballot` struct value.
+  """
+  @type struct_t :: %__MODULE__{}
 
   @primary_key {:id, :binary_id, autogenerate: true}
   schema "ballots" do
@@ -30,6 +42,7 @@ defmodule Flick.Ballots.Ballot do
   @required_fields [:title]
   @optional_fields []
 
+  @spec changeset(t() | struct_t(), map()) :: Ecto.Changeset.t(Ballot.t())
   def changeset(ballot, attrs) do
     ballot
     |> cast(attrs, @required_fields ++ @optional_fields)

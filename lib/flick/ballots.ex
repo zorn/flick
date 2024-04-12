@@ -12,20 +12,13 @@ defmodule Flick.Ballots do
   @spec create_ballot(String.t(), list(Question.t())) ::
           {:ok, Ballot.t()} | {:error, Ecto.Changeset.t(Ballot.t())}
   def create_ballot(title, questions) do
-    # During creation changesets for the embedded questions will need to be made
-    # and since changesets are based on a `Map` of changes, we'll convert the
-    # incoming questions to `Map` values. We still want the expressiveness of
-    # the `Question` type in the argument list, but will do the transform here
-    # to allow the changeset to work as needed.
-    questions_as_maps = Enum.map(questions, &Map.from_struct/1)
-
     attrs = %{
       title: title,
-      questions: questions_as_maps
+      questions: questions
     }
 
     %Ballot{}
-    |> Ballot.changeset(attrs)
+    |> change_ballot(attrs)
     |> Repo.insert()
   end
 
@@ -59,4 +52,32 @@ defmodule Flick.Ballots do
       ballot -> {:ok, ballot}
     end
   end
+
+  @typedoc """
+  The expected shape of the attribute maps when creating a
+  `Flick.Ballots.Ballot` changeset.
+  """
+  @type change_ballot_attrs :: %{
+          optional(:title) => String.t(),
+          optional(:questions) => list(Question.t())
+        }
+
+  @doc """
+  Returns an `Ecto.Changeset` representing changes to a `Flick.Ballots.Ballot` entity.
+  """
+  @spec change_ballot(Ballot.t() | Ballot.struct_t(), change_ballot_attrs()) ::
+          Ecto.Changeset.t(Ballot.t())
+  def change_ballot(ballot, attrs) do
+    attrs = convert_questions(attrs)
+    Ballot.changeset(ballot, attrs)
+  end
+
+  @spec convert_questions(change_ballot_attrs()) :: map()
+  defp convert_questions(%{questions: questions} = attrs) do
+    # The internal `Ballot.changeset/2` function needs the questions values in
+    # the `attrs` as raw map values for `embed_many` reasons.
+    %{attrs | questions: Enum.map(questions, &Map.from_struct/1)}
+  end
+
+  defp convert_questions(attrs), do: attrs
 end
