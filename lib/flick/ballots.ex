@@ -80,7 +80,7 @@ defmodule Flick.Ballots do
   @spec change_ballot(Ballot.t() | Ballot.struct_t(), change_ballot_attrs()) ::
           Ecto.Changeset.t(Ballot.t())
   def change_ballot(ballot, attrs) do
-    attrs = convert_questions(attrs)
+    # attrs = convert_questions(attrs)
     Ballot.changeset(ballot, attrs)
   end
 
