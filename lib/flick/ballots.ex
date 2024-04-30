@@ -51,10 +51,10 @@ defmodule Flick.Ballots do
   @doc """
   Fetches a `Flick.Ballots.Ballot` entity for the given id.
   """
-  @spec fetch_ballot(Ballot.id()) :: {:ok, Ballot.t()} | :not_found
+  @spec fetch_ballot(Ballot.id()) :: {:ok, Ballot.t()} | :ballot_not_found
   def fetch_ballot(ballot_id) do
     case Repo.get(Ballot, ballot_id) do
-      nil -> :not_found
+      nil -> :ballot_not_found
       ballot -> {:ok, ballot}
     end
   end

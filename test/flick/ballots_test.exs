@@ -116,7 +116,7 @@ defmodule Flick.BallotsTest do
     end
 
     test "failure: returns `:not_found` when the ballot does not exist" do
-      assert :not_found = Ballots.fetch_ballot(Ecto.UUID.generate())
+      assert :ballot_not_found = Ballots.fetch_ballot(Ecto.UUID.generate())
     end
   end
 
