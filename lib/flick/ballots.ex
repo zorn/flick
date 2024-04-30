@@ -6,17 +6,13 @@ defmodule Flick.Ballots do
   alias Flick.Ballots.Ballot
   alias Flick.Repo
 
+  @typep changeset :: Ecto.Changeset.t(Ballot.t())
+
   @doc """
   Creates a new `Flick.Ballots.Ballot` entity with the given `title` and `questions`.
   """
-  @spec create_ballot(String.t(), list(Question.t())) ::
-          {:ok, Ballot.t()} | {:error, Ecto.Changeset.t(Ballot.t())}
-  def create_ballot(title, questions) do
-    attrs = %{
-      title: title,
-      questions: questions
-    }
-
+  @spec create_ballot(map()) :: {:ok, Ballot.t()} | {:error, changeset()}
+  def create_ballot(attrs) do
     %Ballot{}
     |> change_ballot(attrs)
     |> Repo.insert()
@@ -26,8 +22,7 @@ defmodule Flick.Ballots do
   Updates the given `Flick.Ballots.Ballot` entity with the given attributes.
   """
   # TODO: I wish this map were more specific.
-  @spec update_ballot(Ballot.t(), map()) ::
-          {:ok, Ballot.t()} | {:error, Ecto.Changeset.t(Ballot.t())}
+  @spec update_ballot(Ballot.t(), map()) :: {:ok, Ballot.t()} | {:error, changeset()}
   def update_ballot(ballot, attrs) do
     ballot
     |> change_ballot(attrs)
@@ -65,31 +60,11 @@ defmodule Flick.Ballots do
     end
   end
 
-  @typedoc """
-  The expected shape of the attribute maps when creating a
-  `Flick.Ballots.Ballot` changeset.
-  """
-  @type change_ballot_attrs :: %{
-          optional(:title) => String.t(),
-          optional(:questions) => list(Question.t())
-        }
-
   @doc """
   Returns an `Ecto.Changeset` representing changes to a `Flick.Ballots.Ballot` entity.
   """
-  @spec change_ballot(Ballot.t() | Ballot.struct_t(), change_ballot_attrs()) ::
-          Ecto.Changeset.t(Ballot.t())
+  @spec change_ballot(Ballot.t() | Ballot.struct_t(), map()) :: changeset()
   def change_ballot(ballot, attrs) do
-    # attrs = convert_questions(attrs)
     Ballot.changeset(ballot, attrs)
   end
-
-  @spec convert_questions(change_ballot_attrs()) :: map()
-  defp convert_questions(%{questions: questions} = attrs) do
-    # The internal `Ballot.changeset/2` function needs the questions values in
-    # the `attrs` as raw map values for `embed_many` reasons.
-    %{attrs | questions: Enum.map(questions, &Map.from_struct/1)}
-  end
-
-  defp convert_questions(attrs), do: attrs
 end

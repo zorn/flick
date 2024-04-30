@@ -3,22 +3,26 @@ defmodule Flick.BallotsTest do
 
   alias Flick.Ballots
   alias Flick.Ballots.Ballot
-  alias Flick.Ballots.Question
 
   describe "create_ballot/1" do
     test "success: creates a ballot with questions" do
-      title = "My first ballot"
-      question_1 = %Question{title: "What is your favorite color?"}
-      question_2 = %Question{title: "What is your favorite food?"}
-      questions = [question_1, question_2]
+      attrs = %{
+        "questions" => %{
+          "0" => %{"_persistent_id" => "0", "title" => "What is your favorite color?"},
+          "1" => %{"_persistent_id" => "1", "title" => "What is your favorite food?"}
+        },
+        "questions_drop" => [""],
+        "questions_sort" => ["0", "1"],
+        "title" => "My first ballot"
+      }
 
-      {:ok, ballot} = Ballots.create_ballot(title, questions)
+      {:ok, ballot} = Ballots.create_ballot(attrs)
 
       assert %Ballot{
-               title: ^title,
+               title: "My first ballot",
                questions: [
-                 %Question{title: "What is your favorite color?"},
-                 %Question{title: "What is your favorite food?"}
+                 %{title: "What is your favorite color?"},
+                 %{title: "What is your favorite food?"}
                ]
              } = ballot
     end
@@ -28,14 +32,9 @@ defmodule Flick.BallotsTest do
     empty_values = ["", nil, " "]
 
     for empty_value <- empty_values do
-      assert {:error, changeset} = Ballots.create_ballot(empty_value, [])
+      assert {:error, changeset} = Ballots.create_ballot(%{"title" => empty_value})
       assert "can't be blank" in errors_on(changeset).title
     end
-  end
-
-  test "failure: at least one question is required" do
-    assert {:error, changeset} = Ballots.create_ballot("My first ballot", [])
-    assert "can't be blank" in errors_on(changeset).questions
   end
 
   describe "list_ballots/1" do

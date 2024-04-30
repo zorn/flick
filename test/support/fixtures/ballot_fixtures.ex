@@ -14,9 +14,16 @@ defmodule Support.Fixtures.BallotFixtures do
   allowing for the passed in attributes to override defaults.
   """
   def valid_ballot_attributes(attrs \\ %{}) do
+    questions =
+      [
+        Support.Fixtures.QuestionFixture.question_fixture(),
+        Support.Fixtures.QuestionFixture.question_fixture()
+      ]
+      |> Enum.map(&Map.from_struct/1)
+
     Enum.into(attrs, %{
       title: unique_ballot_title(),
-      questions: [Support.Fixtures.QuestionFixture.question_fixture()]
+      questions: questions
     })
   end
 
@@ -27,8 +34,8 @@ defmodule Support.Fixtures.BallotFixtures do
   When not provided, all required attributes will be generated.
   """
   def ballot_fixture(attrs \\ %{}) do
-    %{title: title, questions: questions} = valid_ballot_attributes(attrs)
-    {:ok, ballot} = Flick.Ballots.create_ballot(title, questions)
+    attrs = valid_ballot_attributes(attrs)
+    {:ok, ballot} = Flick.Ballots.create_ballot(attrs)
     ballot
   end
 end
