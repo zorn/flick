@@ -128,7 +128,7 @@ defmodule Flick.BallotsTest do
       assert %Ecto.Changeset{
                changes: %{title: "some-title-changed"},
                valid?: true
-             } = changeset = Ballots.change_ballot(ballot, attrs)
+             } = Ballots.change_ballot(ballot, attrs)
     end
   end
 end
