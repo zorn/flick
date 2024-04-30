@@ -47,7 +47,10 @@ defmodule Flick.Ballots.Ballot do
     ballot
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
-    |> cast_embed(:questions, with: &Question.changeset/2, required: true)
-    |> validate_length(:questions, min: 1)
+    |> cast_embed(:questions,
+      with: &Question.changeset/2,
+      sort_param: :questions_sort,
+      drop_param: :questions_drop
+    )
   end
 end
