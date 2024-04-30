@@ -104,8 +104,13 @@ defmodule FlickWeb.Ballots.EditorLive do
           </label>
         </.inputs_for>
 
+        <%!-- This is what make sure we remove all questions when no inputs_for are present above. --%>
         <input type="hidden" name="ballot[questions_drop][]" />
 
+        <%!-- When the user clicks `add` below, this sends an `"on"` value for `questions_sort` input value.
+        Ecto is documented saying: "Unknown indexes are considered to be new entries." so this results in
+        a new `Question` embed being added to the changeset. -->
+        <%!-- https://hexdocs.pm/ecto/Ecto.Changeset.html#cast_assoc/3-options --%>
         <label class="block cursor-pointer">
           <input type="checkbox" name="ballot[questions_sort][]" class="hidden" /> add question
         </label>
