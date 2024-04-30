@@ -12,7 +12,6 @@ defmodule FlickWeb.Ballots.EditorLive do
 
   alias Flick.Ballots
   alias Flick.Ballots.Ballot
-  alias Flick.Ballots.Question
 
   @impl Phoenix.LiveView
   def mount(params, _session, socket) do
