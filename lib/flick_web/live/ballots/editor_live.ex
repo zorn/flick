@@ -4,10 +4,6 @@ defmodule FlickWeb.Ballots.EditorLive do
   `Flick.Ballots.Ballot`.
   """
 
-  # TODO: Normalize a better way to say "Ballot" and have it link without
-  # showing the full module path. Maybe come up with a typing shortcut to help
-  # me?
-
   use FlickWeb, :live_view
 
   alias Flick.Ballots
@@ -15,16 +11,22 @@ defmodule FlickWeb.Ballots.EditorLive do
 
   @impl Phoenix.LiveView
   def mount(params, _session, socket) do
-    # do I need to save this to the assigns?
     ballot = ballot(params, socket)
     form = to_form(Ballots.change_ballot(ballot, %{}))
 
     socket
-    # TODO: Update page title to be more editor centric when I add editing.
-    |> assign(:page_title, "Create a Ballot")
     |> assign(:form, form)
     |> assign(:ballot, ballot)
+    |> assign_page_title()
     |> ok()
+  end
+
+  defp assign_page_title(%{assigns: %{live_action: :edit, ballot: ballot}} = socket) do
+    assign(socket, page_title: "Edit Ballot: #{ballot.title}")
+  end
+
+  defp assign_page_title(socket) do
+    assign(socket, page_title: "Create a Ballot")
   end
 
   defp ballot(params, %{assigns: %{live_action: :edit}} = _socket) do
@@ -55,8 +57,8 @@ defmodule FlickWeb.Ballots.EditorLive do
     dbg(ballot_params)
 
     case Ballots.update_ballot(ballot, ballot_params) do
-      {:ok, _ballot} ->
-        {:noreply, redirect(socket, to: ~p"/ballots")}
+      {:ok, ballot} ->
+        {:noreply, redirect(socket, to: ~p"/ballots/#{ballot}")}
 
       {:error, changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}
@@ -64,10 +66,9 @@ defmodule FlickWeb.Ballots.EditorLive do
   end
 
   defp do_save(params, socket) do
-    %{"title" => title} = params["ballot"]
-    %{ballot: ballot} = socket.assigns
+    %{"ballot" => ballot_params} = params
 
-    case Ballots.update_ballot(ballot, %{"title" => title}) do
+    case Ballots.create_ballot(ballot_params) do
       {:ok, ballot} ->
         {:noreply, redirect(socket, to: ~p"/ballots/#{ballot}")}
 
