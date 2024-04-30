@@ -100,14 +100,14 @@ defmodule FlickWeb.Ballots.EditorLive do
               name="ballot[questions_drop][]"
               value={question_form.index}
               class="hidden"
-            /> delete event
+            /> delete question
           </label>
         </.inputs_for>
 
         <input type="hidden" name="ballot[questions_drop][]" />
 
         <label class="block cursor-pointer">
-          <input type="checkbox" name="ballot[questions_sort][]" class="hidden" /> add event
+          <input type="checkbox" name="ballot[questions_sort][]" class="hidden" /> add question
         </label>
 
         <:actions>
