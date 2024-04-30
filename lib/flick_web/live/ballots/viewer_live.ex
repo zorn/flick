@@ -25,9 +25,14 @@ defmodule FlickWeb.Ballots.ViewerLive do
   def render(assigns) do
     ~H"""
     <div>
-      <p>
+      <div class="my-6">
         <.back navigate={~p"/ballots"}>Back to ballots</.back>
-      </p>
+      </div>
+
+      <div class="my-6">
+        <.link navigate={~p"/ballots/#{@ballot}/edit"}>Edit</.link>
+      </div>
+
       <p>Some ballot detail page.</p>
       <p id="ballot-title"><%= @ballot.title %></p>
       <div>
