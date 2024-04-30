@@ -23,6 +23,18 @@ defmodule Flick.Ballots do
   end
 
   @doc """
+  Updates the given `Flick.Ballots.Ballot` entity with the given attributes.
+  """
+  # TODO: I wish this map were more specific.
+  @spec update_ballot(Ballot.t(), map()) ::
+          {:ok, Ballot.t()} | {:error, Ecto.Changeset.t(Ballot.t())}
+  def update_ballot(ballot, attrs) do
+    ballot
+    |> change_ballot(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
   Returns a list of all `Flick.Ballots.Ballot` entities.
   """
   def list_ballots() do
