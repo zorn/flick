@@ -21,7 +21,6 @@ defmodule Flick.Ballots do
   @doc """
   Updates the given `Flick.Ballots.Ballot` entity with the given attributes.
   """
-  # TODO: I wish this map were more specific.
   @spec update_ballot(Ballot.t(), map()) :: {:ok, Ballot.t()} | {:error, changeset()}
   def update_ballot(ballot, attrs) do
     ballot
