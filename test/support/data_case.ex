@@ -24,6 +24,9 @@ defmodule Flick.DataCase do
       import Ecto.Changeset
       import Ecto.Query
       import Flick.DataCase
+
+      import Support.Fixtures.BallotFixtures
+      import Support.Fixtures.QuestionFixture
     end
   end
 

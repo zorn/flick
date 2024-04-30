@@ -54,6 +54,8 @@ defmodule FlickWeb do
       use Phoenix.LiveView,
         layout: {FlickWeb.Layouts, :app}
 
+      import FlickWeb.LiveViewPipes, only: [ok: 1]
+
       unquote(html_helpers())
     end
   end
