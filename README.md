@@ -1,5 +1,7 @@
 # Flick
 
+08:41:35 AM
+
 To start your Phoenix server:
 
   * Run `mix setup` to install and setup dependencies
