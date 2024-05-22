@@ -97,7 +97,7 @@ defmodule FlickWeb.Ballots.EditorLive do
           <.inputs_for :let={answer_option_form} field={question_form[:answer_options]}>
             <input
               type="hidden"
-              name={"ballot[questions][#{question_form.index}][answer_options_sort]"}
+              name={"ballot[questions][#{question_form.index}][answer_options_sort][]"}
               value={answer_option_form.index}
             />
             <.input field={answer_option_form[:title]} label="Answer Option Title" />
