@@ -43,7 +43,7 @@ defmodule Flick.Ballots do
 
   Raises `Ecto.NoResultsError` if no entity was found.
   """
-  @spec get_ballot!(Ballot.id()) :: Board.t()
+  @spec get_ballot!(Ballot.id()) :: Ballot.t()
   def get_ballot!(ballot_id) do
     Repo.get!(Ballot, ballot_id)
   end
