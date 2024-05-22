@@ -42,7 +42,7 @@ defmodule Flick.Ballots.Ballot do
   @required_fields [:title]
   @optional_fields []
 
-  @spec changeset(t() | struct_t(), map()) :: Ecto.Changeset.t(Ballot.t())
+  @spec changeset(t() | struct_t(), map()) :: Ecto.Changeset.t(t())
   def changeset(ballot, attrs) do
     ballot
     |> cast(attrs, @required_fields ++ @optional_fields)
