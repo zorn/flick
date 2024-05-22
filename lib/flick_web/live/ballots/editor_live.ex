@@ -94,6 +94,39 @@ defmodule FlickWeb.Ballots.EditorLive do
 
           <.input field={question_form[:title]} label="Question Title" />
 
+          <.inputs_for :let={answer_option_form} field={question_form[:answer_options]}>
+            <input
+              type="hidden"
+              name={"ballot[questions][#{question_form.index}][answer_options_sort]"}
+              value={answer_option_form.index}
+            />
+            <.input field={answer_option_form[:title]} label="Answer Option Title" />
+            <label>
+              <input
+                type="checkbox"
+                name={"ballot[questions][#{question_form.index}][answer_options_drop][]"}
+                value={answer_option_form.index}
+                class="hidden"
+              /> delete answer
+            </label>
+          </.inputs_for>
+
+          <input
+            type="hidden"
+            name={"ballot[questions][#{question_form.index}][answer_options_drop][]"}
+          />
+
+          <%!-- Update these to buttons per: --%>
+          <%!-- https://elixir-lang.slack.com/archives/CD594E0UU/p1715088812701829 --%>
+          <%!-- TODO: Figure out if there is any way I can make it so when I hit add the new entry is presented at the bottom of the list. --%>
+          <label class="block cursor-pointer">
+            <input
+              type="checkbox"
+              name={"ballot[questions][#{question_form.index}][answer_options_sort][]"}
+              class="hidden"
+            /> add answer
+          </label>
+
           <label>
             <input
               type="checkbox"
