@@ -23,7 +23,8 @@ defmodule Support.Fixtures.BallotFixtures do
 
     Enum.into(attrs, %{
       title: unique_ballot_title(),
-      questions: questions
+      questions: questions,
+      published_at: nil
     })
   end
 

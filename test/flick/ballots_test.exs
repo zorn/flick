@@ -81,6 +81,30 @@ defmodule Flick.BallotsTest do
         assert "can't be blank" in errors_on(changeset).title
       end
     end
+
+    test "failure: You can not update a published ballot" do
+      ballot = ballot_fixture(%{published_at: DateTime.utc_now()})
+
+      assert {:error, :can_not_update_published_ballot} =
+               Ballots.update_ballot(ballot, %{title: "some new title"})
+    end
+  end
+
+  describe "publish_ballot/2" do
+    test "success: you can publish a non-published ballot" do
+      ballot = ballot_fixture(%{published_at: nil})
+
+      published_at = DateTime.utc_now()
+      assert {:ok, published_ballot} = Ballots.publish_ballot(ballot, published_at)
+
+      assert %Ballot{published_at: ^published_at} = published_ballot
+    end
+
+    test "failure: you can not publish a published ballot" do
+      ballot = ballot_fixture(%{published_at: DateTime.utc_now()})
+
+      assert {:error, :ballot_already_published} = Ballots.publish_ballot(ballot)
+    end
   end
 
   describe "list_ballots/1" do
@@ -116,7 +140,7 @@ defmodule Flick.BallotsTest do
     end
 
     test "failure: returns `:not_found` when the ballot does not exist" do
-      assert :ballot_not_found = Ballots.fetch_ballot(Ecto.UUID.generate())
+      assert {:error, :ballot_not_found} = Ballots.fetch_ballot(Ecto.UUID.generate())
     end
   end
 

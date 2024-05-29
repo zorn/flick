@@ -21,6 +21,7 @@ defmodule Flick.Ballots.Ballot do
   @type t :: %__MODULE__{
           id: Ecto.UUID.t(),
           title: String.t(),
+          published_at: DateTime.t() | nil,
           questions: list(Question.t())
         }
 
@@ -35,12 +36,13 @@ defmodule Flick.Ballots.Ballot do
   @primary_key {:id, :binary_id, autogenerate: true}
   schema "ballots" do
     field :title, :string
+    field :published_at, :utc_datetime_usec
     embeds_many :questions, Question, on_replace: :delete
     timestamps(type: :utc_datetime_usec)
   end
 
   @required_fields [:title]
-  @optional_fields []
+  @optional_fields [:published_at]
 
   @spec changeset(t() | struct_t(), map()) :: Ecto.Changeset.t(t())
   def changeset(ballot, attrs) do
