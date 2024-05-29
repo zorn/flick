@@ -25,9 +25,14 @@ defmodule FlickWeb.Ballots.IndexLive do
       </p>
       <p>A list of known ballots.</p>
       <.table id="ballots" rows={@ballots} row_id={&"ballot-row-#{&1.id}"}>
-        <:col :let={ballot} label="id"><%= ballot.id %></:col>
         <:col :let={ballot} label="title">
-          <.link navigate={~p"/ballots/#{ballot.id}"}><%= ballot.title %></.link>
+          <%= ballot.title %>
+        </:col>
+        <:col :let={ballot} label="published at">
+          <%= ballot.published_at || "Not Published" %>
+        </:col>
+        <:col :let={ballot} label="details">
+          <.link navigate={~p"/ballots/#{ballot.id}"}>View Details</.link>
         </:col>
       </.table>
     </div>
