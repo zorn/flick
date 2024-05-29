@@ -29,7 +29,12 @@ defmodule FlickWeb.Ballots.IndexLive do
           <%= ballot.title %>
         </:col>
         <:col :let={ballot} label="published at">
-          <%= ballot.published_at || "Not Published" %>
+          <%= if ballot.published_at do %>
+            <%= ballot.published_at %>
+            <.link navigate={~p"/vote/#{ballot.id}"}>Voting Page</.link>
+          <% else %>
+            Not Published
+          <% end %>
         </:col>
         <:col :let={ballot} label="details">
           <.link navigate={~p"/ballots/#{ballot.id}"}>View Details</.link>
