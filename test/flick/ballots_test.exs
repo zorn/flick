@@ -82,6 +82,43 @@ defmodule Flick.BallotsTest do
         assert "can't be blank" in errors_on(changeset).title
       end
     end
+
+    test "failure: a question requires a non-empty possible answers value" do
+      empty_values = ["", nil, " "]
+
+      for empty_value <- empty_values do
+        attrs = %{
+          title: "some-title",
+          questions: [%{title: "some-title", possible_answers: empty_value}]
+        }
+
+        assert {:error, changeset} = Ballots.create_ballot(attrs)
+        question_changeset = List.first(changeset.changes.questions)
+        assert "can't be blank" in errors_on(question_changeset).possible_answers
+      end
+    end
+
+    test "failure: a question's possible answers value must not include empty answers" do
+      attrs = %{
+        title: "some-title",
+        questions: [%{title: "some-title", possible_answers: "one,,two"}]
+      }
+
+      assert {:error, changeset} = Ballots.create_ballot(attrs)
+      question_changeset = List.first(changeset.changes.questions)
+      assert "can't contain empty answers" in errors_on(question_changeset).possible_answers
+    end
+
+    test "failure: a question's possible answers value must not include new lines" do
+      attrs = %{
+        title: "some-title",
+        questions: [%{title: "some-title", possible_answers: "one,\ntwo"}]
+      }
+
+      assert {:error, changeset} = Ballots.create_ballot(attrs)
+      question_changeset = List.first(changeset.changes.questions)
+      assert "can't contain new lines" in errors_on(question_changeset).possible_answers
+    end
   end
 
   describe "update_ballot/1" do

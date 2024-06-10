@@ -95,7 +95,7 @@ defmodule FlickWeb.Ballots.EditorLive do
           <.input field={question_form[:title]} label="Question Title" />
           <.input
             type="textarea"
-            field={question_form[:answer_options_text]}
+            field={question_form[:possible_answers]}
             label="Possible Answers (Comma-separated)"
           />
 

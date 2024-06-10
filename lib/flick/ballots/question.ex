@@ -29,5 +29,26 @@ defmodule Flick.Ballots.Question do
     question
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
+    |> validate_possible_answers()
+  end
+
+  defp validate_possible_answers(changeset) do
+    # Because we validated the value as `required` before this, we don't need to
+    # concern ourselves with an empty list here.
+
+    validate_change(changeset, :possible_answers, fn :possible_answers, updated_value ->
+      answer_list = String.split(updated_value, ",")
+
+      cond do
+        String.contains?(updated_value, "\n") ->
+          [possible_answers: "can't contain new lines"]
+
+        Enum.any?(answer_list, &(&1 == "")) ->
+          [possible_answers: "can't contain empty answers"]
+
+        true ->
+          []
+      end
+    end)
   end
 end
