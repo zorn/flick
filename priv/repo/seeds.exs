@@ -13,9 +13,21 @@
 {:ok, _} =
   Flick.Ballots.create_ballot(%{
     "questions" => %{
-      "0" => %{"_persistent_id" => "0", "title" => "What is your sandwich preference?"},
-      "1" => %{"_persistent_id" => "1", "title" => "What is your snack preference?"},
-      "2" => %{"_persistent_id" => "2", "title" => "What is your drink preference?"}
+      "0" => %{
+        "_persistent_id" => "0",
+        "title" => "What is your sandwich preference?",
+        "possible_answers" => "Turkey, Ham, Roast Beef"
+      },
+      "1" => %{
+        "_persistent_id" => "1",
+        "title" => "What is your snack preference?",
+        "possible_answers" => "Chips, Fruit, Candy"
+      },
+      "2" => %{
+        "_persistent_id" => "2",
+        "title" => "What is your drink preference?",
+        "possible_answers" => "Soda, Water, Juice"
+      }
     },
     "questions_drop" => [""],
     "questions_sort" => ["0", "1", "2"],

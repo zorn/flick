@@ -7,13 +7,17 @@ defmodule Flick.BallotsTest do
   describe "create_ballot/1" do
     test "success: creates a ballot with questions" do
       attrs = %{
-        "questions" => %{
-          "0" => %{"_persistent_id" => "0", "title" => "What is your favorite color?"},
-          "1" => %{"_persistent_id" => "1", "title" => "What is your favorite food?"}
-        },
-        "questions_drop" => [""],
-        "questions_sort" => ["0", "1"],
-        "title" => "My first ballot"
+        title: "My first ballot",
+        questions: [
+          %{
+            title: "What is your favorite color?",
+            possible_answers: "Red, Green, Blue"
+          },
+          %{
+            title: "What is your favorite food?",
+            possible_answers: "Pizza, Tacos, Sushi"
+          }
+        ]
       }
 
       {:ok, ballot} = Ballots.create_ballot(attrs)
@@ -21,8 +25,51 @@ defmodule Flick.BallotsTest do
       assert %Ballot{
                title: "My first ballot",
                questions: [
-                 %{title: "What is your favorite color?"},
-                 %{title: "What is your favorite food?"}
+                 %{
+                   title: "What is your favorite color?",
+                   possible_answers: "Red, Green, Blue"
+                 },
+                 %{
+                   title: "What is your favorite food?",
+                   possible_answers: "Pizza, Tacos, Sushi"
+                 }
+               ]
+             } = ballot
+    end
+
+    test "success: can create a ballot with web payload format" do
+      attrs = %{
+        "questions" => %{
+          "0" => %{
+            "_persistent_id" => "0",
+            "title" => "What is your favorite color?",
+            "possible_answers" => "Red, Green, Blue"
+          },
+          "1" => %{
+            "_persistent_id" => "1",
+            "title" => "What is your favorite food?",
+            "possible_answers" => "Pizza, Tacos, Sushi"
+          }
+        },
+        "questions_drop" => [""],
+        "questions_sort" => ["1", "0"],
+        "title" => "My first ballot"
+      }
+
+      # Note: This payload includes a new sort order.
+      {:ok, ballot} = Ballots.create_ballot(attrs)
+
+      assert %Ballot{
+               title: "My first ballot",
+               questions: [
+                 %{
+                   title: "What is your favorite food?",
+                   possible_answers: "Pizza, Tacos, Sushi"
+                 },
+                 %{
+                   title: "What is your favorite color?",
+                   possible_answers: "Red, Green, Blue"
+                 }
                ]
              } = ballot
     end
@@ -43,8 +90,8 @@ defmodule Flick.BallotsTest do
         ballot_fixture(%{
           title: "some-title",
           questions: [
-            %{title: "some-question-one"},
-            %{title: "some-question-two"}
+            %{title: "some-question-one", possible_answers: "a, b"},
+            %{title: "some-question-two", possible_answers: "c, d"}
           ]
         })
 
@@ -52,8 +99,16 @@ defmodule Flick.BallotsTest do
 
       change_attrs = %{
         "questions" => %{
-          "0" => %{"_persistent_id" => "0", "title" => "some-question-one-changed"},
-          "1" => %{"_persistent_id" => "1", "title" => "some-question-two-changed"}
+          "0" => %{
+            "_persistent_id" => "0",
+            "title" => "some-question-one-changed",
+            "possible_answers" => "a, b"
+          },
+          "1" => %{
+            "_persistent_id" => "1",
+            "title" => "some-question-two-changed",
+            "possible_answers" => "c, d"
+          }
         },
         "questions_drop" => [""],
         "questions_sort" => ["0", "1"],
