@@ -43,7 +43,26 @@ defmodule Flick.Votes.Vote do
     |> cast_embed(:answers,
       with: &Answer.changeset/2,
       sort_param: :answers_sort,
-      drop_param: :answers_drop
+      drop_param: :answers_drop,
+      required: true
     )
+    |> validate_answers_question_uniqueness()
+  end
+
+  defp validate_answers_question_uniqueness(changeset) do
+    validate_change(changeset, :answers, fn :answers, new_answers ->
+      dbg(new_answers)
+
+      question_ids =
+        Enum.map(new_answers, fn changeset ->
+          get_field(changeset, :question_id)
+        end)
+
+      if Enum.uniq(question_ids) == question_ids do
+        []
+      else
+        [answers: "should not include duplicate question ids"]
+      end
+    end)
   end
 end

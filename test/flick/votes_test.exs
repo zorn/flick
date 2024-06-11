@@ -85,15 +85,37 @@ defmodule Flick.VotesTest do
     } do
       published_ballot_id = published_ballot.id
 
-      assert {:error, _changeset} =
+      assert {:error, changeset} =
                Votes.record_vote(%{
                  "ballot_id" => published_ballot_id,
                  "answers" => []
                })
+
+      assert "can't be blank" in errors_on(changeset).answers
     end
 
-    # test "failure: a vote can only have a single answer per ballot question" do
-    # end
+    test "failure: a vote can only have a single answer per ballot question", %{
+      published_ballot: published_ballot
+    } do
+      published_ballot_id = published_ballot.id
+
+      assert {:error, changeset} =
+               Votes.record_vote(%{
+                 "ballot_id" => published_ballot_id,
+                 "answers" => [
+                   %{
+                     "question_id" => hd(published_ballot.questions).id,
+                     "ranked_answers" => ["Pizza", "Tacos", "Sushi", "Burgers"]
+                   },
+                   %{
+                     "question_id" => hd(published_ballot.questions).id,
+                     "ranked_answers" => ["Burgers", "Sushi", "Tacos", "Pizza"]
+                   }
+                 ]
+               })
+
+      assert "should not include duplicate question ids" in errors_on(changeset).answers
+    end
 
     # test "failure: a answer must align to a know answer option of the ballot" do
     # end

@@ -17,6 +17,7 @@ defmodule Flick.Votes.Answer do
   @type struct_t :: %__MODULE__{}
 
   embedded_schema do
+    field :ballot_id, :binary_id, virtual: true
     field :question_id, :binary_id
     field :ranked_answers, {:array, :string}
   end

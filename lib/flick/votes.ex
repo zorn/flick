@@ -14,6 +14,8 @@ defmodule Flick.Votes do
   """
   @spec record_vote(map()) :: {:ok, Vote.t()} | {:error, changeset()}
   def record_vote(attrs) do
+    dbg(attrs)
+
     %Vote{}
     |> Vote.changeset(attrs)
     |> Repo.insert()
