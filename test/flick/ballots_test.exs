@@ -83,6 +83,9 @@ defmodule Flick.BallotsTest do
       end
     end
 
+    test "failure: a ballot must have at least one question" do
+    end
+
     test "failure: a question requires a non-empty possible answers value" do
       empty_values = ["", nil, " "]
 

@@ -23,8 +23,9 @@ defmodule Flick.Votes.Vote do
   @type struct_t :: %__MODULE__{}
 
   @primary_key {:id, :binary_id, autogenerate: true}
+  @foreign_key_type :binary_id
   schema "votes" do
-    field :ballot_id, :binary_id
+    belongs_to :ballot, Ballot
     embeds_many :answers, Answer, on_replace: :delete
     timestamps(type: :utc_datetime_usec)
   end

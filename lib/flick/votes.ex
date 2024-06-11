@@ -4,16 +4,16 @@ defmodule Flick.Votes do
   a specific `Flick.Ballots.Ballot`.
   """
 
-  alias Flick.Ballots.Ballot
-  alias Flick.Votes.Vote
   alias Flick.Repo
+  alias Flick.Votes.Vote
 
   @typep changeset :: Ecto.Changeset.t(Vote.t())
 
-  @spec record_vote(Ballot.t(), map()) :: {:ok, Vote.t()} | {:error, changeset()}
-  def record_vote(%Ballot{} = ballot, attrs) do
-    attrs = Map.put(attrs, "ballot_id", ballot.id)
-
+  @doc """
+  Records a vote for the given `Flick.Ballots.Ballot` entity.
+  """
+  @spec record_vote(map()) :: {:ok, Vote.t()} | {:error, changeset()}
+  def record_vote(attrs) do
     %Vote{}
     |> Vote.changeset(attrs)
     |> Repo.insert()

@@ -10,7 +10,7 @@
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
 
-{:ok, _} =
+{:ok, ballot} =
   Flick.Ballots.create_ballot(%{
     "questions" => %{
       "0" => %{
@@ -32,4 +32,29 @@
     "questions_drop" => [""],
     "questions_sort" => ["0", "1", "2"],
     "title" => "Lunch Survey"
+  })
+
+dbg(ballot)
+
+sandwich_question = Enum.at(ballot.questions, 0)
+snack_question = Enum.at(ballot.questions, 1)
+drink_question = Enum.at(ballot.questions, 2)
+
+{:ok, vote} =
+  Flick.Votes.record_vote(%{
+    "ballot_id" => ballot.id,
+    "answers" => [
+      %{
+        "question_id" => sandwich_question.id,
+        "ranked_answers" => ["Turkey", "Roast Beef", "Ham"]
+      },
+      %{
+        "question_id" => snack_question.id,
+        "ranked_answers" => ["Chips", "Fruit", "Candy"]
+      },
+      %{
+        "question_id" => drink_question.id,
+        "ranked_answers" => ["Soda", "Juice", "Water"]
+      }
+    ]
   })

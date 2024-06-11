@@ -1,6 +1,6 @@
 defmodule Flick.Votes.Answer do
   @moduledoc """
-  TBD
+  A collection of ranked answers to a question of a ballot.
   """
 
   use Ecto.Schema
@@ -9,22 +9,19 @@ defmodule Flick.Votes.Answer do
 
   alias Flick.Ballots.Question
 
-  # The Ecto implementation of `embeds_many` will store a `id` value for each
-  # question, but that should not be considered a public long-lived identity,
-  # and so you won't find it in the typespec below.
   @type t :: %__MODULE__{
           question_id: Question.id(),
-          ranked_answer_ids: []
+          ranked_answers: [String.t()]
         }
 
   @type struct_t :: %__MODULE__{}
 
   embedded_schema do
     field :question_id, :binary_id
-    field :ranked_answer_ids, {:array, :binary_id}
+    field :ranked_answers, {:array, :string}
   end
 
-  @required_fields [:question_id, :ranked_answer_ids]
+  @required_fields [:question_id, :ranked_answers]
   @optional_fields []
 
   # TODO: When capturing a vote, do we want to validate that all the supplied answer_ids match actual answers for the question in the ballot?

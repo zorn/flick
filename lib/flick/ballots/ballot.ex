@@ -1,10 +1,9 @@
 defmodule Flick.Ballots.Ballot do
   @moduledoc """
-  A ballot is a collection of questions.
+  A collection of one or many questions with possible answers presented to the user.
 
-  TODO: We may need to keep track of a "published_at" value and disallow changes
-  to ballot and questions after it is considered published to help maintain data
-  integrity.
+  The ballot owner will compose a ballot and then publish it to users, allowing
+  them to vote using ranked answers.
   """
 
   use Ecto.Schema
@@ -34,6 +33,7 @@ defmodule Flick.Ballots.Ballot do
   @type struct_t :: %__MODULE__{}
 
   @primary_key {:id, :binary_id, autogenerate: true}
+  @foreign_key_type :binary_id
   schema "ballots" do
     field :title, :string
     field :published_at, :utc_datetime_usec
@@ -44,7 +44,7 @@ defmodule Flick.Ballots.Ballot do
   @required_fields [:title]
   @optional_fields [:published_at]
 
-  @spec changeset(t() | struct_t(), map()) :: Ecto.Changeset.t(t())
+  @spec changeset(t() | struct_t(), map()) :: Ecto.Changeset.t(t()) | Ecto.Changeset.t(struct_t())
   def changeset(ballot, attrs) do
     ballot
     |> cast(attrs, @required_fields ++ @optional_fields)
