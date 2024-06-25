@@ -19,6 +19,8 @@ defmodule Flick.Votes.Answer do
   embedded_schema do
     field :ballot_id, :binary_id, virtual: true
     field :question_id, :binary_id
+
+    # TODO: While we collapsed the inner embed in ballot, I think for a vote we need to make this a seperate embeded_many so that we can do multiple `inputs_for` when rendering the view. Each ranked answer is just going to be be a value
     field :ranked_answers, {:array, :string}
   end
 

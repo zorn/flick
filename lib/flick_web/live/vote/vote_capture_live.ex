@@ -7,6 +7,8 @@ defmodule FlickWeb.Vote.VoteCaptureLive do
   use FlickWeb, :live_view
 
   alias Flick.Ballots
+  alias Flick.Votes
+  alias Flick.Votes.Vote
 
   @impl Phoenix.LiveView
   def mount(params, _session, socket) do
@@ -14,29 +16,31 @@ defmodule FlickWeb.Vote.VoteCaptureLive do
 
     ballot = Ballots.get_ballot!(ballot_id)
 
+    form = to_form(Votes.change_vote(%Vote{}, %{}))
+
     socket
     |> verify_ballot_is_published(ballot)
     |> assign(:page_title, "Vote: #{ballot.title}")
     |> assign(:ballot, ballot)
+    |> assign(:form, form)
     |> ok()
-  end
-
-  defp verify_ballot_is_published(socket, ballot) do
-    if ballot.published_at do
-      socket
-    else
-      # TODO: We can make this a better user experience in the future.
-      throw("can not vote on an unpublished ballot")
-    end
   end
 
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <div>
-      <div>The Question</div>
+      <div><%= @ballot.title %></div>
 
-      <div class="grid grid-cols-5">
+      <.simple_form for={@form} phx-change="validate" phx-submit="save">
+        <%!-- for each question of the ballot  --%>
+
+        <:actions>
+          <.button>Record Vote</.button>
+        </:actions>
+      </.simple_form>
+
+      <%!-- <div class="grid grid-cols-5">
         <div>
           <!-- empty -->
         </div>
@@ -80,8 +84,17 @@ defmodule FlickWeb.Vote.VoteCaptureLive do
         <div>input</div>
         <div>input</div>
         <div>input</div>
-      </div>
+      </div> --%>
     </div>
     """
+  end
+
+  defp verify_ballot_is_published(socket, ballot) do
+    if ballot.published_at do
+      socket
+    else
+      # TODO: We can make this a better user experience in the future.
+      throw("can not vote on an unpublished ballot")
+    end
   end
 end

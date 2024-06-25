@@ -21,4 +21,12 @@ defmodule Flick.Votes do
     |> Vote.changeset(attrs)
     |> Repo.insert()
   end
+
+  @doc """
+  Returns an `Ecto.Changeset` representing changes to a `Flick.Votes.Vote` entity.
+  """
+  @spec change_vote(Vote.t() | Vote.struct_t(), map()) :: changeset()
+  def change_vote(%Vote{} = vote, attrs) do
+    Vote.changeset(vote, attrs)
+  end
 end
