@@ -8,8 +8,8 @@ defmodule FlickWeb.Ballots.IndexLiveTest do
 
     for ballot <- ballots do
       row_selector = "table#ballots tr#ballot-row-#{ballot.id}"
-      assert has_element?(view, row_selector, ballot.id)
       assert has_element?(view, row_selector, ballot.title)
+      assert has_element?(view, row_selector, "Not Published")
     end
   end
 end

@@ -93,6 +93,16 @@ defmodule FlickWeb.Ballots.EditorLive do
           <input type="hidden" name="ballot[questions_sort][]" value={question_form.index} />
 
           <.input field={question_form[:title]} label="Question Title" />
+          <.input
+            type="textarea"
+            field={question_form[:possible_answers]}
+            label="Possible Answers (Comma-separated)"
+          />
+
+          <input
+            type="hidden"
+            name={"ballot[questions][#{question_form.index}][answer_options_drop][]"}
+          />
 
           <label>
             <input
