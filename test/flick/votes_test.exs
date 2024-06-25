@@ -31,8 +31,7 @@ defmodule Flick.VotesTest do
       question_id = hd(published_ballot.questions).id
 
       assert {:ok, vote} =
-               Votes.record_vote(%{
-                 "ballot_id" => published_ballot_id,
+               Votes.record_vote(published_ballot, %{
                  "answers" => [
                    %{
                      "question_id" => question_id,
@@ -59,8 +58,7 @@ defmodule Flick.VotesTest do
       question_id = hd(published_ballot.questions).id
 
       assert {:ok, vote} =
-               Votes.record_vote(%{
-                 "ballot_id" => published_ballot_id,
+               Votes.record_vote(published_ballot, %{
                  "answers" => [
                    %{
                      "question_id" => question_id,
@@ -83,11 +81,8 @@ defmodule Flick.VotesTest do
     test "failure: a vote must answer all ballot questions", %{
       published_ballot: published_ballot
     } do
-      published_ballot_id = published_ballot.id
-
       assert {:error, changeset} =
-               Votes.record_vote(%{
-                 "ballot_id" => published_ballot_id,
+               Votes.record_vote(published_ballot, %{
                  "answers" => []
                })
 
@@ -97,11 +92,8 @@ defmodule Flick.VotesTest do
     test "failure: a vote can only have a single answer per ballot question", %{
       published_ballot: published_ballot
     } do
-      published_ballot_id = published_ballot.id
-
       assert {:error, changeset} =
-               Votes.record_vote(%{
-                 "ballot_id" => published_ballot_id,
+               Votes.record_vote(published_ballot, %{
                  "answers" => [
                    %{
                      "question_id" => hd(published_ballot.questions).id,
@@ -117,7 +109,22 @@ defmodule Flick.VotesTest do
       assert "should not include duplicate question ids" in errors_on(changeset).answers
     end
 
-    # test "failure: a answer must align to a know answer option of the ballot" do
-    # end
+    test "failure: a vote should not include an answer value that is not present in the ballot",
+         %{
+           published_ballot: published_ballot
+         } do
+      attrs = %{
+        "answers" => [
+          %{
+            "question_id" => hd(published_ballot.questions).id,
+            "ranked_answers" => ["Forbidden Hot Dogs", "Illegal Cookies"]
+          }
+        ]
+      }
+
+      assert {:error, changeset} = Votes.record_vote(published_ballot, attrs)
+
+      assert "invalid answers: Forbidden Hot Dogs, Illegal Cookies" in errors_on(changeset).answers
+    end
   end
 end

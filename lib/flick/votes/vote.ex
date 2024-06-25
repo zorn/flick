@@ -6,6 +6,7 @@ defmodule Flick.Votes.Vote do
   use Ecto.Schema
 
   import Ecto.Changeset
+  import FlickWeb.Gettext
 
   alias Flick.Ballots.Ballot
   alias Flick.Votes.Answer
@@ -46,7 +47,38 @@ defmodule Flick.Votes.Vote do
       drop_param: :answers_drop,
       required: true
     )
+    |> validate_answers_are_present_in_ballot()
     |> validate_answers_question_uniqueness()
+  end
+
+  defp validate_answers_are_present_in_ballot(changeset) do
+    validate_change(changeset, :answers, fn :answers, new_answers ->
+      ballot = Flick.Ballots.get_ballot!(get_field(changeset, :ballot_id))
+      # For each of the answers, make sure each ranked answer is present in the
+      # possible answers for the question from the ballot.
+      Enum.reduce(new_answers, [], fn changeset, acc ->
+        question_id = get_field(changeset, :question_id)
+        ranked_answers = get_field(changeset, :ranked_answers)
+        question_from_ballot = Enum.find(ballot.questions, &(&1.id == question_id))
+
+        case question_from_ballot do
+          nil ->
+            [answers: "question_id not found in ballot"]
+
+          question ->
+            possible_answers = String.split(question.possible_answers, ",")
+            invalid_answers = Enum.reject(ranked_answers, &Enum.member?(possible_answers, &1))
+
+            if invalid_answers == [] do
+              acc
+            else
+              error_label = ngettext("invalid answer", "invalid answers", length(invalid_answers))
+              error_description = Enum.join(invalid_answers, ", ")
+              [answers: "#{error_label}: #{error_description}"]
+            end
+        end
+      end)
+    end)
   end
 
   defp validate_answers_question_uniqueness(changeset) do
