@@ -51,8 +51,6 @@ defmodule Flick.Votes.Vote do
 
   defp validate_answers_question_uniqueness(changeset) do
     validate_change(changeset, :answers, fn :answers, new_answers ->
-      dbg(new_answers)
-
       question_ids =
         Enum.map(new_answers, fn changeset ->
           get_field(changeset, :question_id)
