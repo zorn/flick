@@ -25,7 +25,6 @@ defmodule Flick.Votes.Answer do
   @required_fields [:question_id, :ranked_answers]
   @optional_fields []
 
-  # TODO: When capturing a vote, do we want to validate that all the supplied answer_ids match actual answers for the question in the ballot?
   # Maybe we could store a vitual field for the question so we can check it's answers during changeset? reference
 
   @spec changeset(t() | struct_t(), map()) :: Ecto.Changeset.t(t())
