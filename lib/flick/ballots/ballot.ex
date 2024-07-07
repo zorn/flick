@@ -51,11 +51,17 @@ defmodule Flick.Ballots.Ballot do
     |> validate_possible_answers()
   end
 
+  def possible_answers_as_list(possible_answers) when is_binary(possible_answers) do
+    possible_answers
+    |> String.split(",")
+    |> Enum.map(&String.trim/1)
+  end
+
   defp validate_possible_answers(changeset) do
     # Because we validated the value as `required` before this, we don't need to
     # concern ourselves with an empty list here.
     validate_change(changeset, :possible_answers, fn :possible_answers, updated_value ->
-      answer_list = String.split(updated_value, ",")
+      answer_list = possible_answers_as_list(updated_value)
 
       cond do
         String.contains?(updated_value, "\n") ->

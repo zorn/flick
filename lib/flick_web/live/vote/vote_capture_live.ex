@@ -163,8 +163,7 @@ defmodule FlickWeb.Vote.VoteCaptureLive do
   defp possible_values(_ballot, question) do
     # Maybe this belongs in the core ?
 
-    possible_answers = String.split(question.possible_answers, ",", trim: true)
-    possible_answers = Enum.map(possible_answers, &String.trim/1)
+    possible_answers = Flick.Ballots.Ballot.possible_answers_as_list(question.possible_answers)
 
     possible_answers
   end
