@@ -203,6 +203,10 @@ defmodule Flick.BallotsTest do
   end
 
   describe "list_ballots/1" do
+    test "success: lists ballots start with zero ballots" do
+      assert [] = Ballots.list_ballots()
+    end
+
     test "success: lists ballots" do
       ballot_a = ballot_fixture()
       ballot_b = ballot_fixture()
