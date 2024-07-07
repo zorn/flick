@@ -14,7 +14,6 @@ defmodule Flick.Votes.RankedAnswer do
   @type struct_t :: %__MODULE__{}
 
   embedded_schema do
-    # Maybe use a virtual field for possible values?
     field :value, :string
   end
 
