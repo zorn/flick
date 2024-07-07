@@ -51,6 +51,7 @@ defmodule Flick.Votes.Vote do
     |> validate_answers_question_uniqueness()
   end
 
+  # rename?
   defp validate_answers_are_present_in_ballot(changeset) do
     validate_change(changeset, :question_responses, fn :question_responses,
                                                        new_question_responses ->
