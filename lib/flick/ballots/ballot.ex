@@ -21,7 +21,7 @@ defmodule Flick.Ballots.Ballot do
           id: Ecto.UUID.t(),
           title: String.t(),
           published_at: DateTime.t() | nil,
-          questions: list(Question.t())
+          questions: [Question.t()]
         }
 
   @typedoc """
