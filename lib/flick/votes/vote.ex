@@ -1,6 +1,7 @@
 defmodule Flick.Votes.Vote do
   @moduledoc """
-  A vote is a collection of ranked answers for a `Flick.Ballots.Ballot` question.
+  A response to a `Flick.Ballots.Ballot`. A vote contains a collection of ranked
+  answers for a ballot question.
   """
 
   use Ecto.Schema
@@ -8,8 +9,9 @@ defmodule Flick.Votes.Vote do
   import Ecto.Changeset
   import FlickWeb.Gettext
 
+  # Q: I think I should combine these contexts.
   alias Flick.Ballots.Ballot
-  alias Flick.Votes.QuestionResponse
+  alias Flick.Votes.RankedAnswer
 
   @type id :: Ecto.UUID.t()
 
@@ -17,8 +19,9 @@ defmodule Flick.Votes.Vote do
   A type for a persisted `Flick.Votes.Vote` entity.
   """
   @type t :: %__MODULE__{
-          id: Ecto.UUID.t(),
-          ballot_id: Ballot.id()
+          id: id(),
+          ballot_id: Ballot.id(),
+          ranked_answers: [RankedAnswer.t()]
         }
 
   @type struct_t :: %__MODULE__{}
@@ -27,78 +30,49 @@ defmodule Flick.Votes.Vote do
   @foreign_key_type :binary_id
   schema "votes" do
     belongs_to :ballot, Ballot
-    embeds_many :question_responses, QuestionResponse, on_replace: :delete
+    embeds_many :ranked_answers, RankedAnswer, on_replace: :delete
     timestamps(type: :utc_datetime_usec)
   end
 
   @required_fields [:ballot_id]
   @optional_fields []
 
-  # TODO: Should the changelog of a vote require we have an answer for each question?
   # Q: If we accept a type `struct_t` would the changeset always be of type `t()`?
   @spec changeset(t() | struct_t(), map()) :: Ecto.Changeset.t(t())
   def changeset(vote, attrs) do
     vote
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
-    |> cast_embed(:question_responses,
-      with: &QuestionResponse.changeset/2,
-      sort_param: :question_responses_sort,
-      drop_param: :question_responses_drop,
+    |> cast_embed(:ranked_answers,
+      with: &RankedAnswer.changeset/2,
       required: true
     )
-    |> validate_answers_are_present_in_ballot()
-    |> validate_answers_question_uniqueness()
+    |> validate_ranked_answers_are_present_in_ballot()
   end
 
-  # rename?
-  defp validate_answers_are_present_in_ballot(changeset) do
-    validate_change(changeset, :question_responses, fn :question_responses,
-                                                       new_question_responses ->
+  defp validate_ranked_answers_are_present_in_ballot(changeset) do
+    validate_change(changeset, :ranked_answers, fn :ranked_answers, new_ranked_answers ->
       ballot = Flick.Ballots.get_ballot!(get_field(changeset, :ballot_id))
-      # For each of the question_response, make sure each ranked answer is
-      # present in the possible answers for the question from the ballot.
-      Enum.reduce(new_question_responses, [], fn changeset, acc ->
-        question_id = get_field(changeset, :question_id)
-        ranked_answers = get_field(changeset, :ranked_answers)
-        question_from_ballot = Enum.find(ballot.questions, &(&1.id == question_id))
+      possible_answers = Ballot.possible_answers_as_list(ballot.possible_answers)
 
-        case question_from_ballot do
-          nil ->
-            [question_responses: "question_id not found in ballot"]
+      # For each of the `ranked_answers`, make sure the answer value is present
+      # in the ballot's possible answers.
+      invalid_answers =
+        Enum.reduce(new_ranked_answers, [], fn changeset, acc ->
+          ranked_answer_value = get_field(changeset, :value)
 
-          question ->
-            possible_answers = String.split(question.possible_answers, ",", trim: true)
-            possible_answers = Enum.map(possible_answers, &String.trim/1)
-
-            invalid_answers =
-              Enum.reject(ranked_answers, &Enum.member?(possible_answers, &1.value))
-
-            if invalid_answers == [] do
-              acc
-            else
-              error_label = ngettext("invalid answer", "invalid answers", length(invalid_answers))
-              invalid_answers = Enum.map(invalid_answers, & &1.value)
-              error_description = Enum.join(invalid_answers, ", ")
-              [question_responses: "#{error_label}: #{error_description}"]
-            end
-        end
-      end)
-    end)
-  end
-
-  defp validate_answers_question_uniqueness(changeset) do
-    validate_change(changeset, :question_responses, fn :question_responses,
-                                                       new_question_responses ->
-      question_ids =
-        Enum.map(new_question_responses, fn changeset ->
-          get_field(changeset, :question_id)
+          if Enum.member?(possible_answers, ranked_answer_value) do
+            acc
+          else
+            acc ++ [ranked_answer_value]
+          end
         end)
 
-      if Enum.uniq(question_ids) == question_ids do
-        []
+      if length(invalid_answers) > 0 do
+        error_label = ngettext("invalid answer", "invalid answers", length(invalid_answers))
+        [ranked_answers: "#{error_label}: #{Enum.join(invalid_answers, ", ")}"]
       else
-        [question_responses: "should not include duplicate question ids"]
+        []
       end
     end)
   end
