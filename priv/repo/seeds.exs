@@ -34,27 +34,37 @@
     "title" => "Lunch Survey"
   })
 
-dbg(ballot)
-
 sandwich_question = Enum.at(ballot.questions, 0)
 snack_question = Enum.at(ballot.questions, 1)
 drink_question = Enum.at(ballot.questions, 2)
 
 {:ok, vote} =
-  Flick.Votes.record_vote(%{
+  Flick.Votes.record_vote(ballot, %{
     "ballot_id" => ballot.id,
-    "answers" => [
+    "question_responses" => [
       %{
         "question_id" => sandwich_question.id,
-        "ranked_answers" => ["Turkey", "Roast Beef", "Ham"]
+        "ranked_answers" => [
+          %{"value" => "Turkey"},
+          %{"value" => "Roast Beef"},
+          %{"value" => "Ham"}
+        ]
       },
       %{
         "question_id" => snack_question.id,
-        "ranked_answers" => ["Chips", "Fruit", "Candy"]
+        "ranked_answers" => [
+          %{"value" => "Chips"},
+          %{"value" => "Fruit"},
+          %{"value" => "Candy"}
+        ]
       },
       %{
         "question_id" => drink_question.id,
-        "ranked_answers" => ["Soda", "Juice", "Water"]
+        "ranked_answers" => [
+          %{"value" => "Soda"},
+          %{"value" => "Juice"},
+          %{"value" => "Water"}
+        ]
       }
     ]
   })

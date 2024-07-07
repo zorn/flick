@@ -3,7 +3,8 @@ defmodule Flick.VotesTest do
 
   alias Flick.Votes
   alias Flick.Votes.Vote
-  alias Flick.Votes.Answer
+  alias Flick.Votes.QuestionResponse
+  alias Flick.Votes.RankedAnswer
   alias Flick.Ballots
 
   describe "record_vote/2" do
@@ -32,20 +33,30 @@ defmodule Flick.VotesTest do
 
       assert {:ok, vote} =
                Votes.record_vote(published_ballot, %{
-                 "answers" => [
+                 "question_responses" => [
                    %{
                      "question_id" => question_id,
-                     "ranked_answers" => ["Tacos", "Pizza", "Burgers", "Sushi"]
+                     "ranked_answers" => [
+                       %{"value" => "Tacos"},
+                       %{"value" => "Pizza"},
+                       %{"value" => "Burgers"},
+                       %{"value" => "Sushi"}
+                     ]
                    }
                  ]
                })
 
       assert %Vote{
                ballot_id: ^published_ballot_id,
-               answers: [
-                 %Answer{
+               question_responses: [
+                 %QuestionResponse{
                    question_id: ^question_id,
-                   ranked_answers: ["Tacos", "Pizza", "Burgers", "Sushi"]
+                   ranked_answers: [
+                     %RankedAnswer{value: "Tacos"},
+                     %RankedAnswer{value: "Pizza"},
+                     %RankedAnswer{value: "Burgers"},
+                     %RankedAnswer{value: "Sushi"}
+                   ]
                  }
                ]
              } = vote
@@ -59,20 +70,26 @@ defmodule Flick.VotesTest do
 
       assert {:ok, vote} =
                Votes.record_vote(published_ballot, %{
-                 "answers" => [
+                 "question_responses" => [
                    %{
                      "question_id" => question_id,
-                     "ranked_answers" => ["Burgers", "Sushi"]
+                     "ranked_answers" => [
+                       %{"value" => "Burgers"},
+                       %{"value" => "Sushi"}
+                     ]
                    }
                  ]
                })
 
       assert %Vote{
                ballot_id: ^published_ballot_id,
-               answers: [
-                 %Answer{
+               question_responses: [
+                 %QuestionResponse{
                    question_id: ^question_id,
-                   ranked_answers: ["Burgers", "Sushi"]
+                   ranked_answers: [
+                     %RankedAnswer{value: "Burgers"},
+                     %RankedAnswer{value: "Sushi"}
+                   ]
                  }
                ]
              } = vote
@@ -82,11 +99,9 @@ defmodule Flick.VotesTest do
       published_ballot: published_ballot
     } do
       assert {:error, changeset} =
-               Votes.record_vote(published_ballot, %{
-                 "answers" => []
-               })
+               Votes.record_vote(published_ballot, %{"question_responses" => []})
 
-      assert "can't be blank" in errors_on(changeset).answers
+      assert "can't be blank" in errors_on(changeset).question_responses
     end
 
     test "failure: a vote can only have a single answer per ballot question", %{
@@ -94,19 +109,29 @@ defmodule Flick.VotesTest do
     } do
       assert {:error, changeset} =
                Votes.record_vote(published_ballot, %{
-                 "answers" => [
+                 "question_responses" => [
                    %{
                      "question_id" => hd(published_ballot.questions).id,
-                     "ranked_answers" => ["Pizza", "Tacos", "Sushi", "Burgers"]
+                     "ranked_answers" => [
+                       %{"value" => "Pizza"},
+                       %{"value" => "Tacos"},
+                       %{"value" => "Sushi"},
+                       %{"value" => "Burgers"}
+                     ]
                    },
                    %{
                      "question_id" => hd(published_ballot.questions).id,
-                     "ranked_answers" => ["Burgers", "Sushi", "Tacos", "Pizza"]
+                     "ranked_answers" => [
+                       %{"value" => "Burgers"},
+                       %{"value" => "Sushi"},
+                       %{"value" => "Tacos"},
+                       %{"value" => "Pizza"}
+                     ]
                    }
                  ]
                })
 
-      assert "should not include duplicate question ids" in errors_on(changeset).answers
+      assert "should not include duplicate question ids" in errors_on(changeset).question_responses
     end
 
     test "failure: a vote should not include an answer value that is not present in the ballot",
@@ -114,17 +139,20 @@ defmodule Flick.VotesTest do
            published_ballot: published_ballot
          } do
       attrs = %{
-        "answers" => [
+        "question_responses" => [
           %{
             "question_id" => hd(published_ballot.questions).id,
-            "ranked_answers" => ["Forbidden Hot Dogs", "Illegal Cookies"]
+            "ranked_answers" => [
+              %{"value" => "Forbidden Hot Dogs"},
+              %{"value" => "Illegal Cookies"}
+            ]
           }
         ]
       }
 
       assert {:error, changeset} = Votes.record_vote(published_ballot, attrs)
 
-      assert "invalid answers: Forbidden Hot Dogs, Illegal Cookies" in errors_on(changeset).answers
+      assert "invalid answers: Forbidden Hot Dogs, Illegal Cookies" in errors_on(changeset).question_responses
     end
   end
 end

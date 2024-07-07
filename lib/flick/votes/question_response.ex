@@ -1,6 +1,7 @@
-defmodule Flick.Votes.Answer do
+defmodule Flick.Votes.QuestionResponse do
   @moduledoc """
-  A collection of ranked answers to a question of a ballot.
+  An embedded value that represents a collection of ranked answers relative to a
+  question of a ballot.
   """
 
   use Ecto.Schema
@@ -8,23 +9,21 @@ defmodule Flick.Votes.Answer do
   import Ecto.Changeset
 
   alias Flick.Ballots.Question
+  alias Flick.Votes.RankedAnswer
 
   @type t :: %__MODULE__{
           question_id: Question.id(),
-          ranked_answers: [String.t()]
+          ranked_answers: [RankedAnswer.t()]
         }
 
   @type struct_t :: %__MODULE__{}
 
   embedded_schema do
-    field :ballot_id, :binary_id, virtual: true
     field :question_id, :binary_id
-
-    # TODO: While we collapsed the inner embed in ballot, I think for a vote we need to make this a seperate embeded_many so that we can do multiple `inputs_for` when rendering the view. Each ranked answer is just going to be be a value
-    field :ranked_answers, {:array, :string}
+    embeds_many :ranked_answers, RankedAnswer, on_replace: :delete
   end
 
-  @required_fields [:question_id, :ranked_answers]
+  @required_fields [:question_id]
   @optional_fields []
 
   # Maybe we could store a vitual field for the question so we can check it's answers during changeset? reference
@@ -33,6 +32,12 @@ defmodule Flick.Votes.Answer do
   def changeset(answer, attrs) do
     answer
     |> cast(attrs, @required_fields ++ @optional_fields)
+    |> cast_embed(:ranked_answers,
+      with: &RankedAnswer.changeset/2,
+      sort_param: :ranked_answers_sort,
+      drop_param: :ranked_answers_drop,
+      required: true
+    )
     |> validate_required(@required_fields)
   end
 end
