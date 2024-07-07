@@ -97,7 +97,7 @@ defmodule Flick.Ballots do
   Returns an `Ecto.Changeset` representing changes to a `Flick.Ballots.Ballot` entity.
   """
   @spec change_ballot(Ballot.t() | Ballot.struct_t(), map()) :: changeset()
-  def change_ballot(ballot, attrs) do
+  def change_ballot(%Ballot{} = ballot, attrs) do
     Ballot.changeset(ballot, attrs)
   end
 end
