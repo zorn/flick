@@ -10,17 +10,8 @@ defmodule Support.Fixtures.BallotFixture do
   """
   def valid_ballot_attributes(attrs \\ %{}) do
     Enum.into(attrs, %{
-      title: unique_ballot_title(),
-      questions: [
-        %{
-          title: "What day of the week should we go out to dinner?",
-          possible_answers: "Monday, Tuesday, Wednesday, Thursday, Friday"
-        },
-        %{
-          title: "What should we eat to dinner?",
-          possible_answers: "Pizza, Tacos, Sushi, Burgers"
-        }
-      ],
+      question_title: "What day should have dinner?",
+      possible_answers: "Monday, Tuesday, Wednesday, Thursday, Friday",
       published_at: nil
     })
   end
@@ -36,6 +27,4 @@ defmodule Support.Fixtures.BallotFixture do
     {:ok, ballot} = Flick.Ballots.create_ballot(attrs)
     ballot
   end
-
-  defp unique_ballot_title, do: "some-ballot-#{System.unique_integer()}"
 end
