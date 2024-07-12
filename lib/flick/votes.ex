@@ -23,10 +23,23 @@ defmodule Flick.Votes do
   end
 
   @doc """
-  Returns an `Ecto.Changeset` representing changes to a `Flick.Votes.Vote` entity.
+  Returns an `Ecto.Changeset` representing changes to a `Flick.Votes.Vote`
+  entity.
+
+  ## Options
+
+  * `:action` - An optional atom applied to the changeset, useful for forms that
+    look to a changeset's action to influence form behavior.
   """
   @spec change_vote(Vote.t() | Vote.struct_t(), map()) :: changeset()
-  def change_vote(%Vote{} = vote, attrs) do
-    Vote.changeset(vote, attrs)
+  def change_vote(%Vote{} = vote, attrs, opts \\ []) do
+    opts = Keyword.validate!(opts, action: nil)
+    changeset = Vote.changeset(vote, attrs)
+
+    if opts[:action] do
+      Map.put(changeset, :action, opts[:action])
+    else
+      changeset
+    end
   end
 end

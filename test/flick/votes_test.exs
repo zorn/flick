@@ -83,4 +83,8 @@ defmodule Flick.VotesTest do
       assert "invalid answers: Forbidden Hot Dogs, Illegal Cookies" in errors_on(changeset).ranked_answers
     end
   end
+
+  describe "change_vote/2" do
+    # TODO
+  end
 end
