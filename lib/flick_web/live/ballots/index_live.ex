@@ -26,7 +26,7 @@ defmodule FlickWeb.Ballots.IndexLive do
       <p>A list of known ballots.</p>
       <.table id="ballots" rows={@ballots} row_id={&"ballot-row-#{&1.id}"}>
         <:col :let={ballot} label="title">
-          <%= ballot.title %>
+          <%= ballot.question_title %>
         </:col>
         <:col :let={ballot} label="published at">
           <%= if ballot.published_at do %>

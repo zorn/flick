@@ -16,7 +16,7 @@ defmodule FlickWeb.Ballots.ViewerLive do
     ballot = Ballots.get_ballot!(ballot_id)
 
     socket
-    |> assign(:page_title, "View Ballot: #{ballot.title}")
+    |> assign(:page_title, "View Ballot: #{ballot.question_title}")
     |> assign(:ballot, ballot)
     |> ok()
   end
@@ -55,7 +55,7 @@ defmodule FlickWeb.Ballots.ViewerLive do
       </div>
 
       <p>Some ballot detail page.</p>
-      <p id="ballot-title"><%= @ballot.title %></p>
+      <p id="ballot-question-title"><%= @ballot.question_title %></p>
       <div>
         <pre><%= inspect(@ballot, pretty: true) %></pre>
       </div>
