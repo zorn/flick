@@ -15,57 +15,40 @@ defmodule FlickWeb.Vote.VoteCaptureLive do
   use FlickWeb, :live_view
 
   alias Flick.Ballots
+  alias Flick.Ballots.Ballot
   alias Flick.Votes
   alias Flick.Votes.Vote
 
   @impl Phoenix.LiveView
   def mount(params, _session, socket) do
     %{"ballot_id" => ballot_id} = params
-
     ballot = Ballots.get_ballot!(ballot_id)
-
-    dbg(ballot)
-
-    # I think what we want this to be, is that is
-    # build initial vote params
-    attrs =
-      Enum.map(ballot.questions, fn question ->
-        %{
-          "question_id" => question.id,
-          "ranked_answers" => [%{value: nil}]
-        }
-      end)
-
-    changeset =
-      Votes.change_vote(%Vote{}, %{
-        "ballot_id" => ballot.id,
-        "question_responses" => attrs
-      })
-
-    dbg(changeset)
-
-    form = to_form(changeset)
 
     socket
     |> verify_ballot_is_published(ballot)
-    |> assign(:page_title, "Vote: #{ballot.title}")
+    |> assign(:page_title, "Vote: #{ballot.question_title}")
     |> assign(:ballot, ballot)
-    |> assign(:form, form)
+    |> assign_form()
     |> ok()
+  end
+
+  defp assign_form(socket) do
+    %{ballot: ballot} = socket.assigns
+
+    # We'll generate a ranked answer value for each possible answer in the ballot, up to 5 answers.
+    possible_answer_count = Ballot.possible_answers_as_list(ballot.possible_answers) |> length()
+    ranked_answer_count = min(5, possible_answer_count)
+    ranked_answers = Enum.map(1..ranked_answer_count, fn _ -> %{value: nil} end)
+
+    vote_params = %{ballot_id: ballot.id, ranked_answers: ranked_answers}
+    changeset = Votes.change_vote(%Vote{}, vote_params)
+    assign(socket, form: to_form(changeset))
   end
 
   @impl Phoenix.LiveView
   def handle_event("validate", %{"vote" => vote_params}, socket) do
-    dbg("validate")
-    dbg(vote_params)
-
-    changeset = Votes.change_vote(%Vote{}, vote_params)
-    dbg(changeset)
-
-    form = to_form(changeset)
-    socket = assign(socket, form: form)
-
-    {:noreply, socket}
+    changeset = Votes.change_vote(%Vote{}, vote_params, action: :validate)
+    {:noreply, assign(socket, form: to_form(changeset))}
   end
 
   def handle_event("save", params, socket) do
@@ -78,94 +61,39 @@ defmodule FlickWeb.Vote.VoteCaptureLive do
   def render(assigns) do
     ~H"""
     <div>
-      <div><%= @ballot.title %></div>
+      <div><%= @ballot.question_title %></div>
 
       <.simple_form for={@form} phx-change="validate" phx-submit="save">
+        <%!-- I wonder if we should drop this hidden and just inject the id manually? --%>
         <.input type="hidden" field={@form[:ballot_id]} value={@ballot.id} />
-        <.inputs_for :let={question_response_form} field={@form[:question_responses]}>
-          <h3><%= question_label(@ballot, question_response_form[:question_id]) %></h3>
-          <.input type="hidden" field={question_response_form[:question_id]} />
-
-          <%!-- present selects for first ranked answer selection --%>
-          <.inputs_for :let={ranked_answers_form} field={question_response_form[:ranked_answers]}>
-            <.input
-              field={ranked_answers_form[:value]}
-              type="select"
-              options={[nil] ++ possible_values(@ballot, question_response_form[:question_id])}
-            />
-          </.inputs_for>
+        <.inputs_for :let={ranked_answer_form} field={@form[:ranked_answers]}>
+          <.input
+            field={ranked_answer_form[:value]}
+            type="select"
+            options={options(@ballot)}
+            label={answer_label(ranked_answer_form.id)}
+          />
         </.inputs_for>
         <:actions>
           <.button>Record Vote</.button>
         </:actions>
       </.simple_form>
-
-      <%!-- <div class="grid grid-cols-5">
-        <div>
-          <!-- empty -->
-        </div>
-        <div>1st Choice</div>
-        <div>2nd Choice</div>
-        <div>3rd Choice</div>
-        <div>4th Choice</div>
-
-        <div>Answer Option A</div>
-        <div>input</div>
-        <div>input</div>
-        <div>input</div>
-        <div>input</div>
-
-        <div>Answer Option B</div>
-        <div>input</div>
-        <div>input</div>
-        <div>input</div>
-        <div>input</div>
-
-        <div>Answer Option C</div>
-        <div>input</div>
-        <div>input</div>
-        <div>input</div>
-        <div>input</div>
-
-        <div>Answer Option D</div>
-        <div>input</div>
-        <div>input</div>
-        <div>input</div>
-        <div>input</div>
-
-        <div>Answer Option E</div>
-        <div>input</div>
-        <div>input</div>
-        <div>input</div>
-        <div>input</div>
-
-        <div>Answer Option F</div>
-        <div>input</div>
-        <div>input</div>
-        <div>input</div>
-        <div>input</div>
-      </div> --%>
     </div>
     """
   end
 
-  defp question_label(ballot, %Phoenix.HTML.FormField{value: question_id}) do
-    question = Enum.find(ballot.questions, &(&1.id == question_id))
-
-    question.title
+  defp answer_label("vote_ranked_answers_" <> number = _form_id) do
+    case number do
+      "0" -> "1st Choice"
+      "1" -> "2nd Choice"
+      "2" -> "3rd Choice"
+      "3" -> "4th Choice"
+      "4" -> "5th Choice"
+    end
   end
 
-  defp possible_values(ballot, %Phoenix.HTML.FormField{value: question_id}) do
-    question = Enum.find(ballot.questions, &(&1.id == question_id))
-    possible_values(ballot, question)
-  end
-
-  defp possible_values(_ballot, question) do
-    # Maybe this belongs in the core ?
-
-    possible_answers = Flick.Ballots.Ballot.possible_answers_as_list(question.possible_answers)
-
-    possible_answers
+  defp options(ballot) do
+    [nil] ++ Flick.Ballots.Ballot.possible_answers_as_list(ballot.possible_answers)
   end
 
   defp verify_ballot_is_published(socket, ballot) do
