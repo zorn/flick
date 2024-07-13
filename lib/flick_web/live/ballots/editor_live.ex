@@ -54,8 +54,6 @@ defmodule FlickWeb.Ballots.EditorLive do
     %{"ballot" => ballot_params} = params
     %{ballot: ballot} = socket.assigns
 
-    dbg(ballot_params)
-
     case Ballots.update_ballot(ballot, ballot_params) do
       {:ok, ballot} ->
         {:noreply, redirect(socket, to: ~p"/ballots/#{ballot}")}
