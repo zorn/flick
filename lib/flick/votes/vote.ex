@@ -48,6 +48,43 @@ defmodule Flick.Votes.Vote do
       required: true
     )
     |> validate_ranked_answers_are_present_in_ballot()
+    |> validate_ranked_answers_are_not_duplicated()
+  end
+
+  defp validate_ranked_answers_are_not_duplicated(%Ecto.Changeset{valid?: false} = changeset) do
+    # If the changeset is already considered false we skip this validation,
+    # since it does wholesale overwriting of the `ranked_answers` changeset list
+    # and we don't want to overwrite the existing errors.
+    changeset
+  end
+
+  defp validate_ranked_answers_are_not_duplicated(changeset) do
+    # For all the embedded changesets of `ranked_answers`, check if any are
+    # known to be duplicates, and if so add a validation error to those
+    # individual changesets.
+    #
+    # I'm not really proud of this solution, as it does a lot of manual map
+    # manipulation. I welcome new suggestions. I do think it's important to have
+    # the error be on the individual changeset, as those are more directly
+    # presented to the user.
+    ranked_answer_values = Enum.map(get_field(changeset, :ranked_answers), & &1.value)
+    ranked_answer_frequencies = Enum.frequencies(ranked_answer_values)
+
+    ranked_answer_changesets =
+      Enum.map(changeset.changes.ranked_answers, fn changeset ->
+        if Map.get(ranked_answer_frequencies, get_field(changeset, :value)) > 1 do
+          add_error(changeset, :value, gettext("answers must not be duplicated"))
+        else
+          changeset
+        end
+      end)
+
+    new_changes = Map.put(changeset.changes, :ranked_answers, ranked_answer_changesets)
+    new_changes_are_valid = Enum.all?(ranked_answer_changesets, & &1.valid?)
+
+    changeset
+    |> Map.put(:changes, new_changes)
+    |> Map.put(:valid?, new_changes_are_valid)
   end
 
   defp validate_ranked_answers_are_present_in_ballot(changeset) do

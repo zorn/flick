@@ -82,6 +82,32 @@ defmodule Flick.VotesTest do
 
       assert "invalid answers: Forbidden Hot Dogs, Illegal Cookies" in errors_on(changeset).ranked_answers
     end
+
+    test "failure: a vote should not include duplicate answer values",
+         %{
+           published_ballot: published_ballot
+         } do
+      attrs = %{
+        "ranked_answers" => [
+          %{"value" => "Pizza"},
+          %{"value" => "Tacos"},
+          %{"value" => "Pizza"}
+        ]
+      }
+
+      assert {:error, changeset} = Votes.record_vote(published_ballot, attrs)
+      %Ecto.Changeset{changes: %{ranked_answers: ranked_answers_changesets}} = changeset
+      pizza_1 = Enum.at(ranked_answers_changesets, 0)
+      tacos = Enum.at(ranked_answers_changesets, 1)
+      pizza_2 = Enum.at(ranked_answers_changesets, 2)
+
+      assert "answers must not be duplicated" in errors_on(pizza_1).value
+      assert %{} == errors_on(tacos)
+      assert "answers must not be duplicated" in errors_on(pizza_2).value
+    end
+
+    test "failure: a vote needs to include at least one ranked answer" do
+    end
   end
 
   describe "change_vote/2" do
