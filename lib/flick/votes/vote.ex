@@ -37,8 +37,8 @@ defmodule Flick.Votes.Vote do
   @required_fields [:ballot_id]
   @optional_fields []
 
-  # Q: If we accept a type `struct_t` would the changeset always be of type `t()`?
-  @spec changeset(t() | struct_t(), map()) :: Ecto.Changeset.t(t())
+  @spec changeset(t() | struct_t(), map()) ::
+          Ecto.Changeset.t(t()) | Ecto.Changeset.t(struct_t())
   def changeset(vote, attrs) do
     vote
     |> cast(attrs, @required_fields ++ @optional_fields)
