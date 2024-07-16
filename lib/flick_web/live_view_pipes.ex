@@ -6,5 +6,8 @@ defmodule FlickWeb.LiveViewPipes do
   alias Phoenix.LiveView.Socket
 
   @spec ok(Socket.t()) :: {:ok, Socket.t()}
-  def ok(socket), do: {:ok, socket}
+  def ok(%Socket{} = socket), do: {:ok, socket}
+
+  @spec noreply(Socket.t()) :: {:noreply, Socket.t()}
+  def noreply(%Socket{} = socket), do: {:noreply, socket}
 end
