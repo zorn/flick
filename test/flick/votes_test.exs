@@ -54,7 +54,9 @@ defmodule Flick.VotesTest do
                Votes.record_vote(published_ballot, %{
                  "ranked_answers" => [
                    %{"value" => "Sushi"},
-                   %{"value" => "Pizza"}
+                   %{"value" => "Pizza"},
+                   %{"value" => ""},
+                   %{"value" => ""}
                  ]
                })
 
@@ -62,7 +64,9 @@ defmodule Flick.VotesTest do
                ballot_id: ^published_ballot_id,
                ranked_answers: [
                  %RankedAnswer{value: "Sushi"},
-                 %RankedAnswer{value: "Pizza"}
+                 %RankedAnswer{value: "Pizza"},
+                 %RankedAnswer{value: nil},
+                 %RankedAnswer{value: nil}
                ]
              } = vote
     end
@@ -106,7 +110,22 @@ defmodule Flick.VotesTest do
       assert "answers must not be duplicated" in errors_on(pizza_2).value
     end
 
-    test "failure: a vote needs to include at least one ranked answer" do
+    test "failure: a vote needs to include at least one ranked answer", %{
+      published_ballot: published_ballot
+    } do
+      attrs = %{
+        "ranked_answers" => [
+          %{"value" => ""},
+          %{"value" => ""},
+          %{"value" => ""},
+          %{"value" => ""}
+        ]
+      }
+
+      assert {:error, changeset} = Votes.record_vote(published_ballot, attrs)
+      %Ecto.Changeset{changes: %{ranked_answers: ranked_answers_changesets}} = changeset
+      first_ranked_answer = Enum.at(ranked_answers_changesets, 0)
+      assert "first answer is required" in errors_on(first_ranked_answer).value
     end
   end
 

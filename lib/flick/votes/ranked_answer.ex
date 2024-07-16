@@ -17,8 +17,8 @@ defmodule Flick.Votes.RankedAnswer do
     field :value, :string
   end
 
-  @required_fields [:value]
-  @optional_fields []
+  @required_fields []
+  @optional_fields [:value]
 
   @spec changeset(t() | struct_t(), map()) :: Ecto.Changeset.t(t())
   def changeset(ranked_answer, attrs) do

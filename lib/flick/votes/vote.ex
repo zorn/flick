@@ -49,6 +49,34 @@ defmodule Flick.Votes.Vote do
     )
     |> validate_ranked_answers_are_present_in_ballot()
     |> validate_ranked_answers_are_not_duplicated()
+    |> validate_first_ranked_answers_has_valid_value()
+  end
+
+  defp validate_ranked_answers_are_present_in_ballot(changeset) do
+    ballot = Flick.Ballots.get_ballot!(get_field(changeset, :ballot_id))
+    possible_answers = Ballot.possible_answers_as_list(ballot.possible_answers) ++ ["", nil]
+
+    validate_change(changeset, :ranked_answers, fn :ranked_answers, new_ranked_answers ->
+      # For each of the `ranked_answers`, make sure the answer value is present
+      # in the ballot's possible answers.
+      invalid_answers =
+        Enum.reduce(new_ranked_answers, [], fn changeset, acc ->
+          ranked_answer_value = get_field(changeset, :value)
+
+          if Enum.member?(possible_answers, ranked_answer_value) do
+            acc
+          else
+            acc ++ [ranked_answer_value]
+          end
+        end)
+
+      if length(invalid_answers) > 0 do
+        error_label = ngettext("invalid answer", "invalid answers", length(invalid_answers))
+        [ranked_answers: "#{error_label}: #{Enum.join(invalid_answers, ", ")}"]
+      else
+        []
+      end
+    end)
   end
 
   defp validate_ranked_answers_are_not_duplicated(%Ecto.Changeset{valid?: false} = changeset) do
@@ -72,7 +100,9 @@ defmodule Flick.Votes.Vote do
 
     ranked_answer_changesets =
       Enum.map(changeset.changes.ranked_answers, fn changeset ->
-        if Map.get(ranked_answer_frequencies, get_field(changeset, :value)) > 1 do
+        value = get_field(changeset, :value)
+
+        if Map.get(ranked_answer_frequencies, value) > 1 and value not in ["", nil] do
           add_error(changeset, :value, gettext("answers must not be duplicated"))
         else
           changeset
@@ -87,30 +117,31 @@ defmodule Flick.Votes.Vote do
     |> Map.put(:valid?, new_changes_are_valid)
   end
 
-  defp validate_ranked_answers_are_present_in_ballot(changeset) do
-    validate_change(changeset, :ranked_answers, fn :ranked_answers, new_ranked_answers ->
-      ballot = Flick.Ballots.get_ballot!(get_field(changeset, :ballot_id))
-      possible_answers = Ballot.possible_answers_as_list(ballot.possible_answers)
+  def validate_first_ranked_answers_has_valid_value(%Ecto.Changeset{valid?: false} = changeset) do
+    changeset
+  end
 
-      # For each of the `ranked_answers`, make sure the answer value is present
-      # in the ballot's possible answers.
-      invalid_answers =
-        Enum.reduce(new_ranked_answers, [], fn changeset, acc ->
-          ranked_answer_value = get_field(changeset, :value)
+  def validate_first_ranked_answers_has_valid_value(changeset) do
+    ranked_answer_changesets =
+      Enum.map(Enum.with_index(changeset.changes.ranked_answers), fn {changeset, index} ->
+        if index == 0 do
+          value = get_field(changeset, :value)
 
-          if Enum.member?(possible_answers, ranked_answer_value) do
-            acc
+          if value in ["", nil] do
+            add_error(changeset, :value, gettext("first answer is required"))
           else
-            acc ++ [ranked_answer_value]
+            changeset
           end
-        end)
+        else
+          changeset
+        end
+      end)
 
-      if length(invalid_answers) > 0 do
-        error_label = ngettext("invalid answer", "invalid answers", length(invalid_answers))
-        [ranked_answers: "#{error_label}: #{Enum.join(invalid_answers, ", ")}"]
-      else
-        []
-      end
-    end)
+    new_changes = Map.put(changeset.changes, :ranked_answers, ranked_answer_changesets)
+    new_changes_are_valid = Enum.all?(ranked_answer_changesets, & &1.valid?)
+
+    changeset
+    |> Map.put(:changes, new_changes)
+    |> Map.put(:valid?, new_changes_are_valid)
   end
 end
