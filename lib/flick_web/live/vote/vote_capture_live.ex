@@ -2,14 +2,6 @@ defmodule FlickWeb.Vote.VoteCaptureLive do
   @moduledoc """
   A live view that presents a ranked voting form for a published
   `Flick.Ballots.Ballot` entity.
-
-
-
-  This feels very complex. I could remove complexity by simplifying.
-
-  - only allow a single question per ballot.
-
-  For that question allow 5 ranked votes, no more no less -- this would let me generate a form changeset with static values and not have to do a lot of dynamic insertion as the form changed. They don't have to answer all ranked answers but could. I could also do validation saying they can't have the same answer twice.
   """
 
   use FlickWeb, :live_view
@@ -18,6 +10,7 @@ defmodule FlickWeb.Vote.VoteCaptureLive do
   alias Flick.Ballots.Ballot
   alias Flick.Votes
   alias Flick.Votes.Vote
+  alias Phoenix.LiveView.Socket
 
   @impl Phoenix.LiveView
   def mount(params, _session, socket) do
@@ -32,10 +25,11 @@ defmodule FlickWeb.Vote.VoteCaptureLive do
     |> ok()
   end
 
+  @spec assign_form(Socket.t()) :: Socket.t()
   defp assign_form(socket) do
     %{ballot: ballot} = socket.assigns
 
-    # We'll generate a ranked answer value for each possible answer in the ballot, up to 5 answers.
+    # We'll generate ranked answer values for each possible answer in the ballot, up to 5.
     possible_answer_count = Ballot.possible_answers_as_list(ballot.possible_answers) |> length()
     ranked_answer_count = min(5, possible_answer_count)
     ranked_answers = Enum.map(1..ranked_answer_count, fn _ -> %{value: nil} end)
@@ -51,10 +45,21 @@ defmodule FlickWeb.Vote.VoteCaptureLive do
     {:noreply, assign(socket, form: to_form(changeset))}
   end
 
-  def handle_event("save", params, socket) do
-    dbg("save")
-    dbg(params)
-    {:noreply, socket}
+  def handle_event("save", %{"vote" => vote_params}, socket) do
+    %{ballot: ballot} = socket.assigns
+
+    case Votes.record_vote(ballot, vote_params) do
+      {:ok, _vote} ->
+        socket
+        |> put_flash(:info, "Vote recorded.")
+        |> redirect(to: ~p"/")
+        |> noreply()
+
+      {:error, changeset} ->
+        socket
+        |> assign(form: to_form(changeset))
+        |> noreply()
+    end
   end
 
   @impl Phoenix.LiveView
