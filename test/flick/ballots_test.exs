@@ -61,6 +61,11 @@ defmodule Flick.BallotsTest do
       assert {:error, changeset} = Ballots.create_ballot(%{possible_answers: "one,\ntwo"})
       assert "can't contain new lines" in errors_on(changeset).possible_answers
     end
+
+    test "failure: `possible_answers` must include at least two answers" do
+      assert {:error, changeset} = Ballots.create_ballot(%{possible_answers: "one"})
+      assert "must contain at least two answers" in errors_on(changeset).possible_answers
+    end
   end
 
   describe "update_ballot/1" do
