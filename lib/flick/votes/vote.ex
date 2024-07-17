@@ -9,7 +9,6 @@ defmodule Flick.Votes.Vote do
   import Ecto.Changeset
   import FlickWeb.Gettext
 
-  # Q: I think I should combine these contexts.
   alias Flick.Ballots.Ballot
   alias Flick.Votes.RankedAnswer
 
