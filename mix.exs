@@ -35,6 +35,9 @@ defmodule Flick.MixProject do
       # For test-driven development.
       {:mix_test_watch, "~> 1.0", only: [:dev, :test], runtime: false},
 
+      # To allow our test descriptions to use a condensed map syntax.
+      {:tiny_maps, "~> 3.0"},
+
       # Unorganized
       {:bandit, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
