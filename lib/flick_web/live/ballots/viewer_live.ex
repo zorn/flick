@@ -16,9 +16,22 @@ defmodule FlickWeb.Ballots.ViewerLive do
     ballot = Ballots.get_ballot!(ballot_id)
 
     socket
-    |> assign(:page_title, "View Ballot: #{ballot.title}")
+    |> assign(:page_title, "View Ballot: #{ballot.question_title}")
     |> assign(:ballot, ballot)
     |> ok()
+  end
+
+  @impl Phoenix.LiveView
+  def handle_event("publish", _params, socket) do
+    %{ballot: ballot} = socket.assigns
+
+    case Ballots.publish_ballot(ballot) do
+      {:ok, ballot} ->
+        {:noreply, assign(socket, :ballot, ballot)}
+
+      {:error, _changeset} ->
+        {:noreply, put_flash(socket, :error, "Could not publish ballot.")}
+    end
   end
 
   @impl Phoenix.LiveView
@@ -33,8 +46,16 @@ defmodule FlickWeb.Ballots.ViewerLive do
         <.link navigate={~p"/ballots/#{@ballot}/edit"}>Edit</.link>
       </div>
 
+      <div class="my-6">
+        <%= if @ballot.published_at do %>
+          Published at: <%= @ballot.published_at %>
+        <% else %>
+          <.button phx-click="publish">Publish</.button>
+        <% end %>
+      </div>
+
       <p>Some ballot detail page.</p>
-      <p id="ballot-title"><%= @ballot.title %></p>
+      <p id="ballot-question-title"><%= @ballot.question_title %></p>
       <div>
         <pre><%= inspect(@ballot, pretty: true) %></pre>
       </div>

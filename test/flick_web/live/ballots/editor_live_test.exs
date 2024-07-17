@@ -3,6 +3,7 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
 
   test "renders create ballot form", %{conn: conn} do
     assert {:ok, view, _html} = live(conn, ~p"/ballots/new")
-    assert has_element?(view, "#ballot-form", "Some form experience.")
+    assert has_element?(view, "#ballot_question_title")
+    assert has_element?(view, "#ballot_possible_answers")
   end
 end

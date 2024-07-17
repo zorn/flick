@@ -19,18 +19,31 @@ defmodule FlickWeb.Ballots.IndexLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <div>
+    <div class="prose">
       <p>
         <.link navigate={~p"/ballots/new"} class="underline">Create a new ballot.</.link>
       </p>
       <p>A list of known ballots.</p>
-      <.table id="ballots" rows={@ballots} row_id={&"ballot-row-#{&1.id}"}>
-        <:col :let={ballot} label="id"><%= ballot.id %></:col>
-        <:col :let={ballot} label="title">
-          <.link navigate={~p"/ballots/#{ballot.id}"}><%= ballot.title %></.link>
-        </:col>
-      </.table>
     </div>
+
+    <.table id="ballots" rows={@ballots} row_id={&"ballot-row-#{&1.id}"}>
+      <:col :let={ballot} label="Title">
+        <%= ballot.question_title %>
+      </:col>
+      <:col :let={ballot} label="Published">
+        <%= if ballot.published_at do %>
+          <%= ballot.published_at %>
+        <% else %>
+          Not Published
+        <% end %>
+      </:col>
+      <:col :let={ballot}>
+        <.link :if={ballot.published_at} navigate={~p"/vote/#{ballot.id}"}>Voting Page</.link>
+      </:col>
+      <:col :let={ballot}>
+        <.link navigate={~p"/ballots/#{ballot.id}"}>View Details</.link>
+      </:col>
+    </.table>
     """
   end
 end

@@ -22,7 +22,7 @@ defmodule FlickWeb.Ballots.EditorLive do
   end
 
   defp assign_page_title(%{assigns: %{live_action: :edit, ballot: ballot}} = socket) do
-    assign(socket, page_title: "Edit Ballot: #{ballot.title}")
+    assign(socket, page_title: "Edit Ballot: #{ballot.question_title}")
   end
 
   defp assign_page_title(socket) do
@@ -54,8 +54,6 @@ defmodule FlickWeb.Ballots.EditorLive do
     %{"ballot" => ballot_params} = params
     %{ballot: ballot} = socket.assigns
 
-    dbg(ballot_params)
-
     case Ballots.update_ballot(ballot, ballot_params) do
       {:ok, ballot} ->
         {:noreply, redirect(socket, to: ~p"/ballots/#{ballot}")}
@@ -80,46 +78,20 @@ defmodule FlickWeb.Ballots.EditorLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <div>
+    <div class="prose">
+      <h2>Create Ballot</h2>
       <p>
         <.back navigate={~p"/ballots"}>Back to ballots</.back>
       </p>
-      <p id="ballot-form">Some form experience.</p>
-
-      <.simple_form for={@form} phx-change="validate" phx-submit="save">
-        <.input field={@form[:title]} label="Ballot Title" />
-
-        <.inputs_for :let={question_form} field={@form[:questions]}>
-          <input type="hidden" name="ballot[questions_sort][]" value={question_form.index} />
-
-          <.input field={question_form[:title]} label="Question Title" />
-
-          <label>
-            <input
-              type="checkbox"
-              name="ballot[questions_drop][]"
-              value={question_form.index}
-              class="hidden"
-            /> delete question
-          </label>
-        </.inputs_for>
-
-        <%!-- This is what make sure we remove all questions when no inputs_for are present above. --%>
-        <input type="hidden" name="ballot[questions_drop][]" />
-
-        <%!-- When the user clicks `add` below, this sends an `"on"` value for `questions_sort` input value.
-        Ecto is documented saying: "Unknown indexes are considered to be new entries." so this results in
-        a new `Question` embed being added to the changeset. -->
-        <%!-- https://hexdocs.pm/ecto/Ecto.Changeset.html#cast_assoc/3-options --%>
-        <label class="block cursor-pointer">
-          <input type="checkbox" name="ballot[questions_sort][]" class="hidden" /> add question
-        </label>
-
-        <:actions>
-          <.button>Save</.button>
-        </:actions>
-      </.simple_form>
     </div>
+
+    <.simple_form for={@form} phx-change="validate" phx-submit="save">
+      <.input field={@form[:question_title]} label="Question Title" />
+      <.input field={@form[:possible_answers]} label="Possible Answers (comma separated)" />
+      <:actions>
+        <.button>Save</.button>
+      </:actions>
+    </.simple_form>
     """
   end
 end

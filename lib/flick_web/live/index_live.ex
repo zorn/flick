@@ -9,14 +9,19 @@ defmodule FlickWeb.IndexLive do
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    {:ok, redirect(socket, to: ~p"/ballots")}
+    {:ok, socket}
   end
 
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <div>
-      An index page that never renders. Who am I?
+    <div class="prose">
+      <p>Flick is a simple Elixir / Phoenix LiveView app for running ranked vote ballots.</p>
+
+      <ul>
+        <li><.link navigate={~p"/ballots"}>View Ballots</.link></li>
+        <li><.link navigate={~p"/ballots/new"}>Create a Ballots</.link></li>
+      </ul>
     </div>
     """
   end

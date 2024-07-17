@@ -1,29 +1,18 @@
-defmodule Support.Fixtures.BallotFixtures do
+defmodule Support.Fixtures.BallotFixture do
   @moduledoc """
   Provides functions to allows tests to easily create and stage
   `Flick.Ballots.Ballot` entities for testing.
   """
 
   @doc """
-  Generates a unique ballot title.
-  """
-  def unique_ballot_title, do: "some-ballot-#{System.unique_integer()}"
-
-  @doc """
   Returns a map of valid attributes for a `Flick.Ballots.Ballot` entity,
   allowing for the passed in attributes to override defaults.
   """
   def valid_ballot_attributes(attrs \\ %{}) do
-    questions =
-      [
-        Support.Fixtures.QuestionFixture.question_fixture(),
-        Support.Fixtures.QuestionFixture.question_fixture()
-      ]
-      |> Enum.map(&Map.from_struct/1)
-
     Enum.into(attrs, %{
-      title: unique_ballot_title(),
-      questions: questions
+      question_title: "What day should have dinner?",
+      possible_answers: "Monday, Tuesday, Wednesday, Thursday, Friday",
+      published_at: nil
     })
   end
 

@@ -1,6 +1,8 @@
 {
     "cSpell.words": [
         "Ecto",
+        "Struct",
+        "Structs",
         "timestamptz",
         "usec"
     ]
