@@ -3,28 +3,28 @@
 ## Domain Terms
 
 * Ballot Owner -- The user who created and can administer the ballot.
-* Voter -- A user who was encouraged to answer questions presented on the ballot.
-* Ballot -- A user creates a ballot when they want to present questions to users. The ballot can have many questions.
-* Question -- A phrase which inspires a ballot participant to provide an answer.
-* AnswerOption -- When building a question on a ballot, a ballot owner creates answer option values for each question.
-* RankedVote -- The captured ranked answers provided by a voter for a single question.
+* Voter -- A user who is encouraged to answer the question presented on the ballot.
+* Ballot -- A user creates a ballot when they want to present a question to a potential voter and capture ranked answers.
+* Question -- A phrase that inspires a voter to provide a collection of ranked answers.
+* Possible Answers -- When building a question on a ballot, a ballot owner creates a comma-separated list of possible answers for the ballot question.
+* Ranked Answer -- The captured ranked answer provided by a voter for a question.
 
 ## Software Terms
 
-### Structs, Values and Entities 
+### Structs, Values, and Entities 
 
 * Struct -- When we need to represent a complex domain concept that Elixir primitives can not represent, we often lean on [Elixir Structs] and [Ecto Schemas] to build those concepts.  
-* Entity -- Many domain concepts are not defined primarily by their attributes, but rather by a thread of continued identity, these are called entities. Entities typically change over time and equality is based on that identity and not its attributes.
-* Value Object -- When you only care about the attributes of a domain concept classify it as a value object. These value objects describe things, but have no identity in an of themselves. Generally value objects do not change over time.
+* Entity -- Many domain concepts are not defined primarily by their attributes but rather by a thread of continued identity; these are called entities. Entities typically change over time, and equality is based on that identity, not its attributes.
+* Value Object -- When you only care about the attributes of a domain concept, classify it as a value object. These value objects describe things but have no identity in and of themselves. Generally, value objects do not change over time.
 
-> **Aside:** Working in the Elixir environment we tend to just say `Value` over `Value Object` since that distinction is only really needed for Object-Oriented Languages. 
+> **Aside:** Working in the Elixir environment, we tend to say `Value` over `Value Object` since that distinction is needed only for object-oriented languages. 
 
 [Elixir Structs]: https://hexdocs.pm/elixir/main/structs.html
 [Ecto Schemas]: https://hexdocs.pm/ecto/Ecto.html#module-schema
 
 #### Is an `Address` a value object? It depends.
 
-Wether or not any domain concept should considered an entity or a value object is entirely dependant on its usage. An example from [Domain-Driven Design]:
+Whether or not any domain concept should consider an entity or a value object depends entirely on its usage. An example from [Domain-Driven Design]:
 
 > In software for a mail-order company, an address is needed to confirm the credit card, and to address the parcel. But if a roommate also orders from the same company, it is not important to realize they are in the same location. Address is a VALUE OBJECT. 
 > 
