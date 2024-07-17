@@ -65,6 +65,9 @@ defmodule Flick.Ballots.Ballot do
       answer_list = possible_answers_as_list(updated_value)
 
       cond do
+        length(answer_list) < 2 ->
+          [possible_answers: "must contain at least two answers"]
+
         String.contains?(updated_value, "\n") ->
           [possible_answers: "can't contain new lines"]
 
