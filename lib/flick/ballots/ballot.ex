@@ -51,7 +51,7 @@ defmodule Flick.Ballots.Ballot do
     |> validate_possible_answers()
   end
 
-  # TODO: Add spec and docs.
+  @spec possible_answers_as_list(String.t()) :: [String.t()]
   def possible_answers_as_list(possible_answers) when is_binary(possible_answers) do
     possible_answers
     |> String.split(",")
