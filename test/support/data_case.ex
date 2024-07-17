@@ -24,6 +24,7 @@ defmodule Flick.DataCase do
       import Ecto.Changeset
       import Ecto.Query
       import Flick.DataCase
+      import TinyMaps
 
       import Support.Fixtures.BallotFixture
     end

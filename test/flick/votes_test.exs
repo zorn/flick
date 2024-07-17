@@ -19,9 +19,7 @@ defmodule Flick.VotesTest do
       {:ok, published_ballot: ballot}
     end
 
-    test "success: creates a vote recording the passed in answers", %{
-      published_ballot: published_ballot
-    } do
+    test "success: creates a vote recording the passed in answers", ~M{published_ballot} do
       published_ballot_id = published_ballot.id
 
       assert {:ok, vote} =
@@ -45,9 +43,7 @@ defmodule Flick.VotesTest do
              } = vote
     end
 
-    test "success: a vote does not need to rank every possible answer", %{
-      published_ballot: published_ballot
-    } do
+    test "success: a vote does not need to rank every possible answer", ~M{published_ballot} do
       published_ballot_id = published_ballot.id
 
       assert {:ok, vote} =
@@ -110,9 +106,7 @@ defmodule Flick.VotesTest do
       assert "answers must not be duplicated" in errors_on(pizza_2).value
     end
 
-    test "failure: a vote needs to include at least one ranked answer", %{
-      published_ballot: published_ballot
-    } do
+    test "failure: a vote needs to include at least one ranked answer", ~M{published_ballot} do
       attrs = %{
         "ranked_answers" => [
           %{"value" => ""},

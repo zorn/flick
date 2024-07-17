@@ -29,6 +29,7 @@ defmodule FlickWeb.ConnCase do
       import Phoenix.ConnTest
       import FlickWeb.ConnCase
       import Phoenix.LiveViewTest
+      import TinyMaps
 
       import Support.Fixtures.BallotFixture
     end
