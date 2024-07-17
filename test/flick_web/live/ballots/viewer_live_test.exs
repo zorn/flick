@@ -4,7 +4,7 @@ defmodule FlickWeb.Ballots.ViewerLiveTest do
   test "renders ballot details", %{conn: conn} do
     ballot = ballot_fixture()
     assert {:ok, view, _html} = live(conn, ~p"/ballots/#{ballot}")
-    assert has_element?(view, "#ballot-title", ballot.title)
+    assert has_element?(view, "#ballot-question-title", ballot.question_title)
   end
 
   test "responds with 404 when no ballot is found", %{conn: conn} do
