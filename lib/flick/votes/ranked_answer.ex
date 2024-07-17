@@ -7,9 +7,7 @@ defmodule Flick.Votes.RankedAnswer do
 
   import Ecto.Changeset
 
-  @type t :: %__MODULE__{
-          value: String.t()
-        }
+  @type t :: %__MODULE__{value: String.t()}
 
   @type struct_t :: %__MODULE__{}
 
