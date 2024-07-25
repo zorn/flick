@@ -1,15 +1,15 @@
-defmodule Flick.Ballots do
+defmodule Flick.RankedVoting do
   @moduledoc """
-  Provides functions related to managing `Flick.Ballots.Ballot` entities.
+  Provides functions related to managing `Flick.RankedVoting.Ballot` entities.
   """
 
-  alias Flick.Ballots.Ballot
+  alias Flick.RankedVoting.Ballot
   alias Flick.Repo
 
   @typep changeset :: Ecto.Changeset.t(Ballot.t())
 
   @doc """
-  Creates a new `Flick.Ballots.Ballot` entity with the given `title` and `questions`.
+  Creates a new `Flick.RankedVoting.Ballot` entity with the given `title` and `questions`.
   """
   @spec create_ballot(map()) :: {:ok, Ballot.t()} | {:error, changeset()}
   def create_ballot(attrs) when is_map(attrs) do
@@ -19,9 +19,9 @@ defmodule Flick.Ballots do
   end
 
   @doc """
-  Updates the given `Flick.Ballots.Ballot` entity with the given attributes.
+  Updates the given `Flick.RankedVoting.Ballot` entity with the given attributes.
 
-  If the `Flick.Ballots.Ballot` has already been published, an error is returned.
+  If the `Flick.RankedVoting.Ballot` has already been published, an error is returned.
   """
   @spec update_ballot(Ballot.t(), map()) ::
           {:ok, Ballot.t()}
@@ -39,9 +39,9 @@ defmodule Flick.Ballots do
   end
 
   @doc """
-  Publishes the given `Flick.Ballots.Ballot` entity.
+  Publishes the given `Flick.RankedVoting.Ballot` entity.
 
-  Once a `Flick.Ballots.Ballot` entity is published, it can no longer be updated.
+  Once a `Flick.RankedVoting.Ballot` entity is published, it can no longer be updated.
   Only a published ballot can be voted on.
   """
   @spec publish_ballot(Ballot.t(), DateTime.t()) ::
@@ -62,7 +62,7 @@ defmodule Flick.Ballots do
   end
 
   @doc """
-  Returns a list of all `Flick.Ballots.Ballot` entities.
+  Returns a list of all `Flick.RankedVoting.Ballot` entities.
   """
   @spec list_ballots() :: [Ballot.t()]
   def list_ballots() do
@@ -73,7 +73,7 @@ defmodule Flick.Ballots do
   end
 
   @doc """
-  Returns a `Flick.Ballots.Ballot` entity for the given id.
+  Returns a `Flick.RankedVoting.Ballot` entity for the given id.
 
   Raises `Ecto.NoResultsError` if no entity was found.
   """
@@ -83,7 +83,7 @@ defmodule Flick.Ballots do
   end
 
   @doc """
-  Fetches a `Flick.Ballots.Ballot` entity for the given id.
+  Fetches a `Flick.RankedVoting.Ballot` entity for the given id.
   """
   @spec fetch_ballot(Ballot.id()) :: {:ok, Ballot.t()} | {:error, :ballot_not_found}
   def fetch_ballot(ballot_id) do
@@ -94,7 +94,7 @@ defmodule Flick.Ballots do
   end
 
   @doc """
-  Returns an `Ecto.Changeset` representing changes to a `Flick.Ballots.Ballot` entity.
+  Returns an `Ecto.Changeset` representing changes to a `Flick.RankedVoting.Ballot` entity.
   """
   @spec change_ballot(Ballot.t() | Ballot.struct_t(), map()) :: changeset()
   def change_ballot(%Ballot{} = ballot, attrs) do

@@ -11,7 +11,7 @@
 # and so on) as they will fail if something goes wrong.
 
 {:ok, ballot} =
-  Flick.Ballots.create_ballot(%{
+  Flick.RankedVoting.create_ballot(%{
     question_title: "What is your sandwich preference?",
     possible_answers: "Turkey, Ham, Roast Beef"
   })

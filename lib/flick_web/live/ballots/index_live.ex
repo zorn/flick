@@ -1,6 +1,6 @@
 defmodule FlickWeb.Ballots.IndexLive do
   @moduledoc """
-  A live view that presents the known list of `Flick.Ballots.Ballot` entities.
+  A live view that presents the known list of `Flick.RankedVoting.Ballot` entities.
   """
 
   # TODO: In the future we probably won't just list all ballots, but for early
@@ -12,7 +12,7 @@ defmodule FlickWeb.Ballots.IndexLive do
   def mount(_params, _session, socket) do
     socket
     |> assign(:page_title, "Ballot Index")
-    |> assign(:ballots, Flick.Ballots.list_ballots())
+    |> assign(:ballots, Flick.RankedVoting.list_ballots())
     |> ok()
   end
 

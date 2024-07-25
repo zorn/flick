@@ -1,13 +1,13 @@
 defmodule FlickWeb.Vote.VoteCaptureLive do
   @moduledoc """
   A live view that presents a ranked voting form for a published
-  `Flick.Ballots.Ballot` entity.
+  `Flick.RankedVoting.Ballot` entity.
   """
 
   use FlickWeb, :live_view
 
-  alias Flick.Ballots
-  alias Flick.Ballots.Ballot
+  alias Flick.RankedVoting
+  alias Flick.RankedVoting.Ballot
   alias Flick.Votes
   alias Flick.Votes.Vote
   alias Phoenix.LiveView.Socket
@@ -15,7 +15,7 @@ defmodule FlickWeb.Vote.VoteCaptureLive do
   @impl Phoenix.LiveView
   def mount(params, _session, socket) do
     %{"ballot_id" => ballot_id} = params
-    ballot = Ballots.get_ballot!(ballot_id)
+    ballot = RankedVoting.get_ballot!(ballot_id)
 
     socket
     |> verify_ballot_is_published(ballot)
@@ -98,7 +98,7 @@ defmodule FlickWeb.Vote.VoteCaptureLive do
   end
 
   defp options(ballot) do
-    [nil] ++ Flick.Ballots.Ballot.possible_answers_as_list(ballot.possible_answers)
+    [nil] ++ Flick.RankedVoting.Ballot.possible_answers_as_list(ballot.possible_answers)
   end
 
   defp verify_ballot_is_published(socket, ballot) do

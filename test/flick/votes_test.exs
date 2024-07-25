@@ -4,7 +4,7 @@ defmodule Flick.VotesTest do
   alias Flick.Votes
   alias Flick.Votes.Vote
   alias Flick.Votes.RankedAnswer
-  alias Flick.Ballots
+  alias Flick.RankedVoting
 
   describe "record_vote/2" do
     setup do
@@ -14,7 +14,7 @@ defmodule Flick.VotesTest do
           possible_answers: "Pizza, Tacos, Sushi, Burgers"
         )
 
-      {:ok, ballot} = Ballots.publish_ballot(ballot)
+      {:ok, ballot} = RankedVoting.publish_ballot(ballot)
 
       {:ok, published_ballot: ballot}
     end

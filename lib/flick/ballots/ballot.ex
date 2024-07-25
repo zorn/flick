@@ -1,4 +1,4 @@
-defmodule Flick.Ballots.Ballot do
+defmodule Flick.RankedVoting.Ballot do
   @moduledoc """
   A prompt that will be presented to the user, asking them to provide a ranked
   vote of answers to help make a group decision.
@@ -14,7 +14,7 @@ defmodule Flick.Ballots.Ballot do
   @type id :: Ecto.UUID.t()
 
   @typedoc """
-  A type for a persisted `Flick.Ballots.Ballot` entity.
+  A type for a persisted `Flick.RankedVoting.Ballot` entity.
   """
   @type t :: %__MODULE__{
           id: Ecto.UUID.t(),
@@ -24,10 +24,10 @@ defmodule Flick.Ballots.Ballot do
         }
 
   @typedoc """
-  A type for the empty `Flick.Ballots.Ballot` struct.
+  A type for the empty `Flick.RankedVoting.Ballot` struct.
 
   This type is helpful when you want to typespec a function that needs to accept
-  a non-persisted `Flick.Ballots.Ballot` struct value.
+  a non-persisted `Flick.RankedVoting.Ballot` struct value.
   """
   @type struct_t :: %__MODULE__{}
 

@@ -2,7 +2,7 @@
 
 ## Ballots
 
-The `Flick.Ballots.Ballot` schema captures a simple one-question ballot using fields for `question_title` and `possible_answers`.
+The `Flick.RankedVoting.Ballot` schema captures a simple one-question ballot using fields for `question_title` and `possible_answers`.
 
 We could have solved "possible answers" in the data model in multiple ways but have picked this specific style with intent.
 

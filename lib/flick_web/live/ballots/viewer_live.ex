@@ -1,19 +1,19 @@
 defmodule FlickWeb.Ballots.ViewerLive do
   @moduledoc """
-  A live view that presents a the generic presentation of a `Flick.Ballots.Ballot`.
+  A live view that presents a the generic presentation of a `Flick.RankedVoting.Ballot`.
   """
 
   # TODO: This is probably the live view we'll use for voters. We'll need another live view for ballot owners.
 
   use FlickWeb, :live_view
 
-  alias Flick.Ballots
+  alias Flick.RankedVoting
 
   @impl Phoenix.LiveView
   def mount(params, _session, socket) do
     %{"ballot_id" => ballot_id} = params
 
-    ballot = Ballots.get_ballot!(ballot_id)
+    ballot = RankedVoting.get_ballot!(ballot_id)
 
     socket
     |> assign(:page_title, "View Ballot: #{ballot.question_title}")
@@ -25,7 +25,7 @@ defmodule FlickWeb.Ballots.ViewerLive do
   def handle_event("publish", _params, socket) do
     %{ballot: ballot} = socket.assigns
 
-    case Ballots.publish_ballot(ballot) do
+    case RankedVoting.publish_ballot(ballot) do
       {:ok, ballot} ->
         {:noreply, assign(socket, :ballot, ballot)}
 
