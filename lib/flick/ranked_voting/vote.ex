@@ -1,4 +1,4 @@
-defmodule Flick.Votes.Vote do
+defmodule Flick.RankedVoting.Vote do
   @moduledoc """
   A response to a `Flick.RankedVoting.Ballot`. A vote contains a collection of ranked
   answers for a ballot question.
@@ -15,7 +15,7 @@ defmodule Flick.Votes.Vote do
   @type id :: Ecto.UUID.t()
 
   @typedoc """
-  A type for a persisted `Flick.Votes.Vote` entity.
+  A type for a persisted `Flick.RankedVoting.Vote` entity.
   """
   @type t :: %__MODULE__{
           id: id(),

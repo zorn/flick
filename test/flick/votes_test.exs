@@ -2,7 +2,7 @@ defmodule Flick.VotesTest do
   use Flick.DataCase, async: true
 
   alias Flick.Votes
-  alias Flick.Votes.Vote
+  alias Flick.RankedVoting.Vote
   alias Flick.Votes.RankedAnswer
   alias Flick.RankedVoting
 

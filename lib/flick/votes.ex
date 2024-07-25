@@ -1,12 +1,12 @@
 defmodule Flick.Votes do
   @moduledoc """
-  Provides functions related to capturing `Flick.Votes.Vote` entities related to
+  Provides functions related to capturing `Flick.RankedVoting.Vote` entities related to
   a specific `Flick.RankedVoting.Ballot`.
   """
 
   alias Flick.RankedVoting.Ballot
   alias Flick.Repo
-  alias Flick.Votes.Vote
+  alias Flick.RankedVoting.Vote
 
   @typep changeset :: Ecto.Changeset.t(Vote.t())
 
@@ -23,7 +23,7 @@ defmodule Flick.Votes do
   end
 
   @doc """
-  Returns an `Ecto.Changeset` representing changes to a `Flick.Votes.Vote`
+  Returns an `Ecto.Changeset` representing changes to a `Flick.RankedVoting.Vote`
   entity.
 
   ## Options

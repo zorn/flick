@@ -9,7 +9,7 @@ defmodule FlickWeb.Vote.VoteCaptureLive do
   alias Flick.RankedVoting
   alias Flick.RankedVoting.Ballot
   alias Flick.Votes
-  alias Flick.Votes.Vote
+  alias Flick.RankedVoting.Vote
   alias Phoenix.LiveView.Socket
 
   @impl Phoenix.LiveView
