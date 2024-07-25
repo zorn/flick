@@ -10,7 +10,7 @@ defmodule Flick.RankedVoting.Vote do
   import FlickWeb.Gettext
 
   alias Flick.RankedVoting.Ballot
-  alias Flick.Votes.RankedAnswer
+  alias Flick.RankedVoting.RankedAnswer
 
   @type id :: Ecto.UUID.t()
 

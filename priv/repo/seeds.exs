@@ -17,7 +17,7 @@
   })
 
 {:ok, _vote} =
-  Flick.Votes.record_vote(ballot, %{
+  Flick.RankedVoting.record_vote(ballot, %{
     "ranked_answers" => [
       %{"value" => "Turkey"},
       %{"value" => "Roast Beef"},

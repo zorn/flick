@@ -1,4 +1,4 @@
-defmodule Flick.Votes.RankedAnswer do
+defmodule Flick.RankedVoting.RankedAnswer do
   @moduledoc """
   An embedded value that represents a ranked answer to a question of a ballot.
   """

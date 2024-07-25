@@ -4,14 +4,13 @@ defmodule Flick.RankedVoting do
   """
 
   alias Flick.RankedVoting.Ballot
+  alias Flick.RankedVoting.Vote
   alias Flick.Repo
-
-  @typep changeset :: Ecto.Changeset.t(Ballot.t())
 
   @doc """
   Creates a new `Flick.RankedVoting.Ballot` entity with the given `title` and `questions`.
   """
-  @spec create_ballot(map()) :: {:ok, Ballot.t()} | {:error, changeset()}
+  @spec create_ballot(map()) :: {:ok, Ballot.t()} | {:error, Ecto.Changeset.t(Ballot.t())}
   def create_ballot(attrs) when is_map(attrs) do
     %Ballot{}
     |> change_ballot(attrs)
@@ -25,7 +24,7 @@ defmodule Flick.RankedVoting do
   """
   @spec update_ballot(Ballot.t(), map()) ::
           {:ok, Ballot.t()}
-          | {:error, changeset()}
+          | {:error, Ecto.Changeset.t(Ballot.t())}
           | {:error, :can_not_update_published_ballot}
   def update_ballot(%Ballot{published_at: published_at}, _attrs)
       when not is_nil(published_at) do
@@ -46,7 +45,7 @@ defmodule Flick.RankedVoting do
   """
   @spec publish_ballot(Ballot.t(), DateTime.t()) ::
           {:ok, Ballot.t()}
-          | {:error, changeset()}
+          | {:error, Ecto.Changeset.t(Ballot.t())}
           | {:error, :ballot_already_published}
   def publish_ballot(ballot, published_at \\ DateTime.utc_now())
 
@@ -96,8 +95,41 @@ defmodule Flick.RankedVoting do
   @doc """
   Returns an `Ecto.Changeset` representing changes to a `Flick.RankedVoting.Ballot` entity.
   """
-  @spec change_ballot(Ballot.t() | Ballot.struct_t(), map()) :: changeset()
+  @spec change_ballot(Ballot.t() | Ballot.struct_t(), map()) :: Ecto.Changeset.t(Ballot.t())
   def change_ballot(%Ballot{} = ballot, attrs) do
     Ballot.changeset(ballot, attrs)
+  end
+
+  @doc """
+  Records a vote for the given `Flick.RankedVoting.Ballot` entity.
+  """
+  @spec record_vote(Ballot.t(), map()) :: {:ok, Vote.t()} | {:error, Ecto.Changeset.t(Vote.t())}
+  def record_vote(ballot, attrs) do
+    attrs = Map.put(attrs, "ballot_id", ballot.id)
+
+    %Vote{}
+    |> Vote.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Returns an `Ecto.Changeset` representing changes to a `Flick.RankedVoting.Vote`
+  entity.
+
+  ## Options
+
+  * `:action` - An optional atom applied to the changeset, useful for forms that
+    look to a changeset's action to influence form behavior.
+  """
+  @spec change_vote(Vote.t() | Vote.struct_t(), map()) :: Ecto.Changeset.t(Vote.t())
+  def change_vote(%Vote{} = vote, attrs, opts \\ []) do
+    opts = Keyword.validate!(opts, action: nil)
+    changeset = Vote.changeset(vote, attrs)
+
+    if opts[:action] do
+      Map.put(changeset, :action, opts[:action])
+    else
+      changeset
+    end
   end
 end
