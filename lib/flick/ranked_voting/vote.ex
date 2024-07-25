@@ -1,6 +1,6 @@
-defmodule Flick.Votes.Vote do
+defmodule Flick.RankedVoting.Vote do
   @moduledoc """
-  A response to a `Flick.Ballots.Ballot`. A vote contains a collection of ranked
+  A response to a `Flick.RankedVoting.Ballot`. A vote contains a collection of ranked
   answers for a ballot question.
   """
 
@@ -9,13 +9,13 @@ defmodule Flick.Votes.Vote do
   import Ecto.Changeset
   import FlickWeb.Gettext
 
-  alias Flick.Ballots.Ballot
-  alias Flick.Votes.RankedAnswer
+  alias Flick.RankedVoting.Ballot
+  alias Flick.RankedVoting.RankedAnswer
 
   @type id :: Ecto.UUID.t()
 
   @typedoc """
-  A type for a persisted `Flick.Votes.Vote` entity.
+  A type for a persisted `Flick.RankedVoting.Vote` entity.
   """
   @type t :: %__MODULE__{
           id: id(),
@@ -52,7 +52,7 @@ defmodule Flick.Votes.Vote do
   end
 
   defp validate_ranked_answers_are_present_in_ballot(changeset) do
-    ballot = Flick.Ballots.get_ballot!(get_field(changeset, :ballot_id))
+    ballot = Flick.RankedVoting.get_ballot!(get_field(changeset, :ballot_id))
     possible_answers = Ballot.possible_answers_as_list(ballot.possible_answers) ++ ["", nil]
 
     validate_change(changeset, :ranked_answers, fn :ranked_answers, new_ranked_answers ->

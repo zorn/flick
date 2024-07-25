@@ -1,18 +1,18 @@
 defmodule FlickWeb.Ballots.EditorLive do
   @moduledoc """
   A live view that presents a form for the creation or editing of a
-  `Flick.Ballots.Ballot`.
+  `Flick.RankedVoting.Ballot`.
   """
 
   use FlickWeb, :live_view
 
-  alias Flick.Ballots
-  alias Flick.Ballots.Ballot
+  alias Flick.RankedVoting
+  alias Flick.RankedVoting.Ballot
 
   @impl Phoenix.LiveView
   def mount(params, _session, socket) do
     ballot = ballot(params, socket)
-    form = to_form(Ballots.change_ballot(ballot, %{}))
+    form = to_form(RankedVoting.change_ballot(ballot, %{}))
 
     socket
     |> assign(:form, form)
@@ -31,7 +31,7 @@ defmodule FlickWeb.Ballots.EditorLive do
 
   defp ballot(params, %{assigns: %{live_action: :edit}} = _socket) do
     %{"ballot_id" => ballot_id} = params
-    Ballots.get_ballot!(ballot_id)
+    RankedVoting.get_ballot!(ballot_id)
   end
 
   defp ballot(_params, _socket) do
@@ -42,7 +42,7 @@ defmodule FlickWeb.Ballots.EditorLive do
   def handle_event("validate", params, socket) do
     %{"ballot" => ballot_params} = params
     %{ballot: ballot} = socket.assigns
-    form = to_form(Ballots.change_ballot(ballot, ballot_params))
+    form = to_form(RankedVoting.change_ballot(ballot, ballot_params))
     {:noreply, assign(socket, form: form)}
   end
 
@@ -54,7 +54,7 @@ defmodule FlickWeb.Ballots.EditorLive do
     %{"ballot" => ballot_params} = params
     %{ballot: ballot} = socket.assigns
 
-    case Ballots.update_ballot(ballot, ballot_params) do
+    case RankedVoting.update_ballot(ballot, ballot_params) do
       {:ok, ballot} ->
         {:noreply, redirect(socket, to: ~p"/ballots/#{ballot}")}
 
@@ -66,7 +66,7 @@ defmodule FlickWeb.Ballots.EditorLive do
   defp do_save(params, socket) do
     %{"ballot" => ballot_params} = params
 
-    case Ballots.create_ballot(ballot_params) do
+    case RankedVoting.create_ballot(ballot_params) do
       {:ok, ballot} ->
         {:noreply, redirect(socket, to: ~p"/ballots/#{ballot}")}
 

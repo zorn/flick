@@ -11,13 +11,13 @@
 # and so on) as they will fail if something goes wrong.
 
 {:ok, ballot} =
-  Flick.Ballots.create_ballot(%{
+  Flick.RankedVoting.create_ballot(%{
     question_title: "What is your sandwich preference?",
     possible_answers: "Turkey, Ham, Roast Beef"
   })
 
 {:ok, _vote} =
-  Flick.Votes.record_vote(ballot, %{
+  Flick.RankedVoting.record_vote(ballot, %{
     "ranked_answers" => [
       %{"value" => "Turkey"},
       %{"value" => "Roast Beef"},
