@@ -1,5 +1,13 @@
 # Flick
 
+![Still frame from the movie Election, the character Tracy Flick is holding up a cupcake with the lettering "Pick Flick" across the icing.](docs/pick-flick.png)
+
+Flick is an in-progress side project that aims to provide a simple web app, built using Elixir and Phoenix LiveView, that will to provide a tools to build and capture ranked voting.
+
+Specifically this project is being constructed to help the [Elixir Book Club](https://elixirbookclub.com/) pick books.
+
+## Standard Phoenix Info
+
 To start your Phoenix server:
 
   * Run `mix setup` to install and setup dependencies
