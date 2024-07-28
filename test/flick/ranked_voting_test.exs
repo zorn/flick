@@ -10,12 +10,15 @@ defmodule Flick.RankedVotingTest do
   alias Flick.RankedVoting.Vote
   alias Flick.RankedVoting.RankedAnswer
 
+  @empty_values ["", nil, " "]
+
   describe "create_ballot/1" do
     test "success: creates a unpublished ballot that is retrievable from the repo" do
       {:ok, %Ballot{id: id}} =
         RankedVoting.create_ballot(%{
           question_title: "What is your favorite color?",
-          possible_answers: "Red, Green, Blue"
+          possible_answers: "Red, Green, Blue",
+          url_slug: "favorite-color"
         })
 
       assert %Ballot{
@@ -30,7 +33,8 @@ defmodule Flick.RankedVotingTest do
       {:ok, %Ballot{id: id}} =
         RankedVoting.create_ballot(%{
           "question_title" => "What is your favorite food?",
-          "possible_answers" => "Pizza, Tacos, Sushi"
+          "possible_answers" => "Pizza, Tacos, Sushi",
+          "url_slug" => "favorite-food"
         })
 
       assert %Ballot{
@@ -40,19 +44,18 @@ defmodule Flick.RankedVotingTest do
              } = RankedVoting.get_ballot!(id)
     end
 
-    test "failure: `question_title` is required" do
-      empty_values = ["", nil, " "]
+    test "success: `question_title` can be more than 255 characters" do
+    end
 
-      for empty_value <- empty_values do
+    test "failure: `question_title` is required" do
+      for empty_value <- @empty_values do
         assert {:error, changeset} = RankedVoting.create_ballot(%{question_title: empty_value})
         assert "can't be blank" in errors_on(changeset).question_title
       end
     end
 
     test "failure: `possible_answers` is required" do
-      empty_values = ["", nil, " "]
-
-      for empty_value <- empty_values do
+      for empty_value <- @empty_values do
         assert {:error, changeset} = RankedVoting.create_ballot(%{possible_answers: empty_value})
         assert "can't be blank" in errors_on(changeset).possible_answers
       end
@@ -71,6 +74,39 @@ defmodule Flick.RankedVotingTest do
     test "failure: `possible_answers` must include at least two answers" do
       assert {:error, changeset} = RankedVoting.create_ballot(%{possible_answers: "one"})
       assert "must contain at least two answers" in errors_on(changeset).possible_answers
+    end
+
+    test "failure: `url_slug` is required" do
+      for empty_value <- @empty_values do
+        assert {:error, changeset} = RankedVoting.create_ballot(%{url_slug: empty_value})
+        assert "can't be blank" in errors_on(changeset).url_slug
+      end
+    end
+
+    test "failure: `url_slug` can only contain alphanumeric or hyphens" do
+      for bad_value <- [
+            "nobangs!",
+            "noquestionmarks?",
+            "no spaces",
+            "no backslashes\\",
+            "no forwardslashes/"
+          ] do
+        assert {:error, changeset} = RankedVoting.create_ballot(%{url_slug: bad_value})
+        assert "can only contain letters, numbers, and hyphens" in errors_on(changeset).url_slug
+      end
+    end
+
+    test "failure: `url_slug` can not be less than than 3 characters" do
+      for bad_value <- ["1", "22"] do
+        assert {:error, changeset} = RankedVoting.create_ballot(%{url_slug: bad_value})
+        assert "should be at least 3 character(s)" in errors_on(changeset).url_slug
+      end
+    end
+
+    test "failure: `url_slug` can not be more than 255 characters" do
+      too_long_value = String.duplicate("a", 256)
+      assert {:error, changeset} = RankedVoting.create_ballot(%{url_slug: too_long_value})
+      assert "should be at most 255 character(s)" in errors_on(changeset).url_slug
     end
   end
 
@@ -95,9 +131,8 @@ defmodule Flick.RankedVotingTest do
 
     test "failure: `question_title` is required" do
       ballot = ballot_fixture()
-      empty_values = ["", nil, " "]
 
-      for empty_value <- empty_values do
+      for empty_value <- @empty_values do
         changes = %{"question_title" => empty_value}
         assert {:error, changeset} = RankedVoting.update_ballot(ballot, changes)
         assert "can't be blank" in errors_on(changeset).question_title

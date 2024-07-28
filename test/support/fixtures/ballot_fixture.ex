@@ -12,6 +12,7 @@ defmodule Support.Fixtures.BallotFixture do
     Enum.into(attrs, %{
       question_title: "What day should have dinner?",
       possible_answers: "Monday, Tuesday, Wednesday, Thursday, Friday",
+      url_slug: "dinner-day",
       published_at: nil
     })
   end
