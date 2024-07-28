@@ -45,6 +45,9 @@ defmodule Flick.RankedVotingTest do
     end
 
     test "success: `question_title` can be more than 255 characters" do
+      long_value = String.duplicate("a", 1_000)
+      assert {:error, changeset} = RankedVoting.create_ballot(%{question_title: long_value})
+      refute Map.has_key?(errors_on(changeset), :question_title)
     end
 
     test "failure: `question_title` is required" do
