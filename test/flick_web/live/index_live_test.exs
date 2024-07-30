@@ -1,5 +1,6 @@
 defmodule FlickWeb.IndexLiveTest do
   @moduledoc """
+  Verifies the expected logic of the index page.
   """
 
   use FlickWeb.ConnCase, async: true
