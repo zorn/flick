@@ -68,6 +68,7 @@ defmodule FlickWeb.Ballots.EditorLive do
 
     case RankedVoting.create_ballot(ballot_params) do
       {:ok, ballot} ->
+        # TODO: Update to new url.
         {:noreply, redirect(socket, to: ~p"/ballots/#{ballot}")}
 
       {:error, changeset} ->
@@ -80,14 +81,21 @@ defmodule FlickWeb.Ballots.EditorLive do
     ~H"""
     <div class="prose">
       <h2>Create Ballot</h2>
-      <p>
-        <.back navigate={~p"/ballots"}>Back to ballots</.back>
-      </p>
     </div>
 
     <.simple_form for={@form} phx-change="validate" phx-submit="save">
-      <.input field={@form[:question_title]} label="Question Title" />
-      <.input field={@form[:possible_answers]} label="Possible Answers (comma separated)" />
+      <.input field={@form[:question_title]} label="Question Title" placeholder="What is for dinner?" />
+      <.input
+        field={@form[:possible_answers]}
+        label="Possible Answers (comma separated)"
+        placeholder="Chicken, Pasta, Pancakes"
+      />
+      <.input
+        field={@form[:url_slug]}
+        label="URL Slug (as seen in the URL you'll give to voters)"
+        placeholder="what-is-for-dinner"
+      />
+
       <:actions>
         <.button>Save</.button>
       </:actions>
