@@ -54,6 +54,8 @@ defmodule Flick.RankedVoting.Ballot do
       message: "can only contain letters, numbers, and hyphens"
     )
     |> validate_length(:url_slug, min: 3, max: 255)
+
+    # TODO: Add URL uniqueness validation.
   end
 
   @spec possible_answers_as_list(String.t()) :: [String.t()]
