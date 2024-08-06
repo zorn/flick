@@ -55,8 +55,6 @@ defmodule Flick.RankedVoting.Ballot do
     )
     |> validate_length(:url_slug, min: 3, max: 255)
     |> unique_constraint(:url_slug)
-
-    # TODO: Add URL uniqueness validation.
   end
 
   @spec possible_answers_as_list(String.t()) :: [String.t()]
