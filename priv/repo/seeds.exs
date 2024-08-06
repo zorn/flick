@@ -13,7 +13,8 @@
 {:ok, ballot} =
   Flick.RankedVoting.create_ballot(%{
     question_title: "What is your sandwich preference?",
-    possible_answers: "Turkey, Ham, Roast Beef"
+    possible_answers: "Turkey, Ham, Roast Beef",
+    url_slug: "sandwich-preference"
   })
 
 {:ok, _vote} =

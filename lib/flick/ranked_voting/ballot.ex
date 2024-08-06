@@ -35,12 +35,13 @@ defmodule Flick.RankedVoting.Ballot do
   @foreign_key_type :binary_id
   schema "ballots" do
     field :question_title, :string
+    field :url_slug, :string
     field :possible_answers, :string
     field :published_at, :utc_datetime_usec
     timestamps(type: :utc_datetime_usec)
   end
 
-  @required_fields [:question_title, :possible_answers]
+  @required_fields [:question_title, :possible_answers, :url_slug]
   @optional_fields [:published_at]
 
   @spec changeset(t() | struct_t(), map()) :: Ecto.Changeset.t(t()) | Ecto.Changeset.t(struct_t())
@@ -49,6 +50,11 @@ defmodule Flick.RankedVoting.Ballot do
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
     |> validate_possible_answers()
+    |> validate_format(:url_slug, ~r/^[a-zA-Z0-9-]+$/,
+      message: "can only contain letters, numbers, and hyphens"
+    )
+    |> validate_length(:url_slug, min: 3, max: 255)
+    |> unique_constraint(:url_slug)
   end
 
   @spec possible_answers_as_list(String.t()) :: [String.t()]

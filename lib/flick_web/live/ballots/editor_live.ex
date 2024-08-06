@@ -25,13 +25,17 @@ defmodule FlickWeb.Ballots.EditorLive do
     assign(socket, page_title: "Edit Ballot: #{ballot.question_title}")
   end
 
+  defp assign_page_title(%{assigns: %{live_action: :edit}} = socket) do
+    assign(socket, page_title: "Edit Ballot")
+  end
+
   defp assign_page_title(socket) do
     assign(socket, page_title: "Create a Ballot")
   end
 
   defp ballot(params, %{assigns: %{live_action: :edit}} = _socket) do
-    %{"ballot_id" => ballot_id} = params
-    RankedVoting.get_ballot!(ballot_id)
+    %{"url_slug" => url_slug, "secret" => secret} = params
+    RankedVoting.get_ballot_by_url_slug_and_secret!(url_slug, secret)
   end
 
   defp ballot(_params, _socket) do
@@ -56,7 +60,7 @@ defmodule FlickWeb.Ballots.EditorLive do
 
     case RankedVoting.update_ballot(ballot, ballot_params) do
       {:ok, ballot} ->
-        {:noreply, redirect(socket, to: ~p"/ballots/#{ballot}")}
+        {:noreply, redirect(socket, to: ~p"/#{ballot.url_slug}/#{ballot.id}")}
 
       {:error, changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}
@@ -68,7 +72,7 @@ defmodule FlickWeb.Ballots.EditorLive do
 
     case RankedVoting.create_ballot(ballot_params) do
       {:ok, ballot} ->
-        {:noreply, redirect(socket, to: ~p"/ballots/#{ballot}")}
+        {:noreply, redirect(socket, to: ~p"/#{ballot.url_slug}/#{ballot.id}")}
 
       {:error, changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}
@@ -79,19 +83,29 @@ defmodule FlickWeb.Ballots.EditorLive do
   def render(assigns) do
     ~H"""
     <div class="prose">
-      <h2>Create Ballot</h2>
-      <p>
-        <.back navigate={~p"/ballots"}>Back to ballots</.back>
-      </p>
+      <h2><%= page_title(@live_action) %></h2>
     </div>
 
     <.simple_form for={@form} phx-change="validate" phx-submit="save">
-      <.input field={@form[:question_title]} label="Question Title" />
-      <.input field={@form[:possible_answers]} label="Possible Answers (comma separated)" />
+      <.input field={@form[:question_title]} label="Question Title" placeholder="What is for dinner?" />
+      <.input
+        field={@form[:possible_answers]}
+        label="Possible Answers (comma separated)"
+        placeholder="Chicken, Pasta, Pancakes"
+      />
+      <.input
+        field={@form[:url_slug]}
+        label="URL Slug (as seen in the URL you'll give to voters)"
+        placeholder="what-is-for-dinner"
+      />
+
       <:actions>
         <.button>Save</.button>
       </:actions>
     </.simple_form>
     """
   end
+
+  defp page_title(:edit), do: "Edit Ballot"
+  defp page_title(_), do: "Create a Ballot"
 end

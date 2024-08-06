@@ -1,9 +1,8 @@
 defmodule FlickWeb.Ballots.ViewerLive do
   @moduledoc """
-  A live view that presents a the generic presentation of a `Flick.RankedVoting.Ballot`.
+  A live view that presents a the detail presentation for a
+  `Flick.RankedVoting.Ballot` entity.
   """
-
-  # TODO: This is probably the live view we'll use for voters. We'll need another live view for ballot owners.
 
   use FlickWeb, :live_view
 
@@ -11,9 +10,9 @@ defmodule FlickWeb.Ballots.ViewerLive do
 
   @impl Phoenix.LiveView
   def mount(params, _session, socket) do
-    %{"ballot_id" => ballot_id} = params
+    %{"url_slug" => url_slug, "secret" => secret} = params
 
-    ballot = RankedVoting.get_ballot!(ballot_id)
+    ballot = RankedVoting.get_ballot_by_url_slug_and_secret!(url_slug, secret)
 
     socket
     |> assign(:page_title, "View Ballot: #{ballot.question_title}")
@@ -38,13 +37,28 @@ defmodule FlickWeb.Ballots.ViewerLive do
   def render(assigns) do
     ~H"""
     <div>
-      <div class="my-6">
-        <.back navigate={~p"/ballots"}>Back to ballots</.back>
+      <div class="prose">
+        <h2>Ballot Admin</h2>
+
+        <dl>
+          <dt class="font-bold">Question Title</dt>
+          <dd class="pb-4"><%= @ballot.question_title %></dd>
+          <dt class="font-bold">Possible Answers</dt>
+          <dd class="pb-4"><%= @ballot.possible_answers %></dd>
+          <dt class="font-bold">URL Slug</dt>
+          <dd class="pb-4"><%= @ballot.url_slug %></dd>
+        </dl>
+        <.button>
+          <.link
+            navigate={~p"/#{@ballot.url_slug}/#{@ballot.id}/edit"}
+            class="text-white no-underline"
+          >
+            Edit Ballot
+          </.link>
+        </.button>
       </div>
 
-      <div class="my-6">
-        <.link navigate={~p"/ballots/#{@ballot}/edit"}>Edit</.link>
-      </div>
+      <div class="my-6"></div>
 
       <div class="my-6">
         <%= if @ballot.published_at do %>

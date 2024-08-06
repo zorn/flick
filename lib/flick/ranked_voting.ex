@@ -82,6 +82,29 @@ defmodule Flick.RankedVoting do
   end
 
   @doc """
+  Returns a `Flick.RankedVoting.Ballot` entity for the given `url_slug` value.
+
+  Raises `Ecto.NoResultsError` if no entity was found.
+  """
+  @spec get_ballot_by_url_slug!(String.t()) :: Ballot.t()
+  def get_ballot_by_url_slug!(url_slug)
+      when is_binary(url_slug) do
+    Repo.get_by!(Ballot, url_slug: url_slug)
+  end
+
+  @doc """
+  Returns a `Flick.RankedVoting.Ballot` entity for the given `url_slug` value
+  and `secret`.
+
+  Raises `Ecto.NoResultsError` if no entity was found.
+  """
+  @spec get_ballot_by_url_slug_and_secret!(String.t(), String.t()) :: Ballot.t()
+  def get_ballot_by_url_slug_and_secret!(url_slug, secret)
+      when is_binary(url_slug) and is_binary(secret) do
+    Repo.get_by!(Ballot, url_slug: url_slug, id: secret)
+  end
+
+  @doc """
   Fetches a `Flick.RankedVoting.Ballot` entity for the given id.
   """
   @spec fetch_ballot(Ballot.id()) :: {:ok, Ballot.t()} | {:error, :ballot_not_found}

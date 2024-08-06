@@ -13,8 +13,8 @@ defmodule FlickWeb.Vote.VoteCaptureLive do
 
   @impl Phoenix.LiveView
   def mount(params, _session, socket) do
-    %{"ballot_id" => ballot_id} = params
-    ballot = RankedVoting.get_ballot!(ballot_id)
+    %{"url_slug" => url_slug} = params
+    ballot = RankedVoting.get_ballot_by_url_slug!(url_slug)
 
     socket
     |> verify_ballot_is_published(ballot)
@@ -65,7 +65,7 @@ defmodule FlickWeb.Vote.VoteCaptureLive do
   def render(assigns) do
     ~H"""
     <div>
-      <div><%= @ballot.question_title %></div>
+      <div id="question-title"><%= @ballot.question_title %></div>
 
       <.simple_form for={@form} phx-change="validate" phx-submit="save">
         <%!-- I wonder if we should drop this hidden and just inject the id manually? --%>

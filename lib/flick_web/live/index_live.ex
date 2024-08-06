@@ -16,12 +16,11 @@ defmodule FlickWeb.IndexLive do
   def render(assigns) do
     ~H"""
     <div class="prose">
-      <p>Flick is a simple Elixir / Phoenix LiveView app for running ranked vote ballots.</p>
+      <p id="welcome-copy">
+        Flick is an application that allows you to create ballots that capture ranked votes.
+      </p>
 
-      <ul>
-        <li><.link navigate={~p"/ballots"}>View Ballots</.link></li>
-        <li><.link navigate={~p"/ballots/new"}>Create a Ballots</.link></li>
-      </ul>
+      <p><.link navigate={~p"/create-ballot"}>Create a ballot</.link> and try it out.</p>
     </div>
     """
   end
