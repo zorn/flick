@@ -13,7 +13,7 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
     end
 
     test "success: renders a create ballot form", ~M{view} do
-      assert has_element?(view, "h2", "Create Ballot")
+      assert has_element?(view, "h2", "Create a Ballot")
       assert has_element?(view, "#ballot_question_title")
       assert has_element?(view, "#ballot_possible_answers")
       assert has_element?(view, "#ballot_url_slug")

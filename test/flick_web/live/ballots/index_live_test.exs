@@ -1,9 +1,13 @@
 defmodule FlickWeb.Ballots.IndexLiveTest do
+  @moduledoc """
+  Verifies logic for the live view `FlickWeb.Ballots.IndexLive`.
+  """
+
   use FlickWeb.ConnCase, async: true
 
   test "renders list of ballots", ~M{conn} do
     ballots = Enum.map(1..3, fn _ -> ballot_fixture() end)
-    assert {:ok, view, _html} = live(conn, ~p"/ballots")
+    assert {:ok, view, _html} = live(conn, ~p"/admin/ballots")
     assert has_element?(view, "table#ballots")
 
     for ballot <- ballots do

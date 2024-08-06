@@ -17,14 +17,15 @@ defmodule FlickWeb.Router do
   scope "/", FlickWeb do
     pipe_through :browser
 
+    # TODO: Protect this path.
+    # https://github.com/zorn/flick/issues/29
+    live "/admin/ballots", Ballots.IndexLive, :index
+
     live "/", IndexLive, :index
     live "/create-ballot", Ballots.EditorLive, :new
-
-    live "/ballots", Ballots.IndexLive, :index
-    live "/ballots/:ballot_id/edit", Ballots.EditorLive, :edit
-    live "/ballots/:ballot_id", Ballots.ViewerLive, :show
-
-    live "/vote/:ballot_id", Vote.VoteCaptureLive, :new
+    live "/:url_slug/:secret", Ballots.ViewerLive, :edit
+    live "/:url_slug/:secret/edit", Ballots.EditorLive, :edit
+    live "/:url_slug", Vote.VoteCaptureLive, :new
   end
 
   # Other scopes may use custom stacks.

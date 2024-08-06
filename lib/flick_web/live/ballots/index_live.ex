@@ -1,17 +1,17 @@
 defmodule FlickWeb.Ballots.IndexLive do
   @moduledoc """
   A live view that presents the known list of `Flick.RankedVoting.Ballot` entities.
-  """
 
-  # TODO: In the future we probably won't just list all ballots, but for early
-  # development this is helpful.
+  This view will be only accessible to authenticated users, per:
+  https://github.com/zorn/flick/issues/29
+  """
 
   use FlickWeb, :live_view
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     socket
-    |> assign(:page_title, "Ballot Index")
+    |> assign(:page_title, "Admin: Ballots")
     |> assign(:ballots, Flick.RankedVoting.list_ballots())
     |> ok()
   end
@@ -20,10 +20,7 @@ defmodule FlickWeb.Ballots.IndexLive do
   def render(assigns) do
     ~H"""
     <div class="prose">
-      <p>
-        <.link navigate={~p"/ballots/new"} class="underline">Create a new ballot.</.link>
-      </p>
-      <p>A list of known ballots.</p>
+      <p>Admin: Ballots</p>
     </div>
 
     <.table id="ballots" rows={@ballots} row_id={&"ballot-row-#{&1.id}"}>
@@ -41,7 +38,7 @@ defmodule FlickWeb.Ballots.IndexLive do
         <.link :if={ballot.published_at} navigate={~p"/vote/#{ballot.id}"}>Voting Page</.link>
       </:col>
       <:col :let={ballot}>
-        <.link navigate={~p"/ballots/#{ballot.id}"}>View Details</.link>
+        <.link navigate={~p"/#{ballot.url_slug}/#{ballot.id}"}>View</.link>
       </:col>
     </.table>
     """
