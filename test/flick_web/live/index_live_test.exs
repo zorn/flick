@@ -1,6 +1,8 @@
 defmodule FlickWeb.IndexLiveTest do
   @moduledoc """
   Verifies the expected logic of the index page.
+
+  http://localhost:4000/
   """
 
   use FlickWeb.ConnCase, async: true
@@ -12,12 +14,10 @@ defmodule FlickWeb.IndexLiveTest do
   test "contains welcome copy", ~M{conn} do
     {:ok, view, _html} = live(conn, ~p"/")
 
-    expected_copy =
-      """
-      Flick is an application that allows you to create ballots that capture ranked votes.
-      """
+    expected_welcome_copy =
+      "Flick is an application that allows you to create ballots that capture ranked votes."
 
-    assert element(view, "#welcome-copy") |> render() =~ expected_copy
+    assert element(view, "#welcome-copy") |> render() =~ expected_welcome_copy
   end
 
   test "contains link to create a ballot", ~M{conn} do
