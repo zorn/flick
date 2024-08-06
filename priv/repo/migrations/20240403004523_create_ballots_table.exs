@@ -10,5 +10,7 @@ defmodule Flick.Repo.Migrations.CreateBallotsTable do
       add :published_at, :utc_datetime_usec
       timestamps(type: :utc_datetime_usec)
     end
+
+    create unique_index(:ballots, [:url_slug])
   end
 end

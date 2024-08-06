@@ -86,6 +86,19 @@ defmodule Flick.RankedVotingTest do
       end
     end
 
+    test "failure: `url_slug` must be unique" do
+      ballot_fixture(url_slug: "popular-slug")
+
+      assert {:error, changeset} =
+               RankedVoting.create_ballot(%{
+                 question_title: "What is your favorite color?",
+                 possible_answers: "Red, Green, Blue",
+                 url_slug: "popular-slug"
+               })
+
+      assert "has already been taken" in errors_on(changeset).url_slug
+    end
+
     test "failure: `url_slug` can only contain alphanumeric or hyphens" do
       for bad_value <- [
             "nobangs!",
