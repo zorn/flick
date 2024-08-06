@@ -1,6 +1,6 @@
 defmodule FlickWeb.IndexLiveTest do
   @moduledoc """
-  Verifies the expected logic of the index page.
+  Verifies the expected logic of `FlickWeb.IndexLive`.
 
   http://localhost:4000/
   """
