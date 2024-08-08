@@ -7,8 +7,6 @@ defmodule FlickWeb.Ballots.ViewerLiveTest do
 
   use FlickWeb.ConnCase, async: true
 
-  alias Flick.RankedVoting
-
   test "renders ballot details", ~M{conn} do
     ballot = ballot_fixture()
     assert {:ok, view, _html} = live(conn, view_path(ballot))
@@ -30,8 +28,7 @@ defmodule FlickWeb.Ballots.ViewerLiveTest do
   end
 
   test "hides edit button for non published ballots", ~M{conn} do
-    ballot = ballot_fixture()
-    {:ok, published_ballot} = RankedVoting.publish_ballot(ballot)
+    published_ballot = published_ballot_fixture()
     {:ok, view, _html} = live(conn, view_path(published_ballot))
     refute has_element?(view, "#edit-ballot-button")
   end
@@ -43,15 +40,13 @@ defmodule FlickWeb.Ballots.ViewerLiveTest do
   end
 
   test "hides the publish button for published ballots", ~M{conn} do
-    ballot = ballot_fixture()
-    {:ok, published_ballot} = RankedVoting.publish_ballot(ballot)
+    published_ballot = published_ballot_fixture()
     {:ok, view, _html} = live(conn, view_path(published_ballot))
     refute has_element?(view, "#publish-ballot-button")
   end
 
   test "presents the vote link for a published ballot", ~M{conn} do
-    ballot = ballot_fixture()
-    {:ok, published_ballot} = RankedVoting.publish_ballot(ballot)
+    published_ballot = published_ballot_fixture()
     {:ok, view, _html} = live(conn, view_path(published_ballot))
     assert has_element?(view, "a[href='/#{published_ballot.url_slug}']")
   end
