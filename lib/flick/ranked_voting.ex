@@ -38,6 +38,14 @@ defmodule Flick.RankedVoting do
   end
 
   @doc """
+  Returns a boolean value indicating whether the given
+  `Flick.RankedVoting.Ballot` entity can be updated.
+  """
+  @spec can_update_ballot?(Ballot.t()) :: boolean()
+  def can_update_ballot?(%Ballot{published_at: nil}), do: true
+  def can_update_ballot?(_), do: false
+
+  @doc """
   Publishes the given `Flick.RankedVoting.Ballot` entity.
 
   Once a `Flick.RankedVoting.Ballot` entity is published, it can no longer be updated.

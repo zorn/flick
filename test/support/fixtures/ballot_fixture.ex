@@ -28,4 +28,17 @@ defmodule Support.Fixtures.BallotFixture do
     {:ok, ballot} = Flick.RankedVoting.create_ballot(attrs)
     ballot
   end
+
+  @doc """
+  Creates a `Flick.RankedVoting.Ballot` entity in the `Flick.Repo` for the passed in
+  optional attributes and then publishes the ballot.
+
+  When not provided, all required attributes will be generated.
+  """
+  def published_ballot_fixture(attrs \\ %{}) do
+    attrs = valid_ballot_attributes(attrs)
+    {:ok, ballot} = Flick.RankedVoting.create_ballot(attrs)
+    {:ok, published_ballot} = Flick.RankedVoting.publish_ballot(ballot)
+    published_ballot
+  end
 end

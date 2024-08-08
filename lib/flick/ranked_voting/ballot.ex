@@ -50,6 +50,7 @@ defmodule Flick.RankedVoting.Ballot do
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
     |> validate_possible_answers()
+    |> validate_published_at()
     |> validate_format(:url_slug, ~r/^[a-zA-Z0-9-]+$/,
       message: "can only contain letters, numbers, and hyphens"
     )
@@ -63,6 +64,15 @@ defmodule Flick.RankedVoting.Ballot do
     |> String.split(",")
     |> Enum.map(&String.trim/1)
   end
+
+  def validate_published_at(%Ecto.Changeset{data: %__MODULE__{id: nil}} = changeset) do
+    # We do not want "new" ballots to be created as already published.
+    validate_change(changeset, :published_at, fn :published_at, _updated_value ->
+      [published_at: "new ballots can not be published"]
+    end)
+  end
+
+  def validate_published_at(changeset), do: changeset
 
   defp validate_possible_answers(changeset) do
     # Because we validated the value as `required` before this, we don't need to
