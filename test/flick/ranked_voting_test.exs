@@ -124,6 +124,13 @@ defmodule Flick.RankedVotingTest do
       assert {:error, changeset} = RankedVoting.create_ballot(%{url_slug: too_long_value})
       assert "should be at most 255 character(s)" in errors_on(changeset).url_slug
     end
+
+    test "failure: can not attempt to create a ballot that is already `published`" do
+      assert {:error, changeset} =
+               RankedVoting.create_ballot(%{published_at: ~U[2021-01-01 00:00:00Z]})
+
+      assert "new ballots can not be published" in errors_on(changeset).published_at
+    end
   end
 
   describe "update_ballot/1" do
@@ -156,10 +163,12 @@ defmodule Flick.RankedVotingTest do
     end
 
     test "failure: can not update a published ballot" do
-      ballot = ballot_fixture(%{published_at: DateTime.utc_now()})
+      ballot = ballot_fixture()
+      published_at = DateTime.utc_now()
+      {:ok, published_ballot} = RankedVoting.publish_ballot(ballot, published_at)
 
       assert {:error, :can_not_update_published_ballot} =
-               RankedVoting.update_ballot(ballot, %{title: "some new title"})
+               RankedVoting.update_ballot(published_ballot, %{title: "some new title"})
     end
   end
 
@@ -172,8 +181,10 @@ defmodule Flick.RankedVotingTest do
     end
 
     test "failure: you can not publish a published ballot" do
-      ballot = ballot_fixture(%{published_at: DateTime.utc_now()})
-      assert {:error, :ballot_already_published} = RankedVoting.publish_ballot(ballot)
+      ballot = ballot_fixture()
+      published_at = DateTime.utc_now()
+      assert {:ok, published_ballot} = RankedVoting.publish_ballot(ballot, published_at)
+      assert {:error, :ballot_already_published} = RankedVoting.publish_ballot(published_ballot)
     end
   end
 
