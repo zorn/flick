@@ -42,13 +42,13 @@ defmodule FlickWeb.Ballots.ViewerLive do
 
         <dl>
           <dt class="font-bold">Question Title</dt>
-          <dd class="pb-4"><%= @ballot.question_title %></dd>
+          <dd id="ballot-question-title" class="pb-4"><%= @ballot.question_title %></dd>
           <dt class="font-bold">Possible Answers</dt>
-          <dd class="pb-4"><%= @ballot.possible_answers %></dd>
+          <dd id="ballot-possible-answers" class="pb-4"><%= @ballot.possible_answers %></dd>
           <dt class="font-bold">URL Slug</dt>
-          <dd class="pb-4"><%= @ballot.url_slug %></dd>
+          <dd id="ballot-url-slug" class="pb-4"><%= @ballot.url_slug %></dd>
         </dl>
-        <.button>
+        <.button :if={RankedVoting.can_update_ballot?(@ballot)} id="edit-ballot-button">
           <.link
             navigate={~p"/#{@ballot.url_slug}/#{@ballot.id}/edit"}
             class="text-white no-underline"
@@ -62,16 +62,19 @@ defmodule FlickWeb.Ballots.ViewerLive do
 
       <div class="my-6">
         <%= if @ballot.published_at do %>
-          Published at: <%= @ballot.published_at %>
-        <% else %>
-          <.button phx-click="publish">Publish</.button>
-        <% end %>
-      </div>
+          <div class="prose">
+            <p>This ballot was published at: <%= @ballot.published_at %></p>
 
-      <p>Some ballot detail page.</p>
-      <p id="ballot-question-title"><%= @ballot.question_title %></p>
-      <div>
-        <pre><%= inspect(@ballot, pretty: true) %></pre>
+            <p>
+              You can invite people to vote using the URL:
+              <.link navigate={~p"/#{@ballot.url_slug}"}>
+                <%= URI.append_path(@socket.host_uri, "/#{@ballot.url_slug}") %>
+              </.link>
+            </p>
+          </div>
+        <% else %>
+          <.button phx-click="publish" id="publish-ballot-button">Publish</.button>
+        <% end %>
       </div>
     </div>
     """
