@@ -44,6 +44,7 @@ defmodule Flick.RankedVoting.Vote do
     vote
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
+    |> validate_number(:weight, greater_than_or_equal_to: 0.0)
     |> cast_embed(:ranked_answers,
       with: &RankedAnswer.changeset/2,
       required: true

@@ -361,6 +361,43 @@ defmodule Flick.RankedVotingTest do
   end
 
   describe "change_vote/2" do
-    # TODO
+    setup do
+      ballot =
+        ballot_fixture(
+          question_title: "What's for dinner?",
+          possible_answers: "Pizza, Tacos, Sushi, Burgers"
+        )
+
+      {:ok, ballot} = RankedVoting.publish_ballot(ballot)
+
+      {:ok, vote} =
+        RankedVoting.record_vote(ballot, %{
+          "ranked_answers" => [
+            %{"value" => "Tacos"},
+            %{"value" => "Pizza"},
+            %{"value" => "Burgers"}
+          ]
+        })
+
+      {:ok, published_ballot: ballot, vote: vote}
+    end
+
+    test "generates a valid changeset for a previously created vote", ~M{vote} do
+      assert %Ecto.Changeset{valid?: true} = RankedVoting.change_vote(vote, %{})
+    end
+
+    test "generates a valid changeset when the `weight` change is an empty string", ~M{vote} do
+      # This is because "Empty values are always replaced by the default value
+      # of the respective field."
+      # https://hexdocs.pm/ecto/Ecto.Changeset.html#cast/4-options
+      changeset = RankedVoting.change_vote(vote, %{weight: ""})
+      assert %Ecto.Changeset{valid?: true} = changeset
+    end
+
+    test "generates an invalid changeset for a previously created vote", ~M{vote} do
+      changeset = RankedVoting.change_vote(vote, %{weight: "-1.0"})
+      assert %Ecto.Changeset{valid?: false} = changeset
+      assert "must be greater than or equal to 0.0" in errors_on(changeset).weight
+    end
   end
 end
