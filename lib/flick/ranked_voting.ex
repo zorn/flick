@@ -3,6 +3,8 @@ defmodule Flick.RankedVoting do
   Provides functions related to managing `Flick.RankedVoting.Ballot` entities.
   """
 
+  import Ecto.Query
+
   alias Flick.RankedVoting.Ballot
   alias Flick.RankedVoting.Vote
   alias Flick.Repo
@@ -143,6 +145,10 @@ defmodule Flick.RankedVoting do
     |> Repo.insert()
   end
 
+  def update_vote() do
+    # TODO: Consider changing this function to accept the ballot as an argument and verify the vote they are
+  end
+
   @doc """
   Returns an `Ecto.Changeset` representing changes to a `Flick.RankedVoting.Vote`
   entity.
@@ -162,5 +168,27 @@ defmodule Flick.RankedVoting do
     else
       changeset
     end
+  end
+
+  def list_votes_for_ballot_id(ballot_id) do
+    Vote
+    |> where(ballot_id: ^ballot_id)
+    |> Repo.all()
+  end
+
+  @doc """
+  Returns the number of allowed answers a vote can provide for a ballot.
+
+  This number will match the count of possible answers the ballot has defined,
+  up to a maximum of 5.
+  """
+  @spec allowed_answer_count_for_ballot(Ballot.t()) :: non_neg_integer()
+  def allowed_answer_count_for_ballot(%Ballot{} = ballot) do
+    possible_answer_count =
+      ballot.possible_answers
+      |> Ballot.possible_answers_as_list()
+      |> length()
+
+    min(5, possible_answer_count)
   end
 end
