@@ -20,6 +20,7 @@ defmodule Flick.RankedVoting.Vote do
   @type t :: %__MODULE__{
           id: id(),
           ballot_id: Ballot.id(),
+          weight: float(),
           ranked_answers: [RankedAnswer.t()]
         }
 
@@ -29,11 +30,12 @@ defmodule Flick.RankedVoting.Vote do
   @foreign_key_type :binary_id
   schema "votes" do
     belongs_to :ballot, Ballot
+    field :weight, :float, default: 1.0
     embeds_many :ranked_answers, RankedAnswer, on_replace: :delete
     timestamps(type: :utc_datetime_usec)
   end
 
-  @required_fields [:ballot_id]
+  @required_fields [:ballot_id, :weight]
   @optional_fields []
 
   @spec changeset(t() | struct_t(), map()) ::
