@@ -85,7 +85,8 @@ defmodule Flick.RankedVoting.Vote do
     changeset
   end
 
-  defp validate_ranked_answers_are_not_duplicated(changeset) do
+  defp validate_ranked_answers_are_not_duplicated(%Ecto.Changeset{changes: changes} = changeset)
+       when is_map_key(changes, :ranked_answers) do
     # For all the embedded changesets of `ranked_answers`, check if any are
     # known to be duplicates, and if so add a validation error to those
     # individual changesets.
@@ -116,11 +117,18 @@ defmodule Flick.RankedVoting.Vote do
     |> Map.put(:valid?, new_changes_are_valid)
   end
 
-  def validate_first_ranked_answers_has_valid_value(%Ecto.Changeset{valid?: false} = changeset) do
+  defp validate_ranked_answers_are_not_duplicated(changeset) do
     changeset
   end
 
-  def validate_first_ranked_answers_has_valid_value(changeset) do
+  defp validate_first_ranked_answers_has_valid_value(%Ecto.Changeset{valid?: false} = changeset) do
+    changeset
+  end
+
+  defp validate_first_ranked_answers_has_valid_value(
+         %Ecto.Changeset{changes: changes} = changeset
+       )
+       when is_map_key(changes, :ranked_answers) do
     ranked_answer_changesets =
       Enum.map(Enum.with_index(changeset.changes.ranked_answers), fn {changeset, index} ->
         if index == 0 do
@@ -142,5 +150,9 @@ defmodule Flick.RankedVoting.Vote do
     changeset
     |> Map.put(:changes, new_changes)
     |> Map.put(:valid?, new_changes_are_valid)
+  end
+
+  defp validate_first_ranked_answers_has_valid_value(changeset) do
+    changeset
   end
 end
