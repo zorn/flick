@@ -75,10 +75,9 @@ defmodule Flick.RankedVoting do
   """
   @spec list_ballots() :: [Ballot.t()]
   def list_ballots() do
-    # TODO: Currently there is no expectation regarding the order of the
-    # returned list. We should add something.
-
-    Repo.all(Ballot)
+    Ballot
+    |> order_by([ballot], desc: ballot.inserted_at)
+    |> Repo.all()
   end
 
   @doc """
