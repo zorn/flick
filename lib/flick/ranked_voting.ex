@@ -143,6 +143,14 @@ defmodule Flick.RankedVoting do
     |> Repo.insert()
   end
 
+  @doc """
+  Updates the given `Flick.RankedVoting.Vote` entity with the given attributes.
+
+  The `:weight` field is the only expected edited value.
+
+  If the given `Flick.RankedVoting.Ballot` does not align with the `ballot_id`
+  of the `Flick.RankedVoting.Vote`, then the function will not match.
+  """
   @spec update_vote(Ballot.t(), Vote.t(), map()) ::
           {:ok, Vote.t()} | {:error, Ecto.Changeset.t(Vote.t())}
   def update_vote(%Ballot{id: id}, %Vote{ballot_id: ballot_id} = vote, attrs)
@@ -182,6 +190,11 @@ defmodule Flick.RankedVoting do
     end
   end
 
+  @doc """
+  Returns a list of `Flick.RankedVoting.Vote` entities associated with the given
+  `ballot_id`.
+  """
+  @spec list_votes_for_ballot_id(Ballot.id()) :: [Vote.t()]
   def list_votes_for_ballot_id(ballot_id) do
     Vote
     |> where(ballot_id: ^ballot_id)
