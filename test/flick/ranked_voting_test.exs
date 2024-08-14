@@ -243,7 +243,7 @@ defmodule Flick.RankedVotingTest do
     end
   end
 
-  describe "record_vote/2" do
+  describe "create_vote/2" do
     setup do
       ballot =
         ballot_fixture(
@@ -260,7 +260,7 @@ defmodule Flick.RankedVotingTest do
       published_ballot_id = published_ballot.id
 
       assert {:ok, vote} =
-               RankedVoting.record_vote(published_ballot, %{
+               RankedVoting.create_vote(published_ballot, %{
                  "ranked_answers" => [
                    %{"value" => "Tacos"},
                    %{"value" => "Pizza"},
@@ -284,7 +284,7 @@ defmodule Flick.RankedVotingTest do
       published_ballot_id = published_ballot.id
 
       assert {:ok, vote} =
-               RankedVoting.record_vote(published_ballot, %{
+               RankedVoting.create_vote(published_ballot, %{
                  "ranked_answers" => [
                    %{"value" => "Sushi"},
                    %{"value" => "Pizza"},
@@ -315,7 +315,7 @@ defmodule Flick.RankedVotingTest do
         ]
       }
 
-      assert {:error, changeset} = RankedVoting.record_vote(published_ballot, attrs)
+      assert {:error, changeset} = RankedVoting.create_vote(published_ballot, attrs)
 
       assert "invalid answers: Forbidden Hot Dogs, Illegal Cookies" in errors_on(changeset).ranked_answers
     end
@@ -332,7 +332,7 @@ defmodule Flick.RankedVotingTest do
         ]
       }
 
-      assert {:error, changeset} = RankedVoting.record_vote(published_ballot, attrs)
+      assert {:error, changeset} = RankedVoting.create_vote(published_ballot, attrs)
       %Ecto.Changeset{changes: %{ranked_answers: ranked_answers_changesets}} = changeset
       pizza_1 = Enum.at(ranked_answers_changesets, 0)
       tacos = Enum.at(ranked_answers_changesets, 1)
@@ -353,14 +353,89 @@ defmodule Flick.RankedVotingTest do
         ]
       }
 
-      assert {:error, changeset} = RankedVoting.record_vote(published_ballot, attrs)
+      assert {:error, changeset} = RankedVoting.create_vote(published_ballot, attrs)
       %Ecto.Changeset{changes: %{ranked_answers: ranked_answers_changesets}} = changeset
       first_ranked_answer = Enum.at(ranked_answers_changesets, 0)
       assert "first answer is required" in errors_on(first_ranked_answer).value
     end
   end
 
+  describe "update_vote/2" do
+    setup do
+      ballot =
+        ballot_fixture(
+          question_title: "What's for dinner?",
+          possible_answers: "Pizza, Tacos, Sushi, Burgers"
+        )
+
+      {:ok, published_ballot} = RankedVoting.publish_ballot(ballot)
+
+      {:ok, vote} =
+        RankedVoting.create_vote(published_ballot, %{
+          "ranked_answers" => [
+            %{"value" => "Tacos"},
+            %{"value" => "Pizza"},
+            %{"value" => "Burgers"},
+            %{"value" => "Sushi"}
+          ]
+        })
+
+      {:ok, ballot: ballot, vote: vote}
+    end
+
+    test "success: can update the weight of a previously created vote",
+         ~M{ballot, vote} do
+      assert {:ok, %Vote{weight: 2.1}} = RankedVoting.update_vote(ballot, vote, %{weight: 2.1})
+    end
+
+    test "success: can not update the ranked answers", ~M{ballot, vote} do
+      assert {:ok, ^vote} = RankedVoting.update_vote(ballot, vote, %{"ranked_answers" => []})
+    end
+
+    test "success: can not update the associated ballot", ~M{ballot, vote} do
+      change = %{"ballot_id" => Ecto.UUID.generate()}
+      assert {:ok, ^vote} = RankedVoting.update_vote(ballot, vote, change)
+    end
+  end
+
   describe "change_vote/2" do
-    # TODO
+    setup do
+      ballot =
+        ballot_fixture(
+          question_title: "What's for dinner?",
+          possible_answers: "Pizza, Tacos, Sushi, Burgers"
+        )
+
+      {:ok, ballot} = RankedVoting.publish_ballot(ballot)
+
+      {:ok, vote} =
+        RankedVoting.create_vote(ballot, %{
+          "ranked_answers" => [
+            %{"value" => "Tacos"},
+            %{"value" => "Pizza"},
+            %{"value" => "Burgers"}
+          ]
+        })
+
+      {:ok, published_ballot: ballot, vote: vote}
+    end
+
+    test "generates a valid changeset for a previously created vote", ~M{vote} do
+      assert %Ecto.Changeset{valid?: true} = RankedVoting.change_vote(vote, %{})
+    end
+
+    test "generates a valid changeset when the `weight` change is an empty string", ~M{vote} do
+      # This is because "Empty values are always replaced by the default value
+      # of the respective field."
+      # https://hexdocs.pm/ecto/Ecto.Changeset.html#cast/4-options
+      changeset = RankedVoting.change_vote(vote, %{weight: ""})
+      assert %Ecto.Changeset{valid?: true} = changeset
+    end
+
+    test "generates an invalid changeset for a previously created vote", ~M{vote} do
+      changeset = RankedVoting.change_vote(vote, %{weight: "-1.0"})
+      assert %Ecto.Changeset{valid?: false} = changeset
+      assert "must be greater than or equal to 0.0" in errors_on(changeset).weight
+    end
   end
 end

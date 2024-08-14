@@ -7,7 +7,6 @@ defmodule FlickWeb.Vote.VoteCaptureLive do
   use FlickWeb, :live_view
 
   alias Flick.RankedVoting
-  alias Flick.RankedVoting.Ballot
   alias Flick.RankedVoting.Vote
   alias Phoenix.LiveView.Socket
 
@@ -29,8 +28,7 @@ defmodule FlickWeb.Vote.VoteCaptureLive do
     %{ballot: ballot} = socket.assigns
 
     # We'll generate ranked answer values for each possible answer in the ballot, up to 5.
-    possible_answer_count = Ballot.possible_answers_as_list(ballot.possible_answers) |> length()
-    ranked_answer_count = min(5, possible_answer_count)
+    ranked_answer_count = RankedVoting.allowed_answer_count_for_ballot(ballot)
     ranked_answers = Enum.map(1..ranked_answer_count, fn _ -> %{value: nil} end)
 
     vote_params = %{ballot_id: ballot.id, ranked_answers: ranked_answers}
@@ -47,7 +45,7 @@ defmodule FlickWeb.Vote.VoteCaptureLive do
   def handle_event("save", %{"vote" => vote_params}, socket) do
     %{ballot: ballot} = socket.assigns
 
-    case RankedVoting.record_vote(ballot, vote_params) do
+    case RankedVoting.create_vote(ballot, vote_params) do
       {:ok, _vote} ->
         socket
         |> put_flash(:info, "Vote recorded.")

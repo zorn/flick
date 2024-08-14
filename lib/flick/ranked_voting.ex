@@ -3,6 +3,8 @@ defmodule Flick.RankedVoting do
   Provides functions related to managing `Flick.RankedVoting.Ballot` entities.
   """
 
+  import Ecto.Query
+
   alias Flick.RankedVoting.Ballot
   alias Flick.RankedVoting.Vote
   alias Flick.Repo
@@ -73,10 +75,9 @@ defmodule Flick.RankedVoting do
   """
   @spec list_ballots() :: [Ballot.t()]
   def list_ballots() do
-    # TODO: Currently there is no expectation regarding the order of the
-    # returned list. We should add something.
-
-    Repo.all(Ballot)
+    Ballot
+    |> order_by([ballot], desc: ballot.inserted_at)
+    |> Repo.all()
   end
 
   @doc """
@@ -95,8 +96,7 @@ defmodule Flick.RankedVoting do
   Raises `Ecto.NoResultsError` if no entity was found.
   """
   @spec get_ballot_by_url_slug!(String.t()) :: Ballot.t()
-  def get_ballot_by_url_slug!(url_slug)
-      when is_binary(url_slug) do
+  def get_ballot_by_url_slug!(url_slug) when is_binary(url_slug) do
     Repo.get_by!(Ballot, url_slug: url_slug)
   end
 
@@ -134,18 +134,38 @@ defmodule Flick.RankedVoting do
   @doc """
   Records a vote for the given `Flick.RankedVoting.Ballot` entity.
   """
-  @spec record_vote(Ballot.t(), map()) :: {:ok, Vote.t()} | {:error, Ecto.Changeset.t(Vote.t())}
-  def record_vote(ballot, attrs) do
+  @spec create_vote(Ballot.t(), map()) :: {:ok, Vote.t()} | {:error, Ecto.Changeset.t(Vote.t())}
+  def create_vote(ballot, attrs) do
     attrs = Map.put(attrs, "ballot_id", ballot.id)
 
     %Vote{}
-    |> Vote.changeset(attrs)
+    |> Vote.create_changeset(attrs)
     |> Repo.insert()
   end
 
   @doc """
-  Returns an `Ecto.Changeset` representing changes to a `Flick.RankedVoting.Vote`
-  entity.
+  Updates the given `Flick.RankedVoting.Vote` entity with the given attributes.
+
+  The `:weight` field is the only expected edited value.
+
+  If the given `Flick.RankedVoting.Ballot` does not align with the `ballot_id`
+  of the `Flick.RankedVoting.Vote`, then the function will not match.
+  """
+  @spec update_vote(Ballot.t(), Vote.t(), map()) ::
+          {:ok, Vote.t()} | {:error, Ecto.Changeset.t(Vote.t())}
+  def update_vote(%Ballot{id: id}, %Vote{ballot_id: ballot_id} = vote, attrs)
+      when id == ballot_id do
+    vote
+    |> Vote.update_changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Returns an `Ecto.Changeset` to changes to a `Flick.RankedVoting.Vote` value.
+
+  If the incoming `vote` struct has an `id`, the changeset will be created for
+  updating, else creation. See `Flick.RankedVoting.Vote.create_changeset/2` and
+  `Flick.RankedVoting.Vote.update_changeset/2` for more details.
 
   ## Options
 
@@ -155,12 +175,46 @@ defmodule Flick.RankedVoting do
   @spec change_vote(Vote.t() | Vote.struct_t(), map()) :: Ecto.Changeset.t(Vote.t())
   def change_vote(%Vote{} = vote, attrs, opts \\ []) do
     opts = Keyword.validate!(opts, action: nil)
-    changeset = Vote.changeset(vote, attrs)
+
+    changeset =
+      if vote.id do
+        Vote.update_changeset(vote, attrs)
+      else
+        Vote.create_changeset(vote, attrs)
+      end
 
     if opts[:action] do
       Map.put(changeset, :action, opts[:action])
     else
       changeset
     end
+  end
+
+  @doc """
+  Returns a list of `Flick.RankedVoting.Vote` entities associated with the given
+  `ballot_id`.
+  """
+  @spec list_votes_for_ballot_id(Ballot.id()) :: [Vote.t()]
+  def list_votes_for_ballot_id(ballot_id) do
+    Vote
+    |> where(ballot_id: ^ballot_id)
+    |> order_by([vote], asc: vote.id)
+    |> Repo.all()
+  end
+
+  @doc """
+  Returns the number of allowed answers a vote can provide for a ballot.
+
+  This number will match the count of possible answers the ballot has defined,
+  up to a maximum of 5.
+  """
+  @spec allowed_answer_count_for_ballot(Ballot.t()) :: non_neg_integer()
+  def allowed_answer_count_for_ballot(%Ballot{} = ballot) do
+    possible_answer_count =
+      ballot.possible_answers
+      |> Ballot.possible_answers_as_list()
+      |> length()
+
+    min(5, possible_answer_count)
   end
 end
