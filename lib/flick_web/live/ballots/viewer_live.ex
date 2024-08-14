@@ -2,6 +2,8 @@ defmodule FlickWeb.Ballots.ViewerLive do
   @moduledoc """
   A live view that presents a the detail presentation for a
   `Flick.RankedVoting.Ballot` entity.
+
+  TODO: Add docs about the socket assign state we keep and why. Maybe as a Elixir type?
   """
 
   use FlickWeb, :live_view
@@ -16,25 +18,20 @@ defmodule FlickWeb.Ballots.ViewerLive do
     %{"url_slug" => url_slug, "secret" => secret} = params
 
     ballot = RankedVoting.get_ballot_by_url_slug_and_secret!(url_slug, secret)
-    votes = RankedVoting.list_votes_for_ballot_id(ballot.id)
 
     socket
     |> assign(:page_title, "View Ballot: #{ballot.question_title}")
     |> assign(:ballot, ballot)
-    |> assign(:votes, votes)
+    |> assign_votes()
     |> assign(:vote_forms, %{})
     |> ok()
   end
 
-  # @spec assign_vote_forms(Socket.t(), [Vote.t()]) :: Socket.t()
-  # defp assign_vote_forms(socket, votes) when is_list(votes) do
-  #   vote_forms =
-  #     Enum.reduce(votes, %{}, fn vote, acc ->
-  #       Map.put(acc, vote.id, to_form(RankedVoting.change_vote(vote, %{})))
-  #     end)
-
-  #   assign(socket, vote_forms: vote_forms, show_vote_form_ids: [])
-  # end
+  defp assign_votes(socket) do
+    %{ballot: ballot} = socket.assigns
+    votes = RankedVoting.list_votes_for_ballot_id(ballot.id)
+    assign(socket, votes: votes)
+  end
 
   @impl Phoenix.LiveView
   def handle_event("publish", _params, socket) do
@@ -50,61 +47,66 @@ defmodule FlickWeb.Ballots.ViewerLive do
   end
 
   def handle_event("present-inline-editor", %{"vote-id" => vote_id}, socket) do
+    vote = assert_vote_id(socket, vote_id)
+
     # To present the inline editor we need only create the form and store it in
     # the assigns.
     socket
     |> update(:vote_forms, fn current_vote_forms ->
-      vote = Enum.find(socket.assigns.votes, &(&1.id == vote_id))
-
-      if vote do
-        vote_form = to_form(RankedVoting.change_vote(vote, %{}))
-        Map.put(current_vote_forms, vote_id, vote_form)
-      else
-        current_vote_forms
-      end
+      vote_form = to_form(RankedVoting.change_vote(vote, %{}))
+      Map.put(current_vote_forms, vote_id, vote_form)
     end)
     |> noreply()
   end
 
   def handle_event("dismiss-inline-editor", %{"vote-id" => vote_id}, socket) do
-    # To dismiss the inline editor we need only remove the form from the assigns.
+    vote = assert_vote_id(socket, vote_id)
 
+    # To dismiss the inline editor we need only remove the form from the assigns.
     socket
     |> update(:vote_forms, fn current_vote_forms ->
-      Map.delete(current_vote_forms, vote_id)
+      Map.delete(current_vote_forms, vote.id)
     end)
     |> noreply()
   end
 
   def handle_event("validate", params, socket) do
     %{"vote_id" => vote_id, "weight" => weight} = params
+    vote = assert_vote_id(socket, vote_id)
 
     socket
     |> update(:vote_forms, fn current_vote_forms ->
-      vote = Enum.find(socket.assigns.votes, &(&1.id == vote_id))
-
-      dbg(current_vote_forms)
-
-      if vote do
-        vote_form =
-          vote
-          |> RankedVoting.change_vote(%{weight: weight}, action: :validate)
-          |> to_form()
-          |> dbg()
-
-        Map.put(current_vote_forms, vote_id, vote_form)
-      end
+      change = %{weight: weight}
+      vote_form = to_form(RankedVoting.change_vote(vote, change, action: :validate))
+      Map.put(current_vote_forms, vote_id, vote_form)
     end)
     |> noreply()
   end
 
   def handle_event("save", params, socket) do
-    dbg(params)
+    %{"vote_id" => vote_id, "weight" => weight} = params
+    vote = assert_vote_id(socket, vote_id)
+    %{ballot: ballot} = socket.assigns
 
-    # The `params` will include a `vote_id` but we need to verify that it aligns with the ballot being viewed by this
+    case RankedVoting.update_vote(ballot, vote, %{weight: weight}) do
+      {:ok, _vote} ->
+        socket
+        |> update(:vote_forms, fn current_vote_forms ->
+          Map.delete(current_vote_forms, vote_id)
+        end)
+        # TODO: This is a expensive, and we might consider a more efficient
+        # solution, maybe using streams?
+        |> assign_votes()
+        |> noreply()
 
-    socket
-    |> noreply()
+      {:error, changeset} ->
+        socket
+        |> put_flash(:error, "Could not update vote.")
+        |> update(:vote_forms, fn current_vote_forms ->
+          Map.put(current_vote_forms, vote_id, to_form(changeset))
+        end)
+        |> noreply()
+    end
   end
 
   @impl Phoenix.LiveView
@@ -180,11 +182,13 @@ defmodule FlickWeb.Ballots.ViewerLive do
             phx-submit="save"
           >
             <input type="hidden" name="vote_id" , value={vote.id} />
+            <%!-- TODO: In the future we should draw red outline here when invalid. --%>
+            <%!-- https://github.com/zorn/flick/issues/37 --%>
             <input
               type="text"
               name="weight"
               value={Phoenix.HTML.Form.input_value(form, :weight)}
-              class="w-12 rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6 phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400 border-zinc-300 focus:border-zinc-400"
+              class="w-16 rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6 phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400 border-zinc-300 focus:border-zinc-400"
               autofocus
             />
             <.button>Save</.button>
@@ -213,18 +217,12 @@ defmodule FlickWeb.Ballots.ViewerLive do
     """
   end
 
-  # defp present_inline_editor(js \\ %JS{}, vote) do
-  #   js
-  #   |> JS.hide(to: "#weight-view-cell-content-#{vote.id}")
-  #   |> JS.show(to: "#weight-editor-cell-content-#{vote.id}")
-  #   |> JS.focus(to: "#weight-editor-cell-content-#{vote.id} input")
-  # end
-
-  # defp dismiss_inline_editor(js \\ %JS{}, vote) do
-  #   js
-  #   |> JS.hide(to: "#weight-editor-cell-content-#{vote.id}")
-  #   |> JS.show(to: "#weight-view-cell-content-#{vote.id}")
-  # end
+  defp assert_vote_id(socket, vote_id) do
+    # Helper for events that are accepting a `vote_id` parameter. If the
+    # frontend sends us a `vote_id` that is not known to this instance of the
+    # live view, crash -- they are sus.
+    %Vote{id: ^vote_id} = Enum.find(socket.assigns.votes, &(&1.id == vote_id))
+  end
 
   defp form_for_vote(vote_forms, vote) do
     Map.get(vote_forms, vote.id)
