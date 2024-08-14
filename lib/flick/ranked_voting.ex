@@ -134,9 +134,8 @@ defmodule Flick.RankedVoting do
   @doc """
   Records a vote for the given `Flick.RankedVoting.Ballot` entity.
   """
-  # TODO: Consider renaming to `create_vote` to be more inline with the rest of the module.
-  @spec record_vote(Ballot.t(), map()) :: {:ok, Vote.t()} | {:error, Ecto.Changeset.t(Vote.t())}
-  def record_vote(ballot, attrs) do
+  @spec create_vote(Ballot.t(), map()) :: {:ok, Vote.t()} | {:error, Ecto.Changeset.t(Vote.t())}
+  def create_vote(ballot, attrs) do
     attrs = Map.put(attrs, "ballot_id", ballot.id)
 
     %Vote{}

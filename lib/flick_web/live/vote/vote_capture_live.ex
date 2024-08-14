@@ -45,7 +45,7 @@ defmodule FlickWeb.Vote.VoteCaptureLive do
   def handle_event("save", %{"vote" => vote_params}, socket) do
     %{ballot: ballot} = socket.assigns
 
-    case RankedVoting.record_vote(ballot, vote_params) do
+    case RankedVoting.create_vote(ballot, vote_params) do
       {:ok, _vote} ->
         socket
         |> put_flash(:info, "Vote recorded.")

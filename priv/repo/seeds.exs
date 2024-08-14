@@ -33,7 +33,7 @@ for _ <- 1..25 do
   third_answer = Enum.random([third_answer, ""])
 
   {:ok, _vote} =
-    Flick.RankedVoting.record_vote(published_ballot, %{
+    Flick.RankedVoting.create_vote(published_ballot, %{
       "ranked_answers" => [
         %{"value" => first_answer},
         %{"value" => second_answer},
