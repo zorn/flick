@@ -35,16 +35,17 @@ defmodule Flick.RankedVoting.Vote do
     timestamps(type: :utc_datetime_usec)
   end
 
-  @required_fields [:ballot_id, :weight]
-  @optional_fields []
+  @doc """
+  Returns an `Ecto.Changeset` value appropriate for creating a
+  `Flick.RankedVoting.Vote` entity.
 
-  @spec changeset(t() | struct_t(), map()) ::
-          Ecto.Changeset.t(t()) | Ecto.Changeset.t(struct_t())
-  def changeset(vote, attrs) do
+  The `weight` field can not be set during creation and will default to `1.0`.
+  """
+  @spec create_changeset(struct_t(), map()) :: Ecto.Changeset.t(struct_t())
+  def create_changeset(vote, attrs) do
     vote
-    |> cast(attrs, @required_fields ++ @optional_fields)
-    |> validate_required(@required_fields)
-    |> validate_number(:weight, greater_than_or_equal_to: 0.0)
+    |> cast(attrs, [:ballot_id])
+    |> validate_required([:ballot_id])
     |> cast_embed(:ranked_answers,
       with: &RankedAnswer.changeset/2,
       required: true
@@ -52,6 +53,20 @@ defmodule Flick.RankedVoting.Vote do
     |> validate_ranked_answers_are_present_in_ballot()
     |> validate_ranked_answers_are_not_duplicated()
     |> validate_first_ranked_answers_has_valid_value()
+  end
+
+  @doc """
+  Returns an `Ecto.Changeset` value appropriate for updating a
+  `Flick.RankedVoting.Vote` entity.
+
+  Only `weight` can be updated.
+  """
+  @spec update_changeset(t(), map()) :: Ecto.Changeset.t(t())
+  def update_changeset(vote, attrs) do
+    vote
+    |> cast(attrs, [:weight])
+    |> validate_required([:weight])
+    |> validate_number(:weight, greater_than_or_equal_to: 0.0)
   end
 
   defp validate_ranked_answers_are_present_in_ballot(changeset) do

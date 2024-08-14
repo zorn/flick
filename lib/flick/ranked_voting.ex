@@ -136,22 +136,31 @@ defmodule Flick.RankedVoting do
   @doc """
   Records a vote for the given `Flick.RankedVoting.Ballot` entity.
   """
+  # TODO: Consider renaming to `create_vote` to be more inline with the rest of the module.
   @spec record_vote(Ballot.t(), map()) :: {:ok, Vote.t()} | {:error, Ecto.Changeset.t(Vote.t())}
   def record_vote(ballot, attrs) do
     attrs = Map.put(attrs, "ballot_id", ballot.id)
 
     %Vote{}
-    |> Vote.changeset(attrs)
+    |> Vote.create_changeset(attrs)
     |> Repo.insert()
   end
 
-  def update_vote() do
-    # TODO: Consider changing this function to accept the ballot as an argument and verify the vote they are
+  @spec update_vote(Ballot.t(), Vote.t(), map()) ::
+          {:ok, Vote.t()} | {:error, Ecto.Changeset.t(Vote.t())}
+  def update_vote(%Ballot{id: id}, %Vote{ballot_id: ballot_id} = vote, attrs)
+      when id == ballot_id do
+    vote
+    |> Vote.update_changeset(attrs)
+    |> Repo.update()
   end
 
   @doc """
-  Returns an `Ecto.Changeset` representing changes to a `Flick.RankedVoting.Vote`
-  entity.
+  Returns an `Ecto.Changeset` to changes to a `Flick.RankedVoting.Vote` value.
+
+  If the incoming `vote` struct has an `id`, the changeset will be created for
+  updating, else creation. See `Flick.RankedVoting.Vote.create_changeset/2` and
+  `Flick.RankedVoting.Vote.update_changeset/2` for more details.
 
   ## Options
 
@@ -161,7 +170,13 @@ defmodule Flick.RankedVoting do
   @spec change_vote(Vote.t() | Vote.struct_t(), map()) :: Ecto.Changeset.t(Vote.t())
   def change_vote(%Vote{} = vote, attrs, opts \\ []) do
     opts = Keyword.validate!(opts, action: nil)
-    changeset = Vote.changeset(vote, attrs)
+
+    changeset =
+      if vote.id do
+        Vote.update_changeset(vote, attrs)
+      else
+        Vote.create_changeset(vote, attrs)
+      end
 
     if opts[:action] do
       Map.put(changeset, :action, opts[:action])
@@ -173,6 +188,7 @@ defmodule Flick.RankedVoting do
   def list_votes_for_ballot_id(ballot_id) do
     Vote
     |> where(ballot_id: ^ballot_id)
+    |> order_by([vote], asc: vote.id)
     |> Repo.all()
   end
 

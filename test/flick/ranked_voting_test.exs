@@ -360,6 +360,44 @@ defmodule Flick.RankedVotingTest do
     end
   end
 
+  describe "update_vote/2" do
+    setup do
+      ballot =
+        ballot_fixture(
+          question_title: "What's for dinner?",
+          possible_answers: "Pizza, Tacos, Sushi, Burgers"
+        )
+
+      {:ok, published_ballot} = RankedVoting.publish_ballot(ballot)
+
+      {:ok, vote} =
+        RankedVoting.record_vote(published_ballot, %{
+          "ranked_answers" => [
+            %{"value" => "Tacos"},
+            %{"value" => "Pizza"},
+            %{"value" => "Burgers"},
+            %{"value" => "Sushi"}
+          ]
+        })
+
+      {:ok, ballot: ballot, vote: vote}
+    end
+
+    test "success: can update the weight of a previously created vote",
+         ~M{ballot, vote} do
+      assert {:ok, %Vote{weight: 2.1}} = RankedVoting.update_vote(ballot, vote, %{weight: 2.1})
+    end
+
+    test "success: can not update the ranked answers", ~M{ballot, vote} do
+      assert {:ok, ^vote} = RankedVoting.update_vote(ballot, vote, %{"ranked_answers" => []})
+    end
+
+    test "success: can not update the associated ballot", ~M{ballot, vote} do
+      change = %{"ballot_id" => Ecto.UUID.generate()}
+      assert {:ok, ^vote} = RankedVoting.update_vote(ballot, vote, change)
+    end
+  end
+
   describe "change_vote/2" do
     setup do
       ballot =
