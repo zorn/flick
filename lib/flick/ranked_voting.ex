@@ -96,8 +96,7 @@ defmodule Flick.RankedVoting do
   Raises `Ecto.NoResultsError` if no entity was found.
   """
   @spec get_ballot_by_url_slug!(String.t()) :: Ballot.t()
-  def get_ballot_by_url_slug!(url_slug)
-      when is_binary(url_slug) do
+  def get_ballot_by_url_slug!(url_slug) when is_binary(url_slug) do
     Repo.get_by!(Ballot, url_slug: url_slug)
   end
 
