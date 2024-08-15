@@ -436,4 +436,80 @@ defmodule Flick.RankedVotingTest do
       assert "must be greater than or equal to 0.0" in errors_on(changeset).weight
     end
   end
+
+  describe "get_vote_report/1" do
+    setup do
+      ballot =
+        published_ballot_fixture(
+          question_title: "What's for dinner?",
+          possible_answers: "Pizza, Tacos, Sushi, Burgers"
+        )
+
+      {:ok, ballot: ballot}
+    end
+
+    test "returns expected vote report", ~M{ballot} do
+      {:ok, _vote} =
+        RankedVoting.create_vote(ballot, %{
+          "ranked_answers" => [
+            # 5 points
+            %{"value" => "Burgers"},
+            # 4 points
+            %{"value" => "Pizza"},
+            # 3 points
+            %{"value" => "Tacos"},
+            # 2 points
+            %{"value" => "Sushi"}
+          ]
+        })
+
+      assert [
+               %{points: 5.0, value: "Burgers"},
+               %{points: 4.0, value: "Pizza"},
+               %{points: 3.0, value: "Tacos"},
+               %{points: 2.0, value: "Sushi"}
+             ] =
+               RankedVoting.get_vote_report(ballot.id)
+    end
+
+    test "returns expected vote report when a custom weight is used", ~M{ballot} do
+      # Create a vote, it will have a weight of 1.
+      {:ok, _vote} =
+        RankedVoting.create_vote(ballot, %{
+          "ranked_answers" => [
+            # 5 points
+            %{"value" => "Tacos"},
+            # 4 points
+            %{"value" => "Pizza"},
+            # 3 points
+            %{"value" => "Burgers"}
+          ]
+        })
+
+      # Create a second vote and give it a weight of 2.
+      {:ok, vote} =
+        RankedVoting.create_vote(ballot, %{
+          "ranked_answers" => [
+            # 10 points
+            %{"value" => "Sushi"},
+            # 8 points
+            %{"value" => "Burgers"},
+            # 6 points
+            %{"value" => "Pizza"},
+            # 4 points
+            %{"value" => "Tacos"}
+          ]
+        })
+
+      {:ok, _vote} = RankedVoting.update_vote(ballot, vote, %{weight: 2})
+
+      assert [
+               %{points: 11.0, value: "Burgers"},
+               %{points: 10.0, value: "Pizza"},
+               %{points: 10.0, value: "Sushi"},
+               %{points: 9.0, value: "Tacos"}
+             ] =
+               RankedVoting.get_vote_report(ballot.id)
+    end
+  end
 end

@@ -202,6 +202,68 @@ defmodule Flick.RankedVoting do
     |> Repo.all()
   end
 
+  @typedoc """
+  A list of reports for each possible answer of a ballot, with a tally of points.
+  """
+  @type vote_report :: [%{value: String.t(), points: float()}]
+
+  @doc """
+  Returns a report presenting each possible answer of the given ballot with a
+  tally of points.
+
+  When calculating the points:
+
+  - 5 points are awarded for the first preference
+  - 4 points are awarded for the second preference
+  - 3 points are awarded for the third preference
+  - 2 points are awarded for the fourth preference
+  - 1 point is awarded for the fifth preference
+
+  These numbers are multiplied by the weight of the vote.
+  """
+  @spec get_vote_report(Ballot.id()) :: vote_report()
+  def get_vote_report(ballot_id) do
+    ballot = get_ballot!(ballot_id)
+    answers = Ballot.possible_answers_as_list(ballot.possible_answers)
+    votes = list_votes_for_ballot_id(ballot_id)
+
+    reports =
+      Enum.reduce(answers, [], fn answer, acc ->
+        answer_report = %{
+          value: answer,
+          points: points_for_answer_in_votes(votes, answer)
+        }
+
+        [answer_report | acc]
+      end)
+
+    reports
+    |> Enum.sort(&(&1.value <= &2.value))
+    |> Enum.sort(&(&1.points >= &2.points))
+  end
+
+  @spec points_for_answer_in_votes([Vote.t()], any()) :: float()
+  defp points_for_answer_in_votes(votes, answer) do
+    # Return the total points for the given answer across all votes while taking
+    # account of the weight of each vote.
+
+    Enum.reduce(votes, 0, fn vote, total ->
+      ranked_answer_index =
+        Enum.find_index(vote.ranked_answers, fn ranked_answer ->
+          ranked_answer.value == answer
+        end)
+
+      case ranked_answer_index do
+        nil -> total
+        0 -> total + 5 * vote.weight
+        1 -> total + 4 * vote.weight
+        2 -> total + 3 * vote.weight
+        3 -> total + 2 * vote.weight
+        4 -> total + 1 * vote.weight
+      end
+    end)
+  end
+
   @doc """
   Returns the number of allowed answers a vote can provide for a ballot.
 
