@@ -401,12 +401,10 @@ defmodule Flick.RankedVotingTest do
   describe "change_vote/2" do
     setup do
       ballot =
-        ballot_fixture(
+        published_ballot_fixture(
           question_title: "What's for dinner?",
           possible_answers: "Pizza, Tacos, Sushi, Burgers"
         )
-
-      {:ok, ballot} = RankedVoting.publish_ballot(ballot)
 
       {:ok, vote} =
         RankedVoting.create_vote(ballot, %{
