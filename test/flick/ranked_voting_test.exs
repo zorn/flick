@@ -163,12 +163,10 @@ defmodule Flick.RankedVotingTest do
     end
 
     test "failure: can not update a published ballot" do
-      ballot = ballot_fixture()
-      published_at = DateTime.utc_now()
-      {:ok, published_ballot} = RankedVoting.publish_ballot(ballot, published_at)
+      ballot = published_ballot_fixture()
 
       assert {:error, :can_not_update_published_ballot} =
-               RankedVoting.update_ballot(published_ballot, %{title: "some new title"})
+               RankedVoting.update_ballot(ballot, %{title: "some new title"})
     end
   end
 
