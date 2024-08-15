@@ -435,7 +435,7 @@ defmodule Flick.RankedVotingTest do
     end
   end
 
-  describe "get_vote_report/1" do
+  describe "get_ballot_results_report/1" do
     setup do
       ballot =
         published_ballot_fixture(
@@ -467,7 +467,7 @@ defmodule Flick.RankedVotingTest do
                %{points: 3.0, value: "Tacos"},
                %{points: 2.0, value: "Sushi"}
              ] =
-               RankedVoting.get_vote_report(ballot.id)
+               RankedVoting.get_ballot_results_report(ballot.id)
     end
 
     test "returns expected vote report when a custom weight is used", ~M{ballot} do
@@ -507,7 +507,7 @@ defmodule Flick.RankedVotingTest do
                %{points: 10.0, value: "Sushi"},
                %{points: 9.0, value: "Tacos"}
              ] =
-               RankedVoting.get_vote_report(ballot.id)
+               RankedVoting.get_ballot_results_report(ballot.id)
     end
   end
 end

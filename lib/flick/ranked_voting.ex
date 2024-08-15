@@ -203,13 +203,13 @@ defmodule Flick.RankedVoting do
   end
 
   @typedoc """
-  A list of reports for each possible answer of a ballot, with a tally of points.
+  A report describing the voting results for a ballot, displaying each possible
+  answer and the point total it received.
   """
-  @type vote_report :: [%{value: String.t(), points: float()}]
+  @type ballot_results_report :: [%{value: String.t(), points: float()}]
 
   @doc """
-  Returns a report presenting each possible answer of the given ballot with a
-  tally of points.
+  Returns a `t:ballot_results_report/0` for the passed in ballot id.
 
   When calculating the points:
 
@@ -221,8 +221,8 @@ defmodule Flick.RankedVoting do
 
   These numbers are multiplied by the weight of the vote.
   """
-  @spec get_vote_report(Ballot.id()) :: vote_report()
-  def get_vote_report(ballot_id) do
+  @spec get_ballot_results_report(Ballot.id()) :: ballot_results_report()
+  def get_ballot_results_report(ballot_id) do
     ballot = get_ballot!(ballot_id)
     answers = Ballot.possible_answers_as_list(ballot.possible_answers)
     votes = list_votes_for_ballot_id(ballot_id)
@@ -244,9 +244,9 @@ defmodule Flick.RankedVoting do
 
   @spec points_for_answer_in_votes([Vote.t()], any()) :: float()
   defp points_for_answer_in_votes(votes, answer) do
-    # Return the total points for the given answer across all votes while taking
-    # account of the weight of each vote.
-
+    # Returns the total points for the given answer across all votes while taking
+    # into account the index of the answer in the full list of ranked answers
+    # and the weight of each vote.
     Enum.reduce(votes, 0, fn vote, total ->
       ranked_answer_index =
         Enum.find_index(vote.ranked_answers, fn ranked_answer ->

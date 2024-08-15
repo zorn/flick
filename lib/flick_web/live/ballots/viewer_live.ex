@@ -30,8 +30,8 @@ defmodule FlickWeb.Ballots.ViewerLive do
   defp assign_votes(socket) do
     %{ballot: ballot} = socket.assigns
     votes = RankedVoting.list_votes_for_ballot_id(ballot.id)
-    vote_report = RankedVoting.get_vote_report(ballot.id)
-    assign(socket, votes: votes, vote_report: vote_report)
+    ballot_results_report = RankedVoting.get_ballot_results_report(ballot.id)
+    assign(socket, votes: votes, ballot_results_report: ballot_results_report)
   end
 
   @impl Phoenix.LiveView
@@ -155,7 +155,7 @@ defmodule FlickWeb.Ballots.ViewerLive do
       <div class="prose mb-8">
         <h3>Vote Results</h3>
         <ol>
-          <%= for %{points: points, value: answer} <- @vote_report do %>
+          <%= for %{points: points, value: answer} <- @ballot_results_report do %>
             <li><%= answer %>: <%= points %> points</li>
           <% end %>
         </ol>
