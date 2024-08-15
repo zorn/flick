@@ -244,9 +244,9 @@ defmodule Flick.RankedVoting do
 
   @spec points_for_answer_in_votes([Vote.t()], any()) :: float()
   defp points_for_answer_in_votes(votes, answer) do
-    # Returns the total points for the given answer across all votes while taking
-    # into account the index of the answer in the full list of ranked answers
-    # and the weight of each vote.
+    # Returns the total points for the given answer across all votes while
+    # taking into account the index of the answer in the full list of ranked
+    # answers and the weight of each vote.
     Enum.reduce(votes, 0, fn vote, total ->
       ranked_answer_index =
         Enum.find_index(vote.ranked_answers, fn ranked_answer ->
