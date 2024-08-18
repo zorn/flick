@@ -50,6 +50,7 @@ defmodule Flick.RankedVoting.Vote do
       with: &RankedAnswer.changeset/2,
       required: true
     )
+    |> validate_ballot_is_published()
     |> validate_ranked_answers_are_present_in_ballot()
     |> validate_ranked_answers_are_not_duplicated()
     |> validate_first_ranked_answers_has_valid_value()
@@ -67,6 +68,18 @@ defmodule Flick.RankedVoting.Vote do
     |> cast(attrs, [:weight])
     |> validate_required([:weight])
     |> validate_number(:weight, greater_than_or_equal_to: 0.0)
+  end
+
+  defp validate_ballot_is_published(changeset) do
+    ballot = Flick.RankedVoting.get_ballot!(get_field(changeset, :ballot_id))
+
+    validate_change(changeset, :ballot_id, fn :ballot_id, _ ->
+      if is_nil(ballot.published_at) do
+        [ballot_id: gettext("ballot must be published")]
+      else
+        []
+      end
+    end)
   end
 
   defp validate_ranked_answers_are_present_in_ballot(changeset) do
