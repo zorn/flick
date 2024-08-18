@@ -21,6 +21,7 @@ defmodule Flick.RankedVoting.Vote do
           id: id(),
           ballot_id: Ballot.id(),
           weight: float(),
+          full_name: String.t() | nil,
           ranked_answers: [RankedAnswer.t()]
         }
 
@@ -31,6 +32,7 @@ defmodule Flick.RankedVoting.Vote do
   schema "votes" do
     belongs_to :ballot, Ballot
     field :weight, :float, default: 1.0
+    field :full_name, :string
     embeds_many :ranked_answers, RankedAnswer, on_replace: :delete
     timestamps(type: :utc_datetime_usec)
   end
@@ -44,7 +46,7 @@ defmodule Flick.RankedVoting.Vote do
   @spec create_changeset(struct_t(), map()) :: Ecto.Changeset.t(struct_t())
   def create_changeset(vote, attrs) do
     vote
-    |> cast(attrs, [:ballot_id])
+    |> cast(attrs, [:ballot_id, :full_name])
     |> validate_required([:ballot_id])
     |> cast_embed(:ranked_answers,
       with: &RankedAnswer.changeset/2,
