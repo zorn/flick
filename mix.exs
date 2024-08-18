@@ -38,6 +38,9 @@ defmodule Flick.MixProject do
       # To allow our test descriptions to use a condensed map syntax.
       {:tiny_maps, "~> 3.0"},
 
+      # For generating seed and test data.
+      {:faker, "~> 0.18", only: [:dev, :test]},
+
       # Unorganized
       {:bandit, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
