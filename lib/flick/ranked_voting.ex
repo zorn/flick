@@ -198,7 +198,7 @@ defmodule Flick.RankedVoting do
   def list_votes_for_ballot_id(ballot_id) do
     Vote
     |> where(ballot_id: ^ballot_id)
-    |> order_by([vote], asc: vote.id)
+    |> order_by([vote], desc: vote.inserted_at)
     |> Repo.all()
   end
 
