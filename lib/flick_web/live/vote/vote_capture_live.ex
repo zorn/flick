@@ -63,11 +63,20 @@ defmodule FlickWeb.Vote.VoteCaptureLive do
   def render(assigns) do
     ~H"""
     <div>
-      <div id="question-title"><%= @ballot.question_title %></div>
+
+      <div>
+      <p>Use the form below to submit your vote.</p>
+      </div>
 
       <.simple_form for={@form} phx-change="validate" phx-submit="save">
         <%!-- I wonder if we should drop this hidden and just inject the id manually? --%>
         <.input type="hidden" field={@form[:ballot_id]} value={@ballot.id} />
+        <.input field={@form[:full_name]} label="Name (Optional)"/>
+
+        <div id="question-title" class="prose">
+          <h2><%= @ballot.question_title %></h2>
+        </div>
+
         <.inputs_for :let={ranked_answer_form} field={@form[:ranked_answers]}>
           <.input
             field={ranked_answer_form[:value]}
@@ -77,7 +86,7 @@ defmodule FlickWeb.Vote.VoteCaptureLive do
           />
         </.inputs_for>
         <:actions>
-          <.button>Record Vote</.button>
+          <.button>Submit Vote</.button>
         </:actions>
       </.simple_form>
     </div>
@@ -86,11 +95,11 @@ defmodule FlickWeb.Vote.VoteCaptureLive do
 
   defp answer_label("vote_ranked_answers_" <> number = _form_id) do
     case number do
-      "0" -> "1st Choice"
-      "1" -> "2nd Choice"
-      "2" -> "3rd Choice"
-      "3" -> "4th Choice"
-      "4" -> "5th Choice"
+      "0" -> "First Preference"
+      "1" -> "Second Preference (Optional)"
+      "2" -> "Third Preference (Optional)"
+      "3" -> "Fourth Preference (Optional)"
+      "4" -> "Fifth Preference (Optional)"
     end
   end
 
