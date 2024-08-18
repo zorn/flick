@@ -1,6 +1,8 @@
 defmodule FlickWeb.Router do
   use FlickWeb, :router
 
+  import Plug.BasicAuth
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -10,16 +12,22 @@ defmodule FlickWeb.Router do
     plug :put_secure_browser_headers
   end
 
+  pipeline :admin do
+    plug :basic_auth, Application.compile_env(:flick, :basic_auth)
+  end
+
   pipeline :api do
     plug :accepts, ["json"]
   end
 
+  scope "/admin", FlickWeb do
+    pipe_through [:browser, :admin]
+
+    live "/ballots", Ballots.IndexLive, :index
+  end
+
   scope "/", FlickWeb do
     pipe_through :browser
-
-    # TODO: Protect this path.
-    # https://github.com/zorn/flick/issues/29
-    live "/admin/ballots", Ballots.IndexLive, :index
 
     live "/", IndexLive, :index
     live "/create-ballot", Ballots.EditorLive, :new
@@ -27,11 +35,6 @@ defmodule FlickWeb.Router do
     live "/:url_slug/:secret/edit", Ballots.EditorLive, :edit
     live "/:url_slug", Vote.VoteCaptureLive, :new
   end
-
-  # Other scopes may use custom stacks.
-  # scope "/api", FlickWeb do
-  #   pipe_through :api
-  # end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:flick, :dev_routes) do

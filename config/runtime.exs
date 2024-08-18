@@ -65,6 +65,11 @@ if config_env() == :prod do
     ],
     secret_key_base: secret_key_base
 
+  # We do basic auth for the admin index in production.
+  config :flick, :basic_auth,
+    username: System.get_env("BASIC_AUTH_ADMIN_USERNAME"),
+    password: System.get_env("BASIC_AUTH_ADMIN_PASSWORD")
+
   # ## SSL Support
   #
   # To get SSL working, you will need to add the `https` key
