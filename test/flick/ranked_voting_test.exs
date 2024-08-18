@@ -302,6 +302,16 @@ defmodule Flick.RankedVotingTest do
              } = vote
     end
 
+    test "success: a vote can contain an optional `full_name` value", ~M{published_ballot} do
+      published_ballot_id = published_ballot.id
+      assert {:ok, %Vote{ballot_id: ^published_ballot_id, full_name: "John Doe"}} =
+               RankedVoting.create_vote(published_ballot, %{
+                 "ranked_answers" => [%{"value" => "Sushi"}],
+                 "full_name" => "John Doe"
+               })
+
+    end
+
     test "failure: a vote should not include an answer value that is not present in the ballot",
          %{
            published_ballot: published_ballot

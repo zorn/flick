@@ -166,10 +166,8 @@ defmodule FlickWeb.Ballots.ViewerLive do
       </div>
 
       <.table id="votes" rows={@votes} row_id={&"vote-row-#{&1.id}"}>
-        <:col :let={vote} label="ID">
-          <%!-- This will be replace with name in the future. --%>
-          <%!-- https://github.com/zorn/flick/issues/34 --%>
-          <%= vote.id %>
+        <:col :let={vote} label="Name">
+          <%= vote.full_name || "No Name" %>
         </:col>
         <:col :let={vote} label="Weight">
           <div :if={!form_for_vote(@vote_forms, vote)}>

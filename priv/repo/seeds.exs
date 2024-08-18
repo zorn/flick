@@ -32,8 +32,11 @@ for _ <- 1..25 do
   # answer, since a user need not always provide a full ranked list answer.
   third_answer = Enum.random([third_answer, ""])
 
+  full_name = if Enum.random(1..5) > 1, do: Faker.Person.name()
+
   {:ok, _vote} =
     Flick.RankedVoting.create_vote(published_ballot, %{
+      "full_name" => full_name,
       "ranked_answers" => [
         %{"value" => first_answer},
         %{"value" => second_answer},
