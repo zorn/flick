@@ -356,6 +356,12 @@ defmodule Flick.RankedVotingTest do
       first_ranked_answer = Enum.at(ranked_answers_changesets, 0)
       assert "first answer is required" in errors_on(first_ranked_answer).value
     end
+
+    test "failure: a vote can not be created for an unpublished ballot" do
+      unpublished_ballot = ballot_fixture()
+      assert {:error, changeset} = RankedVoting.create_vote(unpublished_ballot, %{})
+      assert "ballot must be published" in errors_on(changeset).ballot_id
+    end
   end
 
   describe "update_vote/2" do
