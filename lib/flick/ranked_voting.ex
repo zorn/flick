@@ -202,6 +202,68 @@ defmodule Flick.RankedVoting do
     |> Repo.all()
   end
 
+  @typedoc """
+  A report describing the voting results for a ballot, displaying each possible
+  answer and the point total it received.
+  """
+  @type ballot_results_report :: [%{value: String.t(), points: float()}]
+
+  @doc """
+  Returns a `t:ballot_results_report/0` for the passed in ballot id.
+
+  When calculating the points:
+
+  - 5 points are awarded for the first preference
+  - 4 points are awarded for the second preference
+  - 3 points are awarded for the third preference
+  - 2 points are awarded for the fourth preference
+  - 1 point is awarded for the fifth preference
+
+  These numbers are multiplied by the weight of the vote.
+  """
+  @spec get_ballot_results_report(Ballot.id()) :: ballot_results_report()
+  def get_ballot_results_report(ballot_id) do
+    ballot = get_ballot!(ballot_id)
+    answers = Ballot.possible_answers_as_list(ballot.possible_answers)
+    votes = list_votes_for_ballot_id(ballot_id)
+
+    reports =
+      Enum.reduce(answers, [], fn answer, acc ->
+        answer_report = %{
+          value: answer,
+          points: points_for_answer_in_votes(votes, answer)
+        }
+
+        [answer_report | acc]
+      end)
+
+    reports
+    |> Enum.sort(&(&1.value <= &2.value))
+    |> Enum.sort(&(&1.points >= &2.points))
+  end
+
+  @spec points_for_answer_in_votes([Vote.t()], any()) :: float()
+  defp points_for_answer_in_votes(votes, answer) do
+    # Returns the total points for the given answer across all votes while
+    # taking into account the index of the answer in the full list of ranked
+    # answers and the weight of each vote.
+    Enum.reduce(votes, 0, fn vote, total ->
+      ranked_answer_index =
+        Enum.find_index(vote.ranked_answers, fn ranked_answer ->
+          ranked_answer.value == answer
+        end)
+
+      case ranked_answer_index do
+        nil -> total
+        0 -> total + 5 * vote.weight
+        1 -> total + 4 * vote.weight
+        2 -> total + 3 * vote.weight
+        3 -> total + 2 * vote.weight
+        4 -> total + 1 * vote.weight
+      end
+    end)
+  end
+
   @doc """
   Returns the number of allowed answers a vote can provide for a ballot.
 

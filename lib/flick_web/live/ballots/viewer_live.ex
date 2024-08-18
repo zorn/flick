@@ -30,7 +30,8 @@ defmodule FlickWeb.Ballots.ViewerLive do
   defp assign_votes(socket) do
     %{ballot: ballot} = socket.assigns
     votes = RankedVoting.list_votes_for_ballot_id(ballot.id)
-    assign(socket, votes: votes)
+    ballot_results_report = RankedVoting.get_ballot_results_report(ballot.id)
+    assign(socket, votes: votes, ballot_results_report: ballot_results_report)
   end
 
   @impl Phoenix.LiveView
@@ -151,13 +152,17 @@ defmodule FlickWeb.Ballots.ViewerLive do
         <% end %>
       </div>
 
-      <div class="prose">
+      <div class="prose mb-8">
         <h3>Vote Results</h3>
-        <p>A table showing the tallied vote results would go here.</p>
+        <ol>
+          <%= for %{points: points, value: answer} <- @ballot_results_report do %>
+            <li><%= answer %>: <%= points %> points</li>
+          <% end %>
+        </ol>
       </div>
 
-      <div class="prose">
-        <h3>Votes (Add Total Count)</h3>
+      <div class="prose mb-4">
+        <h3>Votes (<%= length(@votes) %>)</h3>
       </div>
 
       <.table id="votes" rows={@votes} row_id={&"vote-row-#{&1.id}"}>
@@ -197,19 +202,19 @@ defmodule FlickWeb.Ballots.ViewerLive do
             </.link>
           </.form>
         </:col>
-        <:col :let={vote} :if={show_answer(@ballot, 0)} label="First Preference">
+        <:col :let={vote} :if={show_answer(@ballot, 0)} label="First Preference (5pts)">
           <%= answer_at_index(vote, 0) %>
         </:col>
-        <:col :let={vote} :if={show_answer(@ballot, 1)} label="Second Preference">
+        <:col :let={vote} :if={show_answer(@ballot, 1)} label="Second Preference (4pts)">
           <%= answer_at_index(vote, 1) %>
         </:col>
-        <:col :let={vote} :if={show_answer(@ballot, 2)} label="Third Preference">
+        <:col :let={vote} :if={show_answer(@ballot, 2)} label="Third Preference (3pts)">
           <%= answer_at_index(vote, 2) %>
         </:col>
-        <:col :let={vote} :if={show_answer(@ballot, 3)} label="Fourth Preference">
+        <:col :let={vote} :if={show_answer(@ballot, 3)} label="Fourth Preference (2pts)">
           <%= answer_at_index(vote, 3) %>
         </:col>
-        <:col :let={vote} :if={show_answer(@ballot, 4)} label="Fifth Preference">
+        <:col :let={vote} :if={show_answer(@ballot, 4)} label="Fifth Preference (1pt)">
           <%= answer_at_index(vote, 4) %>
         </:col>
       </.table>
