@@ -109,7 +109,7 @@ defmodule Flick.RankedVoting do
   @spec get_ballot_by_url_slug_and_secret!(String.t(), String.t()) :: Ballot.t()
   def get_ballot_by_url_slug_and_secret!(url_slug, secret)
       when is_binary(url_slug) and is_binary(secret) do
-    Repo.get_by!(Ballot, url_slug: url_slug, id: secret)
+    Repo.get_by!(Ballot, url_slug: url_slug, secret: secret)
   end
 
   @doc """

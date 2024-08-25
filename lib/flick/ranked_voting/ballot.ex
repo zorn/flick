@@ -19,6 +19,8 @@ defmodule Flick.RankedVoting.Ballot do
   @type t :: %__MODULE__{
           id: Ecto.UUID.t(),
           question_title: String.t(),
+          url_slug: String.t(),
+          secret: Ecto.UUID.t(),
           possible_answers: String.t(),
           published_at: DateTime.t() | nil
         }
@@ -36,6 +38,7 @@ defmodule Flick.RankedVoting.Ballot do
   schema "ballots" do
     field :question_title, :string
     field :url_slug, :string
+    field :secret, :binary_id, read_after_writes: true
     field :possible_answers, :string
     field :published_at, :utc_datetime_usec
     timestamps(type: :utc_datetime_usec)

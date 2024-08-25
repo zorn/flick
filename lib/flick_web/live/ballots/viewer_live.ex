@@ -141,9 +141,9 @@ defmodule FlickWeb.Ballots.ViewerLive do
             <p>This ballot was published at: <%= @ballot.published_at %></p>
 
             <p>
-              You can invite people to vote using the URL:
+              You can invite people to vote using the URL:<br />
               <.link navigate={~p"/ballot/#{@ballot.url_slug}"}>
-                <%= URI.append_path(@socket.host_uri, "/#{@ballot.url_slug}") %>
+                <%= URI.append_path(@socket.host_uri, "/ballot/#{@ballot.url_slug}") %>
               </.link>
             </p>
           </div>

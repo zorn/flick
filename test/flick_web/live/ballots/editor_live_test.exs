@@ -39,7 +39,7 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
       # Assert upon submit the page redirects, and the ballot was created.
       assert {:error, {:redirect, %{to: redirect_target}}} = response
       assert "/ballot/favorite-color/" <> secret = redirect_target
-      assert %Ballot{url_slug: "favorite-color"} = RankedVoting.get_ballot!(secret)
+      assert %Ballot{} = RankedVoting.get_ballot_by_url_slug_and_secret!("favorite-color", secret)
     end
 
     test "failure: `question_title` is required", ~M{view} do
@@ -61,7 +61,7 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
   describe "When used for editing, eg: `/ballot/<url-slug>/<secret>/edit`" do
     setup ~M{conn} do
       ballot = ballot_fixture()
-      {:ok, view, _html} = live(conn, ~p"/ballot/#{ballot.url_slug}/#{ballot.id}/edit")
+      {:ok, view, _html} = live(conn, ~p"/ballot/#{ballot.url_slug}/#{ballot.secret}/edit")
       ~M{conn, view, ballot}
     end
 
@@ -96,7 +96,7 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
                question_title: "new-title",
                possible_answers: "purple, pink, yellow",
                url_slug: "new-url-slug"
-             } = RankedVoting.get_ballot!(secret)
+             } = RankedVoting.get_ballot_by_url_slug_and_secret!("new-url-slug", secret)
     end
   end
 
