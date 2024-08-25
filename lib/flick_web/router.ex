@@ -30,7 +30,7 @@ defmodule FlickWeb.Router do
     pipe_through :browser
 
     live "/", IndexLive, :index
-    live "/create-ballot", Ballots.EditorLive, :new
+    live "/ballot/new", Ballots.EditorLive, :new
     live "/ballot/:url_slug/:secret", Ballots.ViewerLive, :edit
     live "/ballot/:url_slug/:secret/edit", Ballots.EditorLive, :edit
     live "/ballot/:url_slug", Vote.VoteCaptureLive, :new

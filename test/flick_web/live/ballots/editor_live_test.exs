@@ -11,9 +11,9 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
   alias Flick.RankedVoting.Ballot
   alias Flick.RankedVoting
 
-  describe "When used for creation, eg: `/create-ballot`" do
+  describe "When used for creation, eg: `/ballot/new`" do
     setup ~M{conn} do
-      {:ok, view, _html} = live(conn, ~p"/create-ballot")
+      {:ok, view, _html} = live(conn, ~p"/ballot/new")
       ~M{conn, view}
     end
 
