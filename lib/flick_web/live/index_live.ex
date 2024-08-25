@@ -20,7 +20,7 @@ defmodule FlickWeb.IndexLive do
         Flick is an application that allows you to create ballots that capture ranked votes.
       </p>
 
-      <p><.link navigate={~p"/create-ballot"}>Create a ballot</.link> and try it out.</p>
+      <p><.link navigate={~p"/ballot/new"}>Create a ballot</.link> and try it out.</p>
     </div>
     """
   end

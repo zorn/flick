@@ -127,7 +127,7 @@ defmodule FlickWeb.Ballots.ViewerLive do
         </dl>
         <.button :if={RankedVoting.can_update_ballot?(@ballot)} id="edit-ballot-button">
           <.link
-            navigate={~p"/#{@ballot.url_slug}/#{@ballot.id}/edit"}
+            navigate={~p"/ballot/#{@ballot.url_slug}/#{@ballot.id}/edit"}
             class="text-white no-underline"
           >
             Edit Ballot
@@ -142,7 +142,7 @@ defmodule FlickWeb.Ballots.ViewerLive do
 
             <p>
               You can invite people to vote using the URL:
-              <.link navigate={~p"/#{@ballot.url_slug}"}>
+              <.link navigate={~p"/ballot/#{@ballot.url_slug}"}>
                 <%= URI.append_path(@socket.host_uri, "/#{@ballot.url_slug}") %>
               </.link>
             </p>

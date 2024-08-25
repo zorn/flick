@@ -22,6 +22,6 @@ defmodule FlickWeb.IndexLiveTest do
 
   test "contains link to create a ballot", ~M{conn} do
     {:ok, view, _html} = live(conn, ~p"/")
-    assert has_element?(view, "a[href='/create-ballot']", "Create a ballot")
+    assert has_element?(view, "a[href='/ballot/new']", "Create a ballot")
   end
 end

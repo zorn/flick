@@ -17,7 +17,7 @@ defmodule FlickWeb.Ballots.ViewerLiveTest do
 
   test "responds with 404 when no ballot is found", ~M{conn} do
     assert_raise Ecto.NoResultsError, fn ->
-      live(conn, ~p"/ballots/#{Ecto.UUID.generate()}")
+      live(conn, ~p"/ballot/unknown-slug")
     end
   end
 
@@ -35,7 +35,7 @@ defmodule FlickWeb.Ballots.ViewerLiveTest do
 
   test "presents the publish button for non published ballots", ~M{conn} do
     ballot = ballot_fixture()
-    assert {:ok, view, _html} = live(conn, ~p"/#{ballot.url_slug}/#{ballot.id}")
+    assert {:ok, view, _html} = live(conn, ~p"/ballot/#{ballot.url_slug}/#{ballot.id}")
     assert has_element?(view, "#publish-ballot-button")
   end
 
@@ -48,10 +48,10 @@ defmodule FlickWeb.Ballots.ViewerLiveTest do
   test "presents the vote link for a published ballot", ~M{conn} do
     published_ballot = published_ballot_fixture()
     {:ok, view, _html} = live(conn, view_path(published_ballot))
-    assert has_element?(view, "a[href='/#{published_ballot.url_slug}']")
+    assert has_element?(view, "a[href='/ballot/#{published_ballot.url_slug}']")
   end
 
   defp view_path(ballot) do
-    ~p"/#{ballot.url_slug}/#{ballot.id}"
+    ~p"/ballot/#{ballot.url_slug}/#{ballot.id}"
   end
 end

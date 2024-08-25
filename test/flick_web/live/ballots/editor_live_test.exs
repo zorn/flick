@@ -11,9 +11,9 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
   alias Flick.RankedVoting.Ballot
   alias Flick.RankedVoting
 
-  describe "When used for creation, eg: `/create-ballot`" do
+  describe "When used for creation, eg: `/ballot/new`" do
     setup ~M{conn} do
-      {:ok, view, _html} = live(conn, ~p"/create-ballot")
+      {:ok, view, _html} = live(conn, ~p"/ballot/new")
       ~M{conn, view}
     end
 
@@ -38,7 +38,7 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
 
       # Assert upon submit the page redirects, and the ballot was created.
       assert {:error, {:redirect, %{to: redirect_target}}} = response
-      assert "/favorite-color/" <> secret = redirect_target
+      assert "/ballot/favorite-color/" <> secret = redirect_target
       assert %Ballot{url_slug: "favorite-color"} = RankedVoting.get_ballot!(secret)
     end
 
@@ -58,10 +58,10 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
     end
   end
 
-  describe "When used for editing, eg: `/<url-slug>/<secret>/edit`" do
+  describe "When used for editing, eg: `/ballot/<url-slug>/<secret>/edit`" do
     setup ~M{conn} do
       ballot = ballot_fixture()
-      {:ok, view, _html} = live(conn, ~p"/#{ballot.url_slug}/#{ballot.id}/edit")
+      {:ok, view, _html} = live(conn, ~p"/ballot/#{ballot.url_slug}/#{ballot.id}/edit")
       ~M{conn, view, ballot}
     end
 
@@ -89,7 +89,7 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
       # Assert upon submit the page redirects, and the ballot was edited, and
       # maintains it's identity.
       assert {:error, {:redirect, %{to: redirect_target}}} = response
-      assert "/new-url-slug/" <> secret = redirect_target
+      assert "/ballot/new-url-slug/" <> secret = redirect_target
 
       assert %Ballot{
                id: ^expected_id,
