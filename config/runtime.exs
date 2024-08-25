@@ -31,7 +31,10 @@ if config_env() == :prod do
   maybe_ipv6 = if System.get_env("ECTO_IPV6") in ~w(true 1), do: [:inet6], else: []
 
   config :flick, Flick.Repo,
-    ssl: true,
+    # If I want to have this I need to provide a certificate.
+    # setting ssl: true on your database connection offers only limited protection,
+    # as the server's certificate is not verified. Set "ssl: [cacertfile: path/to/file]" instead
+    # ssl: true,
     url: database_url,
     pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
     socket_options: maybe_ipv6,
