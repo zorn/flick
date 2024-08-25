@@ -73,7 +73,7 @@ if config_env() == :prod do
   basic_auth_username =
     System.get_env("BASIC_AUTH_ADMIN_USERNAME") ||
       raise """
-      Environment variable SECRET_KEY_BASE is missing.
+      Environment variable BASIC_AUTH_ADMIN_USERNAME is missing.
       """
 
   basic_auth_password =
