@@ -131,6 +131,11 @@ defmodule Flick.RankedVotingTest do
 
       assert "new ballots can not be published" in errors_on(changeset).published_at
     end
+
+    test "success: `secret` is created after row insertion" do
+      %Ballot{secret: secret} = ballot_fixture()
+      assert is_uuid_string?(secret)
+    end
   end
 
   describe "update_ballot/1" do
@@ -526,4 +531,15 @@ defmodule Flick.RankedVotingTest do
                RankedVoting.get_ballot_results_report(ballot.id)
     end
   end
+
+  defp is_uuid_string?(value) when byte_size(value) > 16 do
+    # More info on why the byte_size check is necessary:
+    # https://fosstodon.org/@tylerayoung/112872657415154548
+    case Ecto.UUID.cast(value) do
+      {:ok, _} -> true
+      _ -> false
+    end
+  end
+
+  defp is_uuid_string?(_), do: false
 end
