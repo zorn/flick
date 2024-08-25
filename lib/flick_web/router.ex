@@ -13,9 +13,7 @@ defmodule FlickWeb.Router do
   end
 
   pipeline :admin do
-    # The use of `get_env/2` is temp.
-    # https://github.com/zorn/flick/issues/56
-    plug :basic_auth, Application.get_env(:flick, :basic_auth)
+    plug :basic_auth, Application.compile_env(:flick, :basic_auth)
   end
 
   pipeline :api do

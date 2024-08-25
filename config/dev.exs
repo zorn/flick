@@ -29,9 +29,6 @@ config :flick, FlickWeb.Endpoint,
     tailwind: {Tailwind, :install_and_run, [:flick, ~w(--watch)]}
   ]
 
-# Basic HTTP authentication for the `/admin` pages.
-config :flick, :basic_auth, username: "flick-admin", password: "unsafe-password"
-
 # ## SSL Support
 #
 # In order to use HTTPS in development, a self-signed

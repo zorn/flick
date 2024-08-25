@@ -70,9 +70,21 @@ if config_env() == :prod do
     secret_key_base: secret_key_base
 
   # We do basic auth for the admin index in production.
+  basic_auth_username =
+    System.get_env("BASIC_AUTH_ADMIN_USERNAME") ||
+      raise """
+      Environment variable BASIC_AUTH_ADMIN_USERNAME is missing.
+      """
+
+  basic_auth_password =
+    System.get_env("BASIC_AUTH_ADMIN_PASSWORD") ||
+      raise """
+      Environment variable BASIC_AUTH_ADMIN_PASSWORD is missing.
+      """
+
   config :flick, :basic_auth,
-    username: System.get_env("BASIC_AUTH_ADMIN_USERNAME"),
-    password: System.get_env("BASIC_AUTH_ADMIN_PASSWORD")
+    username: basic_auth_username,
+    password: basic_auth_password
 
   # ## SSL Support
   #

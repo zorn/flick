@@ -22,6 +22,14 @@ config :flick, FlickWeb.Endpoint,
   pubsub_server: Flick.PubSub,
   live_view: [signing_salt: "D3iFdkff"]
 
+# We do basic auth for the admin index in production.
+#
+# During a deployment build, we expect these environment variables to be set,
+# otherwise we'll put in some defaults.
+config :flick, :basic_auth,
+  username: System.get_env("BASIC_AUTH_ADMIN_USERNAME", "flick-admin"),
+  password: System.get_env("BASIC_AUTH_ADMIN_PASSWORD", "unsafe-password")
+
 # Configures the mailer
 #
 # By default it uses the "Local" adapter which stores the emails
