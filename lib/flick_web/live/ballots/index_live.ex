@@ -38,7 +38,7 @@ defmodule FlickWeb.Ballots.IndexLive do
         <.link :if={ballot.published_at} href={~p"/ballot/#{ballot.url_slug}"}>Voting Page</.link>
       </:col>
       <:col :let={ballot}>
-        <.link href={~p"/ballot/#{ballot.url_slug}/#{ballot.id}"}>Ballot Details</.link>
+        <.link href={~p"/ballot/#{ballot.url_slug}/#{ballot.secret}"}>Ballot Details</.link>
       </:col>
     </.table>
     """

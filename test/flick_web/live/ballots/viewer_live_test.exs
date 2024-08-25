@@ -35,7 +35,7 @@ defmodule FlickWeb.Ballots.ViewerLiveTest do
 
   test "presents the publish button for non published ballots", ~M{conn} do
     ballot = ballot_fixture()
-    assert {:ok, view, _html} = live(conn, ~p"/ballot/#{ballot.url_slug}/#{ballot.id}")
+    assert {:ok, view, _html} = live(conn, ~p"/ballot/#{ballot.url_slug}/#{ballot.secret}")
     assert has_element?(view, "#publish-ballot-button")
   end
 
@@ -52,6 +52,6 @@ defmodule FlickWeb.Ballots.ViewerLiveTest do
   end
 
   defp view_path(ballot) do
-    ~p"/ballot/#{ballot.url_slug}/#{ballot.id}"
+    ~p"/ballot/#{ballot.url_slug}/#{ballot.secret}"
   end
 end
