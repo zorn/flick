@@ -60,7 +60,7 @@ defmodule FlickWeb.Ballots.EditorLive do
 
     case RankedVoting.update_ballot(ballot, ballot_params) do
       {:ok, ballot} ->
-        {:noreply, redirect(socket, to: ~p"/#{ballot.url_slug}/#{ballot.id}")}
+        {:noreply, redirect(socket, to: ~p"/ballot/#{ballot.url_slug}/#{ballot.id}")}
 
       {:error, changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}
@@ -72,7 +72,7 @@ defmodule FlickWeb.Ballots.EditorLive do
 
     case RankedVoting.create_ballot(ballot_params) do
       {:ok, ballot} ->
-        {:noreply, redirect(socket, to: ~p"/#{ballot.url_slug}/#{ballot.id}")}
+        {:noreply, redirect(socket, to: ~p"/ballot/#{ballot.url_slug}/#{ballot.id}")}
 
       {:error, changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}

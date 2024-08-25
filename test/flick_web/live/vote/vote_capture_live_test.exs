@@ -19,7 +19,7 @@ defmodule FlickWeb.Vote.VoteCaptureLiveTest do
 
     {:ok, ballot} = Flick.RankedVoting.publish_ballot(ballot)
 
-    {:ok, view, _html} = live(conn, ~p"/movie-night")
+    {:ok, view, _html} = live(conn, ~p"/ballot/movie-night")
     ~M{conn, view, ballot}
   end
 
