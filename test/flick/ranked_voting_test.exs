@@ -351,9 +351,9 @@ defmodule Flick.RankedVotingTest do
       tacos = Enum.at(ranked_answers_changesets, 1)
       pizza_2 = Enum.at(ranked_answers_changesets, 2)
 
-      assert "answers must not be duplicated" in errors_on(pizza_1).value
+      assert "duplicates are not allowed" in errors_on(pizza_1).value
       assert %{} == errors_on(tacos)
-      assert "answers must not be duplicated" in errors_on(pizza_2).value
+      assert "duplicates are not allowed" in errors_on(pizza_2).value
     end
 
     test "failure: a vote needs to include at least one ranked answer", ~M{published_ballot} do
@@ -369,7 +369,7 @@ defmodule Flick.RankedVotingTest do
       assert {:error, changeset} = RankedVoting.create_vote(published_ballot, attrs)
       %Ecto.Changeset{changes: %{ranked_answers: ranked_answers_changesets}} = changeset
       first_ranked_answer = Enum.at(ranked_answers_changesets, 0)
-      assert "first answer is required" in errors_on(first_ranked_answer).value
+      assert "can't be blank" in errors_on(first_ranked_answer).value
     end
 
     test "failure: a vote can not be created for an unpublished ballot" do
