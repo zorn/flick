@@ -7,8 +7,8 @@ defmodule Flick.RankedVotingTest do
 
   alias Flick.RankedVoting
   alias Flick.RankedVoting.Ballot
-  alias Flick.RankedVoting.Vote
   alias Flick.RankedVoting.RankedAnswer
+  alias Flick.RankedVoting.Vote
 
   @empty_values ["", nil, " "]
 
