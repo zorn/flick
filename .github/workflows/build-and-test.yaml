@@ -22,8 +22,8 @@ jobs:
     strategy:
       # TODO: It would be better to pull these from the `.tool-versions` file.
       matrix:
-        otp: ["26.0.2"]
-        elixir: ["1.15.5"]
+        otp: ["27.0.1"]
+        elixir: ["1.17.2"]
 
     services:
       db:
