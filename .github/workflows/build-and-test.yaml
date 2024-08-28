@@ -19,11 +19,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       MIX_ENV: test
-    strategy:
-      # TODO: It would be better to pull these from the `.tool-versions` file.
-      matrix:
-        otp: ["27.0.1"]
-        elixir: ["1.17.2"]
 
     services:
       db:
@@ -45,8 +40,6 @@ jobs:
       - name: Setup Elixir Project
         uses: ./.github/actions/elixir-setup
         with:
-          elixir-version: ${{ matrix.elixir }}
-          otp-version: ${{ matrix.otp }}
           build-flags: --all-warnings --warnings-as-errors
 
       - name: Run Migrations

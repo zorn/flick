@@ -16,11 +16,6 @@ jobs:
   quality_checks:
     name: Formatting, Credo, and Unused Deps
     runs-on: ubuntu-latest
-    strategy:
-      # TODO: It would be better to pull these from the `.tool-versions` file.
-      matrix:
-        otp: ["27.0.1"]
-        elixir: ["1.17.2"]
 
     steps:
       - name: Checkout repository
@@ -29,8 +24,6 @@ jobs:
       - name: Setup Elixir Project
         uses: ./.github/actions/elixir-setup
         with:
-          elixir-version: ${{ matrix.elixir }}
-          otp-version: ${{ matrix.otp }}
           build-app: false
 
       - name: Check for unused deps

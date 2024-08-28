@@ -18,11 +18,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       MIX_ENV: dev
-    strategy:
-      # TODO: It would be better to pull these from the `.tool-versions` file.
-      matrix:
-        otp: ["27.0.1"]
-        elixir: ["1.17.2"]
 
     steps:
       - name: Checkout repository
@@ -32,8 +27,6 @@ jobs:
         uses: ./.github/actions/elixir-setup
         id: beam
         with:
-          elixir-version: ${{ matrix.elixir }}
-          otp-version: ${{ matrix.otp }}
           build-app: false
 
       # Don't cache PLTs based on mix.lock hash, as Dialyzer can incrementally update even old ones

@@ -65,8 +65,8 @@ runs:
       uses: erlef/setup-beam@v1
       id: beam
       with:
-        elixir-version: ${{ inputs.elixir-version }}
-        otp-version: ${{ inputs.otp-version }}
+        version-file: .tool-versions
+        version-type: strict
 
     - name: Get deps cache
       uses: actions/cache@v4
