@@ -9,6 +9,7 @@ defmodule Flick.RankedVoting.Vote do
   import Ecto.Changeset
   import FlickWeb.Gettext
 
+  alias Ecto.Changeset
   alias Flick.RankedVoting.Ballot
   alias Flick.RankedVoting.RankedAnswer
 
@@ -43,7 +44,7 @@ defmodule Flick.RankedVoting.Vote do
 
   The `weight` field can not be set during creation and will default to `1.0`.
   """
-  @spec create_changeset(struct_t(), map()) :: Ecto.Changeset.t(struct_t())
+  @spec create_changeset(struct_t(), map()) :: Changeset.t(struct_t())
   def create_changeset(vote, attrs) do
     vote
     |> cast(attrs, [:ballot_id, :full_name])
@@ -64,7 +65,7 @@ defmodule Flick.RankedVoting.Vote do
 
   Only `weight` can be updated.
   """
-  @spec update_changeset(t(), map()) :: Ecto.Changeset.t(t())
+  @spec update_changeset(t(), map()) :: Changeset.t(t())
   def update_changeset(vote, attrs) do
     vote
     |> cast(attrs, [:weight])
@@ -85,22 +86,10 @@ defmodule Flick.RankedVoting.Vote do
   end
 
   defp validate_ranked_answers_are_present_in_ballot(changeset) do
-    ballot = Flick.RankedVoting.get_ballot!(get_field(changeset, :ballot_id))
-    possible_answers = Ballot.possible_answers_as_list(ballot.possible_answers) ++ ["", nil]
-
     validate_change(changeset, :ranked_answers, fn :ranked_answers, new_ranked_answers ->
       # For each of the `ranked_answers`, make sure the answer value is present
       # in the ballot's possible answers.
-      invalid_answers =
-        Enum.reduce(new_ranked_answers, [], fn changeset, acc ->
-          ranked_answer_value = get_field(changeset, :value)
-
-          if Enum.member?(possible_answers, ranked_answer_value) do
-            acc
-          else
-            acc ++ [ranked_answer_value]
-          end
-        end)
+      invalid_answers = invalid_answers(changeset, new_ranked_answers)
 
       if length(invalid_answers) > 0 do
         error_label = ngettext("invalid answer", "invalid answers", length(invalid_answers))
@@ -111,14 +100,30 @@ defmodule Flick.RankedVoting.Vote do
     end)
   end
 
-  defp validate_ranked_answers_are_not_duplicated(%Ecto.Changeset{valid?: false} = changeset) do
+  @spec invalid_answers(Changeset.t(t()), [Changeset.t(RankedAnswer.t())]) :: [String.t()]
+  defp invalid_answers(changeset, new_ranked_answers) do
+    ballot = Flick.RankedVoting.get_ballot!(get_field(changeset, :ballot_id))
+    possible_answers = Ballot.possible_answers_as_list(ballot.possible_answers) ++ ["", nil]
+
+    Enum.reduce(new_ranked_answers, [], fn changeset, acc ->
+      ranked_answer_value = get_field(changeset, :value)
+
+      if Enum.member?(possible_answers, ranked_answer_value) do
+        acc
+      else
+        acc ++ [ranked_answer_value]
+      end
+    end)
+  end
+
+  defp validate_ranked_answers_are_not_duplicated(%Changeset{valid?: false} = changeset) do
     # If the changeset is already considered false we skip this validation,
     # since it does wholesale overwriting of the `ranked_answers` changeset list
     # and we don't want to overwrite the existing errors.
     changeset
   end
 
-  defp validate_ranked_answers_are_not_duplicated(%Ecto.Changeset{changes: changes} = changeset)
+  defp validate_ranked_answers_are_not_duplicated(%Changeset{changes: changes} = changeset)
        when is_map_key(changes, :ranked_answers) do
     # For all the embedded changesets of `ranked_answers`, check if any are
     # known to be duplicates, and if so add a validation error to those
@@ -154,26 +159,20 @@ defmodule Flick.RankedVoting.Vote do
     changeset
   end
 
-  defp validate_first_ranked_answers_has_valid_value(%Ecto.Changeset{valid?: false} = changeset) do
+  defp validate_first_ranked_answers_has_valid_value(%Changeset{valid?: false} = changeset) do
     changeset
   end
 
-  defp validate_first_ranked_answers_has_valid_value(
-         %Ecto.Changeset{changes: changes} = changeset
-       )
+  defp validate_first_ranked_answers_has_valid_value(%Changeset{changes: changes} = changeset)
        when is_map_key(changes, :ranked_answers) do
     ranked_answer_changesets =
       Enum.map(Enum.with_index(changeset.changes.ranked_answers), fn {changeset, index} ->
-        if index == 0 do
-          value = get_field(changeset, :value)
-
-          if value in ["", nil] do
-            add_error(changeset, :value, gettext("can't be blank"))
-          else
-            changeset
-          end
+        with 0 <- index,
+             value <- get_field(changeset, :value),
+             true <- value in ["", nil] do
+          add_error(changeset, :value, gettext("can't be blank"))
         else
-          changeset
+          _ -> changeset
         end
       end)
 
