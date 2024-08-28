@@ -10,8 +10,8 @@ defmodule FlickWeb.Ballots.ViewerLive do
 
   alias Flick.RankedVoting
   alias Flick.RankedVoting.Ballot
-  alias Flick.RankedVoting.Vote
   alias Flick.RankedVoting.RankedAnswer
+  alias Flick.RankedVoting.Vote
 
   @impl Phoenix.LiveView
   def mount(params, _session, socket) do
@@ -95,7 +95,7 @@ defmodule FlickWeb.Ballots.ViewerLive do
         |> update(:vote_forms, fn current_vote_forms ->
           Map.delete(current_vote_forms, vote_id)
         end)
-        # TODO: This is a expensive, and we might consider a more efficient
+        # FIXME: This is a expensive, and we might consider a more efficient
         # solution, maybe using streams?
         |> assign_votes()
         |> noreply()

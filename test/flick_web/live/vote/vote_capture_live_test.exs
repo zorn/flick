@@ -63,7 +63,7 @@ defmodule FlickWeb.Vote.VoteCaptureLiveTest do
     flash = assert_redirected(view, ~p"/")
     assert flash["info"] == "Vote recorded."
 
-    # TODO: Test the vote was created. Will require the creation of a
+    # FIXME: Test the vote was created. Will require the creation of a
     # `list_votes_for_ballot/1` function.
   end
 

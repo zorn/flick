@@ -41,6 +41,10 @@ defmodule Flick.MixProject do
       # For generating seed and test data.
       {:faker, "~> 0.18", only: [:dev, :test]},
 
+      # For code logic style and enforcement.
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+
       # Unorganized
       {:bandit, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},

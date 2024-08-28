@@ -7,8 +7,8 @@ defmodule Flick.RankedVotingTest do
 
   alias Flick.RankedVoting
   alias Flick.RankedVoting.Ballot
-  alias Flick.RankedVoting.Vote
   alias Flick.RankedVoting.RankedAnswer
+  alias Flick.RankedVoting.Vote
 
   @empty_values ["", nil, " "]
 
@@ -134,7 +134,7 @@ defmodule Flick.RankedVotingTest do
 
     test "success: `secret` is created after row insertion" do
       %Ballot{secret: secret} = ballot_fixture()
-      assert is_uuid_string?(secret)
+      assert uuid_string?(secret)
     end
   end
 
@@ -532,7 +532,7 @@ defmodule Flick.RankedVotingTest do
     end
   end
 
-  defp is_uuid_string?(value) when byte_size(value) > 16 do
+  defp uuid_string?(value) when byte_size(value) > 16 do
     # More info on why the byte_size check is necessary:
     # https://fosstodon.org/@tylerayoung/112872657415154548
     case Ecto.UUID.cast(value) do
@@ -541,5 +541,5 @@ defmodule Flick.RankedVotingTest do
     end
   end
 
-  defp is_uuid_string?(_), do: false
+  defp uuid_string?(_), do: false
 end

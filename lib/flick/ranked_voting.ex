@@ -74,7 +74,7 @@ defmodule Flick.RankedVoting do
   Returns a list of all `Flick.RankedVoting.Ballot` entities.
   """
   @spec list_ballots() :: [Ballot.t()]
-  def list_ballots() do
+  def list_ballots do
     Ballot
     |> order_by([ballot], desc: ballot.inserted_at)
     |> Repo.all()

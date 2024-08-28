@@ -8,8 +8,8 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
 
   use FlickWeb.ConnCase, async: true
 
-  alias Flick.RankedVoting.Ballot
   alias Flick.RankedVoting
+  alias Flick.RankedVoting.Ballot
 
   describe "When used for creation, eg: `/ballot/new`" do
     setup ~M{conn} do
