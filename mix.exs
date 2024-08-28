@@ -43,6 +43,7 @@ defmodule Flick.MixProject do
 
       # For code logic style and enforcement.
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
 
       # Unorganized
       {:bandit, "~> 1.2"},
