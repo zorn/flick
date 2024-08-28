@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   build-and-test:
-    name: Compile with No Warnings, Migrate, and Run Tests
+    name: Compile and Test
     runs-on: ubuntu-latest
     defaults:
       run:
