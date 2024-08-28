@@ -136,7 +136,7 @@ defmodule Flick.RankedVoting.Vote do
         value = get_field(changeset, :value)
 
         if Map.get(ranked_answer_frequencies, value) > 1 and value not in ["", nil] do
-          add_error(changeset, :value, gettext("answers must not be duplicated"))
+          add_error(changeset, :value, gettext("duplicates are not allowed"))
         else
           changeset
         end
@@ -168,7 +168,7 @@ defmodule Flick.RankedVoting.Vote do
           value = get_field(changeset, :value)
 
           if value in ["", nil] do
-            add_error(changeset, :value, gettext("first answer is required"))
+            add_error(changeset, :value, gettext("can't be blank"))
           else
             changeset
           end
