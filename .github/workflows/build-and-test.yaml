@@ -17,9 +17,6 @@ jobs:
   build-and-test:
     name: Compile and Test
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: backend-elixir
     env:
       MIX_ENV: test
     strategy:
