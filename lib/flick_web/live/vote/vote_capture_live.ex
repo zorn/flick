@@ -111,7 +111,7 @@ defmodule FlickWeb.Vote.VoteCaptureLive do
     if ballot.published_at do
       socket
     else
-      # TODO: We can make this a better user experience in the future.
+      # FIXME: We can make this a better user experience in the future.
       throw("can not vote on an unpublished ballot")
     end
   end
