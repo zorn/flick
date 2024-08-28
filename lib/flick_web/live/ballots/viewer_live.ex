@@ -10,8 +10,8 @@ defmodule FlickWeb.Ballots.ViewerLive do
 
   alias Flick.RankedVoting
   alias Flick.RankedVoting.Ballot
-  alias Flick.RankedVoting.Vote
   alias Flick.RankedVoting.RankedAnswer
+  alias Flick.RankedVoting.Vote
 
   @impl Phoenix.LiveView
   def mount(params, _session, socket) do
