@@ -1,0 +1,62 @@
+name: Elixir Build and Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - "*"
+
+# Cancel any in-progress instances of this workflow when this instance is triggered.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: Compile with No Warnings, Migrate, and Run Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend-elixir
+    env:
+      MIX_ENV: test
+    strategy:
+      # TODO: It would be better to pull these from the `.tool-versions` file.
+      matrix:
+        otp: ["26.0.2"]
+        elixir: ["1.15.5"]
+
+    services:
+      db:
+        image: postgres:16
+        ports: ["5432:5432"]
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Elixir Project
+        uses: ./.github/actions/elixir-setup
+        with:
+          elixir-version: ${{ matrix.elixir }}
+          otp-version: ${{ matrix.otp }}
+          working-directory: backend-elixir
+          build-flags: --all-warnings --warnings-as-errors
+
+      - name: Run Migrations
+        run: mix ecto.create; mix ecto.migrate
+        if: always()
+
+      - name: Run Tests
+        run: mix test
+        if: always()
