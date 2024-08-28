@@ -1,4 +1,4 @@
-name: Elixir Build and Test
+name: Build and Test
 
 on:
   push:
@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   build-and-test:
-    name: Compile and Test
+    name: Build and Test
     runs-on: ubuntu-latest
     env:
       MIX_ENV: test
