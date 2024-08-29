@@ -7,6 +7,8 @@ defmodule Flick.Application do
 
   @impl true
   def start(_type, _args) do
+    Appsignal.Phoenix.LiveView.attach()
+
     children = [
       FlickWeb.Telemetry,
       Flick.Repo,
