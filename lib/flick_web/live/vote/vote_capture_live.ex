@@ -80,7 +80,6 @@ defmodule FlickWeb.Vote.VoteCaptureLive do
             <%!-- https://github.com/zorn/flick/issues/77 --%>
             <%= raw(rendered_description(@ballot.description)) %>
           </div>
-
         </div>
 
         <.inputs_for :let={ranked_answer_form} field={@form[:ranked_answers]}>

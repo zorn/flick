@@ -56,8 +56,6 @@ defmodule Flick.RankedVotingTest do
       assert long_question_title == ballot.question_title
     end
 
-
-
     test "failure: `question_title` is required" do
       for empty_value <- @empty_values do
         assert {:error, changeset} = RankedVoting.create_ballot(%{question_title: empty_value})
