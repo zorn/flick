@@ -9,6 +9,7 @@ defmodule Flick.RankedVotingTest do
   alias Flick.RankedVoting.Ballot
   alias Flick.RankedVoting.RankedAnswer
   alias Flick.RankedVoting.Vote
+  alias Support.Fixtures.BallotFixture
 
   @empty_values ["", nil, " "]
 
@@ -45,10 +46,17 @@ defmodule Flick.RankedVotingTest do
     end
 
     test "success: `question_title` can be more than 255 characters" do
-      long_value = String.duplicate("a", 1_000)
-      assert {:error, changeset} = RankedVoting.create_ballot(%{question_title: long_value})
-      refute Map.has_key?(errors_on(changeset), :question_title)
+      long_question_title = String.duplicate("a", 1_000)
+
+      valid_ballot_attrs =
+        BallotFixture.valid_ballot_attributes()
+        |> Map.put(:question_title, long_question_title)
+
+      assert {:ok, ballot} = RankedVoting.create_ballot(valid_ballot_attrs)
+      assert long_question_title == ballot.question_title
     end
+
+
 
     test "failure: `question_title` is required" do
       for empty_value <- @empty_values do
@@ -135,6 +143,17 @@ defmodule Flick.RankedVotingTest do
     test "success: `secret` is created after row insertion" do
       %Ballot{secret: secret} = ballot_fixture()
       assert uuid_string?(secret)
+    end
+
+    test "success: `description` can be more than 255 characters" do
+      long_description = String.duplicate("a", 1_000)
+
+      valid_ballot_attrs =
+        BallotFixture.valid_ballot_attributes()
+        |> Map.put(:description, long_description)
+
+      assert {:ok, ballot} = RankedVoting.create_ballot(valid_ballot_attrs)
+      assert long_description == ballot.description
     end
   end
 
