@@ -48,6 +48,9 @@ defmodule Flick.MixProject do
       # For Observability.
       {:appsignal_phoenix, "~> 2.3.9"},
 
+      # To Render Markdown.
+      {:earmark, "~> 1.4"},
+
       # Unorganized
       {:bandit, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
