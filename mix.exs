@@ -45,7 +45,7 @@ defmodule Flick.MixProject do
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
 
-      # For Observability
+      # For Observability.
       {:appsignal_phoenix, "~> 2.3.9"},
 
       # Unorganized
