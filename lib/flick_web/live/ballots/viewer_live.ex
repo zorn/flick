@@ -120,6 +120,10 @@ defmodule FlickWeb.Ballots.ViewerLive do
         <dl>
           <dt class="font-bold">Question Title</dt>
           <dd id="ballot-question-title" class="pb-4"><%= @ballot.question_title %></dd>
+          <dt class="font-bold">Description</dt>
+          <%!-- FIXME: Showing this inline feels wrong.
+          Revisit how we render this "preview" of the ballot. --%>
+          <dd id="ballot-description" class="pb-4"><%= @ballot.description %></dd>
           <dt class="font-bold">Possible Answers</dt>
           <dd id="ballot-possible-answers" class="pb-4"><%= @ballot.possible_answers %></dd>
           <dt class="font-bold">URL Slug</dt>
@@ -127,7 +131,7 @@ defmodule FlickWeb.Ballots.ViewerLive do
         </dl>
         <.button :if={RankedVoting.can_update_ballot?(@ballot)} id="edit-ballot-button">
           <.link
-            navigate={~p"/ballot/#{@ballot.url_slug}/#{@ballot.id}/edit"}
+            navigate={~p"/ballot/#{@ballot.url_slug}/#{@ballot.secret}/edit"}
             class="text-white no-underline"
           >
             Edit Ballot

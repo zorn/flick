@@ -19,6 +19,7 @@ defmodule Flick.RankedVoting.Ballot do
   @type t :: %__MODULE__{
           id: Ecto.UUID.t(),
           question_title: String.t(),
+          description: String.t() | nil,
           url_slug: String.t(),
           secret: Ecto.UUID.t(),
           possible_answers: String.t(),
@@ -37,6 +38,7 @@ defmodule Flick.RankedVoting.Ballot do
   @foreign_key_type :binary_id
   schema "ballots" do
     field :question_title, :string
+    field :description, :string, default: nil
     field :url_slug, :string
     field :secret, :binary_id, read_after_writes: true
     field :possible_answers, :string
@@ -45,7 +47,7 @@ defmodule Flick.RankedVoting.Ballot do
   end
 
   @required_fields [:question_title, :possible_answers, :url_slug]
-  @optional_fields [:published_at]
+  @optional_fields [:published_at, :description]
 
   @spec changeset(t() | struct_t(), map()) :: Ecto.Changeset.t(t()) | Ecto.Changeset.t(struct_t())
   def changeset(ballot, attrs) do

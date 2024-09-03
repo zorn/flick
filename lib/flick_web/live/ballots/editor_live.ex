@@ -88,6 +88,14 @@ defmodule FlickWeb.Ballots.EditorLive do
 
     <.simple_form for={@form} phx-change="validate" phx-submit="save">
       <.input field={@form[:question_title]} label="Question Title" placeholder="What is for dinner?" />
+
+      <.input
+        field={@form[:description]}
+        type="textarea"
+        label="Description (Markdown)"
+        placeholder="Some context to help people know about the possible answers. "
+      />
+
       <.input
         field={@form[:possible_answers]}
         label="Possible Answers (comma separated)"
