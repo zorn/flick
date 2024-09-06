@@ -51,6 +51,9 @@ defmodule Flick.MixProject do
       # To Render Markdown.
       {:earmark, "~> 1.4"},
 
+      # For security scans.
+      {:sobelow, "~> 0.13", only: [:dev, :test], runtime: false},
+
       # Unorganized
       {:bandit, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
