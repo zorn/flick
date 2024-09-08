@@ -105,7 +105,8 @@ defmodule Flick.RankedVoting.Vote do
     ballot = Flick.RankedVoting.get_ballot!(get_field(changeset, :ballot_id))
     possible_answers = Ballot.possible_answers_as_list(ballot.possible_answers) ++ ["", nil]
 
-    Enum.reduce(new_ranked_answers, [], fn changeset, acc ->
+    new_ranked_answers
+    |> Enum.reduce([], fn changeset, acc ->
       ranked_answer_value = get_field(changeset, :value)
 
       if Enum.member?(possible_answers, ranked_answer_value) do
