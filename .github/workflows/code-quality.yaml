@@ -41,7 +41,6 @@ jobs:
         run: mix xref graph --label compile-connected --fail-above 0
         if: always()
 
-      # FIXME: https://github.com/zorn/flick/issues/69
-      # - name: Check for security vulnerabilities in Phoenix project
-      #   run: mix sobelow
-      #   if: always()
+      - name: Check for security vulnerabilities in Phoenix project
+        run: mix sobelow
+        if: always()

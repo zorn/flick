@@ -9,7 +9,13 @@ defmodule FlickWeb.Router do
     plug :fetch_live_flash
     plug :put_root_layout, html: {FlickWeb.Layouts, :root}
     plug :protect_from_forgery
-    plug :put_secure_browser_headers
+
+    # Tailwind uses SVG data URLs for icons,
+    # so we need to allow them with `img-src`.
+    # https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
+    plug :put_secure_browser_headers, %{
+      "content-security-policy" => "default-src 'self'; img-src 'self' data:"
+    }
   end
 
   pipeline :admin do
