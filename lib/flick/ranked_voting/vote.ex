@@ -164,6 +164,8 @@ defmodule Flick.RankedVoting.Vote do
     changeset
   end
 
+  # FIXME: Refactor to reduce complexity.
+  # credo:disable-for-next-line Credo.Check.Refactor.ABCSize
   defp validate_first_ranked_answers_has_valid_value(%Changeset{changes: changes} = changeset)
        when is_map_key(changes, :ranked_answers) do
     ranked_answer_changesets =
