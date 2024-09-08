@@ -105,15 +105,17 @@ defmodule Flick.RankedVoting.Vote do
     ballot = Flick.RankedVoting.get_ballot!(get_field(changeset, :ballot_id))
     possible_answers = Ballot.possible_answers_as_list(ballot.possible_answers) ++ ["", nil]
 
-    Enum.reduce(new_ranked_answers, [], fn changeset, acc ->
+    new_ranked_answers
+    |> Enum.reduce([], fn changeset, acc ->
       ranked_answer_value = get_field(changeset, :value)
 
       if Enum.member?(possible_answers, ranked_answer_value) do
         acc
       else
-        acc ++ [ranked_answer_value]
+        [ranked_answer_value] ++ acc
       end
     end)
+    |> Enum.reverse()
   end
 
   defp validate_ranked_answers_are_not_duplicated(%Changeset{valid?: false} = changeset) do
@@ -163,6 +165,8 @@ defmodule Flick.RankedVoting.Vote do
     changeset
   end
 
+  # FIXME: Refactor to reduce complexity.
+  # credo:disable-for-next-line Credo.Check.Refactor.ABCSize
   defp validate_first_ranked_answers_has_valid_value(%Changeset{changes: changes} = changeset)
        when is_map_key(changes, :ranked_answers) do
     ranked_answer_changesets =

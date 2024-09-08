@@ -10,14 +10,14 @@ defmodule FlickWeb.Vote.VoteCaptureLiveTest do
   alias Flick.RankedVoting.Ballot
 
   setup ~M{conn} do
-    ballot =
+    prepublished_ballot =
       ballot_fixture(%{
         question_title: "What movie should we go see?",
         possible_answers: "Hackers, Sneakers, WarGames, The Matrix, Tron",
         url_slug: "movie-night"
       })
 
-    {:ok, ballot} = Flick.RankedVoting.publish_ballot(ballot)
+    {:ok, ballot} = Flick.RankedVoting.publish_ballot(prepublished_ballot)
 
     {:ok, view, _html} = live(conn, ~p"/ballot/movie-night")
     ~M{conn, view, ballot}

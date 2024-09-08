@@ -1,3 +1,4 @@
+# credo:disable-for-this-file Credo.Check.Refactor.ModuleDependencies
 defmodule Flick.Application do
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications
@@ -5,7 +6,7 @@ defmodule Flick.Application do
 
   use Application
 
-  @impl true
+  @impl Application
   def start(_type, _args) do
     Appsignal.Phoenix.LiveView.attach()
 
@@ -30,7 +31,7 @@ defmodule Flick.Application do
 
   # Tell Phoenix to update the endpoint configuration
   # whenever the application is updated.
-  @impl true
+  @impl Application
   def config_change(changed, _new, removed) do
     FlickWeb.Endpoint.config_change(changed, removed)
     :ok

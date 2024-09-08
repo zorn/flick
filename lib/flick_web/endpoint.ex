@@ -1,3 +1,4 @@
+# credo:disable-for-this-file Credo.Check.Refactor.ModuleDependencies
 defmodule FlickWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :flick
 

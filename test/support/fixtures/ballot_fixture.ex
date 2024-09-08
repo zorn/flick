@@ -4,10 +4,13 @@ defmodule Support.Fixtures.BallotFixture do
   `Flick.RankedVoting.Ballot` entities for testing.
   """
 
+  alias Flick.RankedVoting.Ballot
+
   @doc """
   Returns a map of valid attributes for a `Flick.RankedVoting.Ballot` entity,
   allowing for the passed in attributes to override defaults.
   """
+  @spec valid_ballot_attributes(map()) :: map()
   def valid_ballot_attributes(attrs \\ %{}) do
     Enum.into(attrs, %{
       question_title: "What day should have dinner?",
@@ -23,6 +26,7 @@ defmodule Support.Fixtures.BallotFixture do
 
   When not provided, all required attributes will be generated.
   """
+  @spec ballot_fixture(map()) :: {:ok, Ballot.t()}
   def ballot_fixture(attrs \\ %{}) do
     attrs = valid_ballot_attributes(attrs)
     {:ok, ballot} = Flick.RankedVoting.create_ballot(attrs)
@@ -35,6 +39,7 @@ defmodule Support.Fixtures.BallotFixture do
 
   When not provided, all required attributes will be generated.
   """
+  @spec published_ballot_fixture(map()) :: {:ok, Ballot.t()}
   def published_ballot_fixture(attrs \\ %{}) do
     attrs = valid_ballot_attributes(attrs)
     {:ok, ballot} = Flick.RankedVoting.create_ballot(attrs)

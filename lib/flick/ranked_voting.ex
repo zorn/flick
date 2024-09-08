@@ -28,15 +28,15 @@ defmodule Flick.RankedVoting do
           {:ok, Ballot.t()}
           | {:error, Ecto.Changeset.t(Ballot.t())}
           | {:error, :can_not_update_published_ballot}
-  def update_ballot(%Ballot{published_at: published_at}, _attrs)
-      when not is_nil(published_at) do
-    {:error, :can_not_update_published_ballot}
-  end
 
   def update_ballot(%Ballot{published_at: nil} = ballot, attrs) do
     ballot
     |> change_ballot(attrs)
     |> Repo.update()
+  end
+
+  def update_ballot(_ballot, _attrs) do
+    {:error, :can_not_update_published_ballot}
   end
 
   @doc """
@@ -59,15 +59,14 @@ defmodule Flick.RankedVoting do
           | {:error, :ballot_already_published}
   def publish_ballot(ballot, published_at \\ DateTime.utc_now())
 
-  def publish_ballot(%Ballot{published_at: published_at}, _published_at)
-      when not is_nil(published_at) do
-    {:error, :ballot_already_published}
-  end
-
-  def publish_ballot(%Ballot{} = ballot, published_at) do
+  def publish_ballot(%Ballot{published_at: nil} = ballot, published_at) do
     ballot
     |> change_ballot(%{published_at: published_at})
     |> Repo.update()
+  end
+
+  def publish_ballot(_ballot, _published_at) do
+    {:error, :ballot_already_published}
   end
 
   @doc """
@@ -172,7 +171,7 @@ defmodule Flick.RankedVoting do
   * `:action` - An optional atom applied to the changeset, useful for forms that
     look to a changeset's action to influence form behavior.
   """
-  @spec change_vote(Vote.t() | Vote.struct_t(), map()) :: Ecto.Changeset.t(Vote.t())
+  @spec change_vote(Vote.t() | Vote.struct_t(), map(), keyword()) :: Ecto.Changeset.t(Vote.t())
   def change_vote(%Vote{} = vote, attrs, opts \\ []) do
     opts = Keyword.validate!(opts, action: nil)
 
