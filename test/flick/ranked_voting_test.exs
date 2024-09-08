@@ -265,13 +265,13 @@ defmodule Flick.RankedVotingTest do
 
   describe "create_vote/2" do
     setup do
-      ballot =
+      prepublished_ballot =
         ballot_fixture(
           question_title: "What's for dinner?",
           possible_answers: "Pizza, Tacos, Sushi, Burgers"
         )
 
-      {:ok, ballot} = RankedVoting.publish_ballot(ballot)
+      {:ok, ballot} = RankedVoting.publish_ballot(prepublished_ballot)
 
       {:ok, published_ballot: ballot}
     end
