@@ -2,6 +2,7 @@ defmodule FlickWeb.Telemetry do
   use Supervisor
   import Telemetry.Metrics
 
+  @spec start_link(term()) :: Supervisor.on_start()
   def start_link(arg) do
     Supervisor.start_link(__MODULE__, arg, name: __MODULE__)
   end
@@ -19,6 +20,7 @@ defmodule FlickWeb.Telemetry do
     Supervisor.init(children, strategy: :one_for_one)
   end
 
+  @spec metrics() :: [Telemetry.Metrics.Summary.t()]
   def metrics do
     [
       # Phoenix Metrics

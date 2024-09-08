@@ -70,6 +70,7 @@ defmodule Flick.RankedVoting.Ballot do
     |> Enum.map(&String.trim/1)
   end
 
+  @spec validate_published_at(Ecto.Changeset.t()) :: Ecto.Changeset.t()
   def validate_published_at(%Ecto.Changeset{data: %__MODULE__{id: nil}} = changeset) do
     # We do not want "new" ballots to be created as already published.
     validate_change(changeset, :published_at, fn :published_at, _updated_value ->

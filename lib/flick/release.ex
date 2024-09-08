@@ -11,6 +11,7 @@ defmodule Flick.Release do
   """
   @app :flick
 
+  @spec migrate() :: [any()]
   def migrate do
     ensure_started()
 
@@ -19,6 +20,7 @@ defmodule Flick.Release do
     end
   end
 
+  @spec rollback(Ecto.Repo.t(), integer()) :: {:ok, any(), list()}
   def rollback(repo, version) do
     ensure_started()
     {:ok, _, _} = Ecto.Migrator.with_repo(repo, &Ecto.Migrator.run(&1, :down, to: version))

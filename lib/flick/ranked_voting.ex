@@ -172,7 +172,7 @@ defmodule Flick.RankedVoting do
   * `:action` - An optional atom applied to the changeset, useful for forms that
     look to a changeset's action to influence form behavior.
   """
-  @spec change_vote(Vote.t() | Vote.struct_t(), map()) :: Ecto.Changeset.t(Vote.t())
+  @spec change_vote(Vote.t() | Vote.struct_t(), map(), keyword()) :: Ecto.Changeset.t(Vote.t())
   def change_vote(%Vote{} = vote, attrs, opts \\ []) do
     opts = Keyword.validate!(opts, action: nil)
 
