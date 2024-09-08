@@ -111,9 +111,10 @@ defmodule Flick.RankedVoting.Vote do
       if Enum.member?(possible_answers, ranked_answer_value) do
         acc
       else
-        acc ++ [ranked_answer_value]
+        [ranked_answer_value] ++ acc
       end
     end)
+    |> Enum.reverse()
   end
 
   defp validate_ranked_answers_are_not_duplicated(%Changeset{valid?: false} = changeset) do
