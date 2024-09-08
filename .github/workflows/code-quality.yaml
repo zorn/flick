@@ -42,5 +42,5 @@ jobs:
         if: always()
 
       - name: Check for security vulnerabilities in Phoenix project
-        run: mix sobelow
+        run: mix sobelow --config
         if: always()
