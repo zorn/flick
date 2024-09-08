@@ -1,3 +1,4 @@
+# credo:disable-for-this-file Credo.Check.Refactor.ModuleDependencies
 defmodule FlickWeb do
   @moduledoc """
   The entrypoint for defining your web interface, such
