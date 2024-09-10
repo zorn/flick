@@ -47,8 +47,8 @@ defmodule FlickWeb do
         formats: [:html, :json],
         layouts: [html: FlickWeb.Layouts]
 
+      use Gettext, backend: FlickWeb.Gettext
       import Plug.Conn
-      import FlickWeb.Gettext
 
       unquote(verified_routes())
     end
@@ -91,11 +91,13 @@ defmodule FlickWeb do
 
   defp html_helpers do
     quote do
+      # Translations
+      use Gettext, backend: FlickWeb.Gettext
+
       # HTML escaping functionality
       import Phoenix.HTML
-      # Core UI components and translation
+      # Core UI components
       import FlickWeb.CoreComponents
-      import FlickWeb.Gettext
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS
