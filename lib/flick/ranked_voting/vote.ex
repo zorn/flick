@@ -5,9 +5,9 @@ defmodule Flick.RankedVoting.Vote do
   """
 
   use Ecto.Schema
+  use Gettext, backend: FlickWeb.Gettext
 
   import Ecto.Changeset
-  import FlickWeb.Gettext
 
   alias Ecto.Changeset
   alias Flick.RankedVoting.Ballot
