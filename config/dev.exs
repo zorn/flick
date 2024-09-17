@@ -26,7 +26,8 @@ config :flick, FlickWeb.Endpoint,
   secret_key_base: "3A5gt96GzZt6No8BUZpuicElbO80urqkhj8OWMwEyJDefaDnxm3JfDWkwb8FM/Ak",
   watchers: [
     esbuild: {Esbuild, :install_and_run, [:flick, ~w(--sourcemap=inline --watch)]},
-    tailwind: {Tailwind, :install_and_run, [:flick, ~w(--watch)]}
+    tailwind: {Tailwind, :install_and_run, [:flick, ~w(--watch)]},
+    storybook_tailwind: {Tailwind, :install_and_run, [:storybook, ~w(--watch)]}
   ]
 
 # ## SSL Support
@@ -58,7 +59,8 @@ config :flick, FlickWeb.Endpoint,
     patterns: [
       ~r"priv/static/(?!uploads/).*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"lib/flick_web/(controllers|live|components)/.*(ex|heex)$"
+      ~r"lib/flick_web/(controllers|live|components)/.*(ex|heex)$",
+      ~r"storybook/.*(exs)$"
     ]
   ]
 

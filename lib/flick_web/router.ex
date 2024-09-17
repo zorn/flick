@@ -2,6 +2,7 @@
 defmodule FlickWeb.Router do
   use FlickWeb, :router
 
+  import PhoenixStorybook.Router
   import Plug.BasicAuth
 
   pipeline :browser do
@@ -27,6 +28,10 @@ defmodule FlickWeb.Router do
     plug :accepts, ["json"]
   end
 
+  scope "/" do
+    storybook_assets()
+  end
+
   scope "/admin", FlickWeb do
     pipe_through [:browser, :admin]
 
@@ -41,6 +46,8 @@ defmodule FlickWeb.Router do
     live "/ballot/:url_slug/:secret", Ballots.ViewerLive, :edit
     live "/ballot/:url_slug/:secret/edit", Ballots.EditorLive, :edit
     live "/ballot/:url_slug", Vote.VoteCaptureLive, :new
+
+    live_storybook "/storybook", backend_module: Elixir.FlickWeb.Storybook
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

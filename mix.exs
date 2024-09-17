@@ -54,6 +54,9 @@ defmodule Flick.MixProject do
       # For security scans.
       {:sobelow, "~> 0.13", only: [:dev, :test], runtime: false},
 
+      # For UI component documentation.
+      {:phoenix_storybook, "~> 0.6.0"},
+
       # Unorganized
       {:bandit, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
@@ -62,13 +65,17 @@ defmodule Flick.MixProject do
       {:finch, "~> 0.13"},
       {:floki, ">= 0.30.0", only: :test},
       {:gettext, "~> 0.20"},
-      {:heroicons,
-       github: "tailwindlabs/heroicons",
-       tag: "v2.1.1",
-       sparse: "optimized",
-       app: false,
-       compile: false,
-       depth: 1},
+      {
+        :heroicons,
+        # The `override` setting is needed for `phoenix_storybook`.
+        github: "tailwindlabs/heroicons",
+        tag: "v2.1.1",
+        sparse: "optimized",
+        app: false,
+        compile: false,
+        depth: 1,
+        override: true
+      },
       {:jason, "~> 1.2"},
       {:phoenix_ecto, "~> 4.4"},
       {:phoenix_html, "~> 4.0"},
@@ -101,6 +108,7 @@ defmodule Flick.MixProject do
       "assets.deploy": [
         "tailwind flick --minify",
         "esbuild flick --minify",
+        "tailwind storybook --minify",
         "phx.digest"
       ]
     ]
