@@ -6,6 +6,7 @@ const fs = require("fs")
 const path = require("path")
 
 module.exports = {
+  important: ".flick-web",
   content: [
     "./js/**/*.js",
     "../lib/flick_web.ex",

@@ -2,6 +2,7 @@
 defmodule FlickWeb.Router do
   use FlickWeb, :router
 
+  import PhoenixStorybook.Router
   import Plug.BasicAuth
 
   pipeline :browser do
@@ -14,8 +15,13 @@ defmodule FlickWeb.Router do
     # Tailwind uses SVG data URLs for icons,
     # so we need to allow them with `img-src`.
     # https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
+    #
+    # To avoid web console issues with Phoenix Storybook we've added
+    # `style-src 'self' 'unsafe-inline'` which feels unfortunate and
+    # might be reconsidered.
     plug :put_secure_browser_headers, %{
-      "content-security-policy" => "default-src 'self'; img-src 'self' data:"
+      "content-security-policy" =>
+        "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'"
     }
   end
 
@@ -25,6 +31,10 @@ defmodule FlickWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+  end
+
+  scope "/" do
+    storybook_assets()
   end
 
   scope "/admin", FlickWeb do
@@ -41,6 +51,8 @@ defmodule FlickWeb.Router do
     live "/ballot/:url_slug/:secret", Ballots.ViewerLive, :edit
     live "/ballot/:url_slug/:secret/edit", Ballots.EditorLive, :edit
     live "/ballot/:url_slug", Vote.VoteCaptureLive, :new
+
+    live_storybook "/storybook", backend_module: Elixir.FlickWeb.Storybook
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
