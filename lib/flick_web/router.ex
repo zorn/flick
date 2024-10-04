@@ -15,8 +15,13 @@ defmodule FlickWeb.Router do
     # Tailwind uses SVG data URLs for icons,
     # so we need to allow them with `img-src`.
     # https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
+    #
+    # To avoid web console issues with Phoenix Storybook we've added
+    # `style-src 'self' 'unsafe-inline'` which feels unfortunate and
+    # might be reconsidered.
     plug :put_secure_browser_headers, %{
-      "content-security-policy" => "default-src 'self'; img-src 'self' data:"
+      "content-security-policy" =>
+        "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'"
     }
   end
 
