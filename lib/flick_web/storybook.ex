@@ -1,4 +1,8 @@
 defmodule FlickWeb.Storybook do
+  @moduledoc """
+  Provides a Phoenix Storybook configuration for the FlickWeb application.
+  """
+
   use PhoenixStorybook,
     otp_app: :flick_web,
     content_path: Path.expand("../../storybook", __DIR__),
