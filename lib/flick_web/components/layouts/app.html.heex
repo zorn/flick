@@ -1,18 +1,39 @@
-<header class="px-4 sm:px-6 lg:px-8">
-  <div class="flex items-center justify-between border-b border-zinc-100 py-3 text-sm">
-    <div class="flex items-center gap-4">
-      <.link href={~p"/"}>Flick</.link>
+<%!-- Logo and Navigation --%>
+<section class="bg-gradient-to-r from-teal-500 to-blue-500 py-4">
+  <FlickWeb.UI.page_column>
+    <div class="text-4xl">
+      <div class="flex justify-between">
+        <.link
+          class="font-bold text-white drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]"
+          href={~p"/"}
+        >
+          RankedVoting<span class="text-2xl">.app</span>
+        </.link>
+        <.button class="bg-blue-700 hover:bg-blue-800 text-white">
+          <.link navigate={~p"/ballot/new"} class="no-underline">
+            Create Ballot
+          </.link>
+        </.button>
+      </div>
     </div>
-    <div class="flex items-center gap-4 font-semibold leading-6 text-zinc-900">
-      <a href="https://github.com/zorn/flick" class="hover:text-zinc-700">
-        GitHub
-      </a>
-    </div>
-  </div>
-</header>
-<main class="px-4 py-20 sm:px-6 lg:px-8">
-  <div class="mx-auto max-w-5xl">
+  </FlickWeb.UI.page_column>
+</section>
+
+<%!-- Page Content --%>
+<section>
+  <FlickWeb.UI.page_column class="my-4">
     <.flash_group flash={@flash} />
     <%= @inner_content %>
-  </div>
-</main>
+  </FlickWeb.UI.page_column>
+</section>
+
+<%!-- Footer --%>
+<section class="mt-8">
+  <hr class="mb-4" />
+  <FlickWeb.UI.page_column class="text-center">
+    <a href="https://github.com/zorn/flick" class="underline">
+      GitHub Project
+    </a>
+    &bull; <a href="mailto:mike@mikezornek.com" class="underline">Contact</a>
+  </FlickWeb.UI.page_column>.
+</section>
