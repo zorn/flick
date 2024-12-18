@@ -22,7 +22,7 @@ defmodule FlickWeb.IndexLive do
         </p>
 
         <p>
-          This site helps people quickly create, run, and tally ranked voting ballots. It is free to use and open source. No accounts are required to create or vote on a ballot.
+          This site helps people quickly create, run, and tally ranked voting ballots. It is free-to-use and open source. No accounts are required to create or vote on a ballot.
         </p>
 
         <p class="font-bold">How it works:</p>
@@ -33,7 +33,7 @@ defmodule FlickWeb.IndexLive do
             with a question and possible answers.
           </li>
           <li>Publish the ballot, creating a link to share with voters.</li>
-          <li>Tally the votes an derive a winner with a point-based system.</li>
+          <li>Tally the votes and derive a winner with a point-based system.</li>
         </ol>
       </section>
 
@@ -45,7 +45,7 @@ defmodule FlickWeb.IndexLive do
           <li>Select a movie for movie night.</li>
           <li>Choose a vacation destination for a large group.</li>
           <li>Decide on a new logo for a company.</li>
-          <li>Prioritize a technical debt projects.</li>
+          <li>Prioritize technical debt projects.</li>
         </ul>
       </section>
 
@@ -55,7 +55,7 @@ defmodule FlickWeb.IndexLive do
       <%!-- Photos would probably be easier to do for now, with an automated demo ballot in the future? --%>
 
       <section>
-        <h2 class="mb-1">Free and Open Source</h2>
+        <h3 class="mb-1">Free and Open Source</h3>
 
         <p>
           The open source project that powers this site is called <a href="https://github.com/zorn/flick">Flick</a>. It is written in
