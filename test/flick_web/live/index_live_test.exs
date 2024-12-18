@@ -15,7 +15,7 @@ defmodule FlickWeb.IndexLiveTest do
     {:ok, view, _html} = live(conn, ~p"/")
 
     expected_welcome_copy =
-      "Flick is an application that allows you to create ballots that capture ranked votes."
+      "This site helps people quickly create, run, and tally ranked voting ballots."
 
     assert view |> element("#welcome-copy") |> render() =~ expected_welcome_copy
   end

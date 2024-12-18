@@ -18,7 +18,7 @@ defmodule FlickWeb.IndexLive do
   def render(assigns) do
     ~H"""
     <div class="prose prose-p:leading-6 prose-li:my-0">
-      <section>
+      <section id="welcome-copy">
         <p>
           Many traditional voting systems ask for a single choice per voter, and the winner is chosen based on the number of votes cast for any single choice.
         </p>
