@@ -55,11 +55,6 @@ defmodule FlickWeb.IndexLive do
         </ul>
       </section>
 
-      <%!-- TODO: Sample voting page photos? --%>
-      <%!-- Sample results page? --%>
-      <%!-- Could be real pages or photos. --%>
-      <%!-- Photos would probably be easier to do for now, with an automated demo ballot in the future? --%>
-
       <section>
         <h3 class="mb-1">Free and Open Source</h3>
 
