@@ -26,7 +26,7 @@ defmodule Support.Fixtures.BallotFixture do
 
   When not provided, all required attributes will be generated.
   """
-  @spec ballot_fixture(map()) :: {:ok, Ballot.t()}
+  @spec ballot_fixture(map()) :: Ballot.t()
   def ballot_fixture(attrs \\ %{}) do
     attrs = valid_ballot_attributes(attrs)
     {:ok, ballot} = Flick.RankedVoting.create_ballot(attrs)
@@ -39,7 +39,7 @@ defmodule Support.Fixtures.BallotFixture do
 
   When not provided, all required attributes will be generated.
   """
-  @spec published_ballot_fixture(map()) :: {:ok, Ballot.t()}
+  @spec published_ballot_fixture(map()) :: Ballot.t()
   def published_ballot_fixture(attrs \\ %{}) do
     attrs = valid_ballot_attributes(attrs)
     {:ok, ballot} = Flick.RankedVoting.create_ballot(attrs)
