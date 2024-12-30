@@ -129,14 +129,15 @@ defmodule FlickWeb.Ballots.ViewerLive do
           <dt class="font-bold">URL Slug</dt>
           <dd id="ballot-url-slug" class="pb-4">{@ballot.url_slug}</dd>
         </dl>
-        <.button :if={RankedVoting.can_update_ballot?(@ballot)} id="edit-ballot-button">
-          <.link
-            navigate={~p"/ballot/#{@ballot.url_slug}/#{@ballot.secret}/edit"}
-            class="text-white no-underline"
-          >
+        <.link
+          :if={RankedVoting.can_update_ballot?(@ballot)}
+          navigate={~p"/ballot/#{@ballot.url_slug}/#{@ballot.secret}/edit"}
+          class="text-white no-underline"
+        >
+          <.button id="edit-ballot-button">
             Edit Ballot
-          </.link>
-        </.button>
+          </.button>
+        </.link>
       </div>
 
       <div class="my-6">
