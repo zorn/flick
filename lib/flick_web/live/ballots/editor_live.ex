@@ -83,7 +83,7 @@ defmodule FlickWeb.Ballots.EditorLive do
   def render(assigns) do
     ~H"""
     <div class="prose">
-      <h2><%= page_title(@live_action) %></h2>
+      <h2>{page_title(@live_action)}</h2>
     </div>
 
     <.simple_form for={@form} phx-change="validate" phx-submit="save">

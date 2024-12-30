@@ -73,12 +73,12 @@ defmodule FlickWeb.Vote.VoteCaptureLive do
         <.input field={@form[:full_name]} label="Name (Optional)" />
 
         <div id="question-title" class="prose">
-          <h2><%= @ballot.question_title %></h2>
+          <h2>{@ballot.question_title}</h2>
 
           <div>
             <%!-- FIXME: Consider the security implications of `raw`. --%>
             <%!-- https://github.com/zorn/flick/issues/77 --%>
-            <%= raw(rendered_description(@ballot.description)) %>
+            {raw(rendered_description(@ballot.description))}
           </div>
         </div>
 

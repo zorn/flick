@@ -25,11 +25,11 @@ defmodule FlickWeb.Ballots.IndexLive do
 
     <.table id="ballots" rows={@ballots} row_id={&"ballot-row-#{&1.id}"}>
       <:col :let={ballot} label="Title">
-        <%= ballot.question_title %>
+        {ballot.question_title}
       </:col>
       <:col :let={ballot} label="Published">
         <%= if ballot.published_at do %>
-          <%= ballot.published_at %>
+          {ballot.published_at}
         <% else %>
           Not Published
         <% end %>

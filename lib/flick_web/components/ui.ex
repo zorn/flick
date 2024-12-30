@@ -17,7 +17,7 @@ defmodule FlickWeb.UI do
     ~H"""
     <div class="max-w-2xl mx-auto px-4">
       <div {@rest}>
-        <%= render_slot(@inner_block) %>
+        {render_slot(@inner_block)}
       </div>
     </div>
     """

@@ -119,15 +119,15 @@ defmodule FlickWeb.Ballots.ViewerLive do
 
         <dl>
           <dt class="font-bold">Question Title</dt>
-          <dd id="ballot-question-title" class="pb-4"><%= @ballot.question_title %></dd>
+          <dd id="ballot-question-title" class="pb-4">{@ballot.question_title}</dd>
           <dt class="font-bold">Description</dt>
           <%!-- FIXME: Showing this inline feels wrong.
           Revisit how we render this "preview" of the ballot. --%>
-          <dd id="ballot-description" class="pb-4"><%= @ballot.description %></dd>
+          <dd id="ballot-description" class="pb-4">{@ballot.description}</dd>
           <dt class="font-bold">Possible Answers</dt>
-          <dd id="ballot-possible-answers" class="pb-4"><%= @ballot.possible_answers %></dd>
+          <dd id="ballot-possible-answers" class="pb-4">{@ballot.possible_answers}</dd>
           <dt class="font-bold">URL Slug</dt>
-          <dd id="ballot-url-slug" class="pb-4"><%= @ballot.url_slug %></dd>
+          <dd id="ballot-url-slug" class="pb-4">{@ballot.url_slug}</dd>
         </dl>
         <.button :if={RankedVoting.can_update_ballot?(@ballot)} id="edit-ballot-button">
           <.link
@@ -142,12 +142,12 @@ defmodule FlickWeb.Ballots.ViewerLive do
       <div class="my-6">
         <%= if @ballot.published_at do %>
           <div class="prose">
-            <p>This ballot was published at: <%= @ballot.published_at %></p>
+            <p>This ballot was published at: {@ballot.published_at}</p>
 
             <p>
               You can invite people to vote using the URL:<br />
               <.link navigate={~p"/ballot/#{@ballot.url_slug}"}>
-                <%= URI.append_path(@socket.host_uri, "/ballot/#{@ballot.url_slug}") %>
+                {URI.append_path(@socket.host_uri, "/ballot/#{@ballot.url_slug}")}
               </.link>
             </p>
           </div>
@@ -160,22 +160,22 @@ defmodule FlickWeb.Ballots.ViewerLive do
         <h3>Vote Results</h3>
         <ol>
           <%= for %{points: points, value: answer} <- @ballot_results_report do %>
-            <li><%= answer %>: <%= points %> points</li>
+            <li>{answer}: {points} points</li>
           <% end %>
         </ol>
       </div>
 
       <div class="prose mb-4">
-        <h3>Votes (<%= length(@votes) %>)</h3>
+        <h3>Votes ({length(@votes)})</h3>
       </div>
 
       <.table id="votes" rows={@votes} row_id={&"vote-row-#{&1.id}"}>
         <:col :let={vote} label="Name">
-          <%= vote.full_name || "No Name" %>
+          {vote.full_name || "No Name"}
         </:col>
         <:col :let={vote} label="Weight">
           <div :if={!form_for_vote(@vote_forms, vote)}>
-            <%= vote.weight %> &nbsp;
+            {vote.weight} &nbsp;
             <%!-- TODO: As the user clicks `Edit` we should focus the form input. --%>
             <.link phx-click="present-inline-editor" phx-value-vote-id={vote.id} class="underline">
               Edit
@@ -205,19 +205,19 @@ defmodule FlickWeb.Ballots.ViewerLive do
           </.form>
         </:col>
         <:col :let={vote} :if={show_answer(@ballot, 0)} label="First Preference (5pts)">
-          <%= answer_at_index(vote, 0) %>
+          {answer_at_index(vote, 0)}
         </:col>
         <:col :let={vote} :if={show_answer(@ballot, 1)} label="Second Preference (4pts)">
-          <%= answer_at_index(vote, 1) %>
+          {answer_at_index(vote, 1)}
         </:col>
         <:col :let={vote} :if={show_answer(@ballot, 2)} label="Third Preference (3pts)">
-          <%= answer_at_index(vote, 2) %>
+          {answer_at_index(vote, 2)}
         </:col>
         <:col :let={vote} :if={show_answer(@ballot, 3)} label="Fourth Preference (2pts)">
-          <%= answer_at_index(vote, 3) %>
+          {answer_at_index(vote, 3)}
         </:col>
         <:col :let={vote} :if={show_answer(@ballot, 4)} label="Fifth Preference (1pt)">
-          <%= answer_at_index(vote, 4) %>
+          {answer_at_index(vote, 4)}
         </:col>
       </.table>
     </div>
