@@ -68,6 +68,6 @@ defmodule FlickWeb.Vote.VoteCaptureLiveTest do
   end
 
   defp ranked_answer_selector(index) do
-    "div[phx-feedback-for=\"vote[ranked_answers][#{index}][value]\"]"
+    "div[data-feedback-for=\"vote[ranked_answers][#{index}][value]\"]"
   end
 end

@@ -107,6 +107,6 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
   end
 
   defp feedback_selector(field) do
-    "div[phx-feedback-for=\"ballot[#{field}]\"]"
+    "div[data-feedback-for=\"ballot[#{field}]\"]"
   end
 end
