@@ -216,6 +216,29 @@ defmodule Flick.RankedVotingTest do
     end
   end
 
+  describe "close_ballot/2" do
+    test "success: closes a published ballot" do
+      ballot = published_ballot_fixture()
+      closed_at = DateTime.utc_now()
+      assert {:ok, closed_ballot} = RankedVoting.close_ballot(ballot, closed_at)
+      assert %Ballot{closed_at: ^closed_at} = closed_ballot
+    end
+
+    test "failure: can not close an unpublished ballot" do
+      ballot = ballot_fixture()
+      assert {:error, :ballot_not_published} = RankedVoting.close_ballot(ballot)
+    end
+
+    test "failure: can not close a closed ballot" do
+      ballot = closed_ballot_fixture()
+      assert {:error, :ballot_already_closed} = RankedVoting.close_ballot(ballot)
+    end
+  end
+
+  describe "ballot_status/1" do
+    # TODO
+  end
+
   describe "list_ballots/1" do
     test "success: lists ballots start with zero ballots" do
       assert [] = RankedVoting.list_ballots()

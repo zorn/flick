@@ -81,6 +81,48 @@ defmodule Flick.RankedVoting do
     {:error, :ballot_already_published}
   end
 
+  @spec close_ballot(Ballot.t(), DateTime.t()) ::
+          {:ok, Ballot.t()}
+          | {:error, Ecto.Changeset.t(Ballot.t())}
+          | {:error, :ballot_not_published}
+  def close_ballot(ballot, closed_at \\ DateTime.utc_now())
+
+  def close_ballot(%Ballot{published_at: nil}, _closed_at) do
+    {:error, :ballot_not_published}
+  end
+
+  def close_ballot(%Ballot{closed_at: nil} = ballot, closed_at) do
+    ballot
+    |> Ecto.Changeset.cast(%{closed_at: closed_at}, [:closed_at])
+    |> Repo.update()
+  end
+
+  def close_ballot(%Ballot{closed_at: _non_nil_value}, _closed_at) do
+    {:error, :ballot_already_closed}
+  end
+
+  @typedoc """
+  Represents the three states of a ballot: `:draft`, `:published`, and `:closed`.
+
+  - A `:draft` ballot can be edited, and then published.
+  - A `:published` ballot can no longer be updated, can accept votes and can be closed.
+  - A `:closed` ballot can no longer be updated, and can no longer accept votes.
+  """
+  @type ballot_status :: :draft | :published | :closed
+
+  @doc """
+  Returns the `t:ballot_status/0` of the given `Flick.RankedVoting.Ballot` entity.
+  """
+  @spec ballot_status(Ballot.t()) :: ballot_status()
+  def ballot_status(ballot) do
+    case ballot do
+      %Ballot{closed_at: nil, published_at: nil} -> :draft
+      %Ballot{closed_at: nil, published_at: _non_nil_value} -> :published
+      %Ballot{closed_at: _non_nil_value, published_at: nil} -> raise "invalid state observed"
+      %Ballot{closed_at: _non_nil_value, published_at: _another_non_nil_value} -> :closed
+    end
+  end
+
   @doc """
   Returns a list of all `Flick.RankedVoting.Ballot` entities.
   """
