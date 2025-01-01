@@ -11,9 +11,15 @@ defmodule Flick.RankedVoting do
 
   @doc """
   Creates a new `Flick.RankedVoting.Ballot` entity with the given `title` and `questions`.
+
+  Attempts to pass in `published_at` or `closed_at` will raise an `ArgumentError`
+  Please look to `published_ballot/2` and `close_ballot/2` for those lifecycle needs.
   """
   @spec create_ballot(map()) :: {:ok, Ballot.t()} | {:error, Ecto.Changeset.t(Ballot.t())}
   def create_ballot(attrs) when is_map(attrs) do
+    raise_if_attempting_to_set_published_at(attrs)
+    raise_if_attempting_to_set_closed_at(attrs)
+
     %Ballot{}
     |> change_ballot(attrs)
     |> Repo.insert()
@@ -23,20 +29,26 @@ defmodule Flick.RankedVoting do
   Updates the given `Flick.RankedVoting.Ballot` entity with the given attributes.
 
   If the `Flick.RankedVoting.Ballot` has already been published, an error is returned.
+
+  Attempts to pass in `published_at` or `closed_at` will raise an `ArgumentError`
+  Please look to `published_ballot/2` and `close_ballot/2` for those lifecycle needs.
   """
   @spec update_ballot(Ballot.t(), map()) ::
           {:ok, Ballot.t()}
           | {:error, Ecto.Changeset.t(Ballot.t())}
-          | {:error, :can_not_update_published_ballot}
+          | {:error, :can_only_update_draft_ballots}
 
-  def update_ballot(%Ballot{published_at: nil} = ballot, attrs) do
+  def update_ballot(%Ballot{published_at: nil, closed_at: nil} = ballot, attrs) do
+    raise_if_attempting_to_set_published_at(attrs)
+    raise_if_attempting_to_set_closed_at(attrs)
+
     ballot
     |> change_ballot(attrs)
     |> Repo.update()
   end
 
   def update_ballot(_ballot, _attrs) do
-    {:error, :can_not_update_published_ballot}
+    {:error, :can_only_update_draft_ballots}
   end
 
   @doc """
@@ -277,5 +289,17 @@ defmodule Flick.RankedVoting do
       |> length()
 
     min(5, possible_answer_count)
+  end
+
+  defp raise_if_attempting_to_set_published_at(attrs) do
+    if Map.has_key?(attrs, :published_at) or Map.has_key?(attrs, "published_at") do
+      raise ArgumentError, "`published_at` can not be set during creation or mutation of a ballot"
+    end
+  end
+
+  defp raise_if_attempting_to_set_closed_at(attrs) do
+    if Map.has_key?(attrs, :closed_at) or Map.has_key?(attrs, "closed_at") do
+      raise ArgumentError, "`closed_at` can not be set during creation or mutation of a ballot"
+    end
   end
 end

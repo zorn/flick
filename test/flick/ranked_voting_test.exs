@@ -188,7 +188,14 @@ defmodule Flick.RankedVotingTest do
     test "failure: can not update a published ballot" do
       ballot = published_ballot_fixture()
 
-      assert {:error, :can_not_update_published_ballot} =
+      assert {:error, :can_only_update_draft_ballots} =
+               RankedVoting.update_ballot(ballot, %{title: "some new title"})
+    end
+
+    test "failure: can not update a closed ballot" do
+      ballot = closed_ballot_fixture()
+
+      assert {:error, :can_only_update_draft_ballots} =
                RankedVoting.update_ballot(ballot, %{title: "some new title"})
     end
   end
