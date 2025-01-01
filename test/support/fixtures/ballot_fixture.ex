@@ -45,4 +45,19 @@ defmodule Support.Fixtures.BallotFixture do
     {:ok, published_ballot} = Flick.RankedVoting.publish_ballot(ballot)
     published_ballot
   end
+
+  @doc """
+  Creates a `Flick.RankedVoting.Ballot` entity in the `Flick.Repo` for the passed in
+  optional attributes, publishes the ballot, and then closes the ballot.
+
+  When not provided, all required attributes will be generated.
+  """
+  @spec closed_ballot_fixture(map()) :: Ballot.t()
+  def closed_ballot_fixture(attrs \\ %{}) do
+    attrs = valid_ballot_attributes(attrs)
+    {:ok, ballot} = Flick.RankedVoting.create_ballot(attrs)
+    {:ok, published_ballot} = Flick.RankedVoting.publish_ballot(ballot)
+    {:ok, closed_ballot} = Flick.RankedVoting.close_ballot(published_ballot)
+    closed_ballot
+  end
 end
