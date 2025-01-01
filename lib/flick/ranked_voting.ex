@@ -61,7 +61,7 @@ defmodule Flick.RankedVoting do
 
   def publish_ballot(%Ballot{published_at: nil} = ballot, published_at) do
     ballot
-    |> change_ballot(%{published_at: published_at})
+    |> Ecto.Changeset.cast(%{published_at: published_at}, [:published_at])
     |> Repo.update()
   end
 

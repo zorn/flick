@@ -132,10 +132,11 @@ defmodule Flick.RankedVotingTest do
     end
 
     test "failure: can not attempt to create a ballot that is already `published`" do
-      assert {:error, changeset} =
-               RankedVoting.create_ballot(%{published_at: ~U[2021-01-01 00:00:00Z]})
-
-      assert "new ballots can not be published" in errors_on(changeset).published_at
+      assert_raise ArgumentError,
+                   "`published_at` can not be set during creation or mutation of a ballot",
+                   fn ->
+                     RankedVoting.create_ballot(%{published_at: ~U[2021-01-01 00:00:00Z]})
+                   end
     end
 
     test "success: `secret` is created after row insertion" do
@@ -194,7 +195,7 @@ defmodule Flick.RankedVotingTest do
 
   describe "publish_ballot/2" do
     test "success: you can publish a non-published ballot" do
-      ballot = ballot_fixture(%{published_at: nil})
+      ballot = ballot_fixture()
       published_at = DateTime.utc_now()
       assert {:ok, published_ballot} = RankedVoting.publish_ballot(ballot, published_at)
       assert %Ballot{published_at: ^published_at} = published_ballot
