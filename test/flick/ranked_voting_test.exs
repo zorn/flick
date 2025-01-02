@@ -236,7 +236,28 @@ defmodule Flick.RankedVotingTest do
   end
 
   describe "ballot_status/1" do
-    # TODO
+    test "returns `:draft` for a non-published ballot" do
+      ballot = ballot_fixture()
+      assert :draft = RankedVoting.ballot_status(ballot)
+    end
+
+    test "returns `:published` for a published ballot" do
+      ballot = published_ballot_fixture()
+      assert :published = RankedVoting.ballot_status(ballot)
+    end
+
+    test "returns `:closed` for a closed ballot" do
+      ballot = closed_ballot_fixture()
+      assert :closed = RankedVoting.ballot_status(ballot)
+    end
+
+    test "raises when encountering an unknown status" do
+      ballot = %Ballot{published_at: nil, closed_at: DateTime.utc_now()}
+
+      assert_raise RuntimeError, "invalid state observed", fn ->
+        RankedVoting.ballot_status(ballot)
+      end
+    end
   end
 
   describe "list_ballots/1" do
