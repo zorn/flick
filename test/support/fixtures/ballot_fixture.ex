@@ -15,8 +15,7 @@ defmodule Support.Fixtures.BallotFixture do
     Enum.into(attrs, %{
       question_title: "What day should have dinner?",
       possible_answers: "Monday, Tuesday, Wednesday, Thursday, Friday",
-      url_slug: "dinner-day-#{System.unique_integer()}",
-      published_at: nil
+      url_slug: "dinner-day-#{System.unique_integer()}"
     })
   end
 
@@ -26,7 +25,7 @@ defmodule Support.Fixtures.BallotFixture do
 
   When not provided, all required attributes will be generated.
   """
-  @spec ballot_fixture(map()) :: {:ok, Ballot.t()}
+  @spec ballot_fixture(map()) :: Ballot.t()
   def ballot_fixture(attrs \\ %{}) do
     attrs = valid_ballot_attributes(attrs)
     {:ok, ballot} = Flick.RankedVoting.create_ballot(attrs)
@@ -39,11 +38,26 @@ defmodule Support.Fixtures.BallotFixture do
 
   When not provided, all required attributes will be generated.
   """
-  @spec published_ballot_fixture(map()) :: {:ok, Ballot.t()}
+  @spec published_ballot_fixture(map()) :: Ballot.t()
   def published_ballot_fixture(attrs \\ %{}) do
     attrs = valid_ballot_attributes(attrs)
     {:ok, ballot} = Flick.RankedVoting.create_ballot(attrs)
     {:ok, published_ballot} = Flick.RankedVoting.publish_ballot(ballot)
     published_ballot
+  end
+
+  @doc """
+  Creates a `Flick.RankedVoting.Ballot` entity in the `Flick.Repo` for the passed in
+  optional attributes, publishes the ballot, and then closes the ballot.
+
+  When not provided, all required attributes will be generated.
+  """
+  @spec closed_ballot_fixture(map()) :: Ballot.t()
+  def closed_ballot_fixture(attrs \\ %{}) do
+    attrs = valid_ballot_attributes(attrs)
+    {:ok, ballot} = Flick.RankedVoting.create_ballot(attrs)
+    {:ok, published_ballot} = Flick.RankedVoting.publish_ballot(ballot)
+    {:ok, closed_ballot} = Flick.RankedVoting.close_ballot(published_ballot)
+    closed_ballot
   end
 end
