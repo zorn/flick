@@ -23,7 +23,7 @@ defmodule FlickWeb.Vote.VoteCaptureLiveTest do
     ~M{conn, view, ballot}
   end
 
-  test "success: renders a vote form", ~M{view, ballot} do
+  test "renders a vote form", ~M{view, ballot} do
     # Presents the question.
     assert has_element?(view, "#question-title", ballot.question_title)
 
@@ -44,7 +44,7 @@ defmodule FlickWeb.Vote.VoteCaptureLiveTest do
     end)
   end
 
-  test "success: can submit a form and create a vote", ~M{view} do
+  test "can submit a form and create a vote", ~M{view} do
     payload = %{
       "ranked_answers" => %{
         "0" => %{"_persistent_id" => "0", "value" => "The Matrix"},
