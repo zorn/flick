@@ -15,12 +15,18 @@ defmodule FlickWeb.Vote.VoteCaptureLive do
     %{"url_slug" => url_slug} = params
     ballot = RankedVoting.get_ballot_by_url_slug!(url_slug)
 
-    socket
-    |> verify_ballot_is_published(ballot)
-    |> assign(:page_title, "Vote: #{ballot.question_title}")
-    |> assign(:ballot, ballot)
-    |> assign_form()
-    |> ok()
+    if ballot.published_at do
+      socket
+      |> assign(:page_title, "Vote: #{ballot.question_title}")
+      |> assign(:ballot, ballot)
+      |> assign_form()
+      |> ok()
+    else
+      socket
+      |> put_flash(:error, "This ballot is unpublished and can not accept votes.")
+      |> redirect(to: ~p"/")
+      |> ok()
+    end
   end
 
   @spec assign_form(Socket.t()) :: Socket.t()
@@ -117,14 +123,5 @@ defmodule FlickWeb.Vote.VoteCaptureLive do
 
   defp options(ballot) do
     [nil] ++ Flick.RankedVoting.Ballot.possible_answers_as_list(ballot.possible_answers)
-  end
-
-  defp verify_ballot_is_published(socket, ballot) do
-    if ballot.published_at do
-      socket
-    else
-      # FIXME: We can make this a better user experience in the future.
-      throw("can not vote on an unpublished ballot")
-    end
   end
 end

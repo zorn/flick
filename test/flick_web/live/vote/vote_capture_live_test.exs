@@ -67,6 +67,12 @@ defmodule FlickWeb.Vote.VoteCaptureLiveTest do
     # `list_votes_for_ballot/1` function.
   end
 
+  test "redirects when ballot is an unpublished draft", ~M{conn} do
+    ballot_fixture(%{url_slug: "red-car"})
+    assert {:error, {:redirect, %{to: "/", flash: flash}}} = live(conn, ~p"/ballot/red-car")
+    assert flash["error"] == "This ballot is unpublished and can not accept votes."
+  end
+
   defp ranked_answer_selector(index) do
     "div[data-feedback-for=\"vote[ranked_answers][#{index}][value]\"]"
   end
