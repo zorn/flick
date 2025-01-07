@@ -48,8 +48,9 @@ defmodule FlickWeb.Router do
 
     live "/", IndexLive, :index
     live "/ballot/new", Ballots.EditorLive, :new
-    live "/ballot/:url_slug/:secret", Ballots.ViewerLive, :edit
+    live "/ballot/:url_slug/results", Vote.ResultsLive, :index
     live "/ballot/:url_slug/:secret/edit", Ballots.EditorLive, :edit
+    live "/ballot/:url_slug/:secret", Ballots.ViewerLive, :edit
     live "/ballot/:url_slug", Vote.VoteCaptureLive, :new
 
     live_storybook "/storybook", backend_module: Elixir.FlickWeb.Storybook
