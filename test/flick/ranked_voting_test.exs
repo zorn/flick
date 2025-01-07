@@ -525,6 +525,60 @@ defmodule Flick.RankedVotingTest do
     end
   end
 
+  describe "list_votes_for_ballot_id/1" do
+    setup do
+      ballot =
+        published_ballot_fixture(
+          question_title: "What's for dinner?",
+          possible_answers: "Pizza, Tacos, Sushi, Burgers"
+        )
+
+      {:ok, published_ballot: ballot}
+    end
+
+    test "returns a lists votes of a ballot", ~M{published_ballot} do
+      assert [] = RankedVoting.list_votes_for_ballot_id(published_ballot.id)
+
+      {:ok, vote} =
+        RankedVoting.create_vote(published_ballot, %{
+          "ranked_answers" => [
+            %{"value" => "Tacos"},
+            %{"value" => "Pizza"},
+            %{"value" => "Burgers"}
+          ]
+        })
+
+      assert [^vote] = RankedVoting.list_votes_for_ballot_id(published_ballot.id)
+    end
+  end
+
+  describe "count_votes_for_ballot_id/1" do
+    setup do
+      ballot =
+        published_ballot_fixture(
+          question_title: "What's for dinner?",
+          possible_answers: "Pizza, Tacos, Sushi, Burgers"
+        )
+
+      {:ok, published_ballot: ballot}
+    end
+
+    test "returns a count of the votes of a ballot", ~M{published_ballot} do
+      assert 0 = RankedVoting.count_votes_for_ballot_id(published_ballot.id)
+
+      {:ok, _vote} =
+        RankedVoting.create_vote(published_ballot, %{
+          "ranked_answers" => [
+            %{"value" => "Tacos"},
+            %{"value" => "Pizza"},
+            %{"value" => "Burgers"}
+          ]
+        })
+
+      assert 1 = RankedVoting.count_votes_for_ballot_id(published_ballot.id)
+    end
+  end
+
   describe "get_ballot_results_report/1" do
     setup do
       ballot =

@@ -255,6 +255,17 @@ defmodule Flick.RankedVoting do
     |> Repo.all()
   end
 
+  @doc """
+  Returns the count of `Flick.RankedVoting.Vote` entities associated with the given
+  `ballot_id`.
+  """
+  @spec count_votes_for_ballot_id(Ballot.id()) :: non_neg_integer()
+  def count_votes_for_ballot_id(ballot_id) do
+    Vote
+    |> where(ballot_id: ^ballot_id)
+    |> Repo.aggregate(:count)
+  end
+
   @typedoc """
   A report describing the voting results for a ballot, displaying each possible
   answer and the point total it received.
