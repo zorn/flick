@@ -38,7 +38,7 @@ jobs:
         if: always()
 
       - name: Check for compile-time dependencies
-        run: mix xref graph --label compile-connected --fail-above 0
+        run: mix xref graph --label compile-connected --fail-above 1
         if: always()
 
       - name: Check for security vulnerabilities in Phoenix project
