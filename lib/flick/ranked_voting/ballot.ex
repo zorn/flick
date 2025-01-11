@@ -27,7 +27,10 @@ defmodule Flick.RankedVoting.Ballot do
           closed_at: DateTime.t() | nil
         }
 
-  # TODO Add `changeset` type.
+  @typedoc """
+  A changeset for a `Flick.RankedVoting.Ballot` entity.
+  """
+  @type changeset :: Ecto.Changeset.t(t())
 
   @typedoc """
   A type for the empty `Flick.RankedVoting.Ballot` struct.

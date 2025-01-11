@@ -15,7 +15,7 @@ defmodule Flick.RankedVoting do
   Attempts to pass in `published_at` or `closed_at` will raise an `ArgumentError`
   Please look to `published_ballot/2` and `close_ballot/2` for those lifecycle needs.
   """
-  @spec create_ballot(map()) :: {:ok, Ballot.t()} | {:error, Ecto.Changeset.t(Ballot.t())}
+  @spec create_ballot(map()) :: {:ok, Ballot.t()} | {:error, Ballot.changeset()}
   def create_ballot(attrs) when is_map(attrs) do
     raise_if_attempting_to_set_published_at(attrs)
     raise_if_attempting_to_set_closed_at(attrs)
@@ -35,7 +35,7 @@ defmodule Flick.RankedVoting do
   """
   @spec update_ballot(Ballot.t(), map()) ::
           {:ok, Ballot.t()}
-          | {:error, Ecto.Changeset.t(Ballot.t())}
+          | {:error, Ballot.changeset()}
           | {:error, :can_only_update_draft_ballots}
 
   def update_ballot(%Ballot{published_at: nil, closed_at: nil} = ballot, attrs) do
@@ -67,7 +67,7 @@ defmodule Flick.RankedVoting do
   """
   @spec publish_ballot(Ballot.t(), DateTime.t()) ::
           {:ok, Ballot.t()}
-          | {:error, Ecto.Changeset.t(Ballot.t())}
+          | {:error, Ballot.changeset()}
           | {:error, :ballot_already_published}
   def publish_ballot(ballot, published_at \\ DateTime.utc_now())
 
@@ -83,7 +83,7 @@ defmodule Flick.RankedVoting do
 
   @spec close_ballot(Ballot.t(), DateTime.t()) ::
           {:ok, Ballot.t()}
-          | {:error, Ecto.Changeset.t(Ballot.t())}
+          | {:error, Ballot.changeset()}
           | {:error, :ballot_not_published}
   def close_ballot(ballot, closed_at \\ DateTime.utc_now())
 
@@ -179,7 +179,7 @@ defmodule Flick.RankedVoting do
   @doc """
   Returns an `Ecto.Changeset` representing changes to a `Flick.RankedVoting.Ballot` entity.
   """
-  @spec change_ballot(Ballot.t() | Ballot.struct_t(), map()) :: Ecto.Changeset.t(Ballot.t())
+  @spec change_ballot(Ballot.t() | Ballot.struct_t(), map()) :: Ballot.changeset()
   def change_ballot(%Ballot{} = ballot, attrs) do
     Ballot.changeset(ballot, attrs)
   end
