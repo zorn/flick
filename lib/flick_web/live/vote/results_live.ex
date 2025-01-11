@@ -31,7 +31,7 @@ defmodule FlickWeb.Vote.ResultsLive do
   def render(assigns) do
     ~H"""
     <div class="prose">
-      <h1>Ballot Results</h1>
+      <h3>Ballot Results</h3>
 
       <p>For the ballot asking <strong>{@ballot.question_title}</strong> the results in!</p>
 
