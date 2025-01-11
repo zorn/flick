@@ -81,6 +81,12 @@ defmodule Flick.RankedVoting do
     {:error, :ballot_already_published}
   end
 
+  @doc """
+  Closes the given `Flick.RankedVoting.Ballot` entity.
+
+  Once a `Flick.RankedVoting.Ballot` entity is closed, it can no longer be updated
+  and no more votes can be cast.
+  """
   @spec close_ballot(Ballot.t(), DateTime.t()) ::
           {:ok, Ballot.t()}
           | {:error, Ballot.changeset()}
