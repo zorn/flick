@@ -50,8 +50,7 @@ defmodule FlickWeb.Vote.ResultsLiveTest do
     assert flash["error"] == "This ballot is not closed and results are unavailable."
   end
 
-  defp populate_ballot_with_votes(%Ballot{published_at: published_at} = ballot)
-       when not is_nil(published_at) do
+  defp populate_ballot_with_votes(%Ballot{} = ballot) do
     # This assumes a ballot with three possible answers.
     for _ <- 1..25 do
       available_answers = Ballot.possible_answers_as_list(ballot.possible_answers)
