@@ -15,17 +15,24 @@ defmodule FlickWeb.Vote.VoteCaptureLive do
     %{"url_slug" => url_slug} = params
     ballot = RankedVoting.get_ballot_by_url_slug!(url_slug)
 
-    if ballot.published_at do
-      socket
-      |> assign(:page_title, "Vote: #{ballot.question_title}")
-      |> assign(:ballot, ballot)
-      |> assign_form()
-      |> ok()
-    else
-      socket
-      |> put_flash(:error, "This ballot is unpublished and can not accept votes.")
-      |> redirect(to: ~p"/")
-      |> ok()
+    cond do
+      ballot.closed_at ->
+        socket
+        |> redirect(to: ~p"/ballot/#{ballot.url_slug}/results")
+        |> ok()
+
+      ballot.published_at ->
+        socket
+        |> assign(:page_title, "Vote: #{ballot.question_title}")
+        |> assign(:ballot, ballot)
+        |> assign_form()
+        |> ok()
+
+      true ->
+        socket
+        |> put_flash(:error, "This ballot is unpublished and can not accept votes.")
+        |> redirect(to: ~p"/")
+        |> ok()
     end
   end
 

@@ -73,6 +73,15 @@ defmodule FlickWeb.Vote.VoteCaptureLiveTest do
     assert flash["error"] == "This ballot is unpublished and can not accept votes."
   end
 
+  test "redirects to the result page when the ballot is closed", ~M{conn} do
+    ballot = closed_ballot_fixture()
+
+    expected_url = "/ballot/#{ballot.url_slug}/results"
+
+    assert {:error, {:redirect, %{to: ^expected_url, flash: %{}}}} =
+             live(conn, ~p"/ballot/#{ballot.url_slug}")
+  end
+
   defp ranked_answer_selector(index) do
     "div[data-feedback-for=\"vote[ranked_answers][#{index}][value]\"]"
   end
