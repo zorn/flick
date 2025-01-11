@@ -23,7 +23,7 @@ defmodule FlickWeb.Vote.VoteCaptureLiveTest do
     ~M{conn, view, ballot}
   end
 
-  test "success: renders a vote form", ~M{view, ballot} do
+  test "renders a vote form", ~M{view, ballot} do
     # Presents the question.
     assert has_element?(view, "#question-title", ballot.question_title)
 
@@ -44,7 +44,7 @@ defmodule FlickWeb.Vote.VoteCaptureLiveTest do
     end)
   end
 
-  test "success: can submit a form and create a vote", ~M{view} do
+  test "can submit a form and create a vote", ~M{view} do
     payload = %{
       "ranked_answers" => %{
         "0" => %{"_persistent_id" => "0", "value" => "The Matrix"},
@@ -65,6 +65,21 @@ defmodule FlickWeb.Vote.VoteCaptureLiveTest do
 
     # FIXME: Test the vote was created. Will require the creation of a
     # `list_votes_for_ballot/1` function.
+  end
+
+  test "redirects when ballot is an unpublished draft", ~M{conn} do
+    ballot_fixture(%{url_slug: "red-car"})
+    assert {:error, {:redirect, %{to: "/", flash: flash}}} = live(conn, ~p"/ballot/red-car")
+    assert flash["error"] == "This ballot is unpublished and can not accept votes."
+  end
+
+  test "redirects to the result page when the ballot is closed", ~M{conn} do
+    ballot = closed_ballot_fixture()
+
+    expected_url = "/ballot/#{ballot.url_slug}/results"
+
+    assert {:error, {:redirect, %{to: ^expected_url, flash: %{}}}} =
+             live(conn, ~p"/ballot/#{ballot.url_slug}")
   end
 
   defp ranked_answer_selector(index) do

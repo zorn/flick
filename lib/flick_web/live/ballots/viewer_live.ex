@@ -47,6 +47,18 @@ defmodule FlickWeb.Ballots.ViewerLive do
     end
   end
 
+  def handle_event("close", _params, socket) do
+    %{ballot: ballot} = socket.assigns
+
+    case RankedVoting.close_ballot(ballot) do
+      {:ok, ballot} ->
+        {:noreply, assign(socket, :ballot, ballot)}
+
+      {:error, _changeset} ->
+        {:noreply, put_flash(socket, :error, "Could not close ballot.")}
+    end
+  end
+
   def handle_event("present-inline-editor", %{"vote-id" => vote_id}, socket) do
     vote = assert_vote_id(socket, vote_id)
 
@@ -111,116 +123,246 @@ defmodule FlickWeb.Ballots.ViewerLive do
   end
 
   @impl Phoenix.LiveView
+  def render(%{ballot: %Ballot{published_at: nil}} = assigns) do
+    ~H"""
+    <.shared_header />
+
+    <div class="mt-8 prose">
+      <h3 class="mb-0">Edit Ballot</h3>
+      <p>Your ballot is not published and can still be edited.</p>
+    </div>
+
+    <div class="mt-8 bg-slate-100 rounded-lg p-4">
+      <dl>
+        <dt class="font-bold">Question Title</dt>
+        <dd id="ballot-question-title" class="pb-4">{@ballot.question_title}</dd>
+        <dt class="font-bold">Description</dt>
+
+        <dd id="ballot-description" class="pb-4">
+          <%!-- FIXME: Consider the security implications of `raw`. --%>
+          <%!-- https://github.com/zorn/flick/issues/77 --%>
+          {raw(rendered_description(@ballot.description))}
+        </dd>
+        <dt class="font-bold">Possible Answers</dt>
+        <dd id="ballot-possible-answers" class="pb-4">{@ballot.possible_answers}</dd>
+        <dt class="font-bold">URL Slug</dt>
+        <dd id="ballot-url-slug" class="pb-4">{@ballot.url_slug}</dd>
+      </dl>
+      <.link
+        :if={RankedVoting.can_update_ballot?(@ballot)}
+        navigate={~p"/ballot/#{@ballot.url_slug}/#{@ballot.secret}/edit"}
+        class="text-white no-underline"
+      >
+        <.button id="edit-ballot-button">
+          Edit Ballot
+        </.button>
+      </.link>
+    </div>
+
+    <div class="mt-8 prose">
+      <h3 class="mb-0">Publish Ballot</h3>
+      <p class="mb-2">Once you are satisfied with your ballot, hit the publish button below.</p>
+
+      <.button phx-click="publish" id="publish-ballot-button">Publish Ballot</.button>
+    </div>
+    """
+  end
+
+  def render(%{ballot: %Ballot{closed_at: nil}} = assigns) do
+    ~H"""
+    <.shared_header />
+
+    <div class="mt-8 prose">
+      <h3 class="mb-0">Ballot is Published!</h3>
+      <p>Your ballot is published. Use the URL below to invite people to vote!</p>
+      <.link navigate={~p"/ballot/#{@ballot.url_slug}"}>
+        {URI.append_path(@socket.host_uri, "/ballot/#{@ballot.url_slug}")}
+      </.link>
+
+      <p class="mb-2">
+        When you no longer want to accept votes close the ballot using the button below.
+      </p>
+
+      <.button phx-click="close" id="close-ballot-button">Close Ballot</.button>
+    </div>
+
+    <div class="prose mb-8">
+      <.vote_results
+        ballot_results_report={@ballot_results_report}
+        votes={@votes}
+        title="Early Results"
+      />
+
+      <.votes_table ballot={@ballot} votes={@votes} vote_forms={@vote_forms} />
+    </div>
+    """
+  end
+
   def render(assigns) do
     ~H"""
+    <.shared_header />
+
+    <div class="mt-8 prose">
+      <h3 class="mb-0">Ballot is Closed</h3>
+      <p>Your ballot is closed. Result totals can be viewed by everyone at:</p>
+      <.link navigate={~p"/ballot/#{@ballot.url_slug}/results"}>
+        {URI.append_path(@socket.host_uri, "/ballot/#{@ballot.url_slug}/results")}
+      </.link>
+    </div>
+    <div class="prose mb-8">
+      <.vote_results
+        ballot_results_report={@ballot_results_report}
+        votes={@votes}
+        title="Final Results"
+      />
+
+      <.votes_table ballot={@ballot} votes={@votes} />
+    </div>
+    """
+  end
+
+  attr :ballot_results_report, :list, required: true
+  attr :votes, :list, required: true
+  attr :title, :string, default: "Results"
+
+  defp vote_results(assigns) do
+    ~H"""
     <div>
-      <div class="prose">
-        <h2>Ballot Admin</h2>
-
-        <dl>
-          <dt class="font-bold">Question Title</dt>
-          <dd id="ballot-question-title" class="pb-4">{@ballot.question_title}</dd>
-          <dt class="font-bold">Description</dt>
-          <%!-- FIXME: Showing this inline feels wrong.
-          Revisit how we render this "preview" of the ballot. --%>
-          <dd id="ballot-description" class="pb-4">{@ballot.description}</dd>
-          <dt class="font-bold">Possible Answers</dt>
-          <dd id="ballot-possible-answers" class="pb-4">{@ballot.possible_answers}</dd>
-          <dt class="font-bold">URL Slug</dt>
-          <dd id="ballot-url-slug" class="pb-4">{@ballot.url_slug}</dd>
-        </dl>
-        <.link
-          :if={RankedVoting.can_update_ballot?(@ballot)}
-          navigate={~p"/ballot/#{@ballot.url_slug}/#{@ballot.secret}/edit"}
-          class="text-white no-underline"
-        >
-          <.button id="edit-ballot-button">
-            Edit Ballot
-          </.button>
-        </.link>
-      </div>
-
-      <div class="my-6">
-        <%= if @ballot.published_at do %>
-          <div class="prose">
-            <p>This ballot was published at: {@ballot.published_at}</p>
-
-            <p>
-              You can invite people to vote using the URL:<br />
-              <.link navigate={~p"/ballot/#{@ballot.url_slug}"}>
-                {URI.append_path(@socket.host_uri, "/ballot/#{@ballot.url_slug}")}
-              </.link>
-            </p>
-          </div>
-        <% else %>
-          <.button phx-click="publish" id="publish-ballot-button">Publish</.button>
+      <h3>{@title} ({length(@votes)} votes received)</h3>
+      <ol>
+        <%= for %{points: points, value: answer} <- @ballot_results_report do %>
+          <li>{answer}: {points} points</li>
         <% end %>
-      </div>
+      </ol>
+    </div>
+    """
+  end
 
-      <div class="prose mb-8">
-        <h3>Vote Results</h3>
-        <ol>
-          <%= for %{points: points, value: answer} <- @ballot_results_report do %>
-            <li>{answer}: {points} points</li>
-          <% end %>
-        </ol>
-      </div>
+  attr :ballot, Ballot, required: true
+  attr :votes, :list, required: true
+  attr :vote_forms, :map, default: nil
 
-      <div class="prose mb-4">
-        <h3>Votes ({length(@votes)})</h3>
-      </div>
+  defp votes_table(assigns) do
+    ~H"""
+    <.table id="votes" rows={@votes} row_id={&"vote-row-#{&1.id}"}>
+      <:col :let={vote} label="Name">
+        {vote.full_name || "No Name"}
+      </:col>
+      <:col :let={vote} label="Weight">
+        <.weight_label
+          vote={vote}
+          vote_forms={@vote_forms}
+          enable_inline_editor={!is_nil(@vote_forms)}
+        />
+        <.weight_form vote={vote} vote_forms={@vote_forms} />
+      </:col>
+      <:col
+        :let={vote}
+        :if={show_answer(@ballot, 0)}
+        label="First (5pts)"
+        title="First Preference is worth 5pts."
+      >
+        {answer_at_index(vote, 0)}
+      </:col>
+      <:col
+        :let={vote}
+        :if={show_answer(@ballot, 1)}
+        label="Second (4pts)"
+        title="Second Preference is worth 4pts."
+      >
+        {answer_at_index(vote, 1)}
+      </:col>
+      <:col
+        :let={vote}
+        :if={show_answer(@ballot, 2)}
+        label="Third (3pts)"
+        title="Third Preference is worth 3pts."
+      >
+        {answer_at_index(vote, 2)}
+      </:col>
+      <:col
+        :let={vote}
+        :if={show_answer(@ballot, 3)}
+        label="Fourth (2pts)"
+        title="Fourth Preference is worth 2pts."
+      >
+        {answer_at_index(vote, 3)}
+      </:col>
+      <:col
+        :let={vote}
+        :if={show_answer(@ballot, 4)}
+        label="Fifth (1pt)"
+        title="Fifth Preference is worth 1pt."
+      >
+        {answer_at_index(vote, 4)}
+      </:col>
+    </.table>
+    """
+  end
 
-      <.table id="votes" rows={@votes} row_id={&"vote-row-#{&1.id}"}>
-        <:col :let={vote} label="Name">
-          {vote.full_name || "No Name"}
-        </:col>
-        <:col :let={vote} label="Weight">
-          <div :if={!form_for_vote(@vote_forms, vote)}>
-            {vote.weight} &nbsp;
-            <%!-- TODO: As the user clicks `Edit` we should focus the form input. --%>
-            <.link phx-click="present-inline-editor" phx-value-vote-id={vote.id} class="underline">
-              Edit
-            </.link>
-          </div>
-          <.form
-            :let={form}
-            :if={form_for_vote(@vote_forms, vote)}
-            for={form_for_vote(@vote_forms, vote)}
-            phx-change="validate"
-            phx-submit="save"
-          >
-            <input type="hidden" name="vote_id" , value={vote.id} />
-            <%!-- TODO: In the future we should draw red outline here when invalid. --%>
-            <%!-- https://github.com/zorn/flick/issues/37 --%>
-            <input
-              type="text"
-              name="weight"
-              value={Phoenix.HTML.Form.input_value(form, :weight)}
-              class="w-16 rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6 phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400 border-zinc-300 focus:border-zinc-400"
-              autofocus
-            />
-            <.button>Save</.button>
-            <.link phx-click="dismiss-inline-editor" phx-value-vote-id={vote.id} class="underline">
-              Cancel
-            </.link>
-          </.form>
-        </:col>
-        <:col :let={vote} :if={show_answer(@ballot, 0)} label="First Preference (5pts)">
-          {answer_at_index(vote, 0)}
-        </:col>
-        <:col :let={vote} :if={show_answer(@ballot, 1)} label="Second Preference (4pts)">
-          {answer_at_index(vote, 1)}
-        </:col>
-        <:col :let={vote} :if={show_answer(@ballot, 2)} label="Third Preference (3pts)">
-          {answer_at_index(vote, 2)}
-        </:col>
-        <:col :let={vote} :if={show_answer(@ballot, 3)} label="Fourth Preference (2pts)">
-          {answer_at_index(vote, 3)}
-        </:col>
-        <:col :let={vote} :if={show_answer(@ballot, 4)} label="Fifth Preference (1pt)">
-          {answer_at_index(vote, 4)}
-        </:col>
-      </.table>
+  attr :vote, Vote, required: true
+  attr :vote_forms, :map, required: true
+  attr :enable_inline_editor, :boolean, default: true
+
+  defp weight_label(%{enable_inline_editor: false} = assigns) do
+    ~H"""
+    <div>{@vote.weight}</div>
+    """
+  end
+
+  defp weight_label(assigns) do
+    ~H"""
+    <div :if={@vote_forms && !form_for_vote(@vote_forms, @vote)}>
+      {@vote.weight} &nbsp;
+      <.link phx-click="present-inline-editor" phx-value-vote-id={@vote.id} class="underline">
+        Edit
+      </.link>
+    </div>
+    """
+  end
+
+  attr :vote, Vote, required: true
+  attr :vote_forms, :map, required: true
+
+  defp weight_form(assigns) do
+    ~H"""
+    <.form
+      :let={form}
+      :if={@vote_forms && form_for_vote(@vote_forms, @vote)}
+      for={form_for_vote(@vote_forms, @vote)}
+      phx-change="validate"
+      phx-submit="save"
+    >
+      <input type="hidden" name="vote_id" , value={@vote.id} />
+      <%!-- TODO: In the future we should draw red outline here when invalid. --%>
+      <%!-- https://github.com/zorn/flick/issues/37 --%>
+      <input
+        type="text"
+        name="weight"
+        value={Phoenix.HTML.Form.input_value(form, :weight)}
+        class="w-16 rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6 phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400 border-zinc-300 focus:border-zinc-400"
+        autofocus
+      />
+      <.button>Save</.button>
+      <.link phx-click="dismiss-inline-editor" phx-value-vote-id={@vote.id} class="underline">
+        Cancel
+      </.link>
+    </.form>
+    """
+  end
+
+  defp shared_header(assigns) do
+    ~H"""
+    <div class="prose">
+      <h2 class="mb-0">Ballot Admin</h2>
+
+      <p>This page is where you'll edit, publish, tally and close your ballot.</p>
+
+      <h3 class="mb-0">Bookmark This Page</h3>
+
+      <p>
+        This site does not use registered accounts. To return to this ballot admin page you'll need to full URL. Be sure to bookmark it now.
+      </p>
     </div>
     """
   end
@@ -244,4 +386,11 @@ defmodule FlickWeb.Ballots.ViewerLive do
     %RankedAnswer{value: value} = Enum.at(vote.ranked_answers, index)
     value
   end
+
+  defp rendered_description(description) when is_binary(description) do
+    {:ok, html_doc, _deprecation_messages} = Earmark.as_html(description)
+    html_doc
+  end
+
+  defp rendered_description(_description), do: nil
 end

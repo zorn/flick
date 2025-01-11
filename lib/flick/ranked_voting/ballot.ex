@@ -23,8 +23,14 @@ defmodule Flick.RankedVoting.Ballot do
           url_slug: String.t(),
           secret: Ecto.UUID.t(),
           possible_answers: String.t(),
-          published_at: DateTime.t() | nil
+          published_at: DateTime.t() | nil,
+          closed_at: DateTime.t() | nil
         }
+
+  @typedoc """
+  A changeset for a `Flick.RankedVoting.Ballot` entity.
+  """
+  @type changeset :: Ecto.Changeset.t(t())
 
   @typedoc """
   A type for the empty `Flick.RankedVoting.Ballot` struct.
@@ -43,11 +49,17 @@ defmodule Flick.RankedVoting.Ballot do
     field :secret, :binary_id, read_after_writes: true
     field :possible_answers, :string
     field :published_at, :utc_datetime_usec
+    field :closed_at, :utc_datetime_usec
     timestamps(type: :utc_datetime_usec)
   end
 
   @required_fields [:question_title, :possible_answers, :url_slug]
-  @optional_fields [:published_at, :description]
+
+  # With intent, we do not allow `published_at` or `closed_at` to be set inside
+  # a normal changeset. Instead look to the
+  # `Flick.RankedVoting.publish_ballot/2` and
+  # `Flick.RankedVoting.close_ballot/2` to perform those updates.
+  @optional_fields [:description]
 
   @spec changeset(t() | struct_t(), map()) :: Ecto.Changeset.t(t()) | Ecto.Changeset.t(struct_t())
   def changeset(ballot, attrs) do
@@ -55,7 +67,6 @@ defmodule Flick.RankedVoting.Ballot do
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
     |> validate_possible_answers()
-    |> validate_published_at()
     |> validate_format(:url_slug, ~r/^[a-zA-Z0-9-]+$/,
       message: "can only contain letters, numbers, and hyphens"
     )
@@ -69,16 +80,6 @@ defmodule Flick.RankedVoting.Ballot do
     |> String.split(",")
     |> Enum.map(&String.trim/1)
   end
-
-  @spec validate_published_at(Ecto.Changeset.t()) :: Ecto.Changeset.t()
-  def validate_published_at(%Ecto.Changeset{data: %__MODULE__{id: nil}} = changeset) do
-    # We do not want "new" ballots to be created as already published.
-    validate_change(changeset, :published_at, fn :published_at, _updated_value ->
-      [published_at: "new ballots can not be published"]
-    end)
-  end
-
-  def validate_published_at(changeset), do: changeset
 
   defp validate_possible_answers(changeset) do
     # Because we validated the value as `required` before this, we don't need to

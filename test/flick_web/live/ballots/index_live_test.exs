@@ -32,7 +32,7 @@ defmodule FlickWeb.Ballots.IndexLiveTest do
       for ballot <- ballots do
         row_selector = "tbody#ballots tr#ballot-row-#{ballot.id}"
         assert has_element?(view, row_selector, ballot.question_title)
-        assert has_element?(view, row_selector, "Not Published")
+        assert has_element?(view, row_selector, "Draft")
       end
     end
   end

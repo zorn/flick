@@ -151,7 +151,6 @@
           {Credo.Check.Refactor.RejectReject, []},
           {Credo.Check.Refactor.UnlessWithElse, []},
           {Credo.Check.Refactor.UtcNowTruncate, []},
-          {Credo.Check.Refactor.VariableRebinding, []},
           {Credo.Check.Refactor.WithClauses, []},
 
           #
@@ -189,6 +188,7 @@
           {Credo.Check.Readability.NestedFunctionCalls, []},
           {Credo.Check.Readability.OnePipePerLine, []},
           {Credo.Check.Readability.SinglePipe, []},
+          {Credo.Check.Refactor.VariableRebinding, []},
           {Credo.Check.Warning.LazyLogging, []}
 
           # Custom checks can be created using `mix credo.gen.check`.

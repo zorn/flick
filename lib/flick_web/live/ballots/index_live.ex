@@ -8,6 +8,8 @@ defmodule FlickWeb.Ballots.IndexLive do
 
   use FlickWeb, :live_view
 
+  alias Flick.RankedVoting.Ballot
+
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     socket
@@ -19,28 +21,54 @@ defmodule FlickWeb.Ballots.IndexLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <div class="prose">
-      <p>Admin: Ballots</p>
+    <div class="prose mb-4">
+      <h2>Administration</h2>
+
+      <p>
+        The following page is a list of all ballots in the system, allowing an authenticated admin to quickly see and link to each page.
+      </p>
+
+      <p>Only authenticated admins can see this page.</p>
+
+      <h2>Ballots</h2>
     </div>
 
     <.table id="ballots" rows={@ballots} row_id={&"ballot-row-#{&1.id}"}>
       <:col :let={ballot} label="Title">
-        {ballot.question_title}
+        <div class="text-lg mb-4">
+          {ballot.question_title}
+        </div>
+
+        <div class="font-normal">
+          <.link href={~p"/ballot/#{ballot.url_slug}"} class="underline">
+            Voting Page
+          </.link>
+          &bull;
+          <.link href={~p"/ballot/#{ballot.url_slug}/#{ballot.secret}"} class="underline">
+            Ballot Admin Page
+          </.link>
+        </div>
       </:col>
-      <:col :let={ballot} label="Published">
-        <%= if ballot.published_at do %>
-          {ballot.published_at}
-        <% else %>
-          Not Published
-        <% end %>
-      </:col>
-      <:col :let={ballot}>
-        <.link :if={ballot.published_at} href={~p"/ballot/#{ballot.url_slug}"}>Voting Page</.link>
-      </:col>
-      <:col :let={ballot}>
-        <.link href={~p"/ballot/#{ballot.url_slug}/#{ballot.secret}"}>Ballot Details</.link>
+      <:col :let={ballot} label="Status">
+        <div title={"#{status_date_label(ballot)}"}>{status_label(ballot)}</div>
       </:col>
     </.table>
     """
+  end
+
+  defp status_label(%Ballot{} = ballot) do
+    case Flick.RankedVoting.ballot_status(ballot) do
+      :closed -> "Closed"
+      :published -> "Published"
+      :draft -> "Draft"
+    end
+  end
+
+  defp status_date_label(%Ballot{} = ballot) do
+    case Flick.RankedVoting.ballot_status(ballot) do
+      :closed -> "Closed on #{ballot.closed_at}"
+      :published -> "Published on #{ballot.published_at}"
+      :draft -> "Created on #{ballot.inserted_at}"
+    end
   end
 end

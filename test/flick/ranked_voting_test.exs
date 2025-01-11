@@ -132,10 +132,11 @@ defmodule Flick.RankedVotingTest do
     end
 
     test "failure: can not attempt to create a ballot that is already `published`" do
-      assert {:error, changeset} =
-               RankedVoting.create_ballot(%{published_at: ~U[2021-01-01 00:00:00Z]})
-
-      assert "new ballots can not be published" in errors_on(changeset).published_at
+      assert_raise ArgumentError,
+                   "`published_at` can not be set during creation or mutation of a ballot",
+                   fn ->
+                     RankedVoting.create_ballot(%{published_at: ~U[2021-01-01 00:00:00Z]})
+                   end
     end
 
     test "success: `secret` is created after row insertion" do
@@ -187,14 +188,21 @@ defmodule Flick.RankedVotingTest do
     test "failure: can not update a published ballot" do
       ballot = published_ballot_fixture()
 
-      assert {:error, :can_not_update_published_ballot} =
+      assert {:error, :can_only_update_draft_ballot} =
+               RankedVoting.update_ballot(ballot, %{title: "some new title"})
+    end
+
+    test "failure: can not update a closed ballot" do
+      ballot = closed_ballot_fixture()
+
+      assert {:error, :can_only_update_draft_ballot} =
                RankedVoting.update_ballot(ballot, %{title: "some new title"})
     end
   end
 
   describe "publish_ballot/2" do
     test "success: you can publish a non-published ballot" do
-      ballot = ballot_fixture(%{published_at: nil})
+      ballot = ballot_fixture()
       published_at = DateTime.utc_now()
       assert {:ok, published_ballot} = RankedVoting.publish_ballot(ballot, published_at)
       assert %Ballot{published_at: ^published_at} = published_ballot
@@ -205,6 +213,50 @@ defmodule Flick.RankedVotingTest do
       published_at = DateTime.utc_now()
       assert {:ok, published_ballot} = RankedVoting.publish_ballot(ballot, published_at)
       assert {:error, :ballot_already_published} = RankedVoting.publish_ballot(published_ballot)
+    end
+  end
+
+  describe "close_ballot/2" do
+    test "success: closes a published ballot" do
+      ballot = published_ballot_fixture()
+      closed_at = DateTime.utc_now()
+      assert {:ok, closed_ballot} = RankedVoting.close_ballot(ballot, closed_at)
+      assert %Ballot{closed_at: ^closed_at} = closed_ballot
+    end
+
+    test "failure: can not close an unpublished ballot" do
+      ballot = ballot_fixture()
+      assert {:error, :ballot_not_published} = RankedVoting.close_ballot(ballot)
+    end
+
+    test "failure: can not close a closed ballot" do
+      ballot = closed_ballot_fixture()
+      assert {:error, :ballot_already_closed} = RankedVoting.close_ballot(ballot)
+    end
+  end
+
+  describe "ballot_status/1" do
+    test "returns `:draft` for a non-published ballot" do
+      ballot = ballot_fixture()
+      assert :draft = RankedVoting.ballot_status(ballot)
+    end
+
+    test "returns `:published` for a published ballot" do
+      ballot = published_ballot_fixture()
+      assert :published = RankedVoting.ballot_status(ballot)
+    end
+
+    test "returns `:closed` for a closed ballot" do
+      ballot = closed_ballot_fixture()
+      assert :closed = RankedVoting.ballot_status(ballot)
+    end
+
+    test "raises when encountering an unknown status" do
+      ballot = %Ballot{published_at: nil, closed_at: DateTime.utc_now()}
+
+      assert_raise RuntimeError, "invalid state observed", fn ->
+        RankedVoting.ballot_status(ballot)
+      end
     end
   end
 
@@ -470,6 +522,60 @@ defmodule Flick.RankedVotingTest do
       changeset = RankedVoting.change_vote(vote, %{weight: "-1.0"})
       assert %Ecto.Changeset{valid?: false} = changeset
       assert "must be greater than or equal to 0.0" in errors_on(changeset).weight
+    end
+  end
+
+  describe "list_votes_for_ballot_id/1" do
+    setup do
+      ballot =
+        published_ballot_fixture(
+          question_title: "What's for dinner?",
+          possible_answers: "Pizza, Tacos, Sushi, Burgers"
+        )
+
+      {:ok, published_ballot: ballot}
+    end
+
+    test "returns a lists votes of a ballot", ~M{published_ballot} do
+      assert [] = RankedVoting.list_votes_for_ballot_id(published_ballot.id)
+
+      {:ok, vote} =
+        RankedVoting.create_vote(published_ballot, %{
+          "ranked_answers" => [
+            %{"value" => "Tacos"},
+            %{"value" => "Pizza"},
+            %{"value" => "Burgers"}
+          ]
+        })
+
+      assert [^vote] = RankedVoting.list_votes_for_ballot_id(published_ballot.id)
+    end
+  end
+
+  describe "count_votes_for_ballot_id/1" do
+    setup do
+      ballot =
+        published_ballot_fixture(
+          question_title: "What's for dinner?",
+          possible_answers: "Pizza, Tacos, Sushi, Burgers"
+        )
+
+      {:ok, published_ballot: ballot}
+    end
+
+    test "returns a count of the votes of a ballot", ~M{published_ballot} do
+      assert 0 = RankedVoting.count_votes_for_ballot_id(published_ballot.id)
+
+      {:ok, _vote} =
+        RankedVoting.create_vote(published_ballot, %{
+          "ranked_answers" => [
+            %{"value" => "Tacos"},
+            %{"value" => "Pizza"},
+            %{"value" => "Burgers"}
+          ]
+        })
+
+      assert 1 = RankedVoting.count_votes_for_ballot_id(published_ballot.id)
     end
   end
 

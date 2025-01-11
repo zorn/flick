@@ -11,9 +11,15 @@ defmodule Flick.RankedVoting do
 
   @doc """
   Creates a new `Flick.RankedVoting.Ballot` entity with the given `title` and `questions`.
+
+  Attempts to pass in `published_at` or `closed_at` will raise an `ArgumentError`
+  Please look to `published_ballot/2` and `close_ballot/2` for those lifecycle needs.
   """
-  @spec create_ballot(map()) :: {:ok, Ballot.t()} | {:error, Ecto.Changeset.t(Ballot.t())}
+  @spec create_ballot(map()) :: {:ok, Ballot.t()} | {:error, Ballot.changeset()}
   def create_ballot(attrs) when is_map(attrs) do
+    raise_if_attempting_to_set_published_at(attrs)
+    raise_if_attempting_to_set_closed_at(attrs)
+
     %Ballot{}
     |> change_ballot(attrs)
     |> Repo.insert()
@@ -23,20 +29,26 @@ defmodule Flick.RankedVoting do
   Updates the given `Flick.RankedVoting.Ballot` entity with the given attributes.
 
   If the `Flick.RankedVoting.Ballot` has already been published, an error is returned.
+
+  Attempts to pass in `published_at` or `closed_at` will raise an `ArgumentError`
+  Please look to `published_ballot/2` and `close_ballot/2` for those lifecycle needs.
   """
   @spec update_ballot(Ballot.t(), map()) ::
           {:ok, Ballot.t()}
-          | {:error, Ecto.Changeset.t(Ballot.t())}
-          | {:error, :can_not_update_published_ballot}
+          | {:error, Ballot.changeset()}
+          | {:error, :can_only_update_draft_ballot}
 
-  def update_ballot(%Ballot{published_at: nil} = ballot, attrs) do
+  def update_ballot(%Ballot{published_at: nil, closed_at: nil} = ballot, attrs) do
+    raise_if_attempting_to_set_published_at(attrs)
+    raise_if_attempting_to_set_closed_at(attrs)
+
     ballot
     |> change_ballot(attrs)
     |> Repo.update()
   end
 
   def update_ballot(_ballot, _attrs) do
-    {:error, :can_not_update_published_ballot}
+    {:error, :can_only_update_draft_ballot}
   end
 
   @doc """
@@ -55,18 +67,66 @@ defmodule Flick.RankedVoting do
   """
   @spec publish_ballot(Ballot.t(), DateTime.t()) ::
           {:ok, Ballot.t()}
-          | {:error, Ecto.Changeset.t(Ballot.t())}
+          | {:error, Ballot.changeset()}
           | {:error, :ballot_already_published}
   def publish_ballot(ballot, published_at \\ DateTime.utc_now())
 
   def publish_ballot(%Ballot{published_at: nil} = ballot, published_at) do
     ballot
-    |> change_ballot(%{published_at: published_at})
+    |> Ecto.Changeset.cast(%{published_at: published_at}, [:published_at])
     |> Repo.update()
   end
 
   def publish_ballot(_ballot, _published_at) do
     {:error, :ballot_already_published}
+  end
+
+  @doc """
+  Closes the given `Flick.RankedVoting.Ballot` entity.
+
+  Once a `Flick.RankedVoting.Ballot` entity is closed, it can no longer be updated
+  and no more votes can be cast.
+  """
+  @spec close_ballot(Ballot.t(), DateTime.t()) ::
+          {:ok, Ballot.t()}
+          | {:error, Ballot.changeset()}
+          | {:error, :ballot_not_published}
+  def close_ballot(ballot, closed_at \\ DateTime.utc_now())
+
+  def close_ballot(%Ballot{published_at: nil}, _closed_at) do
+    {:error, :ballot_not_published}
+  end
+
+  def close_ballot(%Ballot{closed_at: nil} = ballot, closed_at) do
+    ballot
+    |> Ecto.Changeset.cast(%{closed_at: closed_at}, [:closed_at])
+    |> Repo.update()
+  end
+
+  def close_ballot(%Ballot{closed_at: _non_nil_value}, _closed_at) do
+    {:error, :ballot_already_closed}
+  end
+
+  @typedoc """
+  Represents the three states of a ballot: `:draft`, `:published`, and `:closed`.
+
+  - A `:draft` ballot can be edited, and then published.
+  - A `:published` ballot can no longer be updated, can accept votes and can be closed.
+  - A `:closed` ballot can no longer be updated, and can no longer accept votes.
+  """
+  @type ballot_status :: :draft | :published | :closed
+
+  @doc """
+  Returns the `t:ballot_status/0` of the given `Flick.RankedVoting.Ballot` entity.
+  """
+  @spec ballot_status(Ballot.t()) :: ballot_status()
+  def ballot_status(ballot) do
+    case ballot do
+      %Ballot{closed_at: nil, published_at: nil} -> :draft
+      %Ballot{closed_at: nil, published_at: _non_nil_value} -> :published
+      %Ballot{closed_at: _non_nil_value, published_at: nil} -> raise "invalid state observed"
+      %Ballot{closed_at: _non_nil_value, published_at: _another_non_nil_value} -> :closed
+    end
   end
 
   @doc """
@@ -125,7 +185,7 @@ defmodule Flick.RankedVoting do
   @doc """
   Returns an `Ecto.Changeset` representing changes to a `Flick.RankedVoting.Ballot` entity.
   """
-  @spec change_ballot(Ballot.t() | Ballot.struct_t(), map()) :: Ecto.Changeset.t(Ballot.t())
+  @spec change_ballot(Ballot.t() | Ballot.struct_t(), map()) :: Ballot.changeset()
   def change_ballot(%Ballot{} = ballot, attrs) do
     Ballot.changeset(ballot, attrs)
   end
@@ -199,6 +259,17 @@ defmodule Flick.RankedVoting do
     |> where(ballot_id: ^ballot_id)
     |> order_by([vote], desc: vote.inserted_at)
     |> Repo.all()
+  end
+
+  @doc """
+  Returns the count of `Flick.RankedVoting.Vote` entities associated with the given
+  `ballot_id`.
+  """
+  @spec count_votes_for_ballot_id(Ballot.id()) :: non_neg_integer()
+  def count_votes_for_ballot_id(ballot_id) do
+    Vote
+    |> where(ballot_id: ^ballot_id)
+    |> Repo.aggregate(:count)
   end
 
   @typedoc """
@@ -277,5 +348,17 @@ defmodule Flick.RankedVoting do
       |> length()
 
     min(5, possible_answer_count)
+  end
+
+  defp raise_if_attempting_to_set_published_at(attrs) do
+    if Map.has_key?(attrs, :published_at) or Map.has_key?(attrs, "published_at") do
+      raise ArgumentError, "`published_at` can not be set during creation or mutation of a ballot"
+    end
+  end
+
+  defp raise_if_attempting_to_set_closed_at(attrs) do
+    if Map.has_key?(attrs, :closed_at) or Map.has_key?(attrs, "closed_at") do
+      raise ArgumentError, "`closed_at` can not be set during creation or mutation of a ballot"
+    end
   end
 end
