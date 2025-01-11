@@ -36,7 +36,7 @@ defmodule Flick.RankedVoting do
   @spec update_ballot(Ballot.t(), map()) ::
           {:ok, Ballot.t()}
           | {:error, Ballot.changeset()}
-          | {:error, :can_only_update_draft_ballots}
+          | {:error, :can_only_update_draft_ballot}
 
   def update_ballot(%Ballot{published_at: nil, closed_at: nil} = ballot, attrs) do
     raise_if_attempting_to_set_published_at(attrs)
@@ -48,7 +48,7 @@ defmodule Flick.RankedVoting do
   end
 
   def update_ballot(_ballot, _attrs) do
-    {:error, :can_only_update_draft_ballots}
+    {:error, :can_only_update_draft_ballot}
   end
 
   @doc """
