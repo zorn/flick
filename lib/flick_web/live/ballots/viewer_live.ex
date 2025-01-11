@@ -200,40 +200,23 @@ defmodule FlickWeb.Ballots.ViewerLive do
 
   def render(assigns) do
     ~H"""
-    <div>
-      <div class="prose">
-        <h2>Ballot Admin</h2>
-      </div>
+    <.shared_header />
 
-      <div class="my-6">
-        <%= if @ballot.published_at do %>
-          <div class="prose">
-            <p>This ballot was published at: {@ballot.published_at}</p>
+    <div class="mt-8 prose">
+      <h3 class="mb-0">Ballot is Closed</h3>
+      <p>Your ballot is closed. Result totals can be viewed by everyone at:</p>
+      <.link navigate={~p"/ballot/#{@ballot.url_slug}/results"}>
+        {URI.append_path(@socket.host_uri, "/ballot/#{@ballot.url_slug}/results")}
+      </.link>
+    </div>
+    <div class="prose mb-8">
+      <.vote_results
+        ballot_results_report={@ballot_results_report}
+        votes={@votes}
+        title="Final Results"
+      />
 
-            <p>
-              You can invite people to vote using the URL:<br />
-              <.link navigate={~p"/ballot/#{@ballot.url_slug}"}>
-                {URI.append_path(@socket.host_uri, "/ballot/#{@ballot.url_slug}")}
-              </.link>
-            </p>
-          </div>
-        <% else %>
-          <.button phx-click="publish" id="publish-ballot-button">Publish</.button>
-        <% end %>
-      </div>
-
-      <div class="prose mb-8">
-        <h3>Vote Results</h3>
-        <ol>
-          <%= for %{points: points, value: answer} <- @ballot_results_report do %>
-            <li>{answer}: {points} points</li>
-          <% end %>
-        </ol>
-      </div>
-
-      <div class="prose mb-4">
-        <h3>Votes ({length(@votes)})</h3>
-      </div>
+      <.votes_table ballot={@ballot} votes={@votes} />
     </div>
     """
   end
@@ -257,44 +240,23 @@ defmodule FlickWeb.Ballots.ViewerLive do
 
   attr :ballot, Ballot, required: true
   attr :votes, :list, required: true
-  attr :vote_forms, :map, required: true
+  attr :vote_forms, :map, default: nil
 
   defp votes_table(assigns) do
+    dbg(assigns)
+
     ~H"""
     <.table id="votes" rows={@votes} row_id={&"vote-row-#{&1.id}"}>
       <:col :let={vote} label="Name">
         {vote.full_name || "No Name"}
       </:col>
       <:col :let={vote} label="Weight">
-        <div :if={!form_for_vote(@vote_forms, vote)}>
-          {vote.weight} &nbsp;
-          <%!-- TODO: As the user clicks `Edit` we should focus the form input. --%>
-          <.link phx-click="present-inline-editor" phx-value-vote-id={vote.id} class="underline">
-            Edit
-          </.link>
-        </div>
-        <.form
-          :let={form}
-          :if={form_for_vote(@vote_forms, vote)}
-          for={form_for_vote(@vote_forms, vote)}
-          phx-change="validate"
-          phx-submit="save"
-        >
-          <input type="hidden" name="vote_id" , value={vote.id} />
-          <%!-- TODO: In the future we should draw red outline here when invalid. --%>
-          <%!-- https://github.com/zorn/flick/issues/37 --%>
-          <input
-            type="text"
-            name="weight"
-            value={Phoenix.HTML.Form.input_value(form, :weight)}
-            class="w-16 rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6 phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400 border-zinc-300 focus:border-zinc-400"
-            autofocus
-          />
-          <.button>Save</.button>
-          <.link phx-click="dismiss-inline-editor" phx-value-vote-id={vote.id} class="underline">
-            Cancel
-          </.link>
-        </.form>
+        <.weight_label
+          vote={vote}
+          vote_forms={@vote_forms}
+          enable_inline_editor={!is_nil(@vote_forms)}
+        />
+        <.weight_form vote={vote} vote_forms={@vote_forms} />
       </:col>
       <:col
         :let={vote}
@@ -337,6 +299,57 @@ defmodule FlickWeb.Ballots.ViewerLive do
         {answer_at_index(vote, 4)}
       </:col>
     </.table>
+    """
+  end
+
+  attr :vote, Vote, required: true
+  attr :vote_forms, :map, required: true
+  attr :enable_inline_editor, :boolean, default: true
+
+  defp weight_label(%{enable_inline_editor: false} = assigns) do
+    ~H"""
+    <div>{@vote.weight}</div>
+    """
+  end
+
+  defp weight_label(assigns) do
+    ~H"""
+    <div :if={@vote_forms && !form_for_vote(@vote_forms, @vote)}>
+      {@vote.weight} &nbsp;
+      <.link phx-click="present-inline-editor" phx-value-vote-id={@vote.id} class="underline">
+        Edit
+      </.link>
+    </div>
+    """
+  end
+
+  attr :vote, Vote, required: true
+  attr :vote_forms, :map, required: true
+
+  defp weight_form(assigns) do
+    ~H"""
+    <.form
+      :let={form}
+      :if={@vote_forms && form_for_vote(@vote_forms, @vote)}
+      for={form_for_vote(@vote_forms, @vote)}
+      phx-change="validate"
+      phx-submit="save"
+    >
+      <input type="hidden" name="vote_id" , value={@vote.id} />
+      <%!-- TODO: In the future we should draw red outline here when invalid. --%>
+      <%!-- https://github.com/zorn/flick/issues/37 --%>
+      <input
+        type="text"
+        name="weight"
+        value={Phoenix.HTML.Form.input_value(form, :weight)}
+        class="w-16 rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6 phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400 border-zinc-300 focus:border-zinc-400"
+        autofocus
+      />
+      <.button>Save</.button>
+      <.link phx-click="dismiss-inline-editor" phx-value-vote-id={@vote.id} class="underline">
+        Cancel
+      </.link>
+    </.form>
     """
   end
 
