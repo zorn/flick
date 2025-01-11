@@ -1,4 +1,4 @@
-defmodule FlickWeb.Vote.VoteCaptureLiveTest do
+defmodule FlickWeb.Vote.ResultsLiveTest do
   @moduledoc """
   Verifies the expected logic of `FlickWeb.Vote.ResultsLive`.
 
