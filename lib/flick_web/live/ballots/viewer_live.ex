@@ -380,4 +380,6 @@ defmodule FlickWeb.Ballots.ViewerLive do
     {:ok, html_doc, _deprecation_messages} = Earmark.as_html(description)
     html_doc
   end
+
+  defp rendered_description(_description), do: nil
 end
