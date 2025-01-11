@@ -243,8 +243,6 @@ defmodule FlickWeb.Ballots.ViewerLive do
   attr :vote_forms, :map, default: nil
 
   defp votes_table(assigns) do
-    dbg(assigns)
-
     ~H"""
     <.table id="votes" rows={@votes} row_id={&"vote-row-#{&1.id}"}>
       <:col :let={vote} label="Name">
