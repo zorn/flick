@@ -55,7 +55,7 @@ defmodule Flick.MixProject do
       {:sobelow, "~> 0.13", only: [:dev, :test], runtime: false},
 
       # For UI component documentation.
-      {:phoenix_storybook, "~> 0.7.0"},
+      {:phoenix_storybook, "~> 0.8.0"},
 
       # Unorganized
       {:bandit, "~> 1.2"},
