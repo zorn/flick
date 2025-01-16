@@ -78,6 +78,7 @@ defmodule Flick.MarkdownTest do
          that it attempts to do SmartyPants quotes for the attribute. Capturing the issue
          and skipping for now. The workaround for the end user is to use normal Markdown
          links.
+         https://github.com/zorn/flick/issues/129
          """
     test "anchor tags in Markdown content are allowed" do
       markdown = """
