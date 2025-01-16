@@ -88,8 +88,8 @@ defmodule FlickWeb.Vote.VoteCaptureLive do
         <div id="question-title" class="prose">
           <h2>{@ballot.question_title}</h2>
 
-          <div>
-            {@ballot.description && Flick.Markdown.render_to_html(@ballot.description)}
+          <div class="prose">
+            {@ballot.description && raw(Flick.Markdown.render_to_html(@ballot.description))}
           </div>
         </div>
 
