@@ -139,9 +139,7 @@ defmodule FlickWeb.Ballots.ViewerLive do
         <dt class="font-bold">Description</dt>
 
         <dd id="ballot-description" class="pb-4">
-          <%!-- FIXME: Consider the security implications of `raw`. --%>
-          <%!-- https://github.com/zorn/flick/issues/77 --%>
-          {raw(rendered_description(@ballot.description))}
+          {@ballot.description && Flick.Markdown.render_to_html(@ballot.description)}
         </dd>
         <dt class="font-bold">Possible Answers</dt>
         <dd id="ballot-possible-answers" class="pb-4">{@ballot.possible_answers}</dd>
@@ -386,11 +384,4 @@ defmodule FlickWeb.Ballots.ViewerLive do
     %RankedAnswer{value: value} = Enum.at(vote.ranked_answers, index)
     value
   end
-
-  defp rendered_description(description) when is_binary(description) do
-    {:ok, html_doc, _deprecation_messages} = Earmark.as_html(description)
-    html_doc
-  end
-
-  defp rendered_description(_description), do: nil
 end
