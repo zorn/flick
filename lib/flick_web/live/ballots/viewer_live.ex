@@ -133,7 +133,7 @@ defmodule FlickWeb.Ballots.ViewerLive do
     <div class="mt-8 prose">
       <h3 class="mb-0">Edit Ballot</h3>
       <p>
-        Your ballot was created at {formatted_datetime(@ballot.inserted_at, @time_zone)}. The ballot is not yet published and can be edited.
+        Your ballot was created on {formatted_datetime(@ballot.inserted_at, @time_zone)}. The ballot is not yet published and can be edited.
       </p>
     </div>
 
@@ -178,7 +178,7 @@ defmodule FlickWeb.Ballots.ViewerLive do
     <div class="mt-8 prose">
       <h3 class="mb-0">Ballot is Published!</h3>
       <p>
-        Your ballot was published at {formatted_datetime(@ballot.published_at, @time_zone)}. Use the URL below to invite people to vote!
+        Your ballot was published on {formatted_datetime(@ballot.published_at, @time_zone)}. Use the URL below to invite people to vote!
       </p>
       <.link navigate={~p"/ballot/#{@ballot.url_slug}"}>
         {URI.append_path(@socket.host_uri, "/ballot/#{@ballot.url_slug}")}
@@ -210,7 +210,7 @@ defmodule FlickWeb.Ballots.ViewerLive do
     <div class="mt-8 prose">
       <h3 class="mb-0">Ballot is Closed</h3>
       <p>
-        Your ballot was closed at {formatted_datetime(@ballot.closed_at, @time_zone)}. Result totals can be viewed by everyone at:
+        Your ballot was closed on {formatted_datetime(@ballot.closed_at, @time_zone)}. Result totals can be viewed by everyone at:
       </p>
       <.link navigate={~p"/ballot/#{@ballot.url_slug}/results"}>
         {URI.append_path(@socket.host_uri, "/ballot/#{@ballot.url_slug}/results")}

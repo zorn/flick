@@ -63,7 +63,7 @@ defmodule FlickWeb.Ballots.ViewerLiveTest do
     # `docs/decisions/1-timestamps.md` but is being ignored for now.
     now = DateTime.utc_now()
     expected_now_string = DateTimeFormatter.display_string(now, "UTC")
-    expected_message = "Your ballot was created at #{expected_now_string}."
+    expected_message = "Your ballot was created on #{expected_now_string}."
     draft_ballot = ballot_fixture()
     {:ok, view, _html} = live(conn, view_path(draft_ballot))
     assert has_element?(view, "p", expected_message)
@@ -72,7 +72,7 @@ defmodule FlickWeb.Ballots.ViewerLiveTest do
   test "displays a formatted `DateTime` value for a published proposal", ~M{conn} do
     now = DateTime.utc_now()
     expected_now_string = DateTimeFormatter.display_string(now, "UTC")
-    expected_message = "Your ballot was published at #{expected_now_string}."
+    expected_message = "Your ballot was published on #{expected_now_string}."
     published_ballot = published_ballot_fixture(%{}, now)
     {:ok, view, _html} = live(conn, view_path(published_ballot))
     assert has_element?(view, "p", expected_message)
@@ -81,7 +81,7 @@ defmodule FlickWeb.Ballots.ViewerLiveTest do
   test "displays a formatted `DateTime` value for a closed proposal", ~M{conn} do
     now = DateTime.utc_now()
     expected_now_string = DateTimeFormatter.display_string(now, "UTC")
-    expected_message = "Your ballot was closed at #{expected_now_string}."
+    expected_message = "Your ballot was closed on #{expected_now_string}."
     closed_ballot = closed_ballot_fixture(%{}, now)
     {:ok, view, _html} = live(conn, view_path(closed_ballot))
     assert has_element?(view, "p", expected_message)
