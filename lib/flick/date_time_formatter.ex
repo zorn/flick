@@ -12,10 +12,10 @@ defmodule Flick.DateTimeFormatter do
 
   ## Example
 
-      iex> Flick.DateTimeFormatter.display_string(~U[2022-01-02 13:35:15Z], "America/New_York")
+      iex> display_string(~U[2022-01-02 13:35:15Z], "America/New_York")
       "January 2, 2022 8:35 AM EST"
 
-      iex> Flick.DateTimeFormatter.display_string(~U[2022-01-02 13:35:15Z])
+      iex> display_string(~U[2022-01-02 13:35:15Z])
       "January 2, 2022 1:35 PM UTC"
   """
   @spec display_string(
