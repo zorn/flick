@@ -38,7 +38,7 @@ defmodule Support.Fixtures.BallotFixture do
 
   When not provided, all required attributes will be generated.
   """
-  @spec published_ballot_fixture(map()) :: Ballot.t()
+  @spec published_ballot_fixture(map(), DateTime.t() | nil) :: Ballot.t()
   def published_ballot_fixture(attrs \\ %{}, published_at \\ nil) do
     published_at = published_at || DateTime.utc_now()
 
@@ -54,7 +54,7 @@ defmodule Support.Fixtures.BallotFixture do
 
   When not provided, all required attributes will be generated.
   """
-  @spec closed_ballot_fixture(map()) :: Ballot.t()
+  @spec closed_ballot_fixture(map(), DateTime.t() | nil) :: Ballot.t()
   def closed_ballot_fixture(attrs \\ %{}, closed_at \\ nil) do
     closed_at = closed_at || DateTime.utc_now()
     attrs = valid_ballot_attributes(attrs)
