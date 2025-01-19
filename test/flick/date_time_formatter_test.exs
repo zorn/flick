@@ -5,6 +5,8 @@ defmodule Flick.DateTimeFormatterTest do
 
   use ExUnit.Case, async: true
 
+  doctest Flick.DateTimeFormatter
+
   import TinyMaps
   import ParameterizedTest
   import ParameterizedTest.Sigil
