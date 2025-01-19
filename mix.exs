@@ -63,6 +63,9 @@ defmodule Flick.MixProject do
       # To help us present `DateTime` values in the user's timezone.
       {:tzdata, "~> 1.1"},
 
+      # To help with making test scenarios easy to describe and maintain.
+      {:parameterized_test, "~> 0.6", only: [:test]},
+
       # Unorganized
       {:bandit, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
