@@ -39,10 +39,12 @@ defmodule Support.Fixtures.BallotFixture do
   When not provided, all required attributes will be generated.
   """
   @spec published_ballot_fixture(map()) :: Ballot.t()
-  def published_ballot_fixture(attrs \\ %{}) do
+  def published_ballot_fixture(attrs \\ %{}, published_at \\ nil) do
+    published_at = published_at || DateTime.utc_now()
+
     attrs = valid_ballot_attributes(attrs)
     {:ok, ballot} = Flick.RankedVoting.create_ballot(attrs)
-    {:ok, published_ballot} = Flick.RankedVoting.publish_ballot(ballot)
+    {:ok, published_ballot} = Flick.RankedVoting.publish_ballot(ballot, published_at)
     published_ballot
   end
 
@@ -53,11 +55,12 @@ defmodule Support.Fixtures.BallotFixture do
   When not provided, all required attributes will be generated.
   """
   @spec closed_ballot_fixture(map()) :: Ballot.t()
-  def closed_ballot_fixture(attrs \\ %{}) do
+  def closed_ballot_fixture(attrs \\ %{}, closed_at \\ nil) do
+    closed_at = closed_at || DateTime.utc_now()
     attrs = valid_ballot_attributes(attrs)
     {:ok, ballot} = Flick.RankedVoting.create_ballot(attrs)
     {:ok, published_ballot} = Flick.RankedVoting.publish_ballot(ballot)
-    {:ok, closed_ballot} = Flick.RankedVoting.close_ballot(published_ballot)
+    {:ok, closed_ballot} = Flick.RankedVoting.close_ballot(published_ballot, closed_at)
     closed_ballot
   end
 end
