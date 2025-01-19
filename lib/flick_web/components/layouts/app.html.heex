@@ -2,14 +2,14 @@
 <section class="bg-gradient-to-r from-teal-500 to-blue-500 py-4">
   <FlickWeb.UI.page_column>
     <div class="text-4xl">
-      <div class="flex justify-between">
+      <div class="flex justify-between items-center">
         <.link
           class="font-bold text-white drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]"
           href={~p"/"}
         >
           RankedVote<span class="text-2xl">.app</span>
         </.link>
-        <.link navigate={~p"/ballot/new"}>
+        <.link navigate={~p"/ballot/new"} class="flex items-center">
           <.button class="shadow-none">
             Create Ballot
           </.button>
