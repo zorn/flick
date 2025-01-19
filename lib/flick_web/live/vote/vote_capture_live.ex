@@ -88,10 +88,8 @@ defmodule FlickWeb.Vote.VoteCaptureLive do
         <div id="question-title" class="prose">
           <h2>{@ballot.question_title}</h2>
 
-          <div>
-            <%!-- FIXME: Consider the security implications of `raw`. --%>
-            <%!-- https://github.com/zorn/flick/issues/77 --%>
-            {raw(rendered_description(@ballot.description))}
+          <div class="prose">
+            {@ballot.description && raw(Flick.Markdown.render_to_html(@ballot.description))}
           </div>
         </div>
 
@@ -110,13 +108,6 @@ defmodule FlickWeb.Vote.VoteCaptureLive do
     </div>
     """
   end
-
-  defp rendered_description(description) when is_binary(description) do
-    {:ok, html_doc, _deprecation_messages} = Earmark.as_html(description)
-    html_doc
-  end
-
-  defp rendered_description(_description), do: nil
 
   defp answer_label("vote_ranked_answers_" <> number = _form_id) do
     case number do
