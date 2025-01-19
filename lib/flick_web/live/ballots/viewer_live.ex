@@ -400,9 +400,8 @@ defmodule FlickWeb.Ballots.ViewerLive do
       formatted_date_time when is_binary(formatted_date_time) ->
         formatted_date_time
 
-      {:error, reason} ->
-        dbg(reason)
-        # If we can get proper formatted string let's just return something helpful.
+      {:error, _reason} ->
+        # If we can not get proper formatted string let's just return something.
         DateTime.to_string(date_time)
     end
   end
