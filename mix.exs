@@ -64,7 +64,7 @@ defmodule Flick.MixProject do
       {:tzdata, "~> 1.1"},
 
       # To help with making test scenarios easy to describe and maintain.
-      {:parameterized_test, "~> 0.6", only: [:test]},
+      {:parameterized_test, "~> 0.6", only: [:dev, :test]},
 
       # Unorganized
       {:bandit, "~> 1.2"},
