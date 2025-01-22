@@ -60,6 +60,12 @@ defmodule Flick.MixProject do
       # For UI component documentation.
       {:phoenix_storybook, "~> 0.8.0"},
 
+      # To help us present `DateTime` values in the user's timezone.
+      {:tzdata, "~> 1.1"},
+
+      # To help with making test scenarios easy to describe and maintain.
+      {:parameterized_test, "~> 0.6", only: [:dev, :test]},
+
       # Unorganized
       {:bandit, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},

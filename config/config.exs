@@ -7,6 +7,8 @@
 # General application configuration
 import Config
 
+config :elixir, :time_zone_database, Tzdata.TimeZoneDatabase
+
 config :flick,
   ecto_repos: [Flick.Repo],
   generators: [timestamp_type: :utc_datetime]

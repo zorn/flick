@@ -8,6 +8,7 @@ defmodule FlickWeb.Ballots.ViewerLive do
 
   use FlickWeb, :live_view
 
+  alias Flick.DateTimeFormatter
   alias Flick.RankedVoting
   alias Flick.RankedVoting.Ballot
   alias Flick.RankedVoting.RankedAnswer
@@ -18,10 +19,12 @@ defmodule FlickWeb.Ballots.ViewerLive do
     %{"url_slug" => url_slug, "secret" => secret} = params
 
     ballot = RankedVoting.get_ballot_by_url_slug_and_secret!(url_slug, secret)
+    time_zone = get_connect_params(socket)["time_zone"] || "UTC"
 
     socket
     |> assign(:page_title, "View Ballot: #{ballot.question_title}")
     |> assign(:ballot, ballot)
+    |> assign(:time_zone, time_zone)
     |> assign_votes()
     |> assign(:vote_forms, %{})
     |> ok()
@@ -129,7 +132,9 @@ defmodule FlickWeb.Ballots.ViewerLive do
 
     <div class="mt-8 prose">
       <h3 class="mb-0">Edit Ballot</h3>
-      <p>Your ballot is not published and can still be edited.</p>
+      <p>
+        Your ballot was created on {formatted_datetime(@ballot.inserted_at, @time_zone)}. The ballot is not yet published and can be edited.
+      </p>
     </div>
 
     <div class="mt-8 bg-slate-100 rounded-lg p-4">
@@ -172,7 +177,9 @@ defmodule FlickWeb.Ballots.ViewerLive do
 
     <div class="mt-8 prose">
       <h3 class="mb-0">Ballot is Published!</h3>
-      <p>Your ballot is published. Use the URL below to invite people to vote!</p>
+      <p>
+        Your ballot was published on {formatted_datetime(@ballot.published_at, @time_zone)}. Use the URL below to invite people to vote!
+      </p>
       <.link navigate={~p"/ballot/#{@ballot.url_slug}"}>
         {URI.append_path(@socket.host_uri, "/ballot/#{@ballot.url_slug}")}
       </.link>
@@ -202,7 +209,9 @@ defmodule FlickWeb.Ballots.ViewerLive do
 
     <div class="mt-8 prose">
       <h3 class="mb-0">Ballot is Closed</h3>
-      <p>Your ballot is closed. Result totals can be viewed by everyone at:</p>
+      <p>
+        Your ballot was closed on {formatted_datetime(@ballot.closed_at, @time_zone)}. Result totals can be viewed by everyone at:
+      </p>
       <.link navigate={~p"/ballot/#{@ballot.url_slug}/results"}>
         {URI.append_path(@socket.host_uri, "/ballot/#{@ballot.url_slug}/results")}
       </.link>
@@ -383,5 +392,17 @@ defmodule FlickWeb.Ballots.ViewerLive do
   defp answer_at_index(%Vote{} = vote, index) when is_integer(index) do
     %RankedAnswer{value: value} = Enum.at(vote.ranked_answers, index)
     value
+  end
+
+  @spec formatted_datetime(DateTime.t(), String.t()) :: String.t()
+  defp formatted_datetime(date_time, time_zone) do
+    case DateTimeFormatter.display_string(date_time, time_zone) do
+      formatted_date_time when is_binary(formatted_date_time) ->
+        formatted_date_time
+
+      {:error, _reason} ->
+        # If we can not get proper formatted string let's just return something.
+        DateTime.to_string(date_time)
+    end
   end
 end
