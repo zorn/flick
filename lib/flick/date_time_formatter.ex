@@ -5,12 +5,12 @@ defmodule Flick.DateTimeFormatter do
   """
 
   @doc """
-  Returns a string representation of the given `DateTime` value, displaying this
-  value using the optional time zone if provided.
+  Returns a string representation of the given `DateTime` value, displaying it
+  using the optional time zone.
 
   If no time zone is provided, the time zone defaults to "UTC".
 
-  ## Example
+  ## Examples
 
       iex> display_string(~U[2022-01-02 13:35:15Z], "America/New_York")
       "January 2, 2022 8:35 AM EST"
@@ -19,7 +19,7 @@ defmodule Flick.DateTimeFormatter do
       "January 2, 2022 1:35 PM UTC"
   """
   @spec display_string(
-          date_tile_value :: DateTime.t(),
+          date_time_value :: DateTime.t(),
           time_zone :: String.t()
         ) ::
           String.t() | {:error, :time_zone_not_found | :utc_only_time_zone_database}
