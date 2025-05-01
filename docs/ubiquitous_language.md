@@ -11,7 +11,7 @@
   ranked answers.
 * **Possible Answers** -- When building a question on a ballot, a ballot owner
   creates a comma-separated list of possible answers for the ballot question.
-* First Preference—When a user comes to have their vote captured, we ask for
+* **First Preference**—When a user comes to have their vote captured, we ask for
   their preferences. (See `Sharp Edges #1` below for more info.)
 * **Ranked Answer** -- The captured ranked answer provided by a voter for a
   question.
