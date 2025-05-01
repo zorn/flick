@@ -2,11 +2,34 @@
 
 ![Still frame from the movie Election, the character Tracy Flick is holding up a cupcake with the lettering "Pick Flick" across the icing.](docs/pick-flick.png)
 
-Flick is an in-progress side project that aims to provide a simple web app, built using Elixir and Phoenix LiveView, that will to provide a tools to build and capture ranked voting.
+Flick is a simple Elixir / Phoenix LiveView app that helps capture ranked votes. You can see this project in action at <https://rankedvote.app/>.
 
-Specifically this project is being constructed to help the [Elixir Book Club](https://elixirbookclub.com/) pick books.
+This project was built to help the [Elixir Book Club](https://elixirbookclub.com/) pick books, but it is open to all.
 
-## Standard Phoenix Info
+## Highlights
+
+- No accounts are needed to create ballots or cast votes.
+- Votes are ranked votes that help find a better overall consensus.
+- Individual voters can be weighted.
+- A ballot can be closed, stopping future votes from being cast.
+
+## Notable Future Enhancements
+
+- The project is very trusting and has no aggressive security against people voting more than once. Flick is intended for honest polling.
+- The ballot creation form asks users to enter comma-delimited options, and I'd like to revert this to dynamic inputs to allow more user-friendly entry of long option names.
+- See [Issues](https://github.com/zorn/flick/issues) for more.
+
+## Screenshots
+
+![Home page](docs/screenshots/home-page.png)
+
+![Create Ballot page](docs/screenshots/create-ballot-page.png)
+
+![Capture Vote page](docs/screenshots/capture-vote-page.png)
+
+![Ballot Admin page](docs/screenshots/admin-page.png)
+
+## Standard Phoenix Readme
 
 To start your Phoenix server:
 
