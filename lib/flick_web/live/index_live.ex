@@ -61,7 +61,7 @@ defmodule FlickWeb.IndexLive do
         <p>
           The open source project that powers this site is called <a href="https://github.com/zorn/flick">Flick</a>. It is written in
           <a href="https://elixir-lang.org/">Elixir</a>
-          and <a href="https://www.phoenixframework.org/">Phoenix Live View</a>. It was initially built to help the
+          and <a href="https://www.phoenixframework.org/">Phoenix LiveView</a>. It was initially built to help the
           <a href="https://elixirbookclub.github.io/website/">Elixir Book Club</a>
           pick books, but is shared with all to use and learn from.
         </p>
