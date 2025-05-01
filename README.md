@@ -19,6 +19,10 @@ This project was built to help the [Elixir Book Club](https://elixirbookclub.com
 - The ballot creation form asks users to enter comma-delimited options, and I'd like to revert this to dynamic inputs to allow more user-friendly entry of long option names.
 - See [Issues](https://github.com/zorn/flick/issues) for more.
 
+## Project Demo
+
+YouTube: <https://www.youtube.com/watch?v=pxE6AbaQuUM>
+
 ## Screenshots
 
 ![Home page](docs/screenshots/home-page.png)
