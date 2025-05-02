@@ -4,7 +4,7 @@
 
 Flick is a simple Elixir / Phoenix LiveView app that helps capture ranked votes. You can see this project in action at <https://rankedvote.app/>.
 
-This project was built to help the [Elixir Book Club](https://elixirbookclub.com/) pick books, but it is open to all.
+This project was built to help the [Elixir Book Club](https://elixirbookclub.github.io/website/) pick books, but it is open to all.
 
 ## Highlights
 
