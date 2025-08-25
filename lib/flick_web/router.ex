@@ -19,10 +19,10 @@ defmodule FlickWeb.Router do
     # To avoid web console issues with Phoenix Storybook we've added
     # `style-src 'self' 'unsafe-inline'` which feels unfortunate and
     # might be reconsidered.
-    plug :put_secure_browser_headers, %{
-      "content-security-policy" =>
-        "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' https://plausible.io; connect-src 'self' https://plausible.io"
-    }
+    # plug :put_secure_browser_headers, %{
+    #   "content-security-policy" =>
+    #     "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' https://plausible.io; connect-src 'self' https://plausible.io"
+    # }
   end
 
   pipeline :admin do
