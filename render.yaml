@@ -31,10 +31,6 @@ services:
     sync: false
   - key: BASIC_AUTH_ADMIN_USERNAME
     sync: false
-  - key: BASIC_AUTH_ADMIN_PASSWORD
-    sync: false
-  - key: BASIC_AUTH_ADMIN_USERNAME
-    sync: false
   - key: DATABASE_URL
     fromDatabase:
       name: flick_prod
