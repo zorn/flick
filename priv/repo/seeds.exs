@@ -56,6 +56,11 @@ defmodule SeedScripts do
   end
 end
 
+# An assertion of expectations that we have no ballots in the database when we start.
+if [] != Flick.RankedVoting.list_ballots() do
+  raise "We expect no ballots in the database when running seed scripts, but saw #{length(Flick.RankedVoting.list_ballots())} ballot(s)."
+end
+
 # Create a published ballot with some votes.
 {:ok, sandwich_ballot} =
   Flick.RankedVoting.create_ballot(%{
