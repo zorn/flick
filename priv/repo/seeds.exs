@@ -56,6 +56,11 @@ defmodule SeedScripts do
   end
 end
 
+# An assertion of expectations that we have no ballots in the database when we start.
+if [] != Flick.RankedVoting.list_ballots() do
+  raise "We expect no ballots in the database when running seed scripts, but saw #{length(Flick.RankedVoting.list_ballots())} ballot(s)."
+end
+
 # Create a published ballot with some votes.
 {:ok, sandwich_ballot} =
   Flick.RankedVoting.create_ballot(%{
@@ -68,7 +73,7 @@ end
 SeedScripts.populate_ballot_with_votes(sandwich_ballot_published)
 
 # Create a draft ballot.
-{:ok, color_ballot} =
+{:ok, _color_ballot} =
   Flick.RankedVoting.create_ballot(%{
     question_title: "What is your favorite color?",
     possible_answers: "Red, Green, Blue",
@@ -85,4 +90,4 @@ SeedScripts.populate_ballot_with_votes(sandwich_ballot_published)
 
 {:ok, fruit_ballot_published} = Flick.RankedVoting.publish_ballot(fruit_ballot)
 SeedScripts.populate_ballot_with_votes(fruit_ballot_published)
-{:ok, fruit_ballot_closed} = Flick.RankedVoting.close_ballot(fruit_ballot_published)
+{:ok, _fruit_ballot_closed} = Flick.RankedVoting.close_ballot(fruit_ballot_published)
