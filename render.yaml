@@ -18,15 +18,15 @@ services:
   plan: starter
   envVars:
   - key: ERLANG_VERSION
-    sync: false
+    value: 27.3.4.2
   - key: ELIXIR_VERSION
-    sync: false
+    value: 1.18.4
   - key: PHX_HOSTNAME
-    sync: false
+    value: rankedvote.app
   - key: SECRET_KEY_BASE
     sync: false
   - key: PHX_SERVER
-    sync: false
+    value: "true"
   - key: BASIC_AUTH_ADMIN_PASSWORD
     sync: false
   - key: BASIC_AUTH_ADMIN_USERNAME
