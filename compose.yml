@@ -1,0 +1,34 @@
+# This Docker Compose file is intended for local development and does not impact
+# any production environments.
+#
+# From the root of the project run:
+#
+# $ docker compose up -d
+#
+# $ docker compose down -d
+#
+# FUTURE ENHANCEMENTS IDEAS:
+# - We could consider using a `https://hub.docker.com/r/postgis/postgis/`
+#   version of the database image to better align with what will be seen in
+#   production on Render.
+
+services:
+  db:
+    image: postgres:17
+    healthcheck:
+      test: ["CMD", "pg_isready", "--username=postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      restart_policy:
+        condition: on-failure
+    environment:
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:

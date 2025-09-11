@@ -33,7 +33,33 @@ YouTube: <https://www.youtube.com/watch?v=pxE6AbaQuUM>
 
 ![Ballot Admin page](docs/screenshots/admin-page.png)
 
-## Standard Phoenix Readme
+## Running in Local Development
+
+### Install Elixir via `asdf`
+
+This project is built using Elixir and Erlang, and as such we define specific version targets using `.tool-versions` a file format of the [asdf project](https://asdf-vm.com/). Please refer to it for [various installation options](https://asdf-vm.com/guide/getting-started.html). Once installed, run the following from the project root to make sure you have the required versions.
+
+```bash
+$ asdf install
+```
+
+### Start Postgres
+
+This project requires a Postgres database for storage and a Docker Compose file to run a containerized version is provided via `compose.yml`. You are not required to run Postgres via a container, and a standard on metal installation should work fine too.
+
+Before attempting to run the Phoenix app, be sure to start the Docker container with:
+
+```bash
+$ docker compose up -d
+```
+
+To shutdown you can run:
+
+```bash
+$ docker compose down -d
+```
+
+### Start Phoenix
 
 To start your Phoenix server:
 
