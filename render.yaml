@@ -1,0 +1,46 @@
+# Exported from Render on 2025-09-11T13:48:20Z
+databases:
+- name: flick_prod
+  databaseName: flick_prod
+  user: flick_prod_user
+  plan: basic-256mb
+  region: oregon
+  ipAllowList:
+  - source: 0.0.0.0/0
+    description: everywhere
+  postgresMajorVersion: "16"
+  diskSizeGB: 1
+services:
+- type: web
+  name: flick
+  runtime: elixir
+  repo: https://github.com/zorn/flick
+  plan: starter
+  envVars:
+  - key: ERLANG_VERSION
+    value: 27.3.4.2
+  - key: ELIXIR_VERSION
+    value: 1.18.4
+  - key: PHX_HOSTNAME
+    value: rankedvote.app
+  - key: SECRET_KEY_BASE
+    sync: false
+  - key: PHX_SERVER
+    value: "true"
+  - key: BASIC_AUTH_ADMIN_PASSWORD
+    sync: false
+  - key: BASIC_AUTH_ADMIN_USERNAME
+    sync: false
+  - key: DATABASE_URL
+    fromDatabase:
+      name: flick_prod
+      property: connectionString
+  region: oregon
+  buildCommand: ./bin/build.sh
+  startCommand: _build/prod/rel/flick/bin/flick eval "Flick.Release.migrate" && _build/prod/rel/flick/bin/flick
+    start
+  domains:
+  - www.rankedvote.app
+  - rankedvote.app
+  autoDeployTrigger: commit
+version: "1"
