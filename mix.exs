@@ -63,6 +63,9 @@ defmodule Flick.MixProject do
       # To help with making test scenarios easy to describe and maintain.
       {:parameterized_test, "~> 0.6", only: [:dev, :test]},
 
+      # Observability
+      {:prom_ex, "~> 1.11.0"},
+
       # Unorganized
       {:bandit, "~> 1.2"},
       {:dns_cluster, "~> 0.2"},
