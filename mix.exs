@@ -55,7 +55,7 @@ defmodule Flick.MixProject do
       {:sobelow, "~> 0.13", only: [:dev, :test], runtime: false},
 
       # For UI component documentation.
-      {:phoenix_storybook, "~> 0.8.0"},
+      {:phoenix_storybook, "~> 1.0"},
 
       # To help us present `DateTime` values in the user's timezone.
       {:tzdata, "~> 1.1"},
@@ -70,7 +70,7 @@ defmodule Flick.MixProject do
       {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
       {:finch, "~> 0.13"},
       {:floki, ">= 0.30.0", only: :test},
-      {:gettext, "~> 0.20"},
+      {:gettext, "~> 1.0"},
       {
         :heroicons,
         # The `override` setting is needed for `phoenix_storybook`.
@@ -88,7 +88,7 @@ defmodule Flick.MixProject do
       {:phoenix_live_dashboard, "~> 0.8.3"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix_live_view, "~> 1.0"},
-      {:phoenix, "~> 1.7.11"},
+      {:phoenix, "~> 1.8"},
       {:lazy_html, ">= 0.1.0", only: :test},
       {:postgrex, ">= 0.0.0"},
       {:swoosh, "~> 1.5"},
