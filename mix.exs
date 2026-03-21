@@ -89,6 +89,7 @@ defmodule Flick.MixProject do
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix_live_view, "~> 1.0"},
       {:phoenix, "~> 1.7.11"},
+      {:lazy_html, ">= 0.1.0", only: :test},
       {:postgrex, ">= 0.0.0"},
       {:swoosh, "~> 1.5"},
       {:tailwind, "~> 0.2", runtime: Mix.env() == :dev},
