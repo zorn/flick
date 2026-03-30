@@ -5,6 +5,9 @@ defmodule FlickWeb.Layouts do
   """
   use FlickWeb, :html
 
+  alias Phoenix.LiveView.Rendered
+  alias Phoenix.LiveView.Socket
+
   # Embed all files in layouts/* within this module.
   # The default root.html.heex file contains the HTML
   # skeleton of your application, namely HTML headers
@@ -34,6 +37,7 @@ defmodule FlickWeb.Layouts do
 
   slot :inner_block, required: true
 
+  @spec app(Socket.assigns()) :: Rendered.t()
   def app(assigns) do
     ~H"""
     <%!-- Logo and Navigation --%>
