@@ -91,11 +91,11 @@ defmodule Flick.RankedVoting.Vote do
       # in the ballot's possible answers.
       invalid_answers = invalid_answers(changeset, new_ranked_answers)
 
-      if length(invalid_answers) > 0 do
+      if Enum.empty?(invalid_answers) do
+        []
+      else
         error_label = ngettext("invalid answer", "invalid answers", length(invalid_answers))
         [ranked_answers: "#{error_label}: #{Enum.join(invalid_answers, ", ")}"]
-      else
-        []
       end
     end)
   end
