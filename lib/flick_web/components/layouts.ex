@@ -61,7 +61,7 @@ defmodule FlickWeb.Layouts do
     <section>
     <FlickWeb.UI.page_column class="my-4">
     <.flash_group flash={@flash} />
-    {@inner_content}
+    {render_slot(@inner_block)}
     </FlickWeb.UI.page_column>
     </section>
 
