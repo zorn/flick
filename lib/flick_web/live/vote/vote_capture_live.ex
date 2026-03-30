@@ -75,37 +75,39 @@ defmodule FlickWeb.Vote.VoteCaptureLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <div>
+    <Layouts.app flash={@flash}>
       <div>
-        <p>Use the form below to submit your vote.</p>
-      </div>
-
-      <.simple_form for={@form} phx-change="validate" phx-submit="save">
-        <%!-- I wonder if we should drop this hidden and just inject the id manually? --%>
-        <.input type="hidden" field={@form[:ballot_id]} value={@ballot.id} />
-        <.input field={@form[:full_name]} label="Name (Optional)" />
-
-        <div id="question-title" class="prose">
-          <h2>{@ballot.question_title}</h2>
-
-          <div class="prose">
-            {@ballot.description && raw(Flick.Markdown.render_to_html(@ballot.description))}
-          </div>
+        <div>
+          <p>Use the form below to submit your vote.</p>
         </div>
 
-        <.inputs_for :let={ranked_answer_form} field={@form[:ranked_answers]}>
-          <.input
-            field={ranked_answer_form[:value]}
-            type="select"
-            options={options(@ballot)}
-            label={answer_label(ranked_answer_form.id)}
-          />
-        </.inputs_for>
-        <:actions>
-          <.button>Submit Vote</.button>
-        </:actions>
-      </.simple_form>
-    </div>
+        <.simple_form for={@form} phx-change="validate" phx-submit="save">
+          <%!-- I wonder if we should drop this hidden and just inject the id manually? --%>
+          <.input type="hidden" field={@form[:ballot_id]} value={@ballot.id} />
+          <.input field={@form[:full_name]} label="Name (Optional)" />
+
+          <div id="question-title" class="prose">
+            <h2>{@ballot.question_title}</h2>
+
+            <div class="prose">
+              {@ballot.description && raw(Flick.Markdown.render_to_html(@ballot.description))}
+            </div>
+          </div>
+
+          <.inputs_for :let={ranked_answer_form} field={@form[:ranked_answers]}>
+            <.input
+              field={ranked_answer_form[:value]}
+              type="select"
+              options={options(@ballot)}
+              label={answer_label(ranked_answer_form.id)}
+            />
+          </.inputs_for>
+          <:actions>
+            <.button>Submit Vote</.button>
+          </:actions>
+        </.simple_form>
+      </div>
+    </Layouts.app>
     """
   end
 

@@ -30,19 +30,21 @@ defmodule FlickWeb.Vote.ResultsLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <div class="prose">
-      <h3>Ballot Results</h3>
+    <Layouts.app flash={@flash}>
+      <div class="prose">
+        <h3>Ballot Results</h3>
 
-      <p>For the ballot asking <strong>{@ballot.question_title}</strong> the results in!</p>
+        <p>For the ballot asking <strong>{@ballot.question_title}</strong> the results in!</p>
 
-      <p>With a total of {@vote_count} votes cast, the outcome of the ranked vote is:</p>
+        <p>With a total of {@vote_count} votes cast, the outcome of the ranked vote is:</p>
 
-      <ol>
-        <%= for %{points: points, value: answer} <- @ballot_results_report do %>
-          <li>{answer}: {points} points</li>
-        <% end %>
-      </ol>
-    </div>
+        <ol>
+          <%= for %{points: points, value: answer} <- @ballot_results_report do %>
+            <li>{answer}: {points} points</li>
+          <% end %>
+        </ol>
+      </div>
+    </Layouts.app>
     """
   end
 end

@@ -21,38 +21,40 @@ defmodule FlickWeb.Ballots.IndexLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <div class="prose mb-4">
-      <h2>Administration</h2>
+    <Layouts.app flash={@flash}>
+      <div class="prose mb-4">
+        <h2>Administration</h2>
 
-      <p>
-        The following page is a list of all ballots in the system, allowing an authenticated admin to quickly see and link to each page.
-      </p>
+        <p>
+          The following page is a list of all ballots in the system, allowing an authenticated admin to quickly see and link to each page.
+        </p>
 
-      <p>Only authenticated admins can see this page.</p>
+        <p>Only authenticated admins can see this page.</p>
 
-      <h2>Ballots</h2>
-    </div>
+        <h2>Ballots</h2>
+      </div>
 
-    <.table id="ballots" rows={@ballots} row_id={&"ballot-row-#{&1.id}"}>
-      <:col :let={ballot} label="Title">
-        <div class="text-lg mb-4">
-          {ballot.question_title}
-        </div>
+      <.table id="ballots" rows={@ballots} row_id={&"ballot-row-#{&1.id}"}>
+        <:col :let={ballot} label="Title">
+          <div class="text-lg mb-4">
+            {ballot.question_title}
+          </div>
 
-        <div class="font-normal">
-          <.link href={~p"/ballot/#{ballot.url_slug}"} class="underline">
-            Voting Page
-          </.link>
-          &bull;
-          <.link href={~p"/ballot/#{ballot.url_slug}/#{ballot.secret}"} class="underline">
-            Ballot Admin Page
-          </.link>
-        </div>
-      </:col>
-      <:col :let={ballot} label="Status">
-        <div title={"#{status_date_label(ballot)}"}>{status_label(ballot)}</div>
-      </:col>
-    </.table>
+          <div class="font-normal">
+            <.link href={~p"/ballot/#{ballot.url_slug}"} class="underline">
+              Voting Page
+            </.link>
+            &bull;
+            <.link href={~p"/ballot/#{ballot.url_slug}/#{ballot.secret}"} class="underline">
+              Ballot Admin Page
+            </.link>
+          </div>
+        </:col>
+        <:col :let={ballot} label="Status">
+          <div title={"#{status_date_label(ballot)}"}>{status_label(ballot)}</div>
+        </:col>
+      </.table>
+    </Layouts.app>
     """
   end
 

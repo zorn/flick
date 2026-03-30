@@ -128,103 +128,109 @@ defmodule FlickWeb.Ballots.ViewerLive do
   @impl Phoenix.LiveView
   def render(%{ballot: %Ballot{published_at: nil}} = assigns) do
     ~H"""
-    <.shared_header />
+    <Layouts.app flash={@flash}>
+      <.shared_header />
 
-    <div class="mt-8 prose">
-      <h3 class="mb-0">Edit Ballot</h3>
-      <p>
-        Your ballot was created on {formatted_datetime(@ballot.inserted_at, @time_zone)}. The ballot is not yet published and can be edited.
-      </p>
-    </div>
+      <div class="mt-8 prose">
+        <h3 class="mb-0">Edit Ballot</h3>
+        <p>
+          Your ballot was created on {formatted_datetime(@ballot.inserted_at, @time_zone)}. The ballot is not yet published and can be edited.
+        </p>
+      </div>
 
-    <div class="mt-8 bg-slate-100 rounded-lg p-4">
-      <dl>
-        <dt class="font-bold">Question Title</dt>
-        <dd id="ballot-question-title" class="pb-4">{@ballot.question_title}</dd>
-        <dt class="font-bold">Description</dt>
+      <div class="mt-8 bg-slate-100 rounded-lg p-4">
+        <dl>
+          <dt class="font-bold">Question Title</dt>
+          <dd id="ballot-question-title" class="pb-4">{@ballot.question_title}</dd>
+          <dt class="font-bold">Description</dt>
 
-        <dd id="ballot-description" class="pb-4 prose">
-          {@ballot.description && raw(Flick.Markdown.render_to_html(@ballot.description))}
-        </dd>
-        <dt class="font-bold">Possible Answers</dt>
-        <dd id="ballot-possible-answers" class="pb-4">{@ballot.possible_answers}</dd>
-        <dt class="font-bold">URL Slug</dt>
-        <dd id="ballot-url-slug" class="pb-4">{@ballot.url_slug}</dd>
-      </dl>
-      <.link
-        :if={RankedVoting.can_update_ballot?(@ballot)}
-        navigate={~p"/ballot/#{@ballot.url_slug}/#{@ballot.secret}/edit"}
-        class="text-white no-underline"
-      >
-        <.button id="edit-ballot-button">
-          Edit Ballot
-        </.button>
-      </.link>
-    </div>
+          <dd id="ballot-description" class="pb-4 prose">
+            {@ballot.description && raw(Flick.Markdown.render_to_html(@ballot.description))}
+          </dd>
+          <dt class="font-bold">Possible Answers</dt>
+          <dd id="ballot-possible-answers" class="pb-4">{@ballot.possible_answers}</dd>
+          <dt class="font-bold">URL Slug</dt>
+          <dd id="ballot-url-slug" class="pb-4">{@ballot.url_slug}</dd>
+        </dl>
+        <.link
+          :if={RankedVoting.can_update_ballot?(@ballot)}
+          navigate={~p"/ballot/#{@ballot.url_slug}/#{@ballot.secret}/edit"}
+          class="text-white no-underline"
+        >
+          <.button id="edit-ballot-button">
+            Edit Ballot
+          </.button>
+        </.link>
+      </div>
 
-    <div class="mt-8 prose">
-      <h3 class="mb-0">Publish Ballot</h3>
-      <p class="mb-2">Once you are satisfied with your ballot, hit the publish button below.</p>
+      <div class="mt-8 prose">
+        <h3 class="mb-0">Publish Ballot</h3>
+        <p class="mb-2">Once you are satisfied with your ballot, hit the publish button below.</p>
 
-      <.button phx-click="publish" id="publish-ballot-button">Publish Ballot</.button>
-    </div>
+        <.button phx-click="publish" id="publish-ballot-button">Publish Ballot</.button>
+      </div>
+    </Layouts.app>
     """
   end
 
   def render(%{ballot: %Ballot{closed_at: nil}} = assigns) do
     ~H"""
-    <.shared_header />
+    <Layouts.app flash={@flash}>
+      <.shared_header />
 
-    <div class="mt-8 prose">
-      <h3 class="mb-0">Ballot is Published!</h3>
-      <p>
-        Your ballot was published on {formatted_datetime(@ballot.published_at, @time_zone)}. Use the URL below to invite people to vote!
-      </p>
-      <.link navigate={~p"/ballot/#{@ballot.url_slug}"}>
-        {URI.append_path(@socket.host_uri, "/ballot/#{@ballot.url_slug}")}
-      </.link>
+      <div class="mt-8 prose">
+        <h3 class="mb-0">Ballot is Published!</h3>
+        <p>
+          Your ballot was published on {formatted_datetime(@ballot.published_at, @time_zone)}. Use the URL below to invite people to vote!
+        </p>
+        <.link navigate={~p"/ballot/#{@ballot.url_slug}"}>
+          {URI.append_path(@socket.host_uri, "/ballot/#{@ballot.url_slug}")}
+        </.link>
 
-      <p class="mb-2">
-        When you no longer want to accept votes close the ballot using the button below.
-      </p>
+        <p class="mb-2">
+          When you no longer want to accept votes close the ballot using the button below.
+        </p>
 
-      <.button phx-click="close" id="close-ballot-button">Close Ballot</.button>
-    </div>
+        <.button phx-click="close" id="close-ballot-button">Close Ballot</.button>
+      </div>
 
-    <div class="prose mb-8">
-      <.vote_results
-        ballot_results_report={@ballot_results_report}
-        votes={@votes}
-        title="Early Results"
-      />
+      <div class="prose mb-8">
+        <.vote_results
+          ballot_results_report={@ballot_results_report}
+          votes={@votes}
+          title="Early Results"
+        />
 
-      <.votes_table ballot={@ballot} votes={@votes} vote_forms={@vote_forms} />
-    </div>
+        <.votes_table ballot={@ballot} votes={@votes} vote_forms={@vote_forms} />
+      </div>
+    </Layouts.app>
     """
   end
 
   def render(assigns) do
     ~H"""
-    <.shared_header />
+    <Layouts.app flash={@flash}>
+      <.shared_header />
 
-    <div class="mt-8 prose">
-      <h3 class="mb-0">Ballot is Closed</h3>
-      <p>
-        Your ballot was closed on {formatted_datetime(@ballot.closed_at, @time_zone)}. Result totals can be viewed by everyone at:
-      </p>
-      <.link navigate={~p"/ballot/#{@ballot.url_slug}/results"}>
-        {URI.append_path(@socket.host_uri, "/ballot/#{@ballot.url_slug}/results")}
-      </.link>
-    </div>
-    <div class="prose mb-8">
-      <.vote_results
-        ballot_results_report={@ballot_results_report}
-        votes={@votes}
-        title="Final Results"
-      />
+      <div class="mt-8 prose">
+        <h3 class="mb-0">Ballot is Closed</h3>
+        <p>
+          Your ballot was closed on {formatted_datetime(@ballot.closed_at, @time_zone)}. Result totals can be viewed by everyone at:
+        </p>
+        <.link navigate={~p"/ballot/#{@ballot.url_slug}/results"}>
+          {URI.append_path(@socket.host_uri, "/ballot/#{@ballot.url_slug}/results")}
+        </.link>
+      </div>
+      <div class="prose mb-8">
+        <.vote_results
+          ballot_results_report={@ballot_results_report}
+          votes={@votes}
+          title="Final Results"
+        />
 
-      <.votes_table ballot={@ballot} votes={@votes} />
-    </div>
+        <.votes_table ballot={@ballot} votes={@votes} />
+      </div>
+    </Layouts.app>
     """
   end
 
