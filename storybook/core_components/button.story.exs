@@ -1,27 +1,30 @@
-defmodule Storybook.CoreComponents.Button do
+defmodule Storybook.Components.CoreComponents.Button do
   use PhoenixStorybook.Story, :component
 
   def function, do: &FlickWeb.CoreComponents.button/1
+  def render_source, do: :function
 
   def variations do
     [
       %Variation{
         id: :default,
-        slots: ["Button"]
-      },
-      %Variation{
-        id: :custom_class,
         attributes: %{
-          class: "rounded-full bg-indigo-500 hover:bg-indigo-600"
+          type: "button",
+          class: "bg-emerald-400 hover:bg-emerald-500 text-emerald-800"
         },
-        slots: ["Disabled"]
+        slots: [
+          "Click me!"
+        ]
       },
       %Variation{
         id: :disabled,
         attributes: %{
+          type: "button",
           disabled: true
         },
-        slots: ["Disabled"]
+        slots: [
+          "Click me!"
+        ]
       }
     ]
   end

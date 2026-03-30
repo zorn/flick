@@ -63,8 +63,10 @@ config :flick, FlickWeb.Endpoint,
       # Gettext translations
       ~r"priv/gettext/.*\.po$",
       # Router, Controllers, LiveViews and LiveComponents
-      ~r"lib/hello_web/router\.ex$",
-      ~r"lib/hello_web/(controllers|live|components)/.*\.(ex|heex)$"
+      ~r"lib/flick_web/router\.ex$",
+      ~r"lib/flick_web/(controllers|live|components)/.*\.(ex|heex)$",
+      # Storybook things
+      ~r"storybook/.*(exs)$"
     ]
   ]
 

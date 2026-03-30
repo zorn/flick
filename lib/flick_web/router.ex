@@ -53,7 +53,7 @@ defmodule FlickWeb.Router do
     live "/ballot/:url_slug/:secret", Ballots.ViewerLive, :edit
     live "/ballot/:url_slug", Vote.VoteCaptureLive, :new
 
-    live_storybook "/storybook", backend_module: Elixir.FlickWeb.Storybook
+    live_storybook "/storybook", backend_module: FlickWeb.Storybook
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
