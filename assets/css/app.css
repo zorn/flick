@@ -2,6 +2,9 @@
    https://tailwindcss.com/docs/configuration */
 
 @import "tailwindcss" source(none);
+
+@plugin "@tailwindcss/typography";
+
 @source "../css";
 @source "../js";
 @source "../../lib/flick_web";
