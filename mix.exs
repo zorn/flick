@@ -117,7 +117,8 @@ defmodule Flick.MixProject do
         "esbuild flick --minify",
         "tailwind storybook --minify",
         "phx.digest"
-      ]
+      ],
+      precommit: ["compile --warnings-as-errors", "deps.unlock --unused", "format", "test"]
     ]
   end
 end
