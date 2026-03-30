@@ -17,6 +17,7 @@ defmodule FlickWeb.IndexLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
+    <Layouts.app flash={@flash}>
     <div class="prose prose-p:leading-6 prose-li:my-0">
       <section id="welcome-copy">
         <p>
@@ -67,6 +68,7 @@ defmodule FlickWeb.IndexLive do
         </p>
       </section>
     </div>
+    </Layouts.app>
     """
   end
 end
