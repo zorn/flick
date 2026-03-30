@@ -4,6 +4,7 @@
 @import "tailwindcss" source(none);
 
 @plugin "@tailwindcss/typography";
+@plugin "@tailwindcss/forms";
 
 @source "../css";
 @source "../js";
