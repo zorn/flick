@@ -13,8 +13,6 @@ defmodule Flick.Application do
       Flick.Repo,
       {DNSCluster, query: Application.get_env(:flick, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Flick.PubSub},
-      # Start the Finch HTTP client for sending emails
-      {Finch, name: Flick.Finch},
       # Start a worker by calling: Flick.Worker.start_link(arg)
       # {Flick.Worker, arg},
       # Start to serve requests, typically the last entry

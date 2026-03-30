@@ -43,10 +43,7 @@ defmodule FlickWeb do
   @spec controller() :: Macro.t()
   def controller do
     quote do
-      use Phoenix.Controller,
-        formats: [:html, :json],
-        layouts: [html: FlickWeb.Layouts]
-
+      use Phoenix.Controller, formats: [:html, :json]
       use Gettext, backend: FlickWeb.Gettext
       import Plug.Conn
 
@@ -57,8 +54,7 @@ defmodule FlickWeb do
   @spec live_view() :: Macro.t()
   def live_view do
     quote do
-      use Phoenix.LiveView,
-        layout: {FlickWeb.Layouts, :app}
+      use Phoenix.LiveView
 
       import FlickWeb.LiveViewPipes
 
@@ -99,8 +95,9 @@ defmodule FlickWeb do
       # Core UI components
       import FlickWeb.CoreComponents
 
-      # Shortcut for generating JS commands
+      # Common modules used in templates
       alias Phoenix.LiveView.JS
+      alias FLickWeb.Layouts
 
       # Routes generation with the ~p sigil
       unquote(verified_routes())

@@ -9,7 +9,9 @@ defmodule Flick.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      compilers: [:phoenix_live_view] ++ Mix.compilers(),
+      listeners: [Phoenix.CodeReloader]
     ]
   end
 
@@ -20,6 +22,12 @@ defmodule Flick.MixProject do
     [
       mod: {Flick.Application, []},
       extra_applications: [:logger, :runtime_tools]
+    ]
+  end
+
+  def cli do
+    [
+      preferred_envs: [precommit: :test]
     ]
   end
 
@@ -67,8 +75,8 @@ defmodule Flick.MixProject do
       {:bandit, "~> 1.2"},
       {:dns_cluster, "~> 0.2"},
       {:ecto_sql, "~> 3.10"},
-      {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
-      {:finch, "~> 0.13"},
+      {:esbuild, "~> 0.10", runtime: Mix.env() == :dev},
+      {:req, "~> 0.5"},
       {:floki, ">= 0.30.0", only: :test},
       {:gettext, "~> 1.0"},
       {
@@ -111,7 +119,7 @@ defmodule Flick.MixProject do
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
-      "assets.build": ["tailwind flick", "esbuild flick"],
+      "assets.build": ["compile", "tailwind flick", "esbuild flick"],
       "assets.deploy": [
         "tailwind flick --minify",
         "esbuild flick --minify",
