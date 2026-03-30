@@ -97,7 +97,7 @@ defmodule FlickWeb do
 
       # Common modules used in templates
       alias Phoenix.LiveView.JS
-      alias FLickWeb.Layouts
+      alias FlickWeb.Layouts
 
       # Routes generation with the ~p sigil
       unquote(verified_routes())
