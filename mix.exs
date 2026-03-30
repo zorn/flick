@@ -83,7 +83,7 @@ defmodule Flick.MixProject do
         :heroicons,
         # The `override` setting is needed for `phoenix_storybook`.
         github: "tailwindlabs/heroicons",
-        tag: "v2.1.1",
+        tag: "v2.2.0",
         sparse: "optimized",
         app: false,
         compile: false,
