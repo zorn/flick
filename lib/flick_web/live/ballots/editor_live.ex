@@ -82,35 +82,41 @@ defmodule FlickWeb.Ballots.EditorLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <div class="prose">
-      <h2>{page_title(@live_action)}</h2>
-    </div>
+    <Layouts.app flash={@flash}>
+      <div class="prose">
+        <h2>{page_title(@live_action)}</h2>
+      </div>
 
-    <.simple_form for={@form} phx-change="validate" phx-submit="save">
-      <.input field={@form[:question_title]} label="Question Title" placeholder="What is for dinner?" />
+      <.simple_form for={@form} phx-change="validate" phx-submit="save">
+        <.input
+          field={@form[:question_title]}
+          label="Question Title"
+          placeholder="What is for dinner?"
+        />
 
-      <.input
-        field={@form[:description]}
-        type="textarea"
-        label="Description (Markdown)"
-        placeholder="Some context to help people know about the possible answers. "
-      />
+        <.input
+          field={@form[:description]}
+          type="textarea"
+          label="Description (Markdown)"
+          placeholder="Some context to help people know about the possible answers. "
+        />
 
-      <.input
-        field={@form[:possible_answers]}
-        label="Possible Answers (comma separated)"
-        placeholder="Chicken, Pasta, Pancakes"
-      />
-      <.input
-        field={@form[:url_slug]}
-        label="URL Slug (as seen in the URL you'll give to voters)"
-        placeholder="what-is-for-dinner"
-      />
+        <.input
+          field={@form[:possible_answers]}
+          label="Possible Answers (comma separated)"
+          placeholder="Chicken, Pasta, Pancakes"
+        />
+        <.input
+          field={@form[:url_slug]}
+          label="URL Slug (as seen in the URL you'll give to voters)"
+          placeholder="what-is-for-dinner"
+        />
 
-      <:actions>
-        <.button>Save</.button>
-      </:actions>
-    </.simple_form>
+        <:actions>
+          <.button>Save</.button>
+        </:actions>
+      </.simple_form>
+    </Layouts.app>
     """
   end
 

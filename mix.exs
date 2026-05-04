@@ -9,7 +9,10 @@ defmodule Flick.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      compilers: [:phoenix_live_view] ++ Mix.compilers(),
+      cli: cli(),
+      listeners: [Phoenix.CodeReloader]
     ]
   end
 
@@ -20,6 +23,12 @@ defmodule Flick.MixProject do
     [
       mod: {Flick.Application, []},
       extra_applications: [:logger, :runtime_tools]
+    ]
+  end
+
+  def cli do
+    [
+      preferred_envs: [precommit: :test]
     ]
   end
 
@@ -52,10 +61,10 @@ defmodule Flick.MixProject do
       {:html_sanitize_ex, "~> 1.4"},
 
       # For security scans.
-      {:sobelow, "~> 0.13", only: [:dev, :test], runtime: false},
+      {:sobelow, "~> 0.14", only: [:dev, :test], runtime: false},
 
       # For UI component documentation.
-      {:phoenix_storybook, "~> 0.8.0"},
+      {:phoenix_storybook, "~> 1.0"},
 
       # To help us present `DateTime` values in the user's timezone.
       {:tzdata, "~> 1.1"},
@@ -67,15 +76,14 @@ defmodule Flick.MixProject do
       {:bandit, "~> 1.2"},
       {:dns_cluster, "~> 0.2"},
       {:ecto_sql, "~> 3.10"},
-      {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
-      {:finch, "~> 0.13"},
-      {:floki, ">= 0.30.0", only: :test},
-      {:gettext, "~> 0.20"},
+      {:esbuild, "~> 0.10", runtime: Mix.env() == :dev},
+      {:req, "~> 0.5"},
+      {:gettext, "~> 1.0"},
       {
         :heroicons,
         # The `override` setting is needed for `phoenix_storybook`.
         github: "tailwindlabs/heroicons",
-        tag: "v2.1.1",
+        tag: "v2.2.0",
         sparse: "optimized",
         app: false,
         compile: false,
@@ -88,7 +96,8 @@ defmodule Flick.MixProject do
       {:phoenix_live_dashboard, "~> 0.8.3"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix_live_view, "~> 1.0"},
-      {:phoenix, "~> 1.7.11"},
+      {:phoenix, "~> 1.8"},
+      {:lazy_html, ">= 0.1.0", only: :test},
       {:postgrex, ">= 0.0.0"},
       {:swoosh, "~> 1.5"},
       {:tailwind, "~> 0.2", runtime: Mix.env() == :dev},
@@ -110,13 +119,14 @@ defmodule Flick.MixProject do
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
-      "assets.build": ["tailwind flick", "esbuild flick"],
+      "assets.build": ["compile", "tailwind flick", "esbuild flick"],
       "assets.deploy": [
         "tailwind flick --minify",
         "esbuild flick --minify",
         "tailwind storybook --minify",
         "phx.digest"
-      ]
+      ],
+      precommit: ["compile --warnings-as-errors", "deps.unlock --unused", "format", "test"]
     ]
   end
 end
