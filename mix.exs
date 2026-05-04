@@ -60,7 +60,7 @@ defmodule Flick.MixProject do
       {:html_sanitize_ex, "~> 1.4"},
 
       # For security scans.
-      {:sobelow, "~> 0.13", only: [:dev, :test], runtime: false},
+      {:sobelow, "~> 0.14", only: [:dev, :test], runtime: false},
 
       # For UI component documentation.
       {:phoenix_storybook, "~> 1.0"},
