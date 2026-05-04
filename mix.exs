@@ -11,6 +11,7 @@ defmodule Flick.MixProject do
       aliases: aliases(),
       deps: deps(),
       compilers: [:phoenix_live_view] ++ Mix.compilers(),
+      cli: cli(),
       listeners: [Phoenix.CodeReloader]
     ]
   end
