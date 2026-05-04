@@ -2,7 +2,7 @@
 
 @source "../../lib/flick_web/**/*.{ex,heex}";
 @source "../js/**.js";
-@source "../storybook/**/*.*exs";
+@source "../../storybook/**/*.*exs";
 /*
  * Put your component styling within the Tailwind utilities layer.
  * See the https://hexdocs.pm/phoenix_storybook/sandboxing.html guide for more info.
