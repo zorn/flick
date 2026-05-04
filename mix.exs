@@ -77,7 +77,6 @@ defmodule Flick.MixProject do
       {:ecto_sql, "~> 3.10"},
       {:esbuild, "~> 0.10", runtime: Mix.env() == :dev},
       {:req, "~> 0.5"},
-      {:floki, ">= 0.30.0", only: :test},
       {:gettext, "~> 1.0"},
       {
         :heroicons,
