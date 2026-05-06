@@ -14,11 +14,11 @@ inputs:
     default: "."
   build-deps:
     required: false
-    default: true
+    default: "true"
     description: True if we should compile dependencies
   build-app:
     required: false
-    default: true
+    default: "true"
     description: True if we should compile the application itself
   build-flags:
     required: false
@@ -26,11 +26,11 @@ inputs:
     description: Flags to pass to mix compile
   install-rebar:
     required: false
-    default: true
+    default: "true"
     description: By default, we will install Rebar (mix local.rebar --force).
   install-hex:
     required: false
-    default: true
+    default: "true"
     description: By default, we will install Hex (mix local.hex --force).
   cache-key:
     required: false
