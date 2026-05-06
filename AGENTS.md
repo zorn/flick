@@ -32,7 +32,7 @@ Votes have a `weight` field (float, default `1.0`). Results calculations must ac
 
 ### No user authentication
 
-There is no user account system. Admin access is via HTTP basic auth only (credentials from `BASIC_AUTH_ADMIN_USERNAME` / `BASIC_AUTH_ADMIN_PASSWORD` env vars). Public ballot creation and voting are completely open.
+There is no user account system. The `/admin/*` scope is protected by HTTP Basic Auth (credentials from `BASIC_AUTH_ADMIN_USERNAME` / `BASIC_AUTH_ADMIN_PASSWORD` env vars). Ballot-specific edit/admin access is not protected by Basic Auth; it is granted via the ballot's `url_slug` and per-ballot `secret` in routes such as `/ballot/:url_slug/:secret/edit`. Public ballot creation and voting are completely open.
 
 ### Markdown safety
 
