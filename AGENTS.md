@@ -282,7 +282,7 @@ custom classes must fully style the input
 
 - **Never** use the deprecated `live_redirect` and `live_patch` functions, instead **always** use the `<.link navigate={href}>` and  `<.link patch={href}>` in templates, and `push_navigate` and `push_patch` functions LiveViews
 - **Avoid LiveComponent's** unless you have a strong, specific need for them
-- LiveViews should be named like `FlickWeb.BallotLive`, with a `Live` suffix. When you go to add LiveView routes to the router, the default `:browser` scope is **already aliased** with the `FlickWeb` module, so you can just do `live "/ballots", BallotLive`
+- LiveViews should be named with a `Live` suffix, grouped under a namespace that matches their domain (e.g. `FlickWeb.Ballots.IndexLive`, `FlickWeb.Vote.ResultsLive`). When you go to add LiveView routes to the router, the default `:browser` scope is **already aliased** with the `FlickWeb` module, so you can just do `live "/ballots", Ballots.IndexLive`
 
 ### LiveView streams
 
