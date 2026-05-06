@@ -7,6 +7,9 @@ on:
   pull_request:
     branches:
       - "*"
+permissions:
+  contents: read
+
 # Cancel any in-progress instances of this workflow when this instance is triggered.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
