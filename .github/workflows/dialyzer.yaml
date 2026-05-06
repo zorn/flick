@@ -33,8 +33,6 @@ jobs:
         with:
           build-app: false
 
-      # Don't cache PLTs based on mix.lock hash, as Dialyzer can incrementally update even old ones
-      # Cache key based on Elixir & Erlang version (also useful when running in matrix)
       - name: Restore PLT cache
         uses: actions/cache@v5
         id: plt_cache
