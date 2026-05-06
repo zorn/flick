@@ -468,20 +468,20 @@ You can also specify a name to nest the params:
 
 #### Creating a form from changesets
 
-When using changesets, the underlying data, form params, and errors are retrieved from it. The `:as` option is automatically computed too. E.g. if you have a user schema:
+When using changesets, the underlying data, form params, and errors are retrieved from it. The `:as` option is automatically computed too. E.g. if you have a ballot schema:
 
-    defmodule Flick.Ballots.Ballot do
+    defmodule Flick.RankedVoting.Ballot do
       use Ecto.Schema
       ...
     end
 
 And then you create a changeset that you pass to `to_form`:
 
-    %Flick.Ballots.Ballot{}
+    %Flick.RankedVoting.Ballot{}
     |> Ecto.Changeset.change()
     |> to_form()
 
-Once the form is submitted, the params will be available under `%{"user" => user_params}`.
+Once the form is submitted, the params will be available under `%{"ballot" => ballot_params}`.
 
 In the template, the form form assign can be passed to the `<.form>` function component:
 
