@@ -51,4 +51,3 @@ jobs:
 
       - name: Run Tests
         run: mix test
-        if: always()
