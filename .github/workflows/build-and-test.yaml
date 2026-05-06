@@ -48,7 +48,6 @@ jobs:
 
       - name: Run Migrations
         run: mix ecto.create; mix ecto.migrate
-        if: always()
 
       - name: Run Tests
         run: mix test
