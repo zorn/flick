@@ -1,14 +1,79 @@
-This is a web application written using the Phoenix web framework.
+Flick is a ranked voting web application built with Elixir and Phoenix LiveView. It lets users create ballots and capture ranked votes without requiring accounts. The app module is `Flick` and the web module is `FlickWeb`.
 
 ## Project guidelines
 
 - Use `mix precommit` alias when you are done with all changes and fix any pending issues
 - Use the already included and available `:req` (`Req`) library for HTTP requests, **avoid** `:httpoison`, `:tesla`, and `:httpc`. Req is included by default and is the preferred HTTP client for Phoenix apps
 
+## Flick domain knowledge
+
+### Ballot state machine
+
+Ballots move through three states, controlled by `published_at` and `closed_at` timestamps:
+
+- **draft** — `published_at` is nil; ballot can be freely edited
+- **published** — `published_at` is set; ballot is read-only, voters can cast votes
+- **closed** — `closed_at` is set; voting is stopped, results are final
+
+Many operations gate on state. Always check state before allowing edits or votes. The context functions `publish_ballot/2` and `close_ballot/2` in `Flick.RankedVoting` handle transitions.
+
+### URL slug and secret
+
+Every ballot has two identifiers:
+
+- `url_slug` — public identifier used in all voter-facing URLs (e.g. `/ballot/:url_slug`)
+- `secret` — UUID required for admin/edit access (e.g. `/ballot/:url_slug/:secret/edit`)
+
+Always require both `url_slug` and `secret` for any operation that modifies a ballot.
+
+### Weighted votes
+
+Votes have a `weight` field (float, default `1.0`). Results calculations must account for weights — a vote with `weight: 2.0` counts twice. Admins can edit vote weights inline on a published ballot.
+
+### No user authentication
+
+There is no user account system. The `/admin/*` scope is protected by HTTP Basic Auth (credentials from `BASIC_AUTH_ADMIN_USERNAME` / `BASIC_AUTH_ADMIN_PASSWORD` env vars). Ballot-specific edit/admin access is not protected by Basic Auth; it is granted via the ballot's `url_slug` and per-ballot `secret` in routes such as `/ballot/:url_slug/:secret/edit`. Public ballot creation and voting are completely open.
+
+### Markdown safety
+
+The `description` field on ballots accepts user-provided Markdown. Always render it through `Flick.Markdown.render_to_html/1`, which runs Earmark and then sanitizes the output via `HtmlSanitizeEx`. Never render raw user content directly in templates.
+
+### Timezone handling
+
+Flick displays timestamps in the user's local timezone. The timezone string is captured from the browser via `get_connect_params` in LiveView and stored as a socket assign. Always pass `time_zone` through to components that display datetimes and use `Flick.DateTimeFormatter` for formatting. Default to `"UTC"` if not present.
+
+## Project structure
+
+### Business logic — `lib/flick/`
+
+- `ranked_voting/` — Core domain schemas: `Ballot`, `Vote`, `RankedAnswer`
+- `ranked_voting.ex` — Context module; all ballot and vote operations go through here
+- `markdown.ex` — Renders Markdown to sanitized HTML
+- `date_time_formatter.ex` — Formats `DateTime` values with timezone support
+
+### Web layer — `lib/flick_web/`
+
+- `live/index_live.ex` — Root LiveView/home page that redirects to the ballots index
+- `live/ballots/editor_live.ex` — Create/edit ballot (draft state only)
+- `live/ballots/viewer_live.ex` — Ballot admin view (publish, close, inline vote editing)
+- `live/ballots/index_live.ex` — Admin index (basic auth protected)
+- `live/vote/vote_capture_live.ex` — Voter ranking interface
+- `live/vote/results_live.ex` — Public results display
+- `components/core_components.ex` — Shared UI components (modal, button, form helpers)
+
+### Tests — `test/`
+
+- `test/flick/` — Unit tests for business logic
+- `test/flick_web/` — LiveView integration tests
+- `test/support/fixtures/ballot_fixture.ex` — Use these helpers to set up test data:
+  - `ballot_fixture/1` — Creates a draft ballot
+  - `published_ballot_fixture/1` — Creates and publishes
+  - `closed_ballot_fixture/1` — Creates, publishes, and closes
+
 ### Phoenix v1.8 guidelines
 
 - **Always** begin your LiveView templates with `<Layouts.app flash={@flash} ...>` which wraps all inner content
-- The `MyAppWeb.Layouts` module is aliased in the `my_app_web.ex` file, so you can use it without needing to alias it again
+- The `FlickWeb.Layouts` module is aliased in the `flick_web.ex` file, so you can use it without needing to alias it again
 - Anytime you run into errors with no `current_scope` assign:
   - You failed to follow the Authenticated Routes guidelines, or you failed to pass `current_scope` to `<Layouts.app>`
   - **Always** fix the `current_scope` error by moving your routes to the proper `live_session` and ensure you pass `current_scope` as needed
@@ -26,7 +91,7 @@ custom classes must fully style the input
       @import "tailwindcss" source(none);
       @source "../css";
       @source "../js";
-      @source "../../lib/my_app_web";
+      @source "../../lib/flick_web";
 
 - **Always use and maintain this import syntax** in the app.css file for projects generated with `phx.new`
 - **Never** use `@apply` when writing raw css
@@ -110,13 +175,13 @@ custom classes must fully style the input
 
 - You **never** need to create your own `alias` for route definitions! The `scope` provides the alias, ie:
 
-      scope "/admin", AppWeb.Admin do
+      scope "/", FlickWeb do
         pipe_through :browser
 
-        live "/users", UserLive, :index
+        live "/", IndexLive, :index
       end
 
-  the UserLive route would point to the `AppWeb.Admin.UserLive` module
+  the IndexLive route would point to the `FlickWeb.IndexLive` module
 
 - `Phoenix.View` no longer is needed or included with Phoenix, don't use it
 <!-- phoenix:phoenix-end -->
@@ -140,7 +205,7 @@ custom classes must fully style the input
 - **Always** use the imported `Phoenix.Component.form/1` and `Phoenix.Component.inputs_for/1` function to build forms. **Never** use `Phoenix.HTML.form_for` or `Phoenix.HTML.inputs_for` as they are outdated
 - When building forms **always** use the already imported `Phoenix.Component.to_form/2` (`assign(socket, form: to_form(...))` and `<.form for={@form} id="msg-form">`), then access those forms in the template via `@form[:field]`
 - **Always** add unique DOM IDs to key elements (like forms, buttons, etc) when writing templates, these IDs can later be used in tests (`<.form for={@form} id="product-form">`)
-- For "app wide" template imports, you can import/alias into the `my_app_web.ex`'s `html_helpers` block, so they will be available to all LiveViews, LiveComponent's, and all modules that do `use MyAppWeb, :html` (replace "my_app" by the actual app name)
+- For "app wide" template imports, you can import/alias into `flick_web.ex`'s `html_helpers` block, so they will be available to all LiveViews, LiveComponents, and all modules that do `use FlickWeb, :html`
 
 - Elixir supports `if/else` but **does NOT support `if/else if` or `if/elsif`**. **Never use `else if` or `elseif` in Elixir**, **always** use `cond` or `case` for multiple conditionals.
 
@@ -217,7 +282,7 @@ custom classes must fully style the input
 
 - **Never** use the deprecated `live_redirect` and `live_patch` functions, instead **always** use the `<.link navigate={href}>` and  `<.link patch={href}>` in templates, and `push_navigate` and `push_patch` functions LiveViews
 - **Avoid LiveComponent's** unless you have a strong, specific need for them
-- LiveViews should be named like `AppWeb.WeatherLive`, with a `Live` suffix. When you go to add LiveView routes to the router, the default `:browser` scope is **already aliased** with the `AppWeb` module, so you can just do `live "/weather", WeatherLive`
+- LiveViews should be named with a `Live` suffix, grouped under a namespace that matches their domain (e.g. `FlickWeb.Ballots.IndexLive`, `FlickWeb.Vote.ResultsLive`). When you go to add LiveView routes to the router, the default `:browser` scope is **already aliased** with the `FlickWeb` module, so you can just do `live "/ballots", Ballots.IndexLive`
 
 ### LiveView streams
 
@@ -403,20 +468,20 @@ You can also specify a name to nest the params:
 
 #### Creating a form from changesets
 
-When using changesets, the underlying data, form params, and errors are retrieved from it. The `:as` option is automatically computed too. E.g. if you have a user schema:
+When using changesets, the underlying data, form params, and errors are retrieved from it. The `:as` option is automatically computed too. E.g. if you have a ballot schema:
 
-    defmodule MyApp.Users.User do
+    defmodule Flick.RankedVoting.Ballot do
       use Ecto.Schema
       ...
     end
 
 And then you create a changeset that you pass to `to_form`:
 
-    %MyApp.Users.User{}
+    %Flick.RankedVoting.Ballot{}
     |> Ecto.Changeset.change()
     |> to_form()
 
-Once the form is submitted, the params will be available under `%{"user" => user_params}`.
+Once the form is submitted, the params will be available under `%{"ballot" => ballot_params}`.
 
 In the template, the form form assign can be passed to the `<.form>` function component:
 

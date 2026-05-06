@@ -8,6 +8,9 @@ on:
     branches:
       - "*"
 
+permissions:
+  contents: read
+
 # Cancel any in-progress instances of this workflow when this instance is triggered.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -17,12 +20,13 @@ jobs:
   build-and-test:
     name: Build and Test
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     env:
       MIX_ENV: test
 
     services:
       db:
-        image: postgres:16
+        image: postgres:17
         ports: ["5432:5432"]
         env:
           POSTGRES_USER: postgres
@@ -35,7 +39,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Elixir Project
         uses: ./.github/actions/elixir-setup
@@ -44,8 +48,6 @@ jobs:
 
       - name: Run Migrations
         run: mix ecto.create; mix ecto.migrate
-        if: always()
 
       - name: Run Tests
         run: mix test
-        if: always()

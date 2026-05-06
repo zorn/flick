@@ -7,6 +7,9 @@ on:
   pull_request:
     branches:
       - "*"
+permissions:
+  contents: read
+
 # Cancel any in-progress instances of this workflow when this instance is triggered.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -16,12 +19,13 @@ jobs:
   build:
     name: Run Dialyzer
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     env:
       MIX_ENV: dev
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Elixir Project
         uses: ./.github/actions/elixir-setup
@@ -29,15 +33,12 @@ jobs:
         with:
           build-app: false
 
-      # Don't cache PLTs based on mix.lock hash, as Dialyzer can incrementally update even old ones
-      # Cache key based on Elixir & Erlang version (also useful when running in matrix)
       - name: Restore PLT cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         id: plt_cache
         with:
           key: plt-${{ runner.os }}-${{ steps.beam.outputs.otp-version }}-${{ steps.beam.outputs.elixir-version }}-${{ hashFiles('**/mix.lock') }}-${{ hashFiles('**/*.ex') }}
           restore-keys: |
-            plt-${{ runner.os }}-${{ steps.beam.outputs.otp-version }}-${{ steps.beam.outputs.elixir-version }}-${{ hashFiles('**/mix.lock') }}-${{ hashFiles('**/*.ex') }}
             plt-${{ runner.os }}-${{ steps.beam.outputs.otp-version }}-${{ steps.beam.outputs.elixir-version }}-${{ hashFiles('**/mix.lock') }}-
             plt-${{ runner.os }}-${{ steps.beam.outputs.otp-version }}-${{ steps.beam.outputs.elixir-version }}-
             plt-${{ runner.os }}-${{ steps.beam.outputs.otp-version }}-
