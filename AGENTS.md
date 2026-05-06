@@ -110,13 +110,13 @@ custom classes must fully style the input
 
 - You **never** need to create your own `alias` for route definitions! The `scope` provides the alias, ie:
 
-      scope "/admin", FlickWeb do
-        pipe_through [:browser, :admin]
+      scope "/", FlickWeb do
+        pipe_through :browser
 
-        live "/ballots", Ballots.IndexLive, :index
+        live "/", IndexLive, :index
       end
 
-  the Ballots.IndexLive route would point to the `FlickWeb.Ballots.IndexLive` module
+  the IndexLive route would point to the `FlickWeb.IndexLive` module
 
 - `Phoenix.View` no longer is needed or included with Phoenix, don't use it
 <!-- phoenix:phoenix-end -->
