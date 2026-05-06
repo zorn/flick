@@ -53,7 +53,7 @@ Flick displays timestamps in the user's local timezone. The timezone string is c
 
 ### Web layer — `lib/flick_web/`
 
-- `live/index_live.ex` — Home page, lists ballots
+- `live/index_live.ex` — Root LiveView/home page that redirects to the ballots index
 - `live/ballots/editor_live.ex` — Create/edit ballot (draft state only)
 - `live/ballots/viewer_live.ex` — Ballot admin view (publish, close, inline vote editing)
 - `live/ballots/index_live.ex` — Admin index (basic auth protected)
