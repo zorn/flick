@@ -5,6 +5,71 @@ Flick is a ranked voting web application built with Elixir and Phoenix LiveView.
 - Use `mix precommit` alias when you are done with all changes and fix any pending issues
 - Use the already included and available `:req` (`Req`) library for HTTP requests, **avoid** `:httpoison`, `:tesla`, and `:httpc`. Req is included by default and is the preferred HTTP client for Phoenix apps
 
+## Flick domain knowledge
+
+### Ballot state machine
+
+Ballots move through three states, controlled by `published_at` and `closed_at` timestamps:
+
+- **draft** — `published_at` is nil; ballot can be freely edited
+- **published** — `published_at` is set; ballot is read-only, voters can cast votes
+- **closed** — `closed_at` is set; voting is stopped, results are final
+
+Many operations gate on state. Always check state before allowing edits or votes. The context functions `publish_ballot/2` and `close_ballot/2` in `Flick.RankedVoting` handle transitions.
+
+### URL slug and secret
+
+Every ballot has two identifiers:
+
+- `url_slug` — public identifier used in all voter-facing URLs (e.g. `/ballot/:url_slug`)
+- `secret` — UUID required for admin/edit access (e.g. `/ballot/:url_slug/:secret/edit`)
+
+Always require both `url_slug` and `secret` for any operation that modifies a ballot.
+
+### Weighted votes
+
+Votes have a `weight` field (float, default `1.0`). Results calculations must account for weights — a vote with `weight: 2.0` counts twice. Admins can edit vote weights inline on a published ballot.
+
+### No user authentication
+
+There is no user account system. Admin access is via HTTP basic auth only (credentials from `BASIC_AUTH_ADMIN_USERNAME` / `BASIC_AUTH_ADMIN_PASSWORD` env vars). Public ballot creation and voting are completely open.
+
+### Markdown safety
+
+The `description` field on ballots accepts user-provided Markdown. Always render it through `Flick.Markdown.render_to_html/1`, which runs Earmark and then sanitizes the output via `HtmlSanitizeEx`. Never render raw user content directly in templates.
+
+### Timezone handling
+
+Flick displays timestamps in the user's local timezone. The timezone string is captured from the browser via `get_connect_params` in LiveView and stored as a socket assign. Always pass `time_zone` through to components that display datetimes and use `Flick.DateTimeFormatter` for formatting. Default to `"UTC"` if not present.
+
+## Project structure
+
+### Business logic — `lib/flick/`
+
+- `ranked_voting/` — Core domain schemas: `Ballot`, `Vote`, `RankedAnswer`
+- `ranked_voting.ex` — Context module; all ballot and vote operations go through here
+- `markdown.ex` — Renders Markdown to sanitized HTML
+- `date_time_formatter.ex` — Formats `DateTime` values with timezone support
+
+### Web layer — `lib/flick_web/`
+
+- `live/index_live.ex` — Home page, lists ballots
+- `live/ballots/editor_live.ex` — Create/edit ballot (draft state only)
+- `live/ballots/viewer_live.ex` — Ballot admin view (publish, close, inline vote editing)
+- `live/ballots/index_live.ex` — Admin index (basic auth protected)
+- `live/vote/vote_capture_live.ex` — Voter ranking interface
+- `live/vote/results_live.ex` — Public results display
+- `components/core_components.ex` — Shared UI components (modal, button, form helpers)
+
+### Tests — `test/`
+
+- `test/flick/` — Unit tests for business logic
+- `test/flick_web/` — LiveView integration tests
+- `test/support/fixtures/ballot_fixture.ex` — Use these helpers to set up test data:
+  - `ballot_fixture/1` — Creates a draft ballot
+  - `published_ballot_fixture/1` — Creates and publishes
+  - `closed_ballot_fixture/1` — Creates, publishes, and closes
+
 ### Phoenix v1.8 guidelines
 
 - **Always** begin your LiveView templates with `<Layouts.app flash={@flash} ...>` which wraps all inner content
