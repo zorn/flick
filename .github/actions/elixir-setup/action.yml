@@ -10,37 +10,30 @@ inputs:
   #################################################################
   working-directory:
     required: true
-    type: string
     description: the working directory of the elixir project
     default: "."
   build-deps:
     required: false
-    type: boolean
     default: true
     description: True if we should compile dependencies
   build-app:
     required: false
-    type: boolean
     default: true
     description: True if we should compile the application itself
   build-flags:
     required: false
-    type: string
     default: "--all-warnings"
     description: Flags to pass to mix compile
   install-rebar:
     required: false
-    type: boolean
     default: true
     description: By default, we will install Rebar (mix local.rebar --force).
   install-hex:
     required: false
-    type: boolean
     default: true
     description: By default, we will install Hex (mix local.hex --force).
   cache-key:
     required: false
-    type: string
     default: "v1"
     description: If you need to reset the cache for some reason, you can change this key.
 outputs:
