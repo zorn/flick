@@ -16,6 +16,7 @@ jobs:
   build:
     name: Run Dialyzer
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     env:
       MIX_ENV: dev
 
