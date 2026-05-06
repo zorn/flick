@@ -38,3 +38,6 @@ npm-debug.log
 
 # Language server files
 /.elixir_ls/
+
+# Local Claude Code settings (personal overrides, not shared)
+.claude/*.local.json
