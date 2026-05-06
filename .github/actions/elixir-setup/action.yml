@@ -9,7 +9,7 @@ inputs:
   # by tweaking these flags.
   #################################################################
   working-directory:
-    required: true
+    required: false
     description: the working directory of the elixir project
     default: "."
   build-deps:
