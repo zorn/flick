@@ -14,9 +14,12 @@
 
 services:
   db:
-    image: postgres:17
+    image: postgres:18
     healthcheck:
-      test: ["CMD", "pg_isready", "--username=postgres"]
+      test:
+        - "CMD"
+        - "pg_isready"
+        - "--username=postgres"
       interval: 10s
       timeout: 5s
       retries: 5
