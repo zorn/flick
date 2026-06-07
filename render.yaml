@@ -8,6 +8,7 @@ databases:
   ipAllowList:
   - source: 0.0.0.0/0
     description: everywhere
+  # NOTE: Updating postgresMajorVersion here does not upgrade an existing Render database in-place; use Render's manual/in-place upgrade tooling.
   postgresMajorVersion: "18"
   diskSizeGB: 1
 services:
