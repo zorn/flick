@@ -71,7 +71,7 @@ defmodule FlickWeb.Vote.ResultsLiveTest do
       # answer, since a user need not always provide a full ranked list answer.
       third_answer = Enum.random([third_answer, ""])
 
-      full_name = if Enum.random(1..5) > 1, do: Faker.Person.name()
+      full_name = if Enum.random(1..5) > 1, do: Flick.NameGenerator.person_name()
 
       {:ok, _vote} =
         Flick.RankedVoting.create_vote(ballot, %{

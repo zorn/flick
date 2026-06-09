@@ -5,7 +5,7 @@ defmodule Flick.MixProject do
     [
       app: :flick,
       version: "0.1.0",
-      elixir: "~> 1.19.5",
+      elixir: "~> 1.20.0",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
@@ -46,9 +46,6 @@ defmodule Flick.MixProject do
 
       # To allow our test descriptions to use a condensed map syntax.
       {:tiny_maps, "~> 3.0"},
-
-      # For generating seed and test data.
-      {:faker, "~> 0.18", only: [:dev, :test]},
 
       # For code logic style and enforcement.
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
