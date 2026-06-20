@@ -87,7 +87,7 @@ defmodule FlickWeb.Ballots.EditorLive do
         <h2>{page_title(@live_action)}</h2>
       </div>
 
-      <.simple_form for={@form} phx-change="validate" phx-submit="save">
+      <.simple_form for={@form} id="ballot-form" phx-change="validate" phx-submit="save">
         <.input
           field={@form[:question_title]}
           label="Question Title"
