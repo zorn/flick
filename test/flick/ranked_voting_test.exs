@@ -255,7 +255,10 @@ defmodule Flick.RankedVotingTest do
       ballot = %Ballot{published_at: nil, closed_at: DateTime.utc_now()}
 
       assert_raise RuntimeError, "invalid state observed", fn ->
-        RankedVoting.ballot_status(ballot)
+        # apply/3 is used instead of a direct call to suppress the Elixir type
+        # checker warning — we're intentionally passing an impossible struct state
+        # to test the defensive raise branch.
+        apply(RankedVoting, :ballot_status, [ballot])
       end
     end
   end
