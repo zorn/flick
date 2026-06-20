@@ -19,9 +19,9 @@ services:
   plan: starter
   envVars:
   - key: ERLANG_VERSION
-    value: 28.5
+    value: 28.5.1
   - key: ELIXIR_VERSION
-    value: 1.20.0
+    value: 1.20.1
   - key: PHX_HOSTNAME
     value: rankedvote.app
   - key: SECRET_KEY_BASE
