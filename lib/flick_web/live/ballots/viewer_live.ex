@@ -343,6 +343,7 @@ defmodule FlickWeb.Ballots.ViewerLive do
       :let={form}
       :if={@vote_forms && form_for_vote(@vote_forms, @vote)}
       for={form_for_vote(@vote_forms, @vote)}
+      id={"weight-form-#{@vote.id}"}
       phx-change="validate"
       phx-submit="save"
     >

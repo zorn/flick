@@ -1,5 +1,38 @@
 {
   "permissions": {
+    "allow": [
+      "WebFetch(domain:hexdocs.pm)",
+      "WebFetch(domain:bandit.hexdocs.pm)",
+      "WebFetch(domain:credo.hexdocs.pm)",
+      "WebFetch(domain:dialyxir.hexdocs.pm)",
+      "WebFetch(domain:dns-cluster.hexdocs.pm)",
+      "WebFetch(domain:earmark.hexdocs.pm)",
+      "WebFetch(domain:ecto.hexdocs.pm)",
+      "WebFetch(domain:ecto-sql.hexdocs.pm)",
+      "WebFetch(domain:esbuild.hexdocs.pm)",
+      "WebFetch(domain:gettext.hexdocs.pm)",
+      "WebFetch(domain:html-sanitize-ex.hexdocs.pm)",
+      "WebFetch(domain:jason.hexdocs.pm)",
+      "WebFetch(domain:lazy-html.hexdocs.pm)",
+      "WebFetch(domain:mix-test-watch.hexdocs.pm)",
+      "WebFetch(domain:parameterized-test.hexdocs.pm)",
+      "WebFetch(domain:phoenix.hexdocs.pm)",
+      "WebFetch(domain:phoenix-ecto.hexdocs.pm)",
+      "WebFetch(domain:phoenix-html.hexdocs.pm)",
+      "WebFetch(domain:phoenix-live-dashboard.hexdocs.pm)",
+      "WebFetch(domain:phoenix-live-reload.hexdocs.pm)",
+      "WebFetch(domain:phoenix-live-view.hexdocs.pm)",
+      "WebFetch(domain:phoenix-storybook.hexdocs.pm)",
+      "WebFetch(domain:postgrex.hexdocs.pm)",
+      "WebFetch(domain:req.hexdocs.pm)",
+      "WebFetch(domain:sobelow.hexdocs.pm)",
+      "WebFetch(domain:swoosh.hexdocs.pm)",
+      "WebFetch(domain:tailwind.hexdocs.pm)",
+      "WebFetch(domain:telemetry-metrics.hexdocs.pm)",
+      "WebFetch(domain:telemetry-poller.hexdocs.pm)",
+      "WebFetch(domain:tiny-maps.hexdocs.pm)",
+      "WebFetch(domain:tzdata.hexdocs.pm)"
+    ],
     "deny": [
       "Bash(git commit*)"
     ]
