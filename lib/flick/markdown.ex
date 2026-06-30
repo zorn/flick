@@ -13,12 +13,11 @@ defmodule Flick.Markdown do
   @spec render_to_html(String.t()) :: String.t()
   def render_to_html(markdown_content) when is_binary(markdown_content) do
     opts = [
-      compact_output: true,
-      smartypants: true,
-      escape: false
+      parse: [smart: true],
+      render: [unsafe: true]
     ]
 
-    {:ok, html_doc, _deprecation_messages} = Earmark.as_html(markdown_content, opts)
+    html_doc = MDEx.to_html!(markdown_content, opts)
 
     HtmlSanitizeEx.markdown_html(html_doc)
   end

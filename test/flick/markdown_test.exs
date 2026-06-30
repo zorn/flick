@@ -18,7 +18,7 @@ defmodule Flick.MarkdownTest do
         <h1>Hello, world!</h1>
         <p>This is a test of the <a href=\"https://en.wikipedia.org/wiki/Markdown\">Markdown</a> rendering system.</p>
         """
-        |> String.replace(~r"\n", "")
+        |> String.trim()
 
       assert expected_html == Flick.Markdown.render_to_html(markdown)
     end
@@ -36,7 +36,7 @@ defmodule Flick.MarkdownTest do
         """
         <p>“Hello, world!” she said. It’s cool.</p>
         """
-        |> String.replace(~r"\n", "")
+        |> String.trim()
 
       assert expected_html == Flick.Markdown.render_to_html(markdown)
     end
@@ -53,7 +53,7 @@ defmodule Flick.MarkdownTest do
         <p>Hello<br />world!</p>
         <p>This is a <strong>test</strong>.</p>
         """
-        |> String.replace(~r"\n", "")
+        |> String.trim()
 
       assert expected_html == Flick.Markdown.render_to_html(markdown)
     end
@@ -67,19 +67,11 @@ defmodule Flick.MarkdownTest do
         """
         alert('Hello, world!')
         """
-        |> String.replace(~r"\n", "")
+        |> String.trim()
 
       assert expected_html == Flick.Markdown.render_to_html(markdown)
     end
 
-    @tag skip: """
-         This currently fails, because the Markdown library is attempting to add an anchor
-         for the full URL it sees inside the `href` attribute. There is also an issue in
-         that it attempts to do SmartyPants quotes for the attribute. Capturing the issue
-         and skipping for now. The workaround for the end user is to use normal Markdown
-         links.
-         https://github.com/zorn/flick/issues/129
-         """
     test "anchor tags in Markdown content are allowed" do
       markdown = """
       A <a href="https://en.wikipedia.org/wiki/Markdown">link</a> to the Markdown Wikipedia page.
@@ -89,7 +81,7 @@ defmodule Flick.MarkdownTest do
         """
         <p>A <a href="https://en.wikipedia.org/wiki/Markdown">link</a> to the Markdown Wikipedia page.</p>
         """
-        |> String.replace(~r"\n", "")
+        |> String.trim()
 
       assert expected_html == Flick.Markdown.render_to_html(markdown)
     end
