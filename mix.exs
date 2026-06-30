@@ -52,7 +52,7 @@ defmodule Flick.MixProject do
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
 
       # To Render Markdown.
-      {:earmark, "~> 1.4"},
+      {:mdex, "~> 0.13.2"},
 
       # To santitize the HTML we expect to see in Markdown content.
       {:html_sanitize_ex, "~> 1.4"},

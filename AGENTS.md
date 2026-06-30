@@ -36,7 +36,7 @@ There is no user account system. The `/admin/*` scope is protected by HTTP Basic
 
 ### Markdown safety
 
-The `description` field on ballots accepts user-provided Markdown. Always render it through `Flick.Markdown.render_to_html/1`, which runs Earmark and then sanitizes the output via `HtmlSanitizeEx`. Never render raw user content directly in templates.
+The `description` field on ballots accepts user-provided Markdown. Always render it through `Flick.Markdown.render_to_html/1`, which runs MDEx and then sanitizes the output via `HtmlSanitizeEx`. Never render raw user content directly in templates.
 
 ### Timezone handling
 

@@ -32,9 +32,6 @@
       "WebFetch(domain:telemetry-poller.hexdocs.pm)",
       "WebFetch(domain:tiny-maps.hexdocs.pm)",
       "WebFetch(domain:tzdata.hexdocs.pm)"
-    ],
-    "deny": [
-      "Bash(git commit*)"
     ]
   }
 }
