@@ -30,7 +30,13 @@ defmodule Flick.Credo.Check.RawInHeex do
     ]
 
   @allow_marker "credo:allow-raw"
-  @raw_call ~r/\braw\s*\(/
+
+  # A real `raw/1` call runs inside a HEEx interpolation, opened by either `{`
+  # (attribute/body interpolation) or `<%= ` (body/block interpolation). We
+  # require such an opener before `raw(` on the same line so that the literal
+  # text `raw(` in prose, HTML attributes, or `<pre>` code samples is not
+  # flagged. `[^{}]*` keeps the opener and the call within the same expression.
+  @raw_call ~r/(?:\{|<%=)[^{}]*\braw\s*\(/
 
   @impl Credo.Check
   def run(%SourceFile{} = source_file, params) do

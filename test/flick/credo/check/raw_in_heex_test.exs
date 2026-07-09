@@ -87,6 +87,37 @@ defmodule Flick.Credo.Check.RawInHeexTest do
     |> refute_issues()
   end
 
+  test "reports a `raw/1` call inside a `<%= %>` interpolation" do
+    """
+    defmodule FlickWeb.SampleLive do
+      def render(assigns) do
+        ~H\"\"\"
+        <div><%= raw(@description) %></div>
+        \"\"\"
+      end
+    end
+    """
+    |> to_source_file()
+    |> run_check(RawInHeex)
+    |> assert_issue(fn issue -> assert issue.trigger == "raw" end)
+  end
+
+  test "does not report the literal text `raw(` outside an interpolation" do
+    """
+    defmodule FlickWeb.SampleLive do
+      def render(assigns) do
+        ~H\"\"\"
+        <div>Call raw(@x) to render unescaped HTML.</div>
+        <pre data-raw("example")>not a call</pre>
+        \"\"\"
+      end
+    end
+    """
+    |> to_source_file()
+    |> run_check(RawInHeex)
+    |> refute_issues()
+  end
+
   test "does not report the substring `raw` inside another identifier" do
     """
     defmodule FlickWeb.SampleLive do
