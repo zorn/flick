@@ -145,7 +145,7 @@ defmodule FlickWeb.Ballots.ViewerLive do
           <dt class="font-bold">Description</dt>
 
           <dd id="ballot-description" class="pb-4 prose">
-            {@ballot.description && raw(Flick.Markdown.render_to_html(@ballot.description))}
+            <.markdown content={@ballot.description} />
           </dd>
           <dt class="font-bold">Possible Answers</dt>
           <dd id="ballot-possible-answers" class="pb-4">{@ballot.possible_answers}</dd>

@@ -18,6 +18,9 @@ defmodule FlickWeb.CoreComponents do
   use Phoenix.Component
   use Gettext, backend: FlickWeb.Gettext
 
+  # For `raw/1`, used by the `markdown/1` component.
+  import Phoenix.HTML, only: [raw: 1]
+
   alias Phoenix.LiveView.JS
 
   @doc """
@@ -650,6 +653,27 @@ defmodule FlickWeb.CoreComponents do
     |> JS.hide(to: "##{id}", transition: {"block", "block", "hidden"})
     |> JS.remove_class("overflow-hidden", to: "body")
     |> JS.pop_focus()
+  end
+
+  @doc """
+  Renders user-provided Markdown as sanitized HTML.
+
+  `content` is rendered through `Flick.Markdown.render_to_html/1`, which runs
+  MDEx and sanitizes the result with `HtmlSanitizeEx`. This is the single
+  sanctioned place in the app that passes rendered Markdown through `raw/1`;
+  centralizing it keeps that security-sensitive call to one audited location
+  (enforced by the `Flick.Credo.Check.RawInHeex` custom Credo check).
+
+  Wrap it in an element that carries the desired styling (e.g. `class="prose"`).
+  Nothing is rendered when `content` is `nil`.
+  """
+  attr :content, :string, default: nil, doc: "the raw Markdown string to render"
+
+  def markdown(assigns) do
+    ~H"""
+    <%!-- credo:allow-raw Flick.Markdown.render_to_html sanitizes via HtmlSanitizeEx --%>
+    {@content && raw(Flick.Markdown.render_to_html(@content))}
+    """
   end
 
   @doc """
