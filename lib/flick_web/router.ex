@@ -12,17 +12,8 @@ defmodule FlickWeb.Router do
     plug :put_root_layout, html: {FlickWeb.Layouts, :root}
     plug :protect_from_forgery
 
-    # Tailwind uses SVG data URLs for icons,
-    # so we need to allow them with `img-src`.
-    # https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
-    #
-    # To avoid web console issues with Phoenix Storybook we've added
-    # `style-src 'self' 'unsafe-inline'` which feels unfortunate and
-    # might be reconsidered.
-    plug :put_secure_browser_headers, %{
-      "content-security-policy" =>
-        "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' https://plausible.io; connect-src 'self' https://plausible.io"
-    }
+    plug :put_secure_browser_headers
+    plug :put_csp_headers
   end
 
   pipeline :admin do
@@ -31,6 +22,33 @@ defmodule FlickWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+  end
+
+  # Sets our Content Security Policy header.
+  #
+  # We generate a per-request `nonce` so the small inline Plausible analytics
+  # `<script>` in the root layout is allowed without opening up `script-src` to
+  # `'unsafe-inline'`. The nonce is assigned to the conn so the layout can stamp
+  # it onto that script tag.
+  #
+  # `style-src` allows `'unsafe-inline'` to avoid web console issues with
+  # Phoenix Storybook, and `img-src` allows `data:` URLs because Tailwind uses
+  # SVG data URLs for icons.
+  #
+  # https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
+  defp put_csp_headers(conn, _opts) do
+    nonce = 18 |> :crypto.strong_rand_bytes() |> Base.encode64()
+
+    csp =
+      "default-src 'self'; " <>
+        "img-src 'self' data:; " <>
+        "style-src 'self' 'unsafe-inline'; " <>
+        "script-src 'self' 'nonce-#{nonce}' https://plausible.io; " <>
+        "connect-src 'self' https://plausible.io"
+
+    conn
+    |> assign(:csp_nonce, nonce)
+    |> put_resp_header("content-security-policy", csp)
   end
 
   scope "/" do
