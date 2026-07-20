@@ -5,6 +5,10 @@ defmodule FlickWeb.Router do
   import PhoenixStorybook.Router
   import Plug.BasicAuth
 
+  # Note: Sobelow's `Config.CSP` check only recognizes a CSP passed as a static
+  # map to `put_secure_browser_headers`. We set the header dynamically in
+  # `put_csp_headers` below (to inject a per-request nonce), so `Config.CSP` is
+  # ignored in `.sobelow-conf`.
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
