@@ -5,10 +5,6 @@ defmodule FlickWeb.Router do
   import PhoenixStorybook.Router
   import Plug.BasicAuth
 
-  # Note: Sobelow's `Config.CSP` check only recognizes a CSP passed as a static
-  # map to `put_secure_browser_headers`. We set the header dynamically in
-  # `put_csp_headers` below (to inject a per-request nonce), so `Config.CSP` is
-  # ignored in `.sobelow-conf`.
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -16,8 +12,26 @@ defmodule FlickWeb.Router do
     plug :put_root_layout, html: {FlickWeb.Layouts, :root}
     plug :protect_from_forgery
 
-    plug :put_secure_browser_headers
-    plug :put_csp_headers
+    # Our Content Security Policy. Notes:
+    #
+    # - `img-src` allows `data:` URLs because Tailwind uses SVG data URLs for
+    #   icons.
+    # - `style-src` allows `'unsafe-inline'` to avoid web console issues with
+    #   Phoenix Storybook.
+    #
+    # `put_csp_nonce` below augments this static policy with a per-request nonce
+    # so the inline Plausible analytics `<script>` in the root layout is allowed
+    # without opening `script-src` up to `'unsafe-inline'`. We keep the full
+    # policy here (rather than building it entirely in the plug) so Sobelow's
+    # `Config.CSP` check can still verify a CSP is present.
+    #
+    # https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
+    plug :put_secure_browser_headers, %{
+      "content-security-policy" =>
+        "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' https://plausible.io; connect-src 'self' https://plausible.io"
+    }
+
+    plug :put_csp_nonce
   end
 
   pipeline :admin do
@@ -28,31 +42,17 @@ defmodule FlickWeb.Router do
     plug :accepts, ["json"]
   end
 
-  # Sets our Content Security Policy header.
-  #
-  # We generate a per-request `nonce` so the small inline Plausible analytics
-  # `<script>` in the root layout is allowed without opening up `script-src` to
-  # `'unsafe-inline'`. The nonce is assigned to the conn so the layout can stamp
-  # it onto that script tag.
-  #
-  # `style-src` allows `'unsafe-inline'` to avoid web console issues with
-  # Phoenix Storybook, and `img-src` allows `data:` URLs because Tailwind uses
-  # SVG data URLs for icons.
-  #
-  # https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
-  defp put_csp_headers(conn, _opts) do
+  # Generates a per-request nonce, assigns it to the conn (so the root layout can
+  # stamp it onto the inline Plausible `<script>`), and splices it into the
+  # `script-src` directive of the CSP header set by `put_secure_browser_headers`.
+  defp put_csp_nonce(conn, _opts) do
     nonce = 18 |> :crypto.strong_rand_bytes() |> Base.encode64()
-
-    csp =
-      "default-src 'self'; " <>
-        "img-src 'self' data:; " <>
-        "style-src 'self' 'unsafe-inline'; " <>
-        "script-src 'self' 'nonce-#{nonce}' https://plausible.io; " <>
-        "connect-src 'self' https://plausible.io"
 
     conn
     |> assign(:csp_nonce, nonce)
-    |> put_resp_header("content-security-policy", csp)
+    |> update_resp_header("content-security-policy", "", fn csp ->
+      String.replace(csp, "script-src ", "script-src 'nonce-#{nonce}' ")
+    end)
   end
 
   scope "/" do
