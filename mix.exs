@@ -64,7 +64,7 @@ defmodule Flick.MixProject do
       {:phoenix_storybook, "~> 1.0"},
 
       # To help us present `DateTime` values in the user's timezone.
-      {:tzdata, "~> 1.1"},
+      {:tz, "~> 0.28"},
 
       # To help with making test scenarios easy to describe and maintain.
       {:parameterized_test, "~> 0.6", only: [:dev, :test]},

@@ -7,7 +7,7 @@
 # General application configuration
 import Config
 
-config :elixir, :time_zone_database, Tzdata.TimeZoneDatabase
+config :elixir, :time_zone_database, Tz.TimeZoneDatabase
 
 config :flick,
   ecto_repos: [Flick.Repo],
