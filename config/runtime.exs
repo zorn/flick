@@ -20,6 +20,76 @@ if System.get_env("PHX_SERVER") do
   config :flick, FlickWeb.Endpoint, server: true
 end
 
+# A git worktree made with worktrunk gets its own port and databases. The
+# hooks in github.com/zorn/dotfiles write them to .env.worktree. The primary
+# checkout has no such file, so it keeps the defaults in dev.exs and test.exs.
+# A variable already set in the shell wins over the file.
+if config_env() in [:dev, :test] do
+  worktree_env_path = Path.expand("../.env.worktree", __DIR__)
+
+  worktree_env =
+    if File.exists?(worktree_env_path) do
+      worktree_env_path
+      |> File.read!()
+      |> String.split("\n", trim: true)
+      # Skip anything that is not KEY=VALUE, such as a comment added by hand,
+      # rather than fail to boot over it.
+      |> Enum.flat_map(fn line ->
+        case String.split(line, "=", parts: 2) do
+          [key, value] -> [{String.trim(key), String.trim(value)}]
+          _ -> []
+        end
+      end)
+      |> Map.new()
+    else
+      %{}
+    end
+
+  # A blank value counts as missing, so a truncated file takes the same path
+  # as an absent key.
+  present = fn
+    "" -> nil
+    value -> value
+  end
+
+  worktree_value = fn key ->
+    present.(System.get_env(key)) || present.(Map.get(worktree_env, key))
+  end
+
+  # In a worktree, a missing database name means its setup stopped partway.
+  # Falling back to the default would migrate the primary checkout's database,
+  # so refuse to boot instead.
+  worktree_database = fn key ->
+    cond do
+      database = worktree_value.(key) ->
+        database
+
+      File.exists?(worktree_env_path) ->
+        raise "#{worktree_env_path} has no #{key}. Re-run the worktree's setup " <>
+                "with `wt hook pre-start`, or remove the worktree and create it again."
+
+      true ->
+        nil
+    end
+  end
+
+  if config_env() == :dev do
+    if port = worktree_value.("PORT") do
+      config :flick, FlickWeb.Endpoint, http: [port: String.to_integer(port)]
+    end
+
+    if database = worktree_database.("DEV_DATABASE_NAME") do
+      config :flick, Flick.Repo, database: database
+    end
+  end
+
+  if config_env() == :test do
+    if database = worktree_database.("TEST_DATABASE_NAME") do
+      config :flick, Flick.Repo, database: "#{database}#{System.get_env("MIX_TEST_PARTITION")}"
+    end
+  end
+end
+
 if config_env() == :prod do
   database_url =
     System.get_env("DATABASE_URL") ||

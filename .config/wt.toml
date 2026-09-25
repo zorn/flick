@@ -1,0 +1,8 @@
+# Flick opts into per-worktree Postgres databases from the shared hook in
+# github.com/zorn/dotfiles. That hook's header explains the two slots.
+
+[pre-start]
+postgres = "~/.config/worktrunk/hooks/postgres names"
+
+[post-start]
+postgres = "~/.config/worktrunk/hooks/postgres create"

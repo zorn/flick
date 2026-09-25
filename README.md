@@ -70,6 +70,23 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
 Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
 
+### Parallel worktrees (optional)
+
+Flick is set up for [worktrunk](https://worktrunk.dev) (`wt`), which creates git worktrees so that several copies of the app, or several coding agents, can run side by side. Nothing above depends on it. A normal checkout ignores these files and keeps port 4000 and the `flick_dev` database.
+
+It needs two things installed:
+
+- **worktrunk**, for example with `brew install worktrunk`.
+- **The hooks from [zorn/dotfiles](https://github.com/zorn/dotfiles#worktrunk-config--worktrunk)**, linked into `~/.config/worktrunk/` by that repo's `bin/link`. Flick's `.config/wt.toml` calls a script from there. Without it, `wt` reports an error and leaves the worktree without its databases, and `mix` in that worktree refuses to start rather than fall back to `flick_dev`.
+
+Then create a worktree with `wt switch --create <branch>`. It does the following:
+
+- Copies `_build` and `deps` from this checkout, so the first compile is incremental.
+- Gives the worktree its own port, and its own dev and test databases. The values are in the worktree's `.env.worktree`, which `config/runtime.exs` reads.
+- Creates and migrates the databases in the background. `wt config state logs` shows the log.
+
+The first time `wt` runs Flick's hooks, it asks you to approve them.
+
 ## Learn more
 
   * Official website: https://www.phoenixframework.org/

@@ -41,3 +41,6 @@ npm-debug.log
 
 # Local Claude Code settings (personal overrides, not shared)
 .claude/*.local.json
+
+# Per-worktree port and database names, written by worktrunk hooks.
+/.env.worktree
