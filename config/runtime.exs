@@ -20,8 +20,8 @@ if System.get_env("PHX_SERVER") do
   config :flick, FlickWeb.Endpoint, server: true
 end
 
-# A git worktree made with worktrunk gets its own port and databases, written
-# to .env.worktree by the hooks in github.com/zorn/dotfiles. The primary
+# A git worktree made with worktrunk gets its own port and databases. The
+# hooks in github.com/zorn/dotfiles write them to .env.worktree. The primary
 # checkout has no such file, so it keeps the defaults in dev.exs and test.exs.
 # A variable already set in the shell wins over the file.
 if config_env() in [:dev, :test] do
@@ -32,10 +32,15 @@ if config_env() in [:dev, :test] do
       worktree_env_path
       |> File.read!()
       |> String.split("\n", trim: true)
-      |> Map.new(fn line ->
-        [key, value] = String.split(line, "=", parts: 2)
-        {key, value}
+      # Skip anything that is not KEY=VALUE, such as a comment added by hand,
+      # rather than fail to boot over it.
+      |> Enum.flat_map(fn line ->
+        case String.split(line, "=", parts: 2) do
+          [key, value] -> [{String.trim(key), String.trim(value)}]
+          _ -> []
+        end
       end)
+      |> Map.new()
     else
       %{}
     end
