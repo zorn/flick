@@ -47,8 +47,13 @@ if config_env() in [:dev, :test] do
 
   # A blank value counts as missing, so a truncated file takes the same path
   # as an absent key.
+  present = fn
+    "" -> nil
+    value -> value
+  end
+
   worktree_value = fn key ->
-    Enum.find([System.get_env(key), Map.get(worktree_env, key)], &(&1 not in [nil, ""]))
+    present.(System.get_env(key)) || present.(Map.get(worktree_env, key))
   end
 
   # In a worktree, a missing database name means its setup stopped partway.
