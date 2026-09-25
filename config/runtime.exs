@@ -47,18 +47,35 @@ if config_env() in [:dev, :test] do
 
   worktree_value = fn key -> System.get_env(key) || Map.get(worktree_env, key) end
 
+  # In a worktree, a missing database name means its setup stopped partway.
+  # Falling back to the default would migrate the primary checkout's database,
+  # so refuse to boot instead.
+  worktree_database = fn key ->
+    cond do
+      database = worktree_value.(key) ->
+        database
+
+      File.exists?(worktree_env_path) ->
+        raise "#{worktree_env_path} has no #{key}. Re-run the worktree's setup " <>
+                "with `wt hook pre-start`, or remove the worktree and create it again."
+
+      true ->
+        nil
+    end
+  end
+
   if config_env() == :dev do
     if port = worktree_value.("PORT") do
       config :flick, FlickWeb.Endpoint, http: [port: String.to_integer(port)]
     end
 
-    if database = worktree_value.("DEV_DATABASE_NAME") do
+    if database = worktree_database.("DEV_DATABASE_NAME") do
       config :flick, Flick.Repo, database: database
     end
   end
 
   if config_env() == :test do
-    if database = worktree_value.("TEST_DATABASE_NAME") do
+    if database = worktree_database.("TEST_DATABASE_NAME") do
       config :flick, Flick.Repo, database: "#{database}#{System.get_env("MIX_TEST_PARTITION")}"
     end
   end
