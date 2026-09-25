@@ -20,6 +20,45 @@ if System.get_env("PHX_SERVER") do
   config :flick, FlickWeb.Endpoint, server: true
 end
 
+# A git worktree made with worktrunk gets its own port and databases, written
+# to .env.worktree by the hooks in github.com/zorn/dotfiles. The primary
+# checkout has no such file, so it keeps the defaults in dev.exs and test.exs.
+# A variable already set in the shell wins over the file.
+if config_env() in [:dev, :test] do
+  worktree_env_path = Path.expand("../.env.worktree", __DIR__)
+
+  worktree_env =
+    if File.exists?(worktree_env_path) do
+      worktree_env_path
+      |> File.read!()
+      |> String.split("\n", trim: true)
+      |> Map.new(fn line ->
+        [key, value] = String.split(line, "=", parts: 2)
+        {key, value}
+      end)
+    else
+      %{}
+    end
+
+  worktree_value = fn key -> System.get_env(key) || Map.get(worktree_env, key) end
+
+  if config_env() == :dev do
+    if port = worktree_value.("PORT") do
+      config :flick, FlickWeb.Endpoint, http: [port: String.to_integer(port)]
+    end
+
+    if database = worktree_value.("DEV_DATABASE_NAME") do
+      config :flick, Flick.Repo, database: database
+    end
+  end
+
+  if config_env() == :test do
+    if database = worktree_value.("TEST_DATABASE_NAME") do
+      config :flick, Flick.Repo, database: "#{database}#{System.get_env("MIX_TEST_PARTITION")}"
+    end
+  end
+end
+
 if config_env() == :prod do
   database_url =
     System.get_env("DATABASE_URL") ||

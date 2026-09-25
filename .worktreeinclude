@@ -1,0 +1,6 @@
+# Gitignored files worktrunk copies into a new worktree. Build state comes
+# along so the first compile is incremental, not cold.
+_build/
+deps/
+assets/node_modules/
+.claude/settings.local.json

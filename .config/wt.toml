@@ -1,0 +1,9 @@
+# Flick's per-worktree Postgres databases, from the shared hook in
+# github.com/zorn/dotfiles. The names land in pre-start so no mix run can
+# fall back to flick_dev; creating and migrating runs in the background.
+
+[pre-start]
+postgres = "~/.config/worktrunk/hooks/postgres names"
+
+[post-start]
+postgres = "~/.config/worktrunk/hooks/postgres create"
