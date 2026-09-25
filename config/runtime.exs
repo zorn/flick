@@ -45,7 +45,11 @@ if config_env() in [:dev, :test] do
       %{}
     end
 
-  worktree_value = fn key -> System.get_env(key) || Map.get(worktree_env, key) end
+  # A blank value counts as missing, so a truncated file takes the same path
+  # as an absent key.
+  worktree_value = fn key ->
+    Enum.find([System.get_env(key), Map.get(worktree_env, key)], &(&1 not in [nil, ""]))
+  end
 
   # In a worktree, a missing database name means its setup stopped partway.
   # Falling back to the default would migrate the primary checkout's database,
