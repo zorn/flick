@@ -76,10 +76,7 @@ Flick is set up for [worktrunk](https://worktrunk.dev) (`wt`), which creates git
 
 A worktree made with `wt` gets its own copy of `_build` and `deps`, its own port, and its own dev and test databases. The port and database names are in the worktree's `.env.worktree`, which `config/runtime.exs` reads.
 
-It needs two things installed:
-
-- **worktrunk**, for example with `brew install worktrunk`.
-- **The hooks from [zorn/dotfiles](https://github.com/zorn/dotfiles)**, linked into `~/.config/worktrunk/` by that repo's `bin/link`. Flick's `.config/wt.toml` calls a script from there. Without it, `wt` reports an error and leaves the worktree without its databases, and `mix` in that worktree refuses to start rather than fall back to `flick_dev`.
+Set up each machine once with [the runbook's setup steps](https://github.com/zorn/dotfiles/blob/main/worktrunk/README.md#set-up-each-machine-once). Flick's `.config/wt.toml` calls a hook script installed by those steps. Without it, `wt` reports an error and leaves the worktree without its databases, and `mix` in that worktree refuses to start rather than fall back to `flick_dev`.
 
 Create and remove these worktrees only with `wt`, because its hooks create the databases and drop them again. A worktree removed any other way leaves its databases behind. [The worktree runbook](https://github.com/zorn/dotfiles/blob/main/worktrunk/README.md) in zorn/dotfiles covers the full flow: setup, creating and opening a worktree in Herdr, working in it, removing it, and what to do when removal stops.
 
