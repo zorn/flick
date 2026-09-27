@@ -9,8 +9,6 @@ defmodule Support.Fixtures.BallotFixture do
   @doc """
   Returns a map of valid attributes for a `Flick.RankedVoting.Ballot` entity,
   allowing for the passed in attributes to override defaults.
-
-  Pass `possible_answers` as a list of answer values.
   """
   @spec valid_ballot_attributes(map()) :: map()
   def valid_ballot_attributes(attrs \\ %{}) do
