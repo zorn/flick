@@ -7,13 +7,11 @@ defmodule FlickWeb.Vote.VoteCaptureLiveTest do
 
   use FlickWeb.ConnCase, async: true
 
-  alias Flick.RankedVoting.Ballot
-
   setup ~M{conn} do
     prepublished_ballot =
       ballot_fixture(%{
         question_title: "What movie should we go see?",
-        possible_answers: "Hackers, Sneakers, WarGames, The Matrix, Tron",
+        possible_answers: ["Hackers", "Sneakers", "WarGames", "The Matrix", "Tron"],
         url_slug: "movie-night"
       })
 
@@ -35,7 +33,7 @@ defmodule FlickWeb.Vote.VoteCaptureLiveTest do
     assert has_element?(view, ranked_answer_selector(4))
 
     # Validate the select input has all the possible answers.
-    Enum.each(Ballot.possible_answers_as_list(ballot.possible_answers), fn answer ->
+    Enum.each(["Hackers", "Sneakers", "WarGames", "The Matrix", "Tron"], fn answer ->
       assert has_element?(
                view,
                "#{ranked_answer_selector(0)} option[value=\"#{answer}\"]",

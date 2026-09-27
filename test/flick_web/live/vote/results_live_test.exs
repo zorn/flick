@@ -13,7 +13,7 @@ defmodule FlickWeb.Vote.ResultsLiveTest do
     ballot =
       ballot_fixture(%{
         question_title: "What movie should we go see?",
-        possible_answers: "WarGames, The Matrix, Tron",
+        possible_answers: ["WarGames", "The Matrix", "Tron"],
         url_slug: "movie-night"
       })
 
@@ -53,7 +53,7 @@ defmodule FlickWeb.Vote.ResultsLiveTest do
   defp populate_ballot_with_votes(%Ballot{} = ballot) do
     # This assumes a ballot with three possible answers.
     for _ <- 1..25 do
-      available_answers = Ballot.possible_answers_as_list(ballot.possible_answers)
+      available_answers = Ballot.answer_values(ballot)
 
       if length(available_answers) != 3 do
         raise """
