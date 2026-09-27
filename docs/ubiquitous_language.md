@@ -9,8 +9,9 @@
   a potential voter and capture ranked answers (preferences).
 * **Question** -- A phrase that inspires a voter to provide a collection of
   ranked answers.
-* **Possible Answers** -- When building a question on a ballot, a ballot owner
-  creates a comma-separated list of possible answers for the ballot question.
+* **Possible Answers** -- The ordered set of answers a ballot owner offers for
+  the ballot question, each entered on its own; a ballot needs at least two.
+  (See [Decision 4](decisions/4-possible-answers-as-embeds.md).)
 * **First Preference**—When a user comes to have their vote captured, we ask for
   their preferences. (See `Sharp Edges #1` below for more info.)
 * **Ranked Answer** -- The captured ranked answer provided by a voter for a
@@ -19,9 +20,9 @@
 ## Sharp Edges
 
 1. In the code, we have a schema for `Flick.RankedVoting.RankedAnswer`, and when
-   a user is creating a ballot, we ask them for `Possible Answers (comma
-   separated)`. However, when capturing a vote, we ask those users for their
-   `First Preference`, `Second Preference`, etcetera. Under the hood, these
+   a user is creating a ballot, we ask them for `Possible Answers`. However,
+   when capturing a vote, we ask those users for their `First Preference`,
+   `Second Preference`, etcetera. Under the hood, these
    "preferences" are stored as `RankedAnswers` which feels like an unfortunate
    misalignment of terms. Currently, the presentation perspective is worth the
    cost of this misalignment, but feedback is welcome.

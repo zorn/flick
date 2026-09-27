@@ -1,5 +1,9 @@
 # Decision: Ballot and Vote Schema Shape
 
+> **Ballots section superseded by
+> [Decision 4](4-possible-answers-as-embeds.md)** -- possible answers are now
+> an `embeds_many`. The Votes section still holds.
+
 ## Ballots
 
 The `Flick.RankedVoting.Ballot` schema captures a simple one-question ballot
