@@ -11,6 +11,8 @@ defmodule Flick.RankedVoting.Ballot do
 
   import Ecto.Changeset
 
+  alias Flick.RankedVoting.PossibleAnswer
+
   @type id :: Ecto.UUID.t()
 
   @typedoc """
@@ -22,7 +24,7 @@ defmodule Flick.RankedVoting.Ballot do
           description: String.t() | nil,
           url_slug: String.t(),
           secret: Ecto.UUID.t(),
-          possible_answers: String.t(),
+          possible_answers: [PossibleAnswer.t()],
           published_at: DateTime.t() | nil,
           closed_at: DateTime.t() | nil
         }
@@ -47,13 +49,13 @@ defmodule Flick.RankedVoting.Ballot do
     field :description, :string, default: nil
     field :url_slug, :string
     field :secret, :binary_id, read_after_writes: true
-    field :possible_answers, :string
+    embeds_many :possible_answers, PossibleAnswer, on_replace: :delete
     field :published_at, :utc_datetime_usec
     field :closed_at, :utc_datetime_usec
     timestamps(type: :utc_datetime_usec)
   end
 
-  @required_fields [:question_title, :possible_answers, :url_slug]
+  @required_fields [:question_title, :url_slug]
 
   # With intent, we do not allow `published_at` or `closed_at` to be set inside
   # a normal changeset. Instead look to the
@@ -65,8 +67,12 @@ defmodule Flick.RankedVoting.Ballot do
   def changeset(ballot, attrs) do
     ballot
     |> cast(attrs, @required_fields ++ @optional_fields)
+    |> cast_embed(:possible_answers,
+      sort_param: :possible_answers_sort,
+      drop_param: :possible_answers_drop
+    )
     |> validate_required(@required_fields)
-    |> validate_possible_answers()
+    |> validate_possible_answer_count()
     |> validate_format(:url_slug, ~r/^[a-zA-Z0-9-]+$/,
       message: "can only contain letters, numbers, and hyphens"
     )
@@ -74,39 +80,19 @@ defmodule Flick.RankedVoting.Ballot do
     |> unique_constraint(:url_slug)
   end
 
+  defp validate_possible_answer_count(changeset) do
+    if length(get_field(changeset, :possible_answers)) < 2 do
+      add_error(changeset, :possible_answers, "must have at least two answers")
+    else
+      changeset
+    end
+  end
+
   @doc """
   Returns the values of the ballot's possible answers in the order voters see them.
   """
   @spec answer_values(t()) :: [String.t()]
   def answer_values(%__MODULE__{possible_answers: possible_answers}) do
-    possible_answers_as_list(possible_answers)
-  end
-
-  defp possible_answers_as_list(possible_answers) when is_binary(possible_answers) do
-    possible_answers
-    |> String.split(",")
-    |> Enum.map(&String.trim/1)
-  end
-
-  defp validate_possible_answers(changeset) do
-    # Because we validated the value as `required` before this, we don't need to
-    # concern ourselves with an empty list here.
-    validate_change(changeset, :possible_answers, fn :possible_answers, updated_value ->
-      answer_list = possible_answers_as_list(updated_value)
-
-      cond do
-        length(answer_list) < 2 ->
-          [possible_answers: "must contain at least two answers"]
-
-        String.contains?(updated_value, "\n") ->
-          [possible_answers: "can't contain new lines"]
-
-        Enum.any?(answer_list, &(&1 == "")) ->
-          [possible_answers: "can't contain empty answers"]
-
-        true ->
-          []
-      end
-    end)
+    Enum.map(possible_answers, & &1.value)
   end
 end

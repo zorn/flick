@@ -12,11 +12,10 @@ defmodule FlickWeb.Ballots.EditorLive do
   @impl Phoenix.LiveView
   def mount(params, _session, socket) do
     ballot = ballot(params, socket)
-    form = to_form(RankedVoting.change_ballot(ballot, %{}))
 
     socket
-    |> assign(:form, form)
     |> assign(:ballot, ballot)
+    |> assign_form(RankedVoting.change_ballot(ballot, initial_params(ballot)))
     |> assign_page_title()
     |> ok()
   end
@@ -42,12 +41,21 @@ defmodule FlickWeb.Ballots.EditorLive do
     %Ballot{}
   end
 
+  # A new ballot starts with two empty answer rows, the minimum it needs.
+  defp initial_params(%Ballot{id: nil}), do: %{"possible_answers_sort" => ["new", "new"]}
+  defp initial_params(_ballot), do: %{}
+
+  defp assign_form(socket, changeset) do
+    socket
+    |> assign(:form, to_form(changeset))
+    |> assign(:answer_count, length(Ecto.Changeset.get_field(changeset, :possible_answers)))
+  end
+
   @impl Phoenix.LiveView
   def handle_event("validate", params, socket) do
     %{"ballot" => ballot_params} = params
     %{ballot: ballot} = socket.assigns
-    form = to_form(RankedVoting.change_ballot(ballot, ballot_params))
-    {:noreply, assign(socket, form: form)}
+    {:noreply, assign_form(socket, RankedVoting.change_ballot(ballot, ballot_params))}
   end
 
   def handle_event("save", params, socket) do
@@ -63,7 +71,7 @@ defmodule FlickWeb.Ballots.EditorLive do
         {:noreply, redirect(socket, to: ~p"/ballot/#{ballot.url_slug}/#{ballot.secret}")}
 
       {:error, changeset} ->
-        {:noreply, assign(socket, form: to_form(changeset))}
+        {:noreply, assign_form(socket, changeset)}
     end
   end
 
@@ -75,7 +83,7 @@ defmodule FlickWeb.Ballots.EditorLive do
         {:noreply, redirect(socket, to: ~p"/ballot/#{ballot.url_slug}/#{ballot.secret}")}
 
       {:error, changeset} ->
-        {:noreply, assign(socket, form: to_form(changeset))}
+        {:noreply, assign_form(socket, changeset)}
     end
   end
 
@@ -91,25 +99,67 @@ defmodule FlickWeb.Ballots.EditorLive do
         <.input
           field={@form[:question_title]}
           label="Question Title"
-          placeholder="What is for dinner?"
+          placeholder="What should the book club read next?"
         />
 
         <.input
           field={@form[:description]}
           type="textarea"
           label="Description (Markdown)"
-          placeholder="Some context to help people know about the possible answers. "
+          placeholder="Some context to help voters choose, like page counts or where to find each book."
         />
 
-        <.input
-          field={@form[:possible_answers]}
-          label="Possible Answers (comma separated)"
-          placeholder="Chicken, Pasta, Pancakes"
-        />
+        <fieldset id="possible-answers" class="space-y-3">
+          <legend class="text-sm font-semibold leading-6 text-zinc-800">Possible Answers</legend>
+          <p class="text-xs text-zinc-500">Voters see answers in this order.</p>
+          <div id="possible-answers-errors">
+            <.error :for={error <- @form[:possible_answers].errors}>
+              {translate_error(error)}
+            </.error>
+          </div>
+
+          <.inputs_for :let={answer_form} field={@form[:possible_answers]}>
+            <div class="flex items-end gap-2">
+              <input type="hidden" name="ballot[possible_answers_sort][]" value={answer_form.index} />
+              <div class="flex-1">
+                <.input
+                  field={answer_form[:value]}
+                  placeholder={answer_placeholder(answer_form.index)}
+                  aria-label={"Answer #{answer_form.index + 1}"}
+                />
+              </div>
+              <button
+                type="button"
+                id={"remove-possible-answer-#{answer_form.index}"}
+                name="ballot[possible_answers_drop][]"
+                value={answer_form.index}
+                phx-click={JS.dispatch("change")}
+                disabled={@answer_count <= 2}
+                class="rounded px-2 py-1 text-sm font-semibold text-rose-600 transition hover:bg-rose-50 disabled:text-zinc-300 disabled:hover:bg-transparent"
+              >
+                Remove
+              </button>
+            </div>
+          </.inputs_for>
+
+          <input type="hidden" name="ballot[possible_answers_drop][]" />
+
+          <button
+            type="button"
+            id="add-possible-answer"
+            name="ballot[possible_answers_sort][]"
+            value="new"
+            phx-click={JS.dispatch("change")}
+            class="inline-flex items-center gap-1 rounded-lg border border-dashed border-zinc-300 px-3 py-1.5 text-sm font-semibold text-teal-700 transition hover:border-teal-500 hover:bg-teal-50"
+          >
+            <.icon name="hero-plus-mini" class="h-4 w-4" /> Add another answer
+          </button>
+        </fieldset>
+
         <.input
           field={@form[:url_slug]}
           label="URL Slug (as seen in the URL you'll give to voters)"
-          placeholder="what-is-for-dinner"
+          placeholder="book-club-next-read"
         />
 
         <:actions>
@@ -119,6 +169,12 @@ defmodule FlickWeb.Ballots.EditorLive do
     </Layouts.app>
     """
   end
+
+  # A book-club example that matches the question and slug placeholders. The
+  # second title's commas show that an answer may contain them.
+  defp answer_placeholder(0), do: "Project Hail Mary by Andy Weir"
+  defp answer_placeholder(1), do: "Tomorrow, and Tomorrow, and Tomorrow by Gabrielle Zevin"
+  defp answer_placeholder(_index), do: "Another book"
 
   defp page_title(:edit), do: "Edit Ballot"
   defp page_title(_), do: "Create a Ballot"

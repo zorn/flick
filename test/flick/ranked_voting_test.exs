@@ -7,6 +7,7 @@ defmodule Flick.RankedVotingTest do
 
   alias Flick.RankedVoting
   alias Flick.RankedVoting.Ballot
+  alias Flick.RankedVoting.PossibleAnswer
   alias Flick.RankedVoting.RankedAnswer
   alias Flick.RankedVoting.Vote
   alias Support.Fixtures.BallotFixture
@@ -18,13 +19,17 @@ defmodule Flick.RankedVotingTest do
       {:ok, %Ballot{id: id}} =
         RankedVoting.create_ballot(%{
           question_title: "What is your favorite color?",
-          possible_answers: "Red, Green, Blue",
+          possible_answers: [%{value: "Red"}, %{value: "Green"}, %{value: "Blue"}],
           url_slug: "favorite-color"
         })
 
       assert %Ballot{
                question_title: "What is your favorite color?",
-               possible_answers: "Red, Green, Blue",
+               possible_answers: [
+                 %PossibleAnswer{value: "Red"},
+                 %PossibleAnswer{value: "Green"},
+                 %PossibleAnswer{value: "Blue"}
+               ],
                published_at: nil
              } =
                RankedVoting.get_ballot!(id)
@@ -34,13 +39,21 @@ defmodule Flick.RankedVotingTest do
       {:ok, %Ballot{id: id}} =
         RankedVoting.create_ballot(%{
           "question_title" => "What is your favorite food?",
-          "possible_answers" => "Pizza, Tacos, Sushi",
+          "possible_answers" => %{
+            "0" => %{"value" => "Pizza"},
+            "1" => %{"value" => "Tacos"},
+            "2" => %{"value" => "Sushi"}
+          },
           "url_slug" => "favorite-food"
         })
 
       assert %Ballot{
                question_title: "What is your favorite food?",
-               possible_answers: "Pizza, Tacos, Sushi",
+               possible_answers: [
+                 %PossibleAnswer{value: "Pizza"},
+                 %PossibleAnswer{value: "Tacos"},
+                 %PossibleAnswer{value: "Sushi"}
+               ],
                published_at: nil
              } = RankedVoting.get_ballot!(id)
     end
@@ -64,25 +77,63 @@ defmodule Flick.RankedVotingTest do
     end
 
     test "failure: `possible_answers` is required" do
-      for empty_value <- @empty_values do
-        assert {:error, changeset} = RankedVoting.create_ballot(%{possible_answers: empty_value})
-        assert "can't be blank" in errors_on(changeset).possible_answers
-      end
-    end
-
-    test "failure: `possible_answers` must not include empty answers" do
-      assert {:error, changeset} = RankedVoting.create_ballot(%{possible_answers: "one,,two"})
-      assert "can't contain empty answers" in errors_on(changeset).possible_answers
-    end
-
-    test "failure: `possible_answers` must not include new lines" do
-      assert {:error, changeset} = RankedVoting.create_ballot(%{possible_answers: "one,\ntwo"})
-      assert "can't contain new lines" in errors_on(changeset).possible_answers
+      assert {:error, changeset} = RankedVoting.create_ballot(%{question_title: "Q"})
+      assert "must have at least two answers" in errors_on(changeset).possible_answers
     end
 
     test "failure: `possible_answers` must include at least two answers" do
-      assert {:error, changeset} = RankedVoting.create_ballot(%{possible_answers: "one"})
-      assert "must contain at least two answers" in errors_on(changeset).possible_answers
+      assert {:error, changeset} =
+               RankedVoting.create_ballot(%{possible_answers: [%{value: "one"}]})
+
+      assert "must have at least two answers" in errors_on(changeset).possible_answers
+    end
+
+    test "success: blank `possible_answers` rows are dropped" do
+      attrs =
+        BallotFixture.valid_ballot_attributes(%{
+          possible_answers: ["Red", "", "  ", "Blue"]
+        })
+
+      assert {:ok, ballot} = RankedVoting.create_ballot(attrs)
+      assert Ballot.answer_values(ballot) == ["Red", "Blue"]
+    end
+
+    test "success: blank `possible_answers` rows are dropped from form params" do
+      attrs = %{
+        "question_title" => "What is your favorite color?",
+        "url_slug" => "favorite-color-form",
+        "possible_answers" => %{
+          "0" => %{"value" => "Red"},
+          "1" => %{"value" => " "},
+          "2" => %{"value" => "Blue"}
+        },
+        "possible_answers_sort" => ["0", "1", "2"],
+        "possible_answers_drop" => [""]
+      }
+
+      assert {:ok, ballot} = RankedVoting.create_ballot(attrs)
+      assert Ballot.answer_values(ballot) == ["Red", "Blue"]
+    end
+
+    test "failure: blank `possible_answers` rows do not count toward the minimum" do
+      attrs = BallotFixture.valid_ballot_attributes(%{possible_answers: ["Red", ""]})
+
+      assert {:error, changeset} = RankedVoting.create_ballot(attrs)
+      assert "must have at least two answers" in errors_on(changeset).possible_answers
+    end
+
+    test "success: `possible_answers` are trimmed and may contain commas" do
+      attrs =
+        BallotFixture.valid_ballot_attributes(%{
+          possible_answers: ["  Project Hail Mary ", "Tomorrow, and Tomorrow, and Tomorrow"]
+        })
+
+      assert {:ok, ballot} = RankedVoting.create_ballot(attrs)
+
+      assert Ballot.answer_values(ballot) == [
+               "Project Hail Mary",
+               "Tomorrow, and Tomorrow, and Tomorrow"
+             ]
     end
 
     test "failure: `url_slug` is required" do
@@ -98,7 +149,7 @@ defmodule Flick.RankedVotingTest do
       assert {:error, changeset} =
                RankedVoting.create_ballot(%{
                  question_title: "What is your favorite color?",
-                 possible_answers: "Red, Green, Blue",
+                 possible_answers: [%{value: "Red"}, %{value: "Green"}],
                  url_slug: "popular-slug"
                })
 
@@ -163,18 +214,29 @@ defmodule Flick.RankedVotingTest do
 
       ballot_id = ballot.id
 
+      existing_answers =
+        ballot.possible_answers
+        |> Enum.with_index()
+        |> Map.new(fn {answer, index} ->
+          {"#{index}", %{"id" => answer.id, "value" => answer.value}}
+        end)
+
       changes = %{
         "question_title" => "some-title-changed",
-        "possible_answers" => "a, b, c, d, e"
+        "possible_answers" => Map.put(existing_answers, "4", %{"value" => "e"})
       }
 
       assert {:ok,
               %Ballot{
                 id: ^ballot_id,
                 question_title: "some-title-changed",
-                possible_answers: "a, b, c, d, e",
                 published_at: nil
-              }} = RankedVoting.update_ballot(ballot, changes)
+              } = updated_ballot} = RankedVoting.update_ballot(ballot, changes)
+
+      assert Ballot.answer_values(updated_ballot) == ["a", "b", "c", "d", "e"]
+
+      assert Enum.take(Enum.map(updated_ballot.possible_answers, & &1.id), 4) ==
+               Enum.map(ballot.possible_answers, & &1.id)
     end
 
     test "failure: `question_title` is required" do
