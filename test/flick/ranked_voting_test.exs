@@ -296,14 +296,9 @@ defmodule Flick.RankedVotingTest do
     end
   end
 
-  describe "answer_values/1" do
+  describe "Ballot.answer_values/1" do
     test "success: returns the possible answer values in order" do
-      {:ok, ballot} =
-        RankedVoting.create_ballot(%{
-          question_title: "What is your favorite color?",
-          possible_answers: "Red, Green, Blue",
-          url_slug: "favorite-color"
-        })
+      ballot = ballot_fixture(%{possible_answers: ["Red", "Green", "Blue"]})
 
       assert Ballot.answer_values(ballot) == ["Red", "Green", "Blue"]
     end

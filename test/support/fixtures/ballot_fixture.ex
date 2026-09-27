@@ -10,7 +10,7 @@ defmodule Support.Fixtures.BallotFixture do
   Returns a map of valid attributes for a `Flick.RankedVoting.Ballot` entity,
   allowing for the passed in attributes to override defaults.
 
-  `possible_answers` is given as a list of answer values.
+  Pass `possible_answers` as a list of answer values.
   """
   @spec valid_ballot_attributes(map()) :: map()
   def valid_ballot_attributes(attrs \\ %{}) do
@@ -23,7 +23,7 @@ defmodule Support.Fixtures.BallotFixture do
     |> Map.update!(:possible_answers, &possible_answers_attribute/1)
   end
 
-  # Converts a list of answer values into the form `create_ballot/1` accepts.
+  # `create_ballot/1` takes a comma-separated string until Possible Answers move to embeds.
   defp possible_answers_attribute(answer_values), do: Enum.join(answer_values, ", ")
 
   @doc """

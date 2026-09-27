@@ -75,7 +75,7 @@ defmodule Flick.RankedVoting.Ballot do
   end
 
   @doc """
-  Returns the values of the ballot's possible answers, in the order voters see them.
+  Returns the values of the ballot's possible answers in the order voters see them.
   """
   @spec answer_values(t()) :: [String.t()]
   def answer_values(%__MODULE__{possible_answers: possible_answers}) do
