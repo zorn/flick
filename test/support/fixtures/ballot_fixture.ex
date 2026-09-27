@@ -9,15 +9,22 @@ defmodule Support.Fixtures.BallotFixture do
   @doc """
   Returns a map of valid attributes for a `Flick.RankedVoting.Ballot` entity,
   allowing for the passed in attributes to override defaults.
+
+  `possible_answers` is given as a list of answer values.
   """
   @spec valid_ballot_attributes(map()) :: map()
   def valid_ballot_attributes(attrs \\ %{}) do
-    Enum.into(attrs, %{
+    attrs
+    |> Enum.into(%{
       question_title: "What day should have dinner?",
-      possible_answers: "Monday, Tuesday, Wednesday, Thursday, Friday",
+      possible_answers: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
       url_slug: "dinner-day-#{System.unique_integer()}"
     })
+    |> Map.update!(:possible_answers, &possible_answers_attribute/1)
   end
+
+  # Converts a list of answer values into the form `create_ballot/1` accepts.
+  defp possible_answers_attribute(answer_values), do: Enum.join(answer_values, ", ")
 
   @doc """
   Creates a `Flick.RankedVoting.Ballot` entity in the `Flick.Repo` for the passed in

@@ -74,8 +74,15 @@ defmodule Flick.RankedVoting.Ballot do
     |> unique_constraint(:url_slug)
   end
 
-  @spec possible_answers_as_list(String.t()) :: [String.t()]
-  def possible_answers_as_list(possible_answers) when is_binary(possible_answers) do
+  @doc """
+  Returns the values of the ballot's possible answers, in the order voters see them.
+  """
+  @spec answer_values(t()) :: [String.t()]
+  def answer_values(%__MODULE__{possible_answers: possible_answers}) do
+    possible_answers_as_list(possible_answers)
+  end
+
+  defp possible_answers_as_list(possible_answers) when is_binary(possible_answers) do
     possible_answers
     |> String.split(",")
     |> Enum.map(&String.trim/1)

@@ -158,7 +158,9 @@ defmodule Flick.RankedVotingTest do
 
   describe "update_ballot/1" do
     test "success: updates a ballot title and questions" do
-      ballot = ballot_fixture(%{question_title: "some-title", possible_answers: "a, b, c, d"})
+      ballot =
+        ballot_fixture(%{question_title: "some-title", possible_answers: ["a", "b", "c", "d"]})
+
       ballot_id = ballot.id
 
       changes = %{
@@ -294,6 +296,19 @@ defmodule Flick.RankedVotingTest do
     end
   end
 
+  describe "answer_values/1" do
+    test "success: returns the possible answer values in order" do
+      {:ok, ballot} =
+        RankedVoting.create_ballot(%{
+          question_title: "What is your favorite color?",
+          possible_answers: "Red, Green, Blue",
+          url_slug: "favorite-color"
+        })
+
+      assert Ballot.answer_values(ballot) == ["Red", "Green", "Blue"]
+    end
+  end
+
   describe "fetch_ballot/1" do
     test "success: returns a ballot" do
       %Ballot{id: id, question_title: question_title} = ballot_fixture()
@@ -324,7 +339,7 @@ defmodule Flick.RankedVotingTest do
       prepublished_ballot =
         ballot_fixture(
           question_title: "What's for dinner?",
-          possible_answers: "Pizza, Tacos, Sushi, Burgers"
+          possible_answers: ["Pizza", "Tacos", "Sushi", "Burgers"]
         )
 
       {:ok, ballot} = RankedVoting.publish_ballot(prepublished_ballot)
@@ -457,7 +472,7 @@ defmodule Flick.RankedVotingTest do
       ballot =
         ballot_fixture(
           question_title: "What's for dinner?",
-          possible_answers: "Pizza, Tacos, Sushi, Burgers"
+          possible_answers: ["Pizza", "Tacos", "Sushi", "Burgers"]
         )
 
       {:ok, published_ballot} = RankedVoting.publish_ballot(ballot)
@@ -495,7 +510,7 @@ defmodule Flick.RankedVotingTest do
       ballot =
         published_ballot_fixture(
           question_title: "What's for dinner?",
-          possible_answers: "Pizza, Tacos, Sushi, Burgers"
+          possible_answers: ["Pizza", "Tacos", "Sushi", "Burgers"]
         )
 
       {:ok, vote} =
@@ -534,7 +549,7 @@ defmodule Flick.RankedVotingTest do
       ballot =
         published_ballot_fixture(
           question_title: "What's for dinner?",
-          possible_answers: "Pizza, Tacos, Sushi, Burgers"
+          possible_answers: ["Pizza", "Tacos", "Sushi", "Burgers"]
         )
 
       {:ok, published_ballot: ballot}
@@ -561,7 +576,7 @@ defmodule Flick.RankedVotingTest do
       ballot =
         published_ballot_fixture(
           question_title: "What's for dinner?",
-          possible_answers: "Pizza, Tacos, Sushi, Burgers"
+          possible_answers: ["Pizza", "Tacos", "Sushi", "Burgers"]
         )
 
       {:ok, published_ballot: ballot}
@@ -588,7 +603,7 @@ defmodule Flick.RankedVotingTest do
       ballot =
         published_ballot_fixture(
           question_title: "What's for dinner?",
-          possible_answers: "Pizza, Tacos, Sushi, Burgers"
+          possible_answers: ["Pizza", "Tacos", "Sushi", "Burgers"]
         )
 
       {:ok, ballot: ballot}

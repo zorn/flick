@@ -14,6 +14,13 @@ defmodule SeedScripts do
   alias Flick.RankedVoting.Ballot
 
   @doc """
+  Creates a ballot, taking `possible_answers` as a list of answer values.
+  """
+  def create_ballot(%{possible_answers: answer_values} = attrs) do
+    Flick.RankedVoting.create_ballot(%{attrs | possible_answers: Enum.join(answer_values, ", ")})
+  end
+
+  @doc """
   Given a published `Flick.RankedVoting.Ballot` will populate said ballot with 25 votes.
 
   It is expected that the ballot has three possible answers.
@@ -23,7 +30,7 @@ defmodule SeedScripts do
     # This assumes a ballot with three possible answers.
 
     for _ <- 1..25 do
-      available_answers = Ballot.possible_answers_as_list(ballot.possible_answers)
+      available_answers = Ballot.answer_values(ballot)
 
       if length(available_answers) != 3 do
         raise """
@@ -63,9 +70,9 @@ end
 
 # Create a published ballot with some votes.
 {:ok, sandwich_ballot} =
-  Flick.RankedVoting.create_ballot(%{
+  SeedScripts.create_ballot(%{
     question_title: "What is your sandwich preference?",
-    possible_answers: "Turkey, Ham, Roast Beef",
+    possible_answers: ["Turkey", "Ham", "Roast Beef"],
     url_slug: "sandwich-preference"
   })
 
@@ -74,17 +81,17 @@ SeedScripts.populate_ballot_with_votes(sandwich_ballot_published)
 
 # Create a draft ballot.
 {:ok, _color_ballot} =
-  Flick.RankedVoting.create_ballot(%{
+  SeedScripts.create_ballot(%{
     question_title: "What is your favorite color?",
-    possible_answers: "Red, Green, Blue",
+    possible_answers: ["Red", "Green", "Blue"],
     url_slug: "favorite-color"
   })
 
 # Create a closed ballot.
 {:ok, fruit_ballot} =
-  Flick.RankedVoting.create_ballot(%{
+  SeedScripts.create_ballot(%{
     question_title: "What is your favorite fruit?",
-    possible_answers: "Apple, Banana, Orange",
+    possible_answers: ["Apple", "Banana", "Orange"],
     url_slug: "favorite-fruit"
   })
 
