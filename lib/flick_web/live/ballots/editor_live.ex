@@ -8,6 +8,7 @@ defmodule FlickWeb.Ballots.EditorLive do
 
   alias Flick.RankedVoting
   alias Flick.RankedVoting.Ballot
+  alias Flick.RankedVoting.PossibleAnswer
 
   @impl Phoenix.LiveView
   def mount(params, _session, socket) do
@@ -54,6 +55,20 @@ defmodule FlickWeb.Ballots.EditorLive do
     |> assign(:answer_count, length(Ecto.Changeset.get_field(changeset, :possible_answers)))
   end
 
+  # Saving drops blank rows, so a failed save can come back with fewer rows
+  # than the minimum. Add empty ones back so the owner has somewhere to type.
+  defp pad_possible_answers(changeset) do
+    answers = Ecto.Changeset.get_embed(changeset, :possible_answers)
+    missing = Ballot.min_possible_answers() - length(answers)
+
+    if missing > 0 do
+      blanks = List.duplicate(%PossibleAnswer{}, missing)
+      Ecto.Changeset.put_embed(changeset, :possible_answers, answers ++ blanks)
+    else
+      changeset
+    end
+  end
+
   @impl Phoenix.LiveView
   def handle_event("validate", params, socket) do
     %{"ballot" => ballot_params} = params
@@ -74,7 +89,7 @@ defmodule FlickWeb.Ballots.EditorLive do
         {:noreply, redirect(socket, to: ~p"/ballot/#{ballot.url_slug}/#{ballot.secret}")}
 
       {:error, changeset} ->
-        {:noreply, assign_form(socket, changeset)}
+        {:noreply, assign_form(socket, pad_possible_answers(changeset))}
     end
   end
 
@@ -86,7 +101,7 @@ defmodule FlickWeb.Ballots.EditorLive do
         {:noreply, redirect(socket, to: ~p"/ballot/#{ballot.url_slug}/#{ballot.secret}")}
 
       {:error, changeset} ->
-        {:noreply, assign_form(socket, changeset)}
+        {:noreply, assign_form(socket, pad_possible_answers(changeset))}
     end
   end
 

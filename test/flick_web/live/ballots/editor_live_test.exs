@@ -119,6 +119,22 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
       assert has_element?(view, "#possible-answers-errors", "must have at least two answers")
     end
 
+    test "failure: a failed save keeps the minimum number of answer rows", ~M{view} do
+      render_form_submit(view, %{possible_answers: %{"0" => %{value: ""}, "1" => %{value: ""}}})
+
+      assert has_element?(view, "#possible-answers-errors", "must have at least two answers")
+      assert has_element?(view, "input[name='ballot[possible_answers][0][value]']")
+      assert has_element?(view, "input[name='ballot[possible_answers][1][value]']")
+    end
+
+    test "failure: a failed save keeps filled answers and pads to the minimum", ~M{view} do
+      render_form_submit(view, %{possible_answers: %{"0" => %{value: "Red"}, "1" => %{value: ""}}})
+
+      assert has_element?(view, "input[name='ballot[possible_answers][0][value]'][value=Red]")
+      assert has_element?(view, "input[name='ballot[possible_answers][1][value]']")
+      refute has_element?(view, "input[name='ballot[possible_answers][1][value]'][value=Red]")
+    end
+
     test "failure: `url_slug` is required", ~M{view} do
       render_form_submit(view, %{url_slug: ""})
       assert has_element?(view, feedback_selector("url_slug"), "can't be blank")
