@@ -130,12 +130,6 @@ defmodule FlickWeb.Ballots.EditorLive do
         <fieldset id="possible-answers" class="space-y-3">
           <legend class="text-sm font-semibold leading-6 text-zinc-800">Possible Answers</legend>
           <p class="text-xs text-zinc-500">Voters see answers in this order.</p>
-          <div id="possible-answers-errors">
-            <.error :for={error <- @form[:possible_answers].errors}>
-              {translate_error(error)}
-            </.error>
-          </div>
-
           <.inputs_for :let={answer_form} field={@form[:possible_answers]}>
             <div class="flex items-end gap-2">
               <input type="hidden" name="ballot[possible_answers_sort][]" value={answer_form.index} />
@@ -172,6 +166,12 @@ defmodule FlickWeb.Ballots.EditorLive do
           >
             <.icon name="hero-plus-mini" class="h-4 w-4" /> Add another answer
           </button>
+
+          <div :if={@form[:possible_answers].errors != []} id="possible-answers-errors">
+            <.error :for={error <- @form[:possible_answers].errors}>
+              {translate_error(error)}
+            </.error>
+          </div>
         </fieldset>
 
         <.input
