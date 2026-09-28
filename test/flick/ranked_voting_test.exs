@@ -7,6 +7,7 @@ defmodule Flick.RankedVotingTest do
 
   alias Flick.RankedVoting
   alias Flick.RankedVoting.Ballot
+  alias Flick.RankedVoting.PossibleAnswer
   alias Flick.RankedVoting.RankedAnswer
   alias Flick.RankedVoting.Vote
   alias Support.Fixtures.BallotFixture
@@ -18,13 +19,17 @@ defmodule Flick.RankedVotingTest do
       {:ok, %Ballot{id: id}} =
         RankedVoting.create_ballot(%{
           question_title: "What is your favorite color?",
-          possible_answers: "Red, Green, Blue",
+          possible_answers: [%{value: "Red"}, %{value: "Green"}, %{value: "Blue"}],
           url_slug: "favorite-color"
         })
 
       assert %Ballot{
                question_title: "What is your favorite color?",
-               possible_answers: "Red, Green, Blue",
+               possible_answers: [
+                 %PossibleAnswer{value: "Red"},
+                 %PossibleAnswer{value: "Green"},
+                 %PossibleAnswer{value: "Blue"}
+               ],
                published_at: nil
              } =
                RankedVoting.get_ballot!(id)
@@ -34,13 +39,21 @@ defmodule Flick.RankedVotingTest do
       {:ok, %Ballot{id: id}} =
         RankedVoting.create_ballot(%{
           "question_title" => "What is your favorite food?",
-          "possible_answers" => "Pizza, Tacos, Sushi",
+          "possible_answers" => %{
+            "0" => %{"value" => "Pizza"},
+            "1" => %{"value" => "Tacos"},
+            "2" => %{"value" => "Sushi"}
+          },
           "url_slug" => "favorite-food"
         })
 
       assert %Ballot{
                question_title: "What is your favorite food?",
-               possible_answers: "Pizza, Tacos, Sushi",
+               possible_answers: [
+                 %PossibleAnswer{value: "Pizza"},
+                 %PossibleAnswer{value: "Tacos"},
+                 %PossibleAnswer{value: "Sushi"}
+               ],
                published_at: nil
              } = RankedVoting.get_ballot!(id)
     end
@@ -64,25 +77,46 @@ defmodule Flick.RankedVotingTest do
     end
 
     test "failure: `possible_answers` is required" do
-      for empty_value <- @empty_values do
-        assert {:error, changeset} = RankedVoting.create_ballot(%{possible_answers: empty_value})
-        assert "can't be blank" in errors_on(changeset).possible_answers
-      end
-    end
-
-    test "failure: `possible_answers` must not include empty answers" do
-      assert {:error, changeset} = RankedVoting.create_ballot(%{possible_answers: "one,,two"})
-      assert "can't contain empty answers" in errors_on(changeset).possible_answers
-    end
-
-    test "failure: `possible_answers` must not include new lines" do
-      assert {:error, changeset} = RankedVoting.create_ballot(%{possible_answers: "one,\ntwo"})
-      assert "can't contain new lines" in errors_on(changeset).possible_answers
+      assert {:error, changeset} = RankedVoting.create_ballot(%{question_title: "Q"})
+      assert "must have at least two answers" in errors_on(changeset).possible_answers
     end
 
     test "failure: `possible_answers` must include at least two answers" do
-      assert {:error, changeset} = RankedVoting.create_ballot(%{possible_answers: "one"})
-      assert "must contain at least two answers" in errors_on(changeset).possible_answers
+      assert {:error, changeset} =
+               RankedVoting.create_ballot(%{possible_answers: [%{value: "one"}]})
+
+      assert "must have at least two answers" in errors_on(changeset).possible_answers
+    end
+
+    test "failure: a blank possible answer is rejected" do
+      for empty_value <- @empty_values do
+        attrs = BallotFixture.valid_ballot_attributes(%{possible_answers: ["Red", "Blue"]})
+        attrs = %{attrs | possible_answers: [%{value: "Red"}, %{value: empty_value}]}
+
+        assert {:error, changeset} = RankedVoting.create_ballot(attrs)
+        assert [%{}, %{value: ["can't be blank"]}] = errors_on(changeset).possible_answers
+      end
+    end
+
+    test "failure: a repeated possible answer is rejected, ignoring case and spacing" do
+      attrs = BallotFixture.valid_ballot_attributes(%{possible_answers: ["Pizza", " pizza "]})
+
+      assert {:error, changeset} = RankedVoting.create_ballot(attrs)
+      assert "must not repeat an answer" in errors_on(changeset).possible_answers
+    end
+
+    test "success: `possible_answers` are trimmed and may contain commas" do
+      attrs =
+        BallotFixture.valid_ballot_attributes(%{
+          possible_answers: ["  Project Hail Mary ", "Tomorrow, and Tomorrow, and Tomorrow"]
+        })
+
+      assert {:ok, ballot} = RankedVoting.create_ballot(attrs)
+
+      assert Ballot.possible_answer_values(ballot) == [
+               "Project Hail Mary",
+               "Tomorrow, and Tomorrow, and Tomorrow"
+             ]
     end
 
     test "failure: `url_slug` is required" do
@@ -98,7 +132,7 @@ defmodule Flick.RankedVotingTest do
       assert {:error, changeset} =
                RankedVoting.create_ballot(%{
                  question_title: "What is your favorite color?",
-                 possible_answers: "Red, Green, Blue",
+                 possible_answers: [%{value: "Red"}, %{value: "Green"}],
                  url_slug: "popular-slug"
                })
 
@@ -163,18 +197,81 @@ defmodule Flick.RankedVotingTest do
 
       ballot_id = ballot.id
 
+      existing_answers =
+        ballot.possible_answers
+        |> Enum.with_index()
+        |> Map.new(fn {answer, index} ->
+          {"#{index}", %{"id" => answer.id, "value" => answer.value}}
+        end)
+
       changes = %{
         "question_title" => "some-title-changed",
-        "possible_answers" => "a, b, c, d, e"
+        "possible_answers" => Map.put(existing_answers, "4", %{"value" => "e"})
       }
 
       assert {:ok,
               %Ballot{
                 id: ^ballot_id,
                 question_title: "some-title-changed",
-                possible_answers: "a, b, c, d, e",
                 published_at: nil
-              }} = RankedVoting.update_ballot(ballot, changes)
+              } = updated_ballot} = RankedVoting.update_ballot(ballot, changes)
+
+      assert Ballot.possible_answer_values(updated_ballot) == ["a", "b", "c", "d", "e"]
+
+      assert Enum.take(Enum.map(updated_ballot.possible_answers, & &1.id), 4) ==
+               Enum.map(ballot.possible_answers, & &1.id)
+    end
+
+    test "success: removes a dropped answer and keeps the rest" do
+      ballot = ballot_fixture(%{possible_answers: ["a", "b", "c"]})
+      [a, b, c] = ballot.possible_answers
+
+      changes = %{
+        "possible_answers" => %{
+          "0" => %{"id" => a.id, "value" => "a"},
+          "1" => %{"id" => b.id, "value" => "b"},
+          "2" => %{"id" => c.id, "value" => "c"}
+        },
+        "possible_answers_drop" => ["1"]
+      }
+
+      assert {:ok, updated_ballot} = RankedVoting.update_ballot(ballot, changes)
+      assert Ballot.possible_answer_values(updated_ballot) == ["a", "c"]
+      assert Enum.map(updated_ballot.possible_answers, & &1.id) == [a.id, c.id]
+    end
+
+    test "success: a legacy ballot with a repeated answer can change fields other than its answers" do
+      ballot = ballot_fixture(%{possible_answers: ["Pizza", "Tacos"]})
+
+      {:ok, ballot} =
+        ballot
+        |> Ecto.Changeset.change()
+        |> Ecto.Changeset.put_embed(:possible_answers, [
+          %PossibleAnswer{value: "Pizza"},
+          %PossibleAnswer{value: "Pizza"}
+        ])
+        |> Repo.update()
+
+      assert {:ok, updated_ballot} =
+               RankedVoting.update_ballot(ballot, %{"question_title" => "New title"})
+
+      assert updated_ballot.question_title == "New title"
+    end
+
+    test "failure: adding an answer that repeats an existing one is rejected" do
+      ballot = ballot_fixture(%{possible_answers: ["Pizza", "Tacos"]})
+      [pizza, tacos] = ballot.possible_answers
+
+      changes = %{
+        "possible_answers" => %{
+          "0" => %{"id" => pizza.id, "value" => "Pizza"},
+          "1" => %{"id" => tacos.id, "value" => "Tacos"},
+          "2" => %{"value" => "PIZZA"}
+        }
+      }
+
+      assert {:error, changeset} = RankedVoting.update_ballot(ballot, changes)
+      assert "must not repeat an answer" in errors_on(changeset).possible_answers
     end
 
     test "failure: `question_title` is required" do
@@ -296,11 +393,11 @@ defmodule Flick.RankedVotingTest do
     end
   end
 
-  describe "Ballot.answer_values/1" do
+  describe "Ballot.possible_answer_values/1" do
     test "success: returns the possible answer values in order" do
       ballot = ballot_fixture(%{possible_answers: ["Red", "Green", "Blue"]})
 
-      assert Ballot.answer_values(ballot) == ["Red", "Green", "Blue"]
+      assert Ballot.possible_answer_values(ballot) == ["Red", "Green", "Blue"]
     end
   end
 
@@ -340,6 +437,20 @@ defmodule Flick.RankedVotingTest do
       {:ok, ballot} = RankedVoting.publish_ballot(prepublished_ballot)
 
       {:ok, published_ballot: ballot}
+    end
+
+    test "success: accepts an answer that contains a comma" do
+      ballot =
+        published_ballot_fixture(%{
+          possible_answers: ["Tomorrow, and Tomorrow, and Tomorrow", "Dune"]
+        })
+
+      assert {:ok, %Vote{ranked_answers: [%RankedAnswer{value: value} | _]}} =
+               RankedVoting.create_vote(ballot, %{
+                 "ranked_answers" => [%{"value" => "Tomorrow, and Tomorrow, and Tomorrow"}]
+               })
+
+      assert value == "Tomorrow, and Tomorrow, and Tomorrow"
     end
 
     test "success: creates a vote recording the passed in answers", ~M{published_ballot} do

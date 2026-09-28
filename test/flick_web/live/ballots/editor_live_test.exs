@@ -20,14 +20,79 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
     test "success: renders a create ballot form", ~M{view} do
       assert has_element?(view, "h2", "Create a Ballot")
       assert has_element?(view, "#ballot_question_title")
-      assert has_element?(view, "#ballot_possible_answers")
       assert has_element?(view, "#ballot_url_slug")
+    end
+
+    test "success: starts with two empty answer rows", ~M{view} do
+      assert has_element?(view, "#ballot_possible_answers_0_value")
+      assert has_element?(view, "#ballot_possible_answers_1_value")
+      refute has_element?(view, "#ballot_possible_answers_2_value")
+    end
+
+    test "success: adding an answer adds a row", ~M{view} do
+      assert has_element?(
+               view,
+               "#add-possible-answer[name='ballot[possible_answers_sort][]'][value=new]"
+             )
+
+      view
+      |> form("#ballot-form")
+      |> render_change(%{ballot: %{possible_answers_sort: ["0", "1", "new"]}})
+
+      assert has_element?(view, "#ballot_possible_answers_2_value")
+    end
+
+    test "success: removing an answer removes its row", ~M{view} do
+      view
+      |> form("#ballot-form")
+      |> render_change(%{ballot: %{possible_answers_sort: ["0", "1", "new"]}})
+
+      view
+      |> form("#ballot-form")
+      |> render_change(%{
+        ballot: %{
+          possible_answers: %{
+            "0" => %{value: "Red"},
+            "1" => %{value: "Green"},
+            "2" => %{value: "Blue"}
+          }
+        }
+      })
+
+      assert has_element?(
+               view,
+               "#remove-possible-answer-1[name='ballot[possible_answers_drop][]'][value='1']"
+             )
+
+      view
+      |> form("#ballot-form")
+      |> render_change(%{ballot: %{possible_answers_drop: ["1"]}})
+
+      # Each row keeps its DOM id, so the rows are checked by their input names.
+      assert has_element?(view, "input[name='ballot[possible_answers][0][value]'][value=Red]")
+      assert has_element?(view, "input[name='ballot[possible_answers][1][value]'][value=Blue]")
+      refute has_element?(view, "input[name='ballot[possible_answers][2][value]']")
+      refute has_element?(view, "#possible-answers input[value=Green]")
+    end
+
+    test "success: remove is disabled when only two answers remain", ~M{view} do
+      assert has_element?(view, "#remove-possible-answer-0[disabled]")
+      assert has_element?(view, "#remove-possible-answer-1[disabled]")
+
+      view
+      |> form("#ballot-form")
+      |> render_change(%{ballot: %{possible_answers_sort: ["0", "1", "new"]}})
+
+      refute has_element?(view, "#remove-possible-answer-0[disabled]")
     end
 
     test "success: submitting valid form creates ballot and redirects", ~M{view} do
       payload = %{
         question_title: "What's your favorite color?",
-        possible_answers: "Red, Green, Blue",
+        possible_answers: %{
+          "0" => %{value: "Red"},
+          "1" => %{value: "Green, or Teal"}
+        },
         url_slug: "favorite-color"
       }
 
@@ -39,7 +104,32 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
       # Assert upon submit the page redirects, and the ballot was created.
       assert {:error, {:redirect, %{to: redirect_target}}} = response
       assert "/ballot/favorite-color/" <> secret = redirect_target
-      assert %Ballot{} = RankedVoting.get_ballot_by_url_slug_and_secret!("favorite-color", secret)
+      ballot = RankedVoting.get_ballot_by_url_slug_and_secret!("favorite-color", secret)
+      assert Ballot.possible_answer_values(ballot) == ["Red", "Green, or Teal"]
+    end
+
+    test "success: saving drops answer rows left blank", ~M{view} do
+      view
+      |> form("#ballot-form")
+      |> render_change(%{ballot: %{possible_answers_sort: ["0", "1", "new"]}})
+
+      payload = %{
+        question_title: "What's your favorite color?",
+        possible_answers: %{
+          "0" => %{value: "Red"},
+          "1" => %{value: "  "},
+          "2" => %{value: "Blue"}
+        },
+        url_slug: "favorite-color-blank-rows"
+      }
+
+      assert {:error, {:redirect, %{to: "/ballot/favorite-color-blank-rows/" <> secret}}} =
+               render_form_submit(view, payload)
+
+      ballot =
+        RankedVoting.get_ballot_by_url_slug_and_secret!("favorite-color-blank-rows", secret)
+
+      assert Ballot.possible_answer_values(ballot) == ["Red", "Blue"]
     end
 
     test "failure: `question_title` is required", ~M{view} do
@@ -47,9 +137,34 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
       assert has_element?(view, feedback_selector("question_title"), "can't be blank")
     end
 
-    test "failure: `possible_answers` is required", ~M{view} do
-      render_form_submit(view, %{possible_answers: ""})
-      assert has_element?(view, feedback_selector("possible_answers"), "can't be blank")
+    test "failure: fewer than two answers shows an error", ~M{view} do
+      render_form_submit(view, %{possible_answers: %{"0" => %{value: "Red"}, "1" => %{value: ""}}})
+
+      assert has_element?(view, "#possible-answers-errors", "must have at least two answers")
+    end
+
+    test "failure: a failed save keeps the minimum number of answer rows", ~M{view} do
+      render_form_submit(view, %{possible_answers: %{"0" => %{value: ""}, "1" => %{value: ""}}})
+
+      assert has_element?(view, "#possible-answers-errors", "must have at least two answers")
+      assert has_element?(view, "input[name='ballot[possible_answers][0][value]']")
+      assert has_element?(view, "input[name='ballot[possible_answers][1][value]']")
+    end
+
+    test "failure: a failed save keeps filled answers and pads to the minimum", ~M{view} do
+      render_form_submit(view, %{possible_answers: %{"0" => %{value: "Red"}, "1" => %{value: ""}}})
+
+      assert has_element?(view, "input[name='ballot[possible_answers][0][value]'][value=Red]")
+      assert has_element?(view, "input[name='ballot[possible_answers][1][value]']")
+      refute has_element?(view, "input[name='ballot[possible_answers][1][value]'][value=Red]")
+    end
+
+    test "failure: a repeated answer shows an error", ~M{view} do
+      render_form_submit(view, %{
+        possible_answers: %{"0" => %{value: "Pizza"}, "1" => %{value: "pizza"}}
+      })
+
+      assert has_element?(view, "#possible-answers-errors", "must not repeat an answer")
     end
 
     test "failure: `url_slug` is required", ~M{view} do
@@ -68,8 +183,13 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
     test "success: renders an edit ballot form", ~M{view} do
       assert has_element?(view, "h2", "Edit Ballot")
       assert has_element?(view, "#ballot_question_title")
-      assert has_element?(view, "#ballot_possible_answers")
       assert has_element?(view, "#ballot_url_slug")
+    end
+
+    test "success: loads the ballot's answers into rows in order", ~M{view} do
+      assert has_element?(view, "#ballot_possible_answers_0_value[value=Monday]")
+      assert has_element?(view, "#ballot_possible_answers_4_value[value=Friday]")
+      refute has_element?(view, "#ballot_possible_answers_5_value")
     end
 
     test "success: submitting valid form creates ballot and redirects", ~M{view, ballot} do
@@ -77,7 +197,13 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
 
       payload = %{
         question_title: "new-title",
-        possible_answers: "purple, pink, yellow",
+        possible_answers: %{
+          "0" => %{value: "purple"},
+          "1" => %{value: "pink"},
+          "2" => %{value: "yellow"},
+          "3" => %{value: ""},
+          "4" => %{value: ""}
+        },
         url_slug: "new-url-slug"
       }
 
@@ -94,9 +220,33 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
       assert %Ballot{
                id: ^expected_id,
                question_title: "new-title",
-               possible_answers: "purple, pink, yellow",
                url_slug: "new-url-slug"
-             } = RankedVoting.get_ballot_by_url_slug_and_secret!("new-url-slug", secret)
+             } =
+               updated_ballot =
+               RankedVoting.get_ballot_by_url_slug_and_secret!("new-url-slug", secret)
+
+      assert Ballot.possible_answer_values(updated_ballot) == ["purple", "pink", "yellow"]
+
+      # The form's hidden id inputs keep each edited answer's identity.
+      assert Enum.map(updated_ballot.possible_answers, & &1.id) ==
+               Enum.map(Enum.take(ballot.possible_answers, 3), & &1.id)
+    end
+
+    test "failure: a failed save keeps the minimum number of answer rows", ~M{view} do
+      render_form_submit(view, %{
+        possible_answers: %{
+          "0" => %{value: "Monday"},
+          "1" => %{value: ""},
+          "2" => %{value: ""},
+          "3" => %{value: ""},
+          "4" => %{value: ""}
+        }
+      })
+
+      assert has_element?(view, "#possible-answers-errors", "must have at least two answers")
+      assert has_element?(view, "#ballot_possible_answers_0_value[value=Monday]")
+      assert has_element?(view, "#ballot_possible_answers_1_value")
+      refute has_element?(view, "#ballot_possible_answers_2_value")
     end
   end
 

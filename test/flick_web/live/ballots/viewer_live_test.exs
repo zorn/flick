@@ -13,7 +13,8 @@ defmodule FlickWeb.Ballots.ViewerLiveTest do
     ballot = ballot_fixture()
     assert {:ok, view, _html} = live(conn, view_path(ballot))
     assert has_element?(view, "#ballot-question-title", ballot.question_title)
-    assert has_element?(view, "#ballot-possible-answers", ballot.possible_answers)
+    assert has_element?(view, "#ballot-possible-answers li:first-child", "Monday")
+    assert has_element?(view, "#ballot-possible-answers li:last-child", "Friday")
     assert has_element?(view, "#ballot-url-slug", ballot.url_slug)
   end
 

@@ -21,8 +21,7 @@ defmodule Support.Fixtures.BallotFixture do
     |> Map.update!(:possible_answers, &possible_answers_attribute/1)
   end
 
-  # `create_ballot/1` takes a comma-separated string until Possible Answers move to embeds.
-  defp possible_answers_attribute(answer_values), do: Enum.join(answer_values, ", ")
+  defp possible_answers_attribute(answer_values), do: Enum.map(answer_values, &%{value: &1})
 
   @doc """
   Creates a `Flick.RankedVoting.Ballot` entity in the `Flick.Repo` for the passed in

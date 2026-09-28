@@ -46,7 +46,7 @@ Flick displays timestamps in the user's local timezone. The timezone string is c
 
 ### Business logic — `lib/flick/`
 
-- `ranked_voting/` — Core domain schemas: `Ballot`, `Vote`, `RankedAnswer`
+- `ranked_voting/` — Core domain schemas: `Ballot`, `PossibleAnswer`, `Vote`, `RankedAnswer`
 - `ranked_voting.ex` — Context module; all ballot and vote operations go through here
 - `markdown.ex` — Renders Markdown to sanitized HTML
 - `date_time_formatter.ex` — Formats `DateTime` values with timezone support
