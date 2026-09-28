@@ -64,12 +64,19 @@ defmodule Flick.RankedVoting.Ballot do
   @optional_fields [:description]
 
   @min_possible_answers 2
+  @max_possible_answers 100
 
   @doc """
   Returns the fewest possible answers a ballot may have.
   """
   @spec min_possible_answers() :: pos_integer()
   def min_possible_answers, do: @min_possible_answers
+
+  @doc """
+  Returns the maximum number of possible answers a ballot may have.
+  """
+  @spec max_possible_answers() :: pos_integer()
+  def max_possible_answers, do: @max_possible_answers
 
   @spec changeset(t() | struct_t(), map()) :: Ecto.Changeset.t(t()) | Ecto.Changeset.t(struct_t())
   def changeset(ballot, attrs) do
@@ -90,25 +97,51 @@ defmodule Flick.RankedVoting.Ballot do
   end
 
   defp validate_possible_answer_count(changeset) do
-    if length(get_field(changeset, :possible_answers)) < @min_possible_answers do
-      add_error(changeset, :possible_answers, "must have at least two answers")
-    else
-      changeset
+    count = length(get_field(changeset, :possible_answers))
+
+    cond do
+      count < @min_possible_answers ->
+        add_error(changeset, :possible_answers, "must have at least two answers")
+
+      count > @max_possible_answers ->
+        add_error(
+          changeset,
+          :possible_answers,
+          "must have at most #{@max_possible_answers} answers"
+        )
+
+      true ->
+        changeset
     end
   end
 
-  # Only runs when the answers change, so the legacy published ballots that
-  # repeat an answer stay valid. See Decision 5.
-  defp validate_unique_possible_answers(changeset) do
-    values =
-      for %PossibleAnswer{value: value} when is_binary(value) and value != "" <-
-            get_field(changeset, :possible_answers),
-          do: String.downcase(value)
+  # The error goes on each repeating answer, not the list. The check runs only
+  # when the answers change, so legacy ballots with repeats stay valid
+  # (Decision 5).
+  defp validate_unique_possible_answers(%{changes: %{possible_answers: answers}} = changeset) do
+    {answers, _seen} = Enum.map_reduce(answers, MapSet.new(), &mark_repeated_answer/2)
+    changeset = put_in(changeset.changes.possible_answers, answers)
+    %{changeset | valid?: changeset.valid? and Enum.all?(answers, & &1.valid?)}
+  end
 
-    if changed?(changeset, :possible_answers) and values != Enum.uniq(values) do
-      add_error(changeset, :possible_answers, "must not repeat an answer")
-    else
-      changeset
+  defp validate_unique_possible_answers(changeset), do: changeset
+
+  # Dropped answers stay in the changes as `:replace`, but no longer count.
+  defp mark_repeated_answer(%{action: :replace} = answer, seen), do: {answer, seen}
+
+  defp mark_repeated_answer(answer, seen) do
+    case get_field(answer, :value) do
+      value when is_binary(value) and value != "" ->
+        key = String.downcase(value)
+
+        if MapSet.member?(seen, key) do
+          {add_error(answer, :value, "repeats an earlier answer"), seen}
+        else
+          {answer, MapSet.put(seen, key)}
+        end
+
+      _blank ->
+        {answer, seen}
     end
   end
 

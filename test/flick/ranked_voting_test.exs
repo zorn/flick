@@ -88,6 +88,22 @@ defmodule Flick.RankedVotingTest do
       assert "must have at least two answers" in errors_on(changeset).possible_answers
     end
 
+    test "success: a ballot may have 100 possible answers" do
+      answers = for n <- 1..100, do: "Answer #{n}"
+      attrs = BallotFixture.valid_ballot_attributes(%{possible_answers: answers})
+
+      assert {:ok, ballot} = RankedVoting.create_ballot(attrs)
+      assert Ballot.possible_answer_values(ballot) == answers
+    end
+
+    test "failure: a ballot can't have more than 100 possible answers" do
+      answers = for n <- 1..101, do: "Answer #{n}"
+      attrs = BallotFixture.valid_ballot_attributes(%{possible_answers: answers})
+
+      assert {:error, changeset} = RankedVoting.create_ballot(attrs)
+      assert "must have at most 100 answers" in errors_on(changeset).possible_answers
+    end
+
     test "failure: a blank possible answer is rejected" do
       for empty_value <- @empty_values do
         attrs = BallotFixture.valid_ballot_attributes(%{possible_answers: ["Red", "Blue"]})
@@ -98,11 +114,46 @@ defmodule Flick.RankedVotingTest do
       end
     end
 
-    test "failure: a repeated possible answer is rejected, ignoring case and spacing" do
-      attrs = BallotFixture.valid_ballot_attributes(%{possible_answers: ["Pizza", " pizza "]})
+    test "success: a possible answer may be 500 characters after trimming" do
+      longest = String.duplicate("a", 500)
+      attrs = BallotFixture.valid_ballot_attributes(%{possible_answers: ["  #{longest}  ", "b"]})
+
+      assert {:ok, ballot} = RankedVoting.create_ballot(attrs)
+      assert Ballot.possible_answer_values(ballot) == [longest, "b"]
+    end
+
+    test "failure: a possible answer over 500 characters is rejected on its row" do
+      too_long = String.duplicate("a", 501)
+      attrs = BallotFixture.valid_ballot_attributes(%{possible_answers: ["Red", too_long]})
 
       assert {:error, changeset} = RankedVoting.create_ballot(attrs)
-      assert "must not repeat an answer" in errors_on(changeset).possible_answers
+
+      assert [%{}, %{value: ["should be at most 500 character(s)"]}] =
+               errors_on(changeset).possible_answers
+    end
+
+    test "failure: a possible answer containing a newline is rejected on its row" do
+      for newline <- ["\n", "\r\n"] do
+        attrs =
+          BallotFixture.valid_ballot_attributes(%{
+            possible_answers: ["Red", "Blue#{newline}Green"]
+          })
+
+        assert {:error, changeset} = RankedVoting.create_ballot(attrs)
+
+        assert [%{}, %{value: ["can't contain line breaks"]}] =
+                 errors_on(changeset).possible_answers
+      end
+    end
+
+    test "failure: a repeated possible answer is rejected on the repeating row, ignoring case and spacing" do
+      attrs =
+        BallotFixture.valid_ballot_attributes(%{possible_answers: ["Dune", "Emma", " dune "]})
+
+      assert {:error, changeset} = RankedVoting.create_ballot(attrs)
+
+      assert [%{}, %{}, %{value: ["repeats an earlier answer"]}] =
+               errors_on(changeset).possible_answers
     end
 
     test "success: `possible_answers` are trimmed and may contain commas" do
@@ -271,7 +322,26 @@ defmodule Flick.RankedVotingTest do
       }
 
       assert {:error, changeset} = RankedVoting.update_ballot(ballot, changes)
-      assert "must not repeat an answer" in errors_on(changeset).possible_answers
+
+      assert [%{}, %{}, %{value: ["repeats an earlier answer"]}] =
+               errors_on(changeset).possible_answers
+    end
+
+    test "success: an answer dropped in the same change doesn't count as a repeat" do
+      ballot = ballot_fixture(%{possible_answers: ["Pizza", "Tacos"]})
+      [pizza, tacos] = ballot.possible_answers
+
+      changes = %{
+        "possible_answers" => %{
+          "0" => %{"id" => pizza.id, "value" => "Pizza"},
+          "1" => %{"id" => tacos.id, "value" => "Tacos"},
+          "2" => %{"value" => "pizza"}
+        },
+        "possible_answers_drop" => ["0"]
+      }
+
+      assert {:ok, updated_ballot} = RankedVoting.update_ballot(ballot, changes)
+      assert Ballot.possible_answer_values(updated_ballot) == ["Tacos", "pizza"]
     end
 
     test "failure: `question_title` is required" do

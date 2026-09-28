@@ -79,11 +79,31 @@ defmodule FlickWeb.Ballots.EditorLive do
   def handle_event("validate", params, socket) do
     %{"ballot" => ballot_params} = params
     %{ballot: ballot} = socket.assigns
-    {:noreply, assign_form(socket, RankedVoting.change_ballot(ballot, ballot_params))}
+
+    changeset =
+      ballot
+      |> RankedVoting.change_ballot(ballot_params)
+      |> Map.put(:action, :validate)
+      |> hide_blank_row_errors()
+
+    {:noreply, assign_form(socket, changeset)}
   end
 
   def handle_event("save", %{"ballot" => ballot_params}, socket) do
     do_save(drop_blank_possible_answers(ballot_params), socket)
+  end
+
+  # Saving drops blank rows, so their "can't be blank" errors would only
+  # distract the owner while typing.
+  defp hide_blank_row_errors(%{changes: %{possible_answers: rows}} = changeset) do
+    rows = Enum.map(rows, &Map.update!(&1, :errors, fn errors -> reject_required(errors) end))
+    put_in(changeset.changes.possible_answers, rows)
+  end
+
+  defp hide_blank_row_errors(changeset), do: changeset
+
+  defp reject_required(errors) do
+    Enum.reject(errors, fn {_field, {_message, opts}} -> opts[:validation] == :required end)
   end
 
   # The form offers empty rows to type into, so saving drops the ones left
@@ -176,10 +196,19 @@ defmodule FlickWeb.Ballots.EditorLive do
             name="ballot[possible_answers_sort][]"
             value="new"
             phx-click={JS.dispatch("change")}
-            class="inline-flex items-center gap-1 rounded-lg border border-dashed border-zinc-300 px-3 py-1.5 text-sm font-semibold text-teal-700 transition hover:border-teal-500 hover:bg-teal-50"
+            disabled={@answer_count >= Ballot.max_possible_answers()}
+            class="inline-flex items-center gap-1 rounded-lg border border-dashed border-zinc-300 px-3 py-1.5 text-sm font-semibold text-teal-700 transition hover:border-teal-500 hover:bg-teal-50 disabled:border-zinc-200 disabled:text-zinc-300 disabled:hover:bg-transparent"
           >
             <.icon name="hero-plus-mini" class="h-4 w-4" /> Add another answer
           </button>
+
+          <p
+            :if={@answer_count >= Ballot.max_possible_answers()}
+            id="possible-answers-max-note"
+            class="text-xs text-zinc-500"
+          >
+            A ballot can have at most {Ballot.max_possible_answers()} answers.
+          </p>
 
           <div :if={@form[:possible_answers].errors != []} id="possible-answers-errors">
             <.error :for={error <- @form[:possible_answers].errors}>
