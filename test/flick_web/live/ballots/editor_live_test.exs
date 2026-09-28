@@ -281,6 +281,59 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
                Enum.map(Enum.take(ballot.possible_answers, 3), & &1.id)
     end
 
+    test "success: moving an answer up swaps it with the row above", ~M{view} do
+      assert has_element?(
+               view,
+               "#move-possible-answer-up-1[name='ballot[possible_answers_move]'][value='1:up']"
+             )
+
+      view
+      |> form("#ballot-form")
+      |> render_change(%{ballot: %{possible_answers_move: "1:up"}})
+
+      assert has_element?(view, answer_row_selector(0, "Tuesday"))
+      assert has_element?(view, answer_row_selector(1, "Monday"))
+      assert has_element?(view, answer_row_selector(2, "Wednesday"))
+    end
+
+    test "success: the first row can't move up and the last row can't move down", ~M{view} do
+      assert has_element?(view, "#move-possible-answer-up-0[disabled]")
+      refute has_element?(view, "#move-possible-answer-down-0[disabled]")
+      refute has_element?(view, "#move-possible-answer-up-4[disabled]")
+      assert has_element?(view, "#move-possible-answer-down-4[disabled]")
+    end
+
+    test "success: moving an answer down swaps it with the row below", ~M{view} do
+      view
+      |> form("#ballot-form")
+      |> render_change(%{ballot: %{possible_answers_move: "3:down"}})
+
+      assert has_element?(view, answer_row_selector(3, "Friday"))
+      assert has_element?(view, answer_row_selector(4, "Thursday"))
+    end
+
+    test "success: saving after a move keeps the new order and each answer's id",
+         ~M{view, ballot} do
+      view
+      |> form("#ballot-form")
+      |> render_change(%{ballot: %{possible_answers_move: "4:up"}})
+
+      assert {:error, {:redirect, _redirect}} =
+               view
+               |> form("#ballot-form")
+               |> render_submit()
+
+      updated_ballot = RankedVoting.get_ballot!(ballot.id)
+
+      assert Ballot.possible_answer_values(updated_ballot) ==
+               ["Monday", "Tuesday", "Wednesday", "Friday", "Thursday"]
+
+      [monday, tuesday, wednesday, thursday, friday] = Enum.map(ballot.possible_answers, & &1.id)
+
+      assert Enum.map(updated_ballot.possible_answers, & &1.id) ==
+               [monday, tuesday, wednesday, friday, thursday]
+    end
+
     test "success: clearing an existing answer while typing keeps the editor up", ~M{view} do
       view
       |> form("#ballot-form")
@@ -316,6 +369,11 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
 
   defp feedback_selector(field) do
     "div[data-feedback-for=\"ballot[#{field}]\"]"
+  end
+
+  # Each row keeps its DOM id when it moves, so rows are checked by input name.
+  defp answer_row_selector(index, value) do
+    "input[name='ballot[possible_answers][#{index}][value]'][value='#{value}']"
   end
 
   defp answer_feedback_selector(index) do

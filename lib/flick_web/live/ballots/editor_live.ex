@@ -82,7 +82,7 @@ defmodule FlickWeb.Ballots.EditorLive do
 
     changeset =
       ballot
-      |> RankedVoting.change_ballot(ballot_params)
+      |> RankedVoting.change_ballot(move_possible_answer(ballot_params))
       |> Map.put(:action, :validate)
       |> hide_blank_row_errors()
 
@@ -105,6 +105,41 @@ defmodule FlickWeb.Ballots.EditorLive do
   defp reject_required(errors) do
     Enum.reject(errors, fn {_field, {_message, opts}} -> opts[:validation] == :required end)
   end
+
+  # A move button sends its row and direction, such as "2:up". Swapping those
+  # two rows in the sort param reorders the answers without losing any typing.
+  defp move_possible_answer(%{"possible_answers_move" => _move} = ballot_params) do
+    {move, ballot_params} = Map.pop(ballot_params, "possible_answers_move")
+    sort = Map.get(ballot_params, "possible_answers_sort", [])
+
+    case parse_move(move, length(sort)) do
+      {index, other} -> Map.put(ballot_params, "possible_answers_sort", swap(sort, index, other))
+      :error -> ballot_params
+    end
+  end
+
+  defp move_possible_answer(ballot_params), do: ballot_params
+
+  defp parse_move(move, count) do
+    with [index, direction] <- String.split(move, ":"),
+         {index, ""} <- Integer.parse(index),
+         other = neighbor(index, direction),
+         true <- index in 0..(count - 1)//1 and other in 0..(count - 1)//1 do
+      {index, other}
+    else
+      _invalid -> :error
+    end
+  end
+
+  defp swap(list, index, other) do
+    list
+    |> List.replace_at(index, Enum.at(list, other))
+    |> List.replace_at(other, Enum.at(list, index))
+  end
+
+  defp neighbor(index, "up"), do: index - 1
+  defp neighbor(index, "down"), do: index + 1
+  defp neighbor(_index, _direction), do: nil
 
   # The form offers empty rows to type into, so saving drops the ones left
   # blank. Validation keeps them, or they would vanish while the owner types.
@@ -173,6 +208,32 @@ defmodule FlickWeb.Ballots.EditorLive do
                   placeholder={answer_placeholder(answer_form.index)}
                   aria-label={"Answer #{answer_form.index + 1}"}
                 />
+              </div>
+              <div class="flex items-center text-zinc-400">
+                <button
+                  type="button"
+                  id={"move-possible-answer-up-#{answer_form.index}"}
+                  name="ballot[possible_answers_move]"
+                  value={"#{answer_form.index}:up"}
+                  phx-click={JS.dispatch("change")}
+                  disabled={answer_form.index == 0}
+                  aria-label="Move up"
+                  class="rounded p-1 transition hover:bg-zinc-100 hover:text-zinc-700 disabled:opacity-30 disabled:hover:bg-transparent"
+                >
+                  <.icon name="hero-chevron-up-mini" class="h-5 w-5" />
+                </button>
+                <button
+                  type="button"
+                  id={"move-possible-answer-down-#{answer_form.index}"}
+                  name="ballot[possible_answers_move]"
+                  value={"#{answer_form.index}:down"}
+                  phx-click={JS.dispatch("change")}
+                  disabled={answer_form.index == @answer_count - 1}
+                  aria-label="Move down"
+                  class="rounded p-1 transition hover:bg-zinc-100 hover:text-zinc-700 disabled:opacity-30 disabled:hover:bg-transparent"
+                >
+                  <.icon name="hero-chevron-down-mini" class="h-5 w-5" />
+                </button>
               </div>
               <button
                 type="button"
