@@ -98,6 +98,13 @@ defmodule Flick.RankedVotingTest do
       end
     end
 
+    test "failure: a repeated possible answer is rejected, ignoring case and spacing" do
+      attrs = BallotFixture.valid_ballot_attributes(%{possible_answers: ["Pizza", " pizza "]})
+
+      assert {:error, changeset} = RankedVoting.create_ballot(attrs)
+      assert "must not repeat an answer" in errors_on(changeset).possible_answers
+    end
+
     test "success: `possible_answers` are trimmed and may contain commas" do
       attrs =
         BallotFixture.valid_ballot_attributes(%{
@@ -231,6 +238,40 @@ defmodule Flick.RankedVotingTest do
       assert {:ok, updated_ballot} = RankedVoting.update_ballot(ballot, changes)
       assert Ballot.possible_answer_values(updated_ballot) == ["a", "c"]
       assert Enum.map(updated_ballot.possible_answers, & &1.id) == [a.id, c.id]
+    end
+
+    test "success: a legacy ballot with a repeated answer can change fields other than its answers" do
+      ballot = ballot_fixture(%{possible_answers: ["Pizza", "Tacos"]})
+
+      {:ok, ballot} =
+        ballot
+        |> Ecto.Changeset.change()
+        |> Ecto.Changeset.put_embed(:possible_answers, [
+          %PossibleAnswer{value: "Pizza"},
+          %PossibleAnswer{value: "Pizza"}
+        ])
+        |> Repo.update()
+
+      assert {:ok, updated_ballot} =
+               RankedVoting.update_ballot(ballot, %{"question_title" => "New title"})
+
+      assert updated_ballot.question_title == "New title"
+    end
+
+    test "failure: adding an answer that repeats an existing one is rejected" do
+      ballot = ballot_fixture(%{possible_answers: ["Pizza", "Tacos"]})
+      [pizza, tacos] = ballot.possible_answers
+
+      changes = %{
+        "possible_answers" => %{
+          "0" => %{"id" => pizza.id, "value" => "Pizza"},
+          "1" => %{"id" => tacos.id, "value" => "Tacos"},
+          "2" => %{"value" => "PIZZA"}
+        }
+      }
+
+      assert {:error, changeset} = RankedVoting.update_ballot(ballot, changes)
+      assert "must not repeat an answer" in errors_on(changeset).possible_answers
     end
 
     test "failure: `question_title` is required" do

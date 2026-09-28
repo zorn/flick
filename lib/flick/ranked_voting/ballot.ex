@@ -81,6 +81,7 @@ defmodule Flick.RankedVoting.Ballot do
     )
     |> validate_required(@required_fields)
     |> validate_possible_answer_count()
+    |> validate_unique_possible_answers()
     |> validate_format(:url_slug, ~r/^[a-zA-Z0-9-]+$/,
       message: "can only contain letters, numbers, and hyphens"
     )
@@ -91,6 +92,21 @@ defmodule Flick.RankedVoting.Ballot do
   defp validate_possible_answer_count(changeset) do
     if length(get_field(changeset, :possible_answers)) < @min_possible_answers do
       add_error(changeset, :possible_answers, "must have at least two answers")
+    else
+      changeset
+    end
+  end
+
+  # Only runs when the answers change, so the legacy published ballots that
+  # repeat an answer stay valid. See Decision 5.
+  defp validate_unique_possible_answers(changeset) do
+    values =
+      for %PossibleAnswer{value: value} when is_binary(value) and value != "" <-
+            get_field(changeset, :possible_answers),
+          do: String.downcase(value)
+
+    if changed?(changeset, :possible_answers) and values != Enum.uniq(values) do
+      add_error(changeset, :possible_answers, "must not repeat an answer")
     else
       changeset
     end

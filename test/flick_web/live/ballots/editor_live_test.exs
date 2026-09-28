@@ -159,6 +159,14 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
       refute has_element?(view, "input[name='ballot[possible_answers][1][value]'][value=Red]")
     end
 
+    test "failure: a repeated answer shows an error", ~M{view} do
+      render_form_submit(view, %{
+        possible_answers: %{"0" => %{value: "Pizza"}, "1" => %{value: "pizza"}}
+      })
+
+      assert has_element?(view, "#possible-answers-errors", "must not repeat an answer")
+    end
+
     test "failure: `url_slug` is required", ~M{view} do
       render_form_submit(view, %{url_slug: ""})
       assert has_element?(view, feedback_selector("url_slug"), "can't be blank")
