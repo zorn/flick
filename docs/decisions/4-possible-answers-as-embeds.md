@@ -16,7 +16,7 @@ cheap, so that reason no longer holds.
 
 Votes keep referencing answers by their text, not by the embed id. Answers are
 frozen once a ballot is published, so the text is stable and existing votes
-need no migration. `Ballot.answer_values/1` reads the embeds and replaces
+need no migration. `Ballot.possible_answer_values/1` reads the embeds and replaces
 `possible_answers_as_list/1`. Nothing ever rebuilds a comma string, because
 answers may now contain commas.
 

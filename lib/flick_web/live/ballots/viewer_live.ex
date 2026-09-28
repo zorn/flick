@@ -150,7 +150,7 @@ defmodule FlickWeb.Ballots.ViewerLive do
           <dt class="font-bold">Possible Answers</dt>
           <dd class="pb-4">
             <ul id="ballot-possible-answers" class="list-disc pl-5">
-              <li :for={answer_value <- Ballot.answer_values(@ballot)}>{answer_value}</li>
+              <li :for={answer_value <- Ballot.possible_answer_values(@ballot)}>{answer_value}</li>
             </ul>
           </dd>
           <dt class="font-bold">URL Slug</dt>

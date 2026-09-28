@@ -105,7 +105,7 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
       assert {:error, {:redirect, %{to: redirect_target}}} = response
       assert "/ballot/favorite-color/" <> secret = redirect_target
       ballot = RankedVoting.get_ballot_by_url_slug_and_secret!("favorite-color", secret)
-      assert Ballot.answer_values(ballot) == ["Red", "Green, or Teal"]
+      assert Ballot.possible_answer_values(ballot) == ["Red", "Green, or Teal"]
     end
 
     test "success: saving drops answer rows left blank", ~M{view} do
@@ -129,7 +129,7 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
       ballot =
         RankedVoting.get_ballot_by_url_slug_and_secret!("favorite-color-blank-rows", secret)
 
-      assert Ballot.answer_values(ballot) == ["Red", "Blue"]
+      assert Ballot.possible_answer_values(ballot) == ["Red", "Blue"]
     end
 
     test "failure: `question_title` is required", ~M{view} do
@@ -217,7 +217,7 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
                updated_ballot =
                RankedVoting.get_ballot_by_url_slug_and_secret!("new-url-slug", secret)
 
-      assert Ballot.answer_values(updated_ballot) == ["purple", "pink", "yellow"]
+      assert Ballot.possible_answer_values(updated_ballot) == ["purple", "pink", "yellow"]
 
       # The form's hidden id inputs keep each edited answer's identity.
       assert Enum.map(updated_ballot.possible_answers, & &1.id) ==

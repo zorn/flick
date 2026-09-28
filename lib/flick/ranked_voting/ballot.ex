@@ -99,8 +99,8 @@ defmodule Flick.RankedVoting.Ballot do
   @doc """
   Returns the values of the ballot's possible answers in the order voters see them.
   """
-  @spec answer_values(t()) :: [String.t()]
-  def answer_values(%__MODULE__{possible_answers: possible_answers}) do
+  @spec possible_answer_values(t()) :: [String.t()]
+  def possible_answer_values(%__MODULE__{possible_answers: possible_answers}) do
     Enum.map(possible_answers, & &1.value)
   end
 end

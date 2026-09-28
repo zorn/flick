@@ -106,7 +106,7 @@ defmodule Flick.RankedVotingTest do
 
       assert {:ok, ballot} = RankedVoting.create_ballot(attrs)
 
-      assert Ballot.answer_values(ballot) == [
+      assert Ballot.possible_answer_values(ballot) == [
                "Project Hail Mary",
                "Tomorrow, and Tomorrow, and Tomorrow"
              ]
@@ -209,7 +209,7 @@ defmodule Flick.RankedVotingTest do
                 published_at: nil
               } = updated_ballot} = RankedVoting.update_ballot(ballot, changes)
 
-      assert Ballot.answer_values(updated_ballot) == ["a", "b", "c", "d", "e"]
+      assert Ballot.possible_answer_values(updated_ballot) == ["a", "b", "c", "d", "e"]
 
       assert Enum.take(Enum.map(updated_ballot.possible_answers, & &1.id), 4) ==
                Enum.map(ballot.possible_answers, & &1.id)
@@ -229,7 +229,7 @@ defmodule Flick.RankedVotingTest do
       }
 
       assert {:ok, updated_ballot} = RankedVoting.update_ballot(ballot, changes)
-      assert Ballot.answer_values(updated_ballot) == ["a", "c"]
+      assert Ballot.possible_answer_values(updated_ballot) == ["a", "c"]
       assert Enum.map(updated_ballot.possible_answers, & &1.id) == [a.id, c.id]
     end
 
@@ -352,11 +352,11 @@ defmodule Flick.RankedVotingTest do
     end
   end
 
-  describe "Ballot.answer_values/1" do
+  describe "Ballot.possible_answer_values/1" do
     test "success: returns the possible answer values in order" do
       ballot = ballot_fixture(%{possible_answers: ["Red", "Green", "Blue"]})
 
-      assert Ballot.answer_values(ballot) == ["Red", "Green", "Blue"]
+      assert Ballot.possible_answer_values(ballot) == ["Red", "Green", "Blue"]
     end
   end
 

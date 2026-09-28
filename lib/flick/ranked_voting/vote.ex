@@ -103,7 +103,7 @@ defmodule Flick.RankedVoting.Vote do
   @spec invalid_answers(Changeset.t(t()), [Changeset.t(RankedAnswer.t())]) :: [String.t()]
   defp invalid_answers(changeset, new_ranked_answers) do
     ballot = Flick.RankedVoting.get_ballot!(get_field(changeset, :ballot_id))
-    possible_answers = Ballot.answer_values(ballot) ++ ["", nil]
+    possible_answers = Ballot.possible_answer_values(ballot) ++ ["", nil]
 
     new_ranked_answers
     |> Enum.reduce([], fn changeset, acc ->
