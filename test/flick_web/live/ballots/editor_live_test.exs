@@ -287,8 +287,8 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
     end
 
     test "success: the move buttons are wired for the sortable list", ~M{view} do
-      assert has_element?(view, "#move-possible-answer-up-1[data-move=up]")
-      assert has_element?(view, "#move-possible-answer-down-1[data-move=down]")
+      assert has_element?(view, "#move-possible-answer-up-1[data-move=up][data-index='1']")
+      assert has_element?(view, "#move-possible-answer-down-1[data-move=down][data-index='1']")
     end
 
     test "success: the first row can't move up and the last row can't move down", ~M{view} do
@@ -296,6 +296,14 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
       refute has_element?(view, "#move-possible-answer-down-0[disabled]")
       refute has_element?(view, "#move-possible-answer-up-4[disabled]")
       assert has_element?(view, "#move-possible-answer-down-4[disabled]")
+    end
+
+    test "success: adding an answer moves the disabled down button to the new last row",
+         ~M{view} do
+      reorder(view, ["0", "1", "2", "3", "4", "new"])
+
+      refute has_element?(view, "#move-possible-answer-down-4[disabled]")
+      assert has_element?(view, "#move-possible-answer-down-5[disabled]")
     end
 
     test "success: a reordered list moves the answers", ~M{view} do
@@ -308,7 +316,7 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
       assert has_element?(view, answer_row_selector(4, "Thursday"))
     end
 
-    test "success: reordering keeps what the owner typed", ~M{view} do
+    test "success: reordering keeps what the ballot owner typed", ~M{view} do
       view
       |> form("#ballot-form")
       |> render_change(%{
@@ -320,6 +328,32 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
 
       assert has_element?(view, answer_row_selector(0, "Taco Tuesday"))
       assert has_element?(view, answer_row_selector(1, "Monday"))
+    end
+
+    test "success: a new answer moved to the top saves first", ~M{view, ballot} do
+      reorder(view, ["0", "1", "2", "3", "4", "new"])
+
+      view
+      |> form("#ballot-form")
+      |> render_change(%{
+        ballot: %{
+          possible_answers: %{"5" => %{value: "Sunday"}},
+          possible_answers_sort: ["5", "0", "1", "2", "3", "4"]
+        }
+      })
+
+      assert {:error, {:redirect, _redirect}} =
+               view
+               |> form("#ballot-form")
+               |> render_submit()
+
+      updated_ballot = RankedVoting.get_ballot!(ballot.id)
+
+      assert Ballot.possible_answer_values(updated_ballot) ==
+               ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+
+      assert tl(Enum.map(updated_ballot.possible_answers, & &1.id)) ==
+               Enum.map(ballot.possible_answers, & &1.id)
     end
 
     test "success: saving after a reorder keeps the new order and each answer's id",
@@ -379,8 +413,8 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
     "div[data-feedback-for=\"ballot[#{field}]\"]"
   end
 
-  # Dragging a row or pressing its arrow reorders the hidden sort inputs in the
-  # browser, which sends the new order with the form's change event.
+  # Dragging a row or pressing a move button reorders the hidden sort inputs in
+  # the browser. The form's change event then sends the new order.
   defp reorder(view, sort) do
     view
     |> form("#ballot-form")

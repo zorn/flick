@@ -164,6 +164,8 @@ defmodule FlickWeb.Ballots.EditorLive do
         <fieldset id="possible-answers" class="space-y-3">
           <legend class="text-sm font-semibold leading-6 text-zinc-800">Possible Answers</legend>
           <p class="text-xs text-zinc-500">Voters see answers in this order.</p>
+          <%!-- The hook moves rows in the DOM, but it has no `phx-update="ignore"`:
+               the server must keep patching values, errors, and disabled states. --%>
           <div id="possible-answer-rows" phx-hook="SortableInputsFor" class="space-y-3">
             <.inputs_for :let={answer_form} field={@form[:possible_answers]}>
               <div data-row class="flex items-end gap-2">
@@ -263,6 +265,7 @@ defmodule FlickWeb.Ballots.EditorLive do
       type="button"
       id={"move-possible-answer-#{@direction}-#{@index}"}
       data-move={@direction}
+      data-index={@index}
       disabled={@disabled}
       aria-label={"Move answer #{@index + 1} #{@direction}"}
       class="rounded p-1 transition hover:bg-zinc-100 hover:text-zinc-700 disabled:opacity-30 disabled:hover:bg-transparent"

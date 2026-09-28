@@ -1,10 +1,9 @@
 import Sortable from "../../vendor/sortable"
 
-// Reorders the rows of an `inputs_for` list in the browser. Each row carries a
-// hidden sort input, so the new DOM order becomes the new sort param once the
-// form sends its change event. Rows move by dragging their `[data-handle]` or
-// by pressing their `[data-move]` buttons, which keep keyboard users covered.
-// Those buttons need ids ending in `-up-<index>` or `-down-<index>`.
+// Reorders the rows of an `inputs_for` list in the browser. Each row holds a
+// hidden sort input, so the DOM order becomes the sort param on the next
+// change event. A row moves by its `[data-handle]` or by its `[data-move]`
+// buttons. The buttons let keyboard users reorder too.
 //
 // Adapted from https://github.com/bemesa21/components_examples.
 export default {
@@ -26,12 +25,13 @@ export default {
     })
   },
 
-  // Button ids follow the row position, so after the server re-renders, focus
-  // goes back to the moved row's button at its new position.
+  // The server re-renders buttons by position. Focus returns to the moved
+  // row's button once that render lands.
   updated() {
-    if (!this.focusId) return
-    document.getElementById(this.focusId)?.focus()
-    this.focusId = null
+    if (!this.focusTarget) return
+    const {direction, index} = this.focusTarget
+    this.el.querySelector(`[data-move="${direction}"][data-index="${index}"]`)?.focus()
+    this.focusTarget = null
   },
 
   destroyed() {
@@ -39,8 +39,8 @@ export default {
   },
 
   move(button) {
-    // `inputs_for` puts each row's hidden id inputs between the rows, so
-    // neighbors are found among the rows rather than the element siblings.
+    // `inputs_for` puts hidden id inputs between the rows. Look for the
+    // neighbor among the rows, not the element siblings.
     const rows = this.rows()
     const row = button.closest("[data-row]")
     const direction = button.dataset.move
@@ -50,11 +50,11 @@ export default {
     if (direction === "up") neighbor.before(row)
     else neighbor.after(row)
 
+    // At either end the same-direction button is disabled, so focus the other.
     const index = this.rows().indexOf(row)
     const atEnd = direction === "up" ? index === 0 : index === rows.length - 1
-    const focusDirection = atEnd ? (direction === "up" ? "down" : "up") : direction
-    const prefix = button.id.replace(/-(up|down)-\d+$/, "")
-    this.focusId = `${prefix}-${focusDirection}-${index}`
+    const opposite = direction === "up" ? "down" : "up"
+    this.focusTarget = {direction: atEnd ? opposite : direction, index}
 
     button.focus()
     this.pushOrder()
@@ -64,7 +64,8 @@ export default {
     return Array.from(this.el.querySelectorAll(":scope > [data-row]"))
   },
 
+  // Any input inside the form triggers its change event.
   pushOrder() {
-    this.el.querySelector("input").dispatchEvent(new Event("input", {bubbles: true}))
+    this.el.querySelector("[data-row] input").dispatchEvent(new Event("input", {bubbles: true}))
   },
 }
