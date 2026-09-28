@@ -494,6 +494,19 @@ defmodule Flick.RankedVotingTest do
                valid?: true
              } = RankedVoting.change_ballot(ballot, change)
     end
+
+    test "failure: a sort param far beyond the answer cap builds no more than one extra answer" do
+      ballot = ballot_fixture()
+      change = %{"possible_answers_sort" => List.duplicate("new", 100_000)}
+
+      changeset = RankedVoting.change_ballot(ballot, change)
+
+      assert length(Ecto.Changeset.get_field(changeset, :possible_answers)) == 101
+
+      # `errors_on/1` reports the blank rows' own errors under this key, so read
+      # the cap error from the ballot changeset directly.
+      assert {"must have at most 100 answers", []} = changeset.errors[:possible_answers]
+    end
   end
 
   describe "create_vote/2" do
