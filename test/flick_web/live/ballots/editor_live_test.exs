@@ -312,6 +312,29 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
       assert has_element?(view, answer_row_selector(4, "Thursday"))
     end
 
+    test "success: a move keeps what the owner typed", ~M{view} do
+      view
+      |> form("#ballot-form")
+      |> render_change(%{
+        ballot: %{
+          possible_answers: %{"1" => %{value: "Taco Tuesday"}},
+          possible_answers_move: "1:up"
+        }
+      })
+
+      assert has_element?(view, answer_row_selector(0, "Taco Tuesday"))
+      assert has_element?(view, answer_row_selector(1, "Monday"))
+    end
+
+    test "failure: a move past the end of the list changes nothing", ~M{view} do
+      view
+      |> form("#ballot-form")
+      |> render_change(%{ballot: %{possible_answers_move: "0:up"}})
+
+      assert has_element?(view, answer_row_selector(0, "Monday"))
+      assert has_element?(view, answer_row_selector(1, "Tuesday"))
+    end
+
     test "success: saving after a move keeps the new order and each answer's id",
          ~M{view, ballot} do
       view
@@ -371,7 +394,8 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
     "div[data-feedback-for=\"ballot[#{field}]\"]"
   end
 
-  # Each row keeps its DOM id when it moves, so rows are checked by input name.
+  # Rows keep their DOM ids when they move, so these tests find a row by its
+  # input name.
   defp answer_row_selector(index, value) do
     "input[name='ballot[possible_answers][#{index}][value]'][value='#{value}']"
   end

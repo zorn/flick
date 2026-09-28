@@ -106,15 +106,18 @@ defmodule FlickWeb.Ballots.EditorLive do
     Enum.reject(errors, fn {_field, {_message, opts}} -> opts[:validation] == :required end)
   end
 
-  # A move button sends its row and direction, such as "2:up". Swapping those
-  # two rows in the sort param reorders the answers without losing any typing.
+  # A move button sends a row and a direction, such as "2:up". The move swaps
+  # that row with its neighbor in the sort param. Unsaved typing stays intact.
   defp move_possible_answer(%{"possible_answers_move" => _move} = ballot_params) do
     {move, ballot_params} = Map.pop(ballot_params, "possible_answers_move")
     sort = Map.get(ballot_params, "possible_answers_sort", [])
 
     case parse_move(move, length(sort)) do
-      {index, other} -> Map.put(ballot_params, "possible_answers_sort", swap(sort, index, other))
-      :error -> ballot_params
+      {index, neighbor_index} ->
+        Map.put(ballot_params, "possible_answers_sort", swap(sort, index, neighbor_index))
+
+      :error ->
+        ballot_params
     end
   end
 
@@ -123,18 +126,18 @@ defmodule FlickWeb.Ballots.EditorLive do
   defp parse_move(move, count) do
     with [index, direction] <- String.split(move, ":"),
          {index, ""} <- Integer.parse(index),
-         other = neighbor(index, direction),
-         true <- index in 0..(count - 1)//1 and other in 0..(count - 1)//1 do
-      {index, other}
+         neighbor_index = neighbor(index, direction),
+         true <- index in 0..(count - 1)//1 and neighbor_index in 0..(count - 1)//1 do
+      {index, neighbor_index}
     else
       _invalid -> :error
     end
   end
 
-  defp swap(list, index, other) do
+  defp swap(list, index, neighbor_index) do
     list
-    |> List.replace_at(index, Enum.at(list, other))
-    |> List.replace_at(other, Enum.at(list, index))
+    |> List.replace_at(index, Enum.at(list, neighbor_index))
+    |> List.replace_at(neighbor_index, Enum.at(list, index))
   end
 
   defp neighbor(index, "up"), do: index - 1
@@ -210,30 +213,16 @@ defmodule FlickWeb.Ballots.EditorLive do
                 />
               </div>
               <div class="flex items-center text-zinc-400">
-                <button
-                  type="button"
-                  id={"move-possible-answer-up-#{answer_form.index}"}
-                  name="ballot[possible_answers_move]"
-                  value={"#{answer_form.index}:up"}
-                  phx-click={JS.dispatch("change")}
+                <.move_button
+                  index={answer_form.index}
+                  direction="up"
                   disabled={answer_form.index == 0}
-                  aria-label="Move up"
-                  class="rounded p-1 transition hover:bg-zinc-100 hover:text-zinc-700 disabled:opacity-30 disabled:hover:bg-transparent"
-                >
-                  <.icon name="hero-chevron-up-mini" class="h-5 w-5" />
-                </button>
-                <button
-                  type="button"
-                  id={"move-possible-answer-down-#{answer_form.index}"}
-                  name="ballot[possible_answers_move]"
-                  value={"#{answer_form.index}:down"}
-                  phx-click={JS.dispatch("change")}
+                />
+                <.move_button
+                  index={answer_form.index}
+                  direction="down"
                   disabled={answer_form.index == @answer_count - 1}
-                  aria-label="Move down"
-                  class="rounded p-1 transition hover:bg-zinc-100 hover:text-zinc-700 disabled:opacity-30 disabled:hover:bg-transparent"
-                >
-                  <.icon name="hero-chevron-down-mini" class="h-5 w-5" />
-                </button>
+                />
               </div>
               <button
                 type="button"
@@ -291,6 +280,31 @@ defmodule FlickWeb.Ballots.EditorLive do
     </Layouts.app>
     """
   end
+
+  attr :index, :integer, required: true
+  attr :direction, :string, required: true, values: ~w(up down)
+  attr :disabled, :boolean, required: true
+
+  defp move_button(assigns) do
+    ~H"""
+    <button
+      type="button"
+      id={"move-possible-answer-#{@direction}-#{@index}"}
+      name="ballot[possible_answers_move]"
+      value={"#{@index}:#{@direction}"}
+      phx-click={JS.dispatch("change")}
+      disabled={@disabled}
+      aria-label={"Move answer #{@index + 1} #{@direction}"}
+      class="rounded p-1 transition hover:bg-zinc-100 hover:text-zinc-700 disabled:opacity-30 disabled:hover:bg-transparent"
+    >
+      <.icon name={move_icon(@direction)} class="h-5 w-5" />
+    </button>
+    """
+  end
+
+  # Tailwind builds only the icon classes it finds spelled out in the source.
+  defp move_icon("up"), do: "hero-chevron-up-mini"
+  defp move_icon("down"), do: "hero-chevron-down-mini"
 
   # The second title's commas show that an answer may contain them.
   defp answer_placeholder(0), do: "Project Hail Mary by Andy Weir"
