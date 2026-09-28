@@ -166,6 +166,23 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
       assert Ballot.possible_answer_values(ballot) == ["Red", "Blue"]
     end
 
+    test "failure: saving a non-string answer value shows an error", ~M{view} do
+      # The form never sends a list here, but a crafted request can. The
+      # `form/3` helper refuses fields the page lacks, so send the event itself.
+      render_submit(view, "save", %{
+        "ballot" => %{
+          "question_title" => "What's your favorite color?",
+          "possible_answers" => %{
+            "0" => %{"value" => ["Red"]},
+            "1" => %{"value" => "Blue"}
+          },
+          "url_slug" => "favorite-color-malformed"
+        }
+      })
+
+      assert has_element?(view, answer_feedback_selector(0), "is invalid")
+    end
+
     test "failure: `question_title` is required", ~M{view} do
       render_form_submit(view, %{question_title: ""})
       assert has_element?(view, feedback_selector("question_title"), "can't be blank")
