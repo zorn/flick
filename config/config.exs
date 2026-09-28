@@ -17,6 +17,8 @@ config :flick,
 config :flick, FlickWeb.Endpoint,
   url: [host: "localhost"],
   adapter: Bandit.PhoenixAdapter,
+  # Matches the `max_frame_size` on the `/live` socket in `FlickWeb.Endpoint`.
+  http: [websocket_options: [max_fragmented_message_size: 1_000_000]],
   render_errors: [
     formats: [html: FlickWeb.ErrorHTML, json: FlickWeb.ErrorJSON],
     layout: false

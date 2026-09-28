@@ -11,6 +11,7 @@ defmodule Flick.RankedVoting.Ballot do
 
   import Ecto.Changeset
 
+  alias Flick.RankedVoting.EmbedParams
   alias Flick.RankedVoting.PossibleAnswer
 
   @type id :: Ecto.UUID.t()
@@ -80,6 +81,11 @@ defmodule Flick.RankedVoting.Ballot do
 
   @spec changeset(t() | struct_t(), map()) :: Ecto.Changeset.t(t()) | Ecto.Changeset.t(struct_t())
   def changeset(ballot, attrs) do
+    attrs =
+      attrs
+      |> EmbedParams.cap("possible_answers", @max_possible_answers)
+      |> EmbedParams.cap("possible_answers_sort", @max_possible_answers)
+
     ballot
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> cast_embed(:possible_answers,

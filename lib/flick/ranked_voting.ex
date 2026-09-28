@@ -338,13 +338,13 @@ defmodule Flick.RankedVoting do
   Returns the number of allowed answers a vote can provide for a ballot.
 
   This number will match the count of possible answers the ballot has defined,
-  up to a maximum of 5.
+  up to `Flick.RankedVoting.Vote.max_ranked_answers/0`.
   """
   @spec allowed_answer_count_for_ballot(Ballot.t()) :: non_neg_integer()
   def allowed_answer_count_for_ballot(%Ballot{} = ballot) do
     possible_answer_count = length(Ballot.possible_answer_values(ballot))
 
-    min(5, possible_answer_count)
+    min(Vote.max_ranked_answers(), possible_answer_count)
   end
 
   defp raise_if_attempting_to_set_published_at(attrs) do

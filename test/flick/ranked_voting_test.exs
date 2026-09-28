@@ -494,6 +494,39 @@ defmodule Flick.RankedVotingTest do
                valid?: true
              } = RankedVoting.change_ballot(ballot, change)
     end
+
+    test "failure: a sort param far beyond the answer cap builds no more than one extra answer" do
+      ballot = ballot_fixture()
+      change = %{"possible_answers_sort" => List.duplicate("new", 100_000)}
+
+      changeset = RankedVoting.change_ballot(ballot, change)
+
+      assert length(Ecto.Changeset.get_field(changeset, :possible_answers)) == 101
+
+      # `errors_on/1` reports the blank rows' errors under this key. Read the cap
+      # error from the ballot changeset instead.
+      assert {"must have at most 100 answers", []} = changeset.errors[:possible_answers]
+    end
+
+    test "failure: an answers map far beyond the answer cap builds no more than one extra answer" do
+      ballot = ballot_fixture()
+      answers = for index <- 0..99_999, into: %{}, do: {"#{index}", %{"value" => ""}}
+
+      changeset = RankedVoting.change_ballot(ballot, %{"possible_answers" => answers})
+
+      assert length(Ecto.Changeset.get_field(changeset, :possible_answers)) == 101
+      assert {"must have at most 100 answers", []} = changeset.errors[:possible_answers]
+    end
+
+    test "failure: an answers list far beyond the answer cap builds no more than one extra answer" do
+      ballot = ballot_fixture()
+      answers = List.duplicate(%{"value" => ""}, 100_000)
+
+      changeset = RankedVoting.change_ballot(ballot, %{"possible_answers" => answers})
+
+      assert length(Ecto.Changeset.get_field(changeset, :possible_answers)) == 101
+      assert {"must have at most 100 answers", []} = changeset.errors[:possible_answers]
+    end
   end
 
   describe "create_vote/2" do
@@ -579,6 +612,35 @@ defmodule Flick.RankedVotingTest do
                  "ranked_answers" => [%{"value" => "Sushi"}],
                  "full_name" => "John Doe"
                })
+    end
+
+    test "failure: a vote can't rank more answers than the ballot allows", ~M{published_ballot} do
+      attrs = %{
+        "ranked_answers" => [
+          %{"value" => "Pizza"},
+          %{"value" => "Tacos"},
+          %{"value" => "Sushi"},
+          %{"value" => "Burgers"},
+          %{"value" => ""}
+        ]
+      }
+
+      assert {:error, changeset} = RankedVoting.create_vote(published_ballot, attrs)
+      assert {"must have at most 4 answers", []} = changeset.errors[:ranked_answers]
+    end
+
+    test "failure: ranked answers far beyond the rank limit build no more than one extra answer",
+         ~M{published_ballot} do
+      oversized_list = List.duplicate(%{"value" => ""}, 100_000)
+      oversized_map = for index <- 0..99_999, into: %{}, do: {"#{index}", %{"value" => ""}}
+
+      for ranked_answers <- [oversized_list, oversized_map] do
+        attrs = %{"ranked_answers" => ranked_answers}
+
+        assert {:error, changeset} = RankedVoting.create_vote(published_ballot, attrs)
+        assert length(Ecto.Changeset.get_field(changeset, :ranked_answers)) == 6
+        assert {"must have at most 4 answers", []} = changeset.errors[:ranked_answers]
+      end
     end
 
     test "failure: a vote should not include an answer value that is not present in the ballot",
