@@ -75,14 +75,25 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
       refute has_element?(view, "#possible-answers input[value=Green]")
     end
 
-    test "success: swapping two blank rows still re-renders the sortable list", ~M{view} do
-      # The hook fixes positions and focus only when the list re-renders. Two
-      # blank rows render the same after a swap, so the list has to change anyway.
-      assert has_element?(view, "#possible-answer-rows[data-change='0']")
+    test "success: swapping two blank rows still changes the render", ~M{view} do
+      # The hook fixes positions and focus only when the list re-renders. Each
+      # row's persistent id moves with it, so even blank rows trade input ids.
+      assert has_element?(
+               view,
+               "input[name='ballot[possible_answers][0][value]']#ballot_possible_answers_0_value"
+             )
 
       reorder(view, ["1", "0"])
 
-      assert has_element?(view, "#possible-answer-rows[data-change='1']")
+      assert has_element?(
+               view,
+               "input[name='ballot[possible_answers][0][value]']#ballot_possible_answers_1_value"
+             )
+
+      assert has_element?(
+               view,
+               "input[name='ballot[possible_answers][1][value]']#ballot_possible_answers_0_value"
+             )
     end
 
     test "success: remove is disabled when only two answers remain", ~M{view} do
