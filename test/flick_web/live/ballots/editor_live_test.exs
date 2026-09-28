@@ -281,6 +281,15 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
                Enum.map(Enum.take(ballot.possible_answers, 3), & &1.id)
     end
 
+    test "success: clearing an existing answer while typing keeps the editor up", ~M{view} do
+      view
+      |> form("#ballot-form")
+      |> render_change(%{ballot: %{possible_answers: %{"0" => %{value: ""}}}})
+
+      assert has_element?(view, "#ballot_possible_answers_0_value")
+      refute has_element?(view, answer_feedback_selector(0), "can't be blank")
+    end
+
     test "failure: a failed save keeps the minimum number of answer rows", ~M{view} do
       render_form_submit(view, %{
         possible_answers: %{

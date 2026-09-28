@@ -22,7 +22,8 @@ defmodule Flick.RankedVoting.PossibleAnswer do
   def changeset(possible_answer, attrs) do
     possible_answer
     |> cast(attrs, [:value])
-    |> update_change(:value, &String.trim/1)
+    # Ecto casts a cleared value to nil, which is a change for a saved answer.
+    |> update_change(:value, &(&1 && String.trim(&1)))
     |> validate_required([:value])
     |> validate_length(:value, max: @max_length)
     |> validate_format(:value, ~r/\A[^\r\n]*\z/, message: "can't contain line breaks")
