@@ -13,8 +13,10 @@ defmodule FlickWeb.Endpoint do
   ]
 
   # A full ballot edit is about 50 KB, so 1 MB leaves room while bounding what
-  # an anonymous client can send in one event. Bandit caps messages split
-  # across frames separately, under `websocket_options` in `config/config.exs`.
+  # an anonymous client can send in one WebSocket event. Bandit caps messages
+  # split across frames separately, under `websocket_options` in
+  # `config/config.exs`. Long-poll has no such setting and stays at `read_body`'s
+  # 8 MB default.
   socket "/live", Phoenix.LiveView.Socket,
     websocket: [connect_info: [session: @session_options], max_frame_size: 1_000_000],
     longpoll: [connect_info: [session: @session_options]]
