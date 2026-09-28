@@ -168,7 +168,8 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
 
     test "failure: saving a non-string answer value shows an error", ~M{view} do
       # The form never sends a list here, but a crafted request can. The
-      # `form/3` helper refuses fields the page lacks, so send the event itself.
+      # `form/3` helper refuses fields the page lacks, so the test sends the
+      # event directly.
       render_submit(view, "save", %{
         "ballot" => %{
           "question_title" => "What's your favorite color?",

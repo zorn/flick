@@ -108,7 +108,7 @@ defmodule FlickWeb.Ballots.EditorLive do
 
   # The form offers empty rows to type into, so saving drops the ones left
   # blank. Validation keeps them, or they would vanish while the owner types.
-  # A value that is not a string stays, so the changeset reports it.
+  # Saving keeps a value that is not a string, so the changeset rejects it.
   defp drop_blank_possible_answers(%{"possible_answers" => answers} = ballot_params) do
     blank_indexes =
       for {index, %{"value" => value}} when is_binary(value) <- answers,
