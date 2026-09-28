@@ -80,13 +80,17 @@ defmodule FlickWeb.Ballots.EditorLive do
     %{"ballot" => ballot_params} = params
     %{ballot: ballot} = socket.assigns
 
+    {ballot_params, focus_id} = move_possible_answer(ballot_params)
+
     changeset =
       ballot
-      |> RankedVoting.change_ballot(move_possible_answer(ballot_params))
+      |> RankedVoting.change_ballot(ballot_params)
       |> Map.put(:action, :validate)
       |> hide_blank_row_errors()
 
-    {:noreply, assign_form(socket, changeset)}
+    socket = assign_form(socket, changeset)
+    socket = if focus_id, do: push_event(socket, "focus", %{id: focus_id}), else: socket
+    {:noreply, socket}
   end
 
   def handle_event("save", %{"ballot" => ballot_params}, socket) do
@@ -108,31 +112,46 @@ defmodule FlickWeb.Ballots.EditorLive do
 
   # A move button sends a row and a direction, such as "2:up". The move swaps
   # that row with its neighbor in the sort param. Unsaved typing stays intact.
+  # Button ids follow the row position, so focus moves to the answer's new row;
+  # otherwise a second press would move a different answer.
   defp move_possible_answer(%{"possible_answers_move" => _move} = ballot_params) do
     {move, ballot_params} = Map.pop(ballot_params, "possible_answers_move")
-    sort = Map.get(ballot_params, "possible_answers_sort", [])
 
-    case parse_move(move, length(sort)) do
-      {index, neighbor_index} ->
-        Map.put(ballot_params, "possible_answers_sort", swap(sort, index, neighbor_index))
+    with sort when is_list(sort) <- Map.get(ballot_params, "possible_answers_sort"),
+         count = length(sort),
+         {index, neighbor_index, direction} <- parse_move(move, count) do
+      sort = swap(sort, index, neighbor_index)
 
-      :error ->
-        ballot_params
+      {%{ballot_params | "possible_answers_sort" => sort},
+       focus_id(neighbor_index, direction, count)}
+    else
+      _invalid_move -> {ballot_params, nil}
     end
   end
 
-  defp move_possible_answer(ballot_params), do: ballot_params
+  defp move_possible_answer(ballot_params), do: {ballot_params, nil}
 
-  defp parse_move(move, count) do
+  defp parse_move(move, count) when is_binary(move) do
     with [index, direction] <- String.split(move, ":"),
          {index, ""} <- Integer.parse(index),
          neighbor_index = neighbor(index, direction),
          true <- index in 0..(count - 1)//1 and neighbor_index in 0..(count - 1)//1 do
-      {index, neighbor_index}
+      {index, neighbor_index, direction}
     else
       _invalid -> :error
     end
   end
+
+  defp parse_move(_move, _count), do: :error
+
+  # At an end of the list the same-direction button is disabled, so focus
+  # goes to the other one.
+  defp focus_id(0, "up", _count), do: "move-possible-answer-down-0"
+
+  defp focus_id(index, "down", count) when index == count - 1,
+    do: "move-possible-answer-up-#{index}"
+
+  defp focus_id(index, direction, _count), do: "move-possible-answer-#{direction}-#{index}"
 
   defp swap(list, index, neighbor_index) do
     list
@@ -199,7 +218,7 @@ defmodule FlickWeb.Ballots.EditorLive do
           placeholder="Some context to help voters choose, like page counts or where to find each book."
         />
 
-        <fieldset id="possible-answers" class="space-y-3">
+        <fieldset id="possible-answers" class="space-y-3" phx-hook=".FocusMovedAnswer">
           <legend class="text-sm font-semibold leading-6 text-zinc-800">Possible Answers</legend>
           <p class="text-xs text-zinc-500">Voters see answers in this order.</p>
           <.inputs_for :let={answer_form} field={@form[:possible_answers]}>
@@ -259,6 +278,14 @@ defmodule FlickWeb.Ballots.EditorLive do
           >
             A ballot can have at most {Ballot.max_possible_answers()} answers.
           </p>
+
+          <script :type={Phoenix.LiveView.ColocatedHook} name=".FocusMovedAnswer">
+            export default {
+              mounted() {
+                this.handleEvent("focus", ({id}) => document.getElementById(id)?.focus())
+              }
+            }
+          </script>
 
           <div :if={@form[:possible_answers].errors != []} id="possible-answers-errors">
             <.error :for={error <- @form[:possible_answers].errors}>

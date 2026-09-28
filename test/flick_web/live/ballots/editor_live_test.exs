@@ -326,6 +326,37 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
       assert has_element?(view, answer_row_selector(1, "Monday"))
     end
 
+    test "success: focus follows the moved answer to its new row", ~M{view} do
+      view
+      |> form("#ballot-form")
+      |> render_change(%{ballot: %{possible_answers_move: "2:up"}})
+
+      assert_push_event(view, "focus", %{id: "move-possible-answer-up-1"})
+    end
+
+    test "success: focus switches direction when the moved answer reaches an end", ~M{view} do
+      view
+      |> form("#ballot-form")
+      |> render_change(%{ballot: %{possible_answers_move: "1:up"}})
+
+      assert_push_event(view, "focus", %{id: "move-possible-answer-down-0"})
+
+      view
+      |> form("#ballot-form")
+      |> render_change(%{ballot: %{possible_answers_move: "3:down"}})
+
+      assert_push_event(view, "focus", %{id: "move-possible-answer-up-4"})
+    end
+
+    test "failure: a malformed move changes nothing", ~M{view} do
+      view
+      |> form("#ballot-form")
+      |> render_change(%{ballot: %{possible_answers_move: ["1:up"]}})
+
+      assert has_element?(view, answer_row_selector(0, "Monday"))
+      assert has_element?(view, answer_row_selector(1, "Tuesday"))
+    end
+
     test "failure: a move past the end of the list changes nothing", ~M{view} do
       view
       |> form("#ballot-form")
