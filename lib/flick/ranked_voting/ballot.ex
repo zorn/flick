@@ -97,36 +97,6 @@ defmodule Flick.RankedVoting.Ballot do
   end
 
   @doc """
-  Removes possible answers left blank from the given ballot attributes.
-
-  The editor offers empty rows to type into, so saving drops the ones left
-  blank. `changeset/2` doesn't call this, or blank rows would vanish from the
-  form while the ballot owner is still typing.
-  """
-  @spec drop_blank_possible_answers(map()) :: map()
-  def drop_blank_possible_answers(%{"possible_answers" => answers} = attrs)
-      when is_map(answers) do
-    blank_indexes = for {index, answer} <- answers, blank_answer?(answer), do: index
-    Map.update(attrs, "possible_answers_drop", blank_indexes, &(&1 ++ blank_indexes))
-  end
-
-  def drop_blank_possible_answers(attrs) do
-    Enum.into(attrs, %{}, fn
-      {key, answers} when key in [:possible_answers, "possible_answers"] and is_list(answers) ->
-        {key, Enum.reject(answers, &blank_answer?/1)}
-
-      pair ->
-        pair
-    end)
-  end
-
-  defp blank_answer?(%{value: value}), do: blank_value?(value)
-  defp blank_answer?(%{"value" => value}), do: blank_value?(value)
-  defp blank_answer?(_answer), do: true
-
-  defp blank_value?(value), do: value |> to_string() |> String.trim() == ""
-
-  @doc """
   Returns the values of the ballot's possible answers in the order voters see them.
   """
   @spec answer_values(t()) :: [String.t()]

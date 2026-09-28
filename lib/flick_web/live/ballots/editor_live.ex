@@ -76,12 +76,22 @@ defmodule FlickWeb.Ballots.EditorLive do
     {:noreply, assign_form(socket, RankedVoting.change_ballot(ballot, ballot_params))}
   end
 
-  def handle_event("save", params, socket) do
-    do_save(params, socket)
+  def handle_event("save", %{"ballot" => ballot_params}, socket) do
+    do_save(drop_blank_possible_answers(ballot_params), socket)
   end
 
-  defp do_save(params, %{assigns: %{live_action: :edit}} = socket) do
-    %{"ballot" => ballot_params} = params
+  # The form offers empty rows to type into, so saving drops the ones left
+  # blank. Validation keeps them, or they would vanish while the owner types.
+  defp drop_blank_possible_answers(%{"possible_answers" => answers} = ballot_params) do
+    blank_indexes =
+      for {index, %{"value" => value}} <- answers, String.trim(value) == "", do: index
+
+    Map.update(ballot_params, "possible_answers_drop", blank_indexes, &(&1 ++ blank_indexes))
+  end
+
+  defp drop_blank_possible_answers(ballot_params), do: ballot_params
+
+  defp do_save(ballot_params, %{assigns: %{live_action: :edit}} = socket) do
     %{ballot: ballot} = socket.assigns
 
     case RankedVoting.update_ballot(ballot, ballot_params) do
@@ -93,9 +103,7 @@ defmodule FlickWeb.Ballots.EditorLive do
     end
   end
 
-  defp do_save(params, socket) do
-    %{"ballot" => ballot_params} = params
-
+  defp do_save(ballot_params, socket) do
     case RankedVoting.create_ballot(ballot_params) do
       {:ok, ballot} ->
         {:noreply, redirect(socket, to: ~p"/ballot/#{ballot.url_slug}/#{ballot.secret}")}

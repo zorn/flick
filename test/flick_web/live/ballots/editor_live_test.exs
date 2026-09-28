@@ -108,6 +108,30 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
       assert Ballot.answer_values(ballot) == ["Red", "Green, or Teal"]
     end
 
+    test "success: saving drops answer rows left blank", ~M{view} do
+      view
+      |> form("#ballot-form")
+      |> render_change(%{ballot: %{possible_answers_sort: ["0", "1", "new"]}})
+
+      payload = %{
+        question_title: "What's your favorite color?",
+        possible_answers: %{
+          "0" => %{value: "Red"},
+          "1" => %{value: "  "},
+          "2" => %{value: "Blue"}
+        },
+        url_slug: "favorite-color-blank-rows"
+      }
+
+      assert {:error, {:redirect, %{to: "/ballot/favorite-color-blank-rows/" <> secret}}} =
+               render_form_submit(view, payload)
+
+      ballot =
+        RankedVoting.get_ballot_by_url_slug_and_secret!("favorite-color-blank-rows", secret)
+
+      assert Ballot.answer_values(ballot) == ["Red", "Blue"]
+    end
+
     test "failure: `question_title` is required", ~M{view} do
       render_form_submit(view, %{question_title: ""})
       assert has_element?(view, feedback_selector("question_title"), "can't be blank")

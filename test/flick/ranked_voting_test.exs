@@ -88,38 +88,14 @@ defmodule Flick.RankedVotingTest do
       assert "must have at least two answers" in errors_on(changeset).possible_answers
     end
 
-    test "success: blank `possible_answers` rows are dropped" do
-      attrs =
-        BallotFixture.valid_ballot_attributes(%{
-          possible_answers: ["Red", "", "  ", "Blue"]
-        })
+    test "failure: a blank possible answer is rejected" do
+      for empty_value <- @empty_values do
+        attrs = BallotFixture.valid_ballot_attributes(%{possible_answers: ["Red", "Blue"]})
+        attrs = %{attrs | possible_answers: [%{value: "Red"}, %{value: empty_value}]}
 
-      assert {:ok, ballot} = RankedVoting.create_ballot(attrs)
-      assert Ballot.answer_values(ballot) == ["Red", "Blue"]
-    end
-
-    test "success: blank `possible_answers` rows are dropped from form params" do
-      attrs = %{
-        "question_title" => "What is your favorite color?",
-        "url_slug" => "favorite-color-form",
-        "possible_answers" => %{
-          "0" => %{"value" => "Red"},
-          "1" => %{"value" => " "},
-          "2" => %{"value" => "Blue"}
-        },
-        "possible_answers_sort" => ["0", "1", "2"],
-        "possible_answers_drop" => [""]
-      }
-
-      assert {:ok, ballot} = RankedVoting.create_ballot(attrs)
-      assert Ballot.answer_values(ballot) == ["Red", "Blue"]
-    end
-
-    test "failure: blank `possible_answers` rows do not count toward the minimum" do
-      attrs = BallotFixture.valid_ballot_attributes(%{possible_answers: ["Red", ""]})
-
-      assert {:error, changeset} = RankedVoting.create_ballot(attrs)
-      assert "must have at least two answers" in errors_on(changeset).possible_answers
+        assert {:error, changeset} = RankedVoting.create_ballot(attrs)
+        assert [%{}, %{value: ["can't be blank"]}] = errors_on(changeset).possible_answers
+      end
     end
 
     test "success: `possible_answers` are trimmed and may contain commas" do

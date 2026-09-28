@@ -21,7 +21,7 @@ defmodule Flick.RankedVoting do
     raise_if_attempting_to_set_closed_at(attrs)
 
     %Ballot{}
-    |> change_ballot(Ballot.drop_blank_possible_answers(attrs))
+    |> change_ballot(attrs)
     |> Repo.insert()
   end
 
@@ -43,7 +43,7 @@ defmodule Flick.RankedVoting do
     raise_if_attempting_to_set_closed_at(attrs)
 
     ballot
-    |> change_ballot(Ballot.drop_blank_possible_answers(attrs))
+    |> change_ballot(attrs)
     |> Repo.update()
   end
 
