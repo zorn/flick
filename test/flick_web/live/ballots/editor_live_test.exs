@@ -47,16 +47,32 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
       |> form("#ballot-form")
       |> render_change(%{ballot: %{possible_answers_sort: ["0", "1", "new"]}})
 
+      view
+      |> form("#ballot-form")
+      |> render_change(%{
+        ballot: %{
+          possible_answers: %{
+            "0" => %{value: "Red"},
+            "1" => %{value: "Green"},
+            "2" => %{value: "Blue"}
+          }
+        }
+      })
+
       assert has_element?(
                view,
-               "#remove-possible-answer-2[name='ballot[possible_answers_drop][]'][value='2']"
+               "#remove-possible-answer-1[name='ballot[possible_answers_drop][]'][value='1']"
              )
 
       view
       |> form("#ballot-form")
-      |> render_change(%{ballot: %{possible_answers_drop: ["2"]}})
+      |> render_change(%{ballot: %{possible_answers_drop: ["1"]}})
 
-      refute has_element?(view, "#ballot_possible_answers_2_value")
+      # Each row keeps its DOM id, so the rows are checked by their input names.
+      assert has_element?(view, "input[name='ballot[possible_answers][0][value]'][value=Red]")
+      assert has_element?(view, "input[name='ballot[possible_answers][1][value]'][value=Blue]")
+      refute has_element?(view, "input[name='ballot[possible_answers][2][value]']")
+      refute has_element?(view, "#possible-answers input[value=Green]")
     end
 
     test "success: remove is disabled when only two answers remain", ~M{view} do
@@ -157,9 +173,15 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
                id: ^expected_id,
                question_title: "new-title",
                url_slug: "new-url-slug"
-             } = ballot = RankedVoting.get_ballot_by_url_slug_and_secret!("new-url-slug", secret)
+             } =
+               updated_ballot =
+               RankedVoting.get_ballot_by_url_slug_and_secret!("new-url-slug", secret)
 
-      assert Ballot.answer_values(ballot) == ["purple", "pink", "yellow"]
+      assert Ballot.answer_values(updated_ballot) == ["purple", "pink", "yellow"]
+
+      # The form's hidden id inputs keep each edited answer's identity.
+      assert Enum.map(updated_ballot.possible_answers, & &1.id) ==
+               Enum.map(Enum.take(ballot.possible_answers, 3), & &1.id)
     end
   end
 

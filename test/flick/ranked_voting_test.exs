@@ -239,6 +239,24 @@ defmodule Flick.RankedVotingTest do
                Enum.map(ballot.possible_answers, & &1.id)
     end
 
+    test "success: removes a dropped answer and keeps the rest" do
+      ballot = ballot_fixture(%{possible_answers: ["a", "b", "c"]})
+      [a, b, c] = ballot.possible_answers
+
+      changes = %{
+        "possible_answers" => %{
+          "0" => %{"id" => a.id, "value" => "a"},
+          "1" => %{"id" => b.id, "value" => "b"},
+          "2" => %{"id" => c.id, "value" => "c"}
+        },
+        "possible_answers_drop" => ["1"]
+      }
+
+      assert {:ok, updated_ballot} = RankedVoting.update_ballot(ballot, changes)
+      assert Ballot.answer_values(updated_ballot) == ["a", "c"]
+      assert Enum.map(updated_ballot.possible_answers, & &1.id) == [a.id, c.id]
+    end
+
     test "failure: `question_title` is required" do
       ballot = ballot_fixture()
 
@@ -402,6 +420,20 @@ defmodule Flick.RankedVotingTest do
       {:ok, ballot} = RankedVoting.publish_ballot(prepublished_ballot)
 
       {:ok, published_ballot: ballot}
+    end
+
+    test "success: accepts an answer that contains a comma" do
+      ballot =
+        published_ballot_fixture(%{
+          possible_answers: ["Tomorrow, and Tomorrow, and Tomorrow", "Dune"]
+        })
+
+      assert {:ok, %Vote{ranked_answers: [%RankedAnswer{value: value} | _]}} =
+               RankedVoting.create_vote(ballot, %{
+                 "ranked_answers" => [%{"value" => "Tomorrow, and Tomorrow, and Tomorrow"}]
+               })
+
+      assert value == "Tomorrow, and Tomorrow, and Tomorrow"
     end
 
     test "success: creates a vote recording the passed in answers", ~M{published_ballot} do

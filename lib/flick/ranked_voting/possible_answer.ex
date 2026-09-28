@@ -1,7 +1,6 @@
 defmodule Flick.RankedVoting.PossibleAnswer do
   @moduledoc """
-  An embedded value that represents one possible answer to the question of a
-  ballot.
+  One possible answer to a ballot's question, embedded in the ballot.
   """
 
   use Ecto.Schema

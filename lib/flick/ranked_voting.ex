@@ -21,7 +21,7 @@ defmodule Flick.RankedVoting do
     raise_if_attempting_to_set_closed_at(attrs)
 
     %Ballot{}
-    |> change_ballot(drop_blank_possible_answers(attrs))
+    |> change_ballot(Ballot.drop_blank_possible_answers(attrs))
     |> Repo.insert()
   end
 
@@ -43,36 +43,12 @@ defmodule Flick.RankedVoting do
     raise_if_attempting_to_set_closed_at(attrs)
 
     ballot
-    |> change_ballot(drop_blank_possible_answers(attrs))
+    |> change_ballot(Ballot.drop_blank_possible_answers(attrs))
     |> Repo.update()
   end
 
   def update_ballot(_ballot, _attrs) do
     {:error, :can_only_update_draft_ballot}
-  end
-
-  # The editor offers empty rows to type into, so a saved ballot ignores the
-  # ones left blank. `change_ballot/2` keeps them, or they would vanish from
-  # the form while the owner is still typing.
-  defp drop_blank_possible_answers(%{"possible_answers" => answers} = attrs)
-       when is_map(answers) do
-    blank_indexes = for {index, answer} <- answers, blank_answer?(answer), do: index
-    Map.update(attrs, "possible_answers_drop", blank_indexes, &(&1 ++ blank_indexes))
-  end
-
-  defp drop_blank_possible_answers(attrs) do
-    Enum.into(attrs, %{}, fn
-      {key, answers} when key in [:possible_answers, "possible_answers"] and is_list(answers) ->
-        {key, Enum.reject(answers, &blank_answer?/1)}
-
-      pair ->
-        pair
-    end)
-  end
-
-  defp blank_answer?(answer) do
-    value = answer[:value] || answer["value"] || ""
-    String.trim(value) == ""
   end
 
   @doc """

@@ -41,8 +41,11 @@ defmodule FlickWeb.Ballots.EditorLive do
     %Ballot{}
   end
 
-  # A new ballot starts with two empty answer rows, the minimum it needs.
-  defp initial_params(%Ballot{id: nil}), do: %{"possible_answers_sort" => ["new", "new"]}
+  # Start with the minimum number of rows.
+  defp initial_params(%Ballot{id: nil}) do
+    %{"possible_answers_sort" => List.duplicate("new", Ballot.min_possible_answers())}
+  end
+
   defp initial_params(_ballot), do: %{}
 
   defp assign_form(socket, changeset) do
@@ -134,7 +137,7 @@ defmodule FlickWeb.Ballots.EditorLive do
                 name="ballot[possible_answers_drop][]"
                 value={answer_form.index}
                 phx-click={JS.dispatch("change")}
-                disabled={@answer_count <= 2}
+                disabled={@answer_count <= Ballot.min_possible_answers()}
                 class="rounded px-2 py-1 text-sm font-semibold text-rose-600 transition hover:bg-rose-50 disabled:text-zinc-300 disabled:hover:bg-transparent"
               >
                 Remove
@@ -170,8 +173,7 @@ defmodule FlickWeb.Ballots.EditorLive do
     """
   end
 
-  # A book-club example that matches the question and slug placeholders. The
-  # second title's commas show that an answer may contain them.
+  # The second title's commas show that an answer may contain them.
   defp answer_placeholder(0), do: "Project Hail Mary by Andy Weir"
   defp answer_placeholder(1), do: "Tomorrow, and Tomorrow, and Tomorrow by Gabrielle Zevin"
   defp answer_placeholder(_index), do: "Another book"

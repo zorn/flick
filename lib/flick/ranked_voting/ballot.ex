@@ -63,6 +63,14 @@ defmodule Flick.RankedVoting.Ballot do
   # `Flick.RankedVoting.close_ballot/2` to perform those updates.
   @optional_fields [:description]
 
+  @min_possible_answers 2
+
+  @doc """
+  Returns the fewest possible answers a ballot may have.
+  """
+  @spec min_possible_answers() :: pos_integer()
+  def min_possible_answers, do: @min_possible_answers
+
   @spec changeset(t() | struct_t(), map()) :: Ecto.Changeset.t(t()) | Ecto.Changeset.t(struct_t())
   def changeset(ballot, attrs) do
     ballot
@@ -81,12 +89,42 @@ defmodule Flick.RankedVoting.Ballot do
   end
 
   defp validate_possible_answer_count(changeset) do
-    if length(get_field(changeset, :possible_answers)) < 2 do
+    if length(get_field(changeset, :possible_answers)) < @min_possible_answers do
       add_error(changeset, :possible_answers, "must have at least two answers")
     else
       changeset
     end
   end
+
+  @doc """
+  Removes possible answers left blank from the given ballot attributes.
+
+  The editor offers empty rows to type into, so saving drops the ones left
+  blank. `changeset/2` doesn't call this, or blank rows would vanish from the
+  form while the ballot owner is still typing.
+  """
+  @spec drop_blank_possible_answers(map()) :: map()
+  def drop_blank_possible_answers(%{"possible_answers" => answers} = attrs)
+      when is_map(answers) do
+    blank_indexes = for {index, answer} <- answers, blank_answer?(answer), do: index
+    Map.update(attrs, "possible_answers_drop", blank_indexes, &(&1 ++ blank_indexes))
+  end
+
+  def drop_blank_possible_answers(attrs) do
+    Enum.into(attrs, %{}, fn
+      {key, answers} when key in [:possible_answers, "possible_answers"] and is_list(answers) ->
+        {key, Enum.reject(answers, &blank_answer?/1)}
+
+      pair ->
+        pair
+    end)
+  end
+
+  defp blank_answer?(%{value: value}), do: blank_value?(value)
+  defp blank_answer?(%{"value" => value}), do: blank_value?(value)
+  defp blank_answer?(_answer), do: true
+
+  defp blank_value?(value), do: value |> to_string() |> String.trim() == ""
 
   @doc """
   Returns the values of the ballot's possible answers in the order voters see them.
