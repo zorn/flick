@@ -16,6 +16,7 @@ defmodule FlickWeb.Ballots.EditorLive do
 
     socket
     |> assign(:ballot, ballot)
+    |> assign(:change_count, 0)
     |> assign_form(RankedVoting.change_ballot(ballot, initial_params(ballot)))
     |> assign_page_title()
     |> ok()
@@ -86,7 +87,7 @@ defmodule FlickWeb.Ballots.EditorLive do
       |> Map.put(:action, :validate)
       |> hide_blank_row_errors()
 
-    {:noreply, assign_form(socket, changeset)}
+    {:noreply, socket |> update(:change_count, &(&1 + 1)) |> assign_form(changeset)}
   end
 
   def handle_event("save", %{"ballot" => ballot_params}, socket) do
@@ -165,8 +166,15 @@ defmodule FlickWeb.Ballots.EditorLive do
           <legend class="text-sm font-semibold leading-6 text-zinc-800">Possible Answers</legend>
           <p class="text-xs text-zinc-500">Voters see answers in this order.</p>
           <%!-- The hook moves rows in the DOM, but it has no `phx-update="ignore"`:
-               the server must keep patching values, errors, and disabled states. --%>
-          <div id="possible-answer-rows" phx-hook="SortableInputsFor" class="space-y-3">
+               the server must keep patching values, errors, and disabled states.
+               `data-change` makes every change patch the page, even a swap of two
+               rows that render the same, so the hook's `updated/0` always runs. --%>
+          <div
+            id="possible-answer-rows"
+            phx-hook="SortableInputsFor"
+            data-change={@change_count}
+            class="space-y-3"
+          >
             <.inputs_for :let={answer_form} field={@form[:possible_answers]}>
               <div data-row class="flex items-end gap-2">
                 <input type="hidden" name="ballot[possible_answers_sort][]" value={answer_form.index} />
