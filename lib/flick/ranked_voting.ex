@@ -294,7 +294,7 @@ defmodule Flick.RankedVoting do
   @spec get_ballot_results_report(Ballot.id()) :: ballot_results_report()
   def get_ballot_results_report(ballot_id) do
     ballot = get_ballot!(ballot_id)
-    answers = Ballot.possible_answers_as_list(ballot.possible_answers)
+    answers = Ballot.possible_answer_values(ballot)
     votes = list_votes_for_ballot_id(ballot_id)
 
     reports =
@@ -338,16 +338,13 @@ defmodule Flick.RankedVoting do
   Returns the number of allowed answers a vote can provide for a ballot.
 
   This number will match the count of possible answers the ballot has defined,
-  up to a maximum of 5.
+  up to `Flick.RankedVoting.Vote.max_ranked_answers/0`.
   """
   @spec allowed_answer_count_for_ballot(Ballot.t()) :: non_neg_integer()
   def allowed_answer_count_for_ballot(%Ballot{} = ballot) do
-    possible_answer_count =
-      ballot.possible_answers
-      |> Ballot.possible_answers_as_list()
-      |> length()
+    possible_answer_count = length(Ballot.possible_answer_values(ballot))
 
-    min(5, possible_answer_count)
+    min(Vote.max_ranked_answers(), possible_answer_count)
   end
 
   defp raise_if_attempting_to_set_published_at(attrs) do

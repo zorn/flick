@@ -11,6 +11,7 @@ defmodule Flick.RankedVoting.Vote do
 
   alias Ecto.Changeset
   alias Flick.RankedVoting.Ballot
+  alias Flick.RankedVoting.EmbedParams
   alias Flick.RankedVoting.RankedAnswer
 
   @type id :: Ecto.UUID.t()
@@ -38,6 +39,14 @@ defmodule Flick.RankedVoting.Vote do
     timestamps(type: :utc_datetime_usec)
   end
 
+  @max_ranked_answers 5
+
+  @doc """
+  Returns the most answers a vote may rank, whatever the ballot's size.
+  """
+  @spec max_ranked_answers() :: pos_integer()
+  def max_ranked_answers, do: @max_ranked_answers
+
   @doc """
   Returns an `Ecto.Changeset` value appropriate for creating a
   `Flick.RankedVoting.Vote` entity.
@@ -46,6 +55,8 @@ defmodule Flick.RankedVoting.Vote do
   """
   @spec create_changeset(struct_t(), map()) :: Changeset.t(struct_t())
   def create_changeset(vote, attrs) do
+    attrs = EmbedParams.cap(attrs, "ranked_answers", @max_ranked_answers)
+
     vote
     |> cast(attrs, [:ballot_id, :full_name])
     |> validate_required([:ballot_id])
@@ -54,6 +65,7 @@ defmodule Flick.RankedVoting.Vote do
       required: true
     )
     |> validate_ballot_is_published()
+    |> validate_ranked_answer_count()
     |> validate_ranked_answers_are_present_in_ballot()
     |> validate_ranked_answers_are_not_duplicated()
     |> validate_first_ranked_answers_has_valid_value()
@@ -85,6 +97,21 @@ defmodule Flick.RankedVoting.Vote do
     end)
   end
 
+  defp validate_ranked_answer_count(changeset) do
+    ballot = Flick.RankedVoting.get_ballot!(get_field(changeset, :ballot_id))
+    allowed_count = Flick.RankedVoting.allowed_answer_count_for_ballot(ballot)
+
+    if length(get_field(changeset, :ranked_answers)) > allowed_count do
+      add_error(
+        changeset,
+        :ranked_answers,
+        gettext("must have at most %{count} answers", count: allowed_count)
+      )
+    else
+      changeset
+    end
+  end
+
   defp validate_ranked_answers_are_present_in_ballot(changeset) do
     validate_change(changeset, :ranked_answers, fn :ranked_answers, new_ranked_answers ->
       # For each of the `ranked_answers`, make sure the answer value is present
@@ -103,7 +130,7 @@ defmodule Flick.RankedVoting.Vote do
   @spec invalid_answers(Changeset.t(t()), [Changeset.t(RankedAnswer.t())]) :: [String.t()]
   defp invalid_answers(changeset, new_ranked_answers) do
     ballot = Flick.RankedVoting.get_ballot!(get_field(changeset, :ballot_id))
-    possible_answers = Ballot.possible_answers_as_list(ballot.possible_answers) ++ ["", nil]
+    possible_answers = Ballot.possible_answer_values(ballot) ++ ["", nil]
 
     new_ranked_answers
     |> Enum.reduce([], fn changeset, acc ->

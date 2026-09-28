@@ -11,6 +11,9 @@ defmodule Flick.RankedVoting.Ballot do
 
   import Ecto.Changeset
 
+  alias Flick.RankedVoting.EmbedParams
+  alias Flick.RankedVoting.PossibleAnswer
+
   @type id :: Ecto.UUID.t()
 
   @typedoc """
@@ -22,7 +25,7 @@ defmodule Flick.RankedVoting.Ballot do
           description: String.t() | nil,
           url_slug: String.t(),
           secret: Ecto.UUID.t(),
-          possible_answers: String.t(),
+          possible_answers: [PossibleAnswer.t()],
           published_at: DateTime.t() | nil,
           closed_at: DateTime.t() | nil
         }
@@ -47,13 +50,13 @@ defmodule Flick.RankedVoting.Ballot do
     field :description, :string, default: nil
     field :url_slug, :string
     field :secret, :binary_id, read_after_writes: true
-    field :possible_answers, :string
+    embeds_many :possible_answers, PossibleAnswer, on_replace: :delete
     field :published_at, :utc_datetime_usec
     field :closed_at, :utc_datetime_usec
     timestamps(type: :utc_datetime_usec)
   end
 
-  @required_fields [:question_title, :possible_answers, :url_slug]
+  @required_fields [:question_title, :url_slug]
 
   # With intent, we do not allow `published_at` or `closed_at` to be set inside
   # a normal changeset. Instead look to the
@@ -61,12 +64,37 @@ defmodule Flick.RankedVoting.Ballot do
   # `Flick.RankedVoting.close_ballot/2` to perform those updates.
   @optional_fields [:description]
 
+  @min_possible_answers 2
+  @max_possible_answers 100
+
+  @doc """
+  Returns the fewest possible answers a ballot may have.
+  """
+  @spec min_possible_answers() :: pos_integer()
+  def min_possible_answers, do: @min_possible_answers
+
+  @doc """
+  Returns the maximum number of possible answers a ballot may have.
+  """
+  @spec max_possible_answers() :: pos_integer()
+  def max_possible_answers, do: @max_possible_answers
+
   @spec changeset(t() | struct_t(), map()) :: Ecto.Changeset.t(t()) | Ecto.Changeset.t(struct_t())
   def changeset(ballot, attrs) do
+    attrs =
+      attrs
+      |> EmbedParams.cap("possible_answers", @max_possible_answers)
+      |> EmbedParams.cap("possible_answers_sort", @max_possible_answers)
+
     ballot
     |> cast(attrs, @required_fields ++ @optional_fields)
+    |> cast_embed(:possible_answers,
+      sort_param: :possible_answers_sort,
+      drop_param: :possible_answers_drop
+    )
     |> validate_required(@required_fields)
-    |> validate_possible_answers()
+    |> validate_possible_answer_count()
+    |> validate_unique_possible_answers()
     |> validate_format(:url_slug, ~r/^[a-zA-Z0-9-]+$/,
       message: "can only contain letters, numbers, and hyphens"
     )
@@ -74,32 +102,60 @@ defmodule Flick.RankedVoting.Ballot do
     |> unique_constraint(:url_slug)
   end
 
-  @spec possible_answers_as_list(String.t()) :: [String.t()]
-  def possible_answers_as_list(possible_answers) when is_binary(possible_answers) do
-    possible_answers
-    |> String.split(",")
-    |> Enum.map(&String.trim/1)
+  defp validate_possible_answer_count(changeset) do
+    count = length(get_field(changeset, :possible_answers))
+
+    cond do
+      count < @min_possible_answers ->
+        add_error(changeset, :possible_answers, "must have at least two answers")
+
+      count > @max_possible_answers ->
+        add_error(
+          changeset,
+          :possible_answers,
+          "must have at most #{@max_possible_answers} answers"
+        )
+
+      true ->
+        changeset
+    end
   end
 
-  defp validate_possible_answers(changeset) do
-    # Because we validated the value as `required` before this, we don't need to
-    # concern ourselves with an empty list here.
-    validate_change(changeset, :possible_answers, fn :possible_answers, updated_value ->
-      answer_list = possible_answers_as_list(updated_value)
+  # The error goes on each repeating answer, not the list. The check runs only
+  # when the answers change, so legacy ballots with repeats stay valid
+  # (Decision 5).
+  defp validate_unique_possible_answers(%{changes: %{possible_answers: answers}} = changeset) do
+    {answers, _seen} = Enum.map_reduce(answers, MapSet.new(), &mark_repeated_answer/2)
+    changeset = put_in(changeset.changes.possible_answers, answers)
+    %{changeset | valid?: changeset.valid? and Enum.all?(answers, & &1.valid?)}
+  end
 
-      cond do
-        length(answer_list) < 2 ->
-          [possible_answers: "must contain at least two answers"]
+  defp validate_unique_possible_answers(changeset), do: changeset
 
-        String.contains?(updated_value, "\n") ->
-          [possible_answers: "can't contain new lines"]
+  # Dropped answers stay in the changes as `:replace`, but no longer count.
+  defp mark_repeated_answer(%{action: :replace} = answer, seen), do: {answer, seen}
 
-        Enum.any?(answer_list, &(&1 == "")) ->
-          [possible_answers: "can't contain empty answers"]
+  defp mark_repeated_answer(answer, seen) do
+    case get_field(answer, :value) do
+      value when is_binary(value) and value != "" ->
+        key = String.downcase(value)
 
-        true ->
-          []
-      end
-    end)
+        if MapSet.member?(seen, key) do
+          {add_error(answer, :value, "repeats an earlier answer"), seen}
+        else
+          {answer, MapSet.put(seen, key)}
+        end
+
+      _blank ->
+        {answer, seen}
+    end
+  end
+
+  @doc """
+  Returns the values of the ballot's possible answers in the order voters see them.
+  """
+  @spec possible_answer_values(t()) :: [String.t()]
+  def possible_answer_values(%__MODULE__{possible_answers: possible_answers}) do
+    Enum.map(possible_answers, & &1.value)
   end
 end

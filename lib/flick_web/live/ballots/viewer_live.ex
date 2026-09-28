@@ -148,7 +148,11 @@ defmodule FlickWeb.Ballots.ViewerLive do
             <.markdown content={@ballot.description} />
           </dd>
           <dt class="font-bold">Possible Answers</dt>
-          <dd id="ballot-possible-answers" class="pb-4">{@ballot.possible_answers}</dd>
+          <dd class="pb-4">
+            <ul id="ballot-possible-answers" class="list-disc pl-5">
+              <li :for={answer_value <- Ballot.possible_answer_values(@ballot)}>{answer_value}</li>
+            </ul>
+          </dd>
           <dt class="font-bold">URL Slug</dt>
           <dd id="ballot-url-slug" class="pb-4">{@ballot.url_slug}</dd>
         </dl>

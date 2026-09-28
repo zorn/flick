@@ -23,7 +23,7 @@ defmodule SeedScripts do
     # This assumes a ballot with three possible answers.
 
     for _ <- 1..25 do
-      available_answers = Ballot.possible_answers_as_list(ballot.possible_answers)
+      available_answers = Ballot.possible_answer_values(ballot)
 
       if length(available_answers) != 3 do
         raise """
@@ -65,7 +65,7 @@ end
 {:ok, sandwich_ballot} =
   Flick.RankedVoting.create_ballot(%{
     question_title: "What is your sandwich preference?",
-    possible_answers: "Turkey, Ham, Roast Beef",
+    possible_answers: [%{value: "Turkey"}, %{value: "Ham"}, %{value: "Roast Beef"}],
     url_slug: "sandwich-preference"
   })
 
@@ -76,7 +76,7 @@ SeedScripts.populate_ballot_with_votes(sandwich_ballot_published)
 {:ok, _color_ballot} =
   Flick.RankedVoting.create_ballot(%{
     question_title: "What is your favorite color?",
-    possible_answers: "Red, Green, Blue",
+    possible_answers: [%{value: "Red"}, %{value: "Green"}, %{value: "Blue"}],
     url_slug: "favorite-color"
   })
 
@@ -84,7 +84,7 @@ SeedScripts.populate_ballot_with_votes(sandwich_ballot_published)
 {:ok, fruit_ballot} =
   Flick.RankedVoting.create_ballot(%{
     question_title: "What is your favorite fruit?",
-    possible_answers: "Apple, Banana, Orange",
+    possible_answers: [%{value: "Apple"}, %{value: "Banana"}, %{value: "Orange"}],
     url_slug: "favorite-fruit"
   })
 

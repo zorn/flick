@@ -122,6 +122,6 @@ defmodule FlickWeb.Vote.VoteCaptureLive do
   end
 
   defp options(ballot) do
-    [nil] ++ Flick.RankedVoting.Ballot.possible_answers_as_list(ballot.possible_answers)
+    [nil] ++ Flick.RankedVoting.Ballot.possible_answer_values(ballot)
   end
 end

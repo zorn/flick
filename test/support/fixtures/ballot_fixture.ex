@@ -12,12 +12,16 @@ defmodule Support.Fixtures.BallotFixture do
   """
   @spec valid_ballot_attributes(map()) :: map()
   def valid_ballot_attributes(attrs \\ %{}) do
-    Enum.into(attrs, %{
+    attrs
+    |> Enum.into(%{
       question_title: "What day should have dinner?",
-      possible_answers: "Monday, Tuesday, Wednesday, Thursday, Friday",
+      possible_answers: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
       url_slug: "dinner-day-#{System.unique_integer()}"
     })
+    |> Map.update!(:possible_answers, &possible_answers_attribute/1)
   end
+
+  defp possible_answers_attribute(answer_values), do: Enum.map(answer_values, &%{value: &1})
 
   @doc """
   Creates a `Flick.RankedVoting.Ballot` entity in the `Flick.Repo` for the passed in
