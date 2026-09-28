@@ -503,8 +503,28 @@ defmodule Flick.RankedVotingTest do
 
       assert length(Ecto.Changeset.get_field(changeset, :possible_answers)) == 101
 
-      # `errors_on/1` reports the blank rows' own errors under this key, so read
-      # the cap error from the ballot changeset directly.
+      # `errors_on/1` reports the blank rows' errors under this key. Read the cap
+      # error from the ballot changeset instead.
+      assert {"must have at most 100 answers", []} = changeset.errors[:possible_answers]
+    end
+
+    test "failure: an answers map far beyond the answer cap builds no more than one extra answer" do
+      ballot = ballot_fixture()
+      answers = for index <- 0..99_999, into: %{}, do: {"#{index}", %{"value" => ""}}
+
+      changeset = RankedVoting.change_ballot(ballot, %{"possible_answers" => answers})
+
+      assert length(Ecto.Changeset.get_field(changeset, :possible_answers)) == 101
+      assert {"must have at most 100 answers", []} = changeset.errors[:possible_answers]
+    end
+
+    test "failure: an answers list far beyond the answer cap builds no more than one extra answer" do
+      ballot = ballot_fixture()
+      answers = List.duplicate(%{"value" => ""}, 100_000)
+
+      changeset = RankedVoting.change_ballot(ballot, %{"possible_answers" => answers})
+
+      assert length(Ecto.Changeset.get_field(changeset, :possible_answers)) == 101
       assert {"must have at most 100 answers", []} = changeset.errors[:possible_answers]
     end
   end

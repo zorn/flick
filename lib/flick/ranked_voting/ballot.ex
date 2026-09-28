@@ -80,7 +80,10 @@ defmodule Flick.RankedVoting.Ballot do
 
   @spec changeset(t() | struct_t(), map()) :: Ecto.Changeset.t(t()) | Ecto.Changeset.t(struct_t())
   def changeset(ballot, attrs) do
-    attrs = cap_possible_answers_sort(attrs)
+    attrs =
+      attrs
+      |> cap_possible_answers_param("possible_answers")
+      |> cap_possible_answers_param("possible_answers_sort")
 
     ballot
     |> cast(attrs, @required_fields ++ @optional_fields)
@@ -98,15 +101,22 @@ defmodule Flick.RankedVoting.Ballot do
     |> unique_constraint(:url_slug)
   end
 
-  # `cast_embed` builds a child changeset for every sort entry before the count
-  # check runs, so an anonymous client could make the server build any number of
-  # rows. One entry past the cap is enough for the count check to reject it.
-  # Answers left out of the sort still cast, appended after the sorted ones.
-  defp cap_possible_answers_sort(%{"possible_answers_sort" => sort} = attrs) when is_list(sort) do
-    %{attrs | "possible_answers_sort" => Enum.take(sort, @max_possible_answers + 1)}
-  end
+  # `cast_embed` builds one child changeset per answer and per sort entry before
+  # the count check runs. Without a bound, an anonymous client can make the
+  # server build any number of them. Keeping one entry past the cap still trips
+  # the count check.
+  defp cap_possible_answers_param(attrs, key) do
+    case attrs do
+      %{^key => value} when is_list(value) ->
+        %{attrs | key => Enum.take(value, @max_possible_answers + 1)}
 
-  defp cap_possible_answers_sort(attrs), do: attrs
+      %{^key => value} when is_map(value) ->
+        %{attrs | key => value |> Enum.take(@max_possible_answers + 1) |> Map.new()}
+
+      _ ->
+        attrs
+    end
+  end
 
   defp validate_possible_answer_count(changeset) do
     count = length(get_field(changeset, :possible_answers))
