@@ -11,6 +11,7 @@ defmodule Flick.RankedVoting.Ballot do
 
   import Ecto.Changeset
 
+  alias Flick.RankedVoting.EmbedParams
   alias Flick.RankedVoting.PossibleAnswer
 
   @type id :: Ecto.UUID.t()
@@ -82,8 +83,8 @@ defmodule Flick.RankedVoting.Ballot do
   def changeset(ballot, attrs) do
     attrs =
       attrs
-      |> cap_possible_answers_param("possible_answers")
-      |> cap_possible_answers_param("possible_answers_sort")
+      |> EmbedParams.cap("possible_answers", @max_possible_answers)
+      |> EmbedParams.cap("possible_answers_sort", @max_possible_answers)
 
     ballot
     |> cast(attrs, @required_fields ++ @optional_fields)
@@ -99,23 +100,6 @@ defmodule Flick.RankedVoting.Ballot do
     )
     |> validate_length(:url_slug, min: 3, max: 255)
     |> unique_constraint(:url_slug)
-  end
-
-  # `cast_embed` builds one child changeset per answer and per sort entry before
-  # the count check runs. Without a bound, an anonymous client can make the
-  # server build any number of them. Keeping one entry past the cap still trips
-  # the count check.
-  defp cap_possible_answers_param(attrs, key) do
-    case attrs do
-      %{^key => value} when is_list(value) ->
-        %{attrs | key => Enum.take(value, @max_possible_answers + 1)}
-
-      %{^key => value} when is_map(value) ->
-        %{attrs | key => value |> Enum.take(@max_possible_answers + 1) |> Map.new()}
-
-      _ ->
-        attrs
-    end
   end
 
   defp validate_possible_answer_count(changeset) do

@@ -614,6 +614,35 @@ defmodule Flick.RankedVotingTest do
                })
     end
 
+    test "failure: a vote can't rank more answers than the ballot allows", ~M{published_ballot} do
+      attrs = %{
+        "ranked_answers" => [
+          %{"value" => "Pizza"},
+          %{"value" => "Tacos"},
+          %{"value" => "Sushi"},
+          %{"value" => "Burgers"},
+          %{"value" => ""}
+        ]
+      }
+
+      assert {:error, changeset} = RankedVoting.create_vote(published_ballot, attrs)
+      assert {"must have at most 4 answers", []} = changeset.errors[:ranked_answers]
+    end
+
+    test "failure: ranked answers far beyond the rank limit build no more than one extra answer",
+         ~M{published_ballot} do
+      oversized_list = List.duplicate(%{"value" => ""}, 100_000)
+      oversized_map = for index <- 0..99_999, into: %{}, do: {"#{index}", %{"value" => ""}}
+
+      for ranked_answers <- [oversized_list, oversized_map] do
+        attrs = %{"ranked_answers" => ranked_answers}
+
+        assert {:error, changeset} = RankedVoting.create_vote(published_ballot, attrs)
+        assert length(Ecto.Changeset.get_field(changeset, :ranked_answers)) == 6
+        assert {"must have at most 4 answers", []} = changeset.errors[:ranked_answers]
+      end
+    end
+
     test "failure: a vote should not include an answer value that is not present in the ballot",
          %{
            published_ballot: published_ballot

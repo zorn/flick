@@ -12,8 +12,11 @@ defmodule FlickWeb.Endpoint do
     same_site: "Lax"
   ]
 
+  # A full ballot edit is about 50 KB, so 1 MB leaves room while bounding what
+  # an anonymous client can send in one event. Bandit caps messages split
+  # across frames separately, under `websocket_options` in `config/config.exs`.
   socket "/live", Phoenix.LiveView.Socket,
-    websocket: [connect_info: [session: @session_options]],
+    websocket: [connect_info: [session: @session_options], max_frame_size: 1_000_000],
     longpoll: [connect_info: [session: @session_options]]
 
   # Serve at "/" the static files from "priv/static" directory.
