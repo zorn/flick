@@ -73,7 +73,7 @@ defmodule Flick.RankedVoting.Ballot do
   def min_possible_answers, do: @min_possible_answers
 
   @doc """
-  Returns the most possible answers a ballot may have.
+  Returns the maximum number of possible answers a ballot may have.
   """
   @spec max_possible_answers() :: pos_integer()
   def max_possible_answers, do: @max_possible_answers
@@ -104,43 +104,44 @@ defmodule Flick.RankedVoting.Ballot do
         add_error(changeset, :possible_answers, "must have at least two answers")
 
       count > @max_possible_answers ->
-        add_error(changeset, :possible_answers, "must have at most 100 answers")
+        add_error(
+          changeset,
+          :possible_answers,
+          "must have at most #{@max_possible_answers} answers"
+        )
 
       true ->
         changeset
     end
   end
 
-  # Puts the error on each row that repeats an earlier one, ignoring case, so
-  # the editor can show it under that row. It only runs when the answers
-  # change, so the legacy published ballots that repeat an answer stay valid.
-  # See Decision 5.
-  defp validate_unique_possible_answers(%{changes: %{possible_answers: rows}} = changeset) do
-    {rows, _seen} = Enum.map_reduce(rows, MapSet.new(), &mark_repeated_answer/2)
-
-    changeset
-    |> put_in([Access.key!(:changes), :possible_answers], rows)
-    |> Map.update!(:valid?, &(&1 and Enum.all?(rows, fn row -> row.valid? end)))
+  # The error goes on each repeating answer, not the list. The check runs only
+  # when the answers change, so legacy ballots with repeats stay valid
+  # (Decision 5).
+  defp validate_unique_possible_answers(%{changes: %{possible_answers: answers}} = changeset) do
+    {answers, _seen} = Enum.map_reduce(answers, MapSet.new(), &mark_repeated_answer/2)
+    changeset = put_in(changeset.changes.possible_answers, answers)
+    %{changeset | valid?: changeset.valid? and Enum.all?(answers, & &1.valid?)}
   end
 
   defp validate_unique_possible_answers(changeset), do: changeset
 
-  # Dropped rows stay in the changes as `:replace`, but no longer count.
-  defp mark_repeated_answer(%{action: :replace} = row, seen), do: {row, seen}
+  # Dropped answers stay in the changes as `:replace`, but no longer count.
+  defp mark_repeated_answer(%{action: :replace} = answer, seen), do: {answer, seen}
 
-  defp mark_repeated_answer(row, seen) do
-    case get_field(row, :value) do
+  defp mark_repeated_answer(answer, seen) do
+    case get_field(answer, :value) do
       value when is_binary(value) and value != "" ->
         key = String.downcase(value)
 
         if MapSet.member?(seen, key) do
-          {add_error(row, :value, "repeats an earlier answer"), seen}
+          {add_error(answer, :value, "repeats an earlier answer"), seen}
         else
-          {row, MapSet.put(seen, key)}
+          {answer, MapSet.put(seen, key)}
         end
 
       _blank ->
-        {row, seen}
+        {answer, seen}
     end
   end
 

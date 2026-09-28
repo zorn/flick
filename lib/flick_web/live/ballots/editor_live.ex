@@ -93,9 +93,8 @@ defmodule FlickWeb.Ballots.EditorLive do
     do_save(drop_blank_possible_answers(ballot_params), socket)
   end
 
-  # Saving drops rows left blank, so their "can't be blank" errors would only
-  # scold the owner while they type. Blank rows also still count until then,
-  # which keeps the fewer-than-two error from showing before a save.
+  # Saving drops blank rows, so their "can't be blank" errors would only
+  # distract the owner while typing.
   defp hide_blank_row_errors(%{changes: %{possible_answers: rows}} = changeset) do
     rows = Enum.map(rows, &Map.update!(&1, :errors, fn errors -> reject_required(errors) end))
     put_in(changeset.changes.possible_answers, rows)

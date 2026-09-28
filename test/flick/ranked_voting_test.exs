@@ -141,7 +141,7 @@ defmodule Flick.RankedVotingTest do
 
         assert {:error, changeset} = RankedVoting.create_ballot(attrs)
 
-        assert [%{}, %{value: ["can't contain new lines"]}] =
+        assert [%{}, %{value: ["can't contain line breaks"]}] =
                  errors_on(changeset).possible_answers
       end
     end
@@ -325,6 +325,23 @@ defmodule Flick.RankedVotingTest do
 
       assert [%{}, %{}, %{value: ["repeats an earlier answer"]}] =
                errors_on(changeset).possible_answers
+    end
+
+    test "success: an answer dropped in the same change doesn't count as a repeat" do
+      ballot = ballot_fixture(%{possible_answers: ["Pizza", "Tacos"]})
+      [pizza, tacos] = ballot.possible_answers
+
+      changes = %{
+        "possible_answers" => %{
+          "0" => %{"id" => pizza.id, "value" => "Pizza"},
+          "1" => %{"id" => tacos.id, "value" => "Tacos"},
+          "2" => %{"value" => "pizza"}
+        },
+        "possible_answers_drop" => ["0"]
+      }
+
+      assert {:ok, updated_ballot} = RankedVoting.update_ballot(ballot, changes)
+      assert Ballot.possible_answer_values(updated_ballot) == ["Tacos", "pizza"]
     end
 
     test "failure: `question_title` is required" do

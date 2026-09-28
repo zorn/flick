@@ -11,6 +11,8 @@ defmodule Flick.RankedVoting.PossibleAnswer do
 
   @type struct_t :: %__MODULE__{}
 
+  @max_length 500
+
   @primary_key {:id, :binary_id, autogenerate: true}
   embedded_schema do
     field :value, :string
@@ -22,7 +24,7 @@ defmodule Flick.RankedVoting.PossibleAnswer do
     |> cast(attrs, [:value])
     |> update_change(:value, &String.trim/1)
     |> validate_required([:value])
-    |> validate_length(:value, max: 500)
-    |> validate_format(:value, ~r/\A[^\r\n]*\z/, message: "can't contain new lines")
+    |> validate_length(:value, max: @max_length)
+    |> validate_format(:value, ~r/\A[^\r\n]*\z/, message: "can't contain line breaks")
   end
 end
