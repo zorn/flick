@@ -86,6 +86,19 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
       refute has_element?(view, "#remove-possible-answer-0[disabled]")
     end
 
+    test "success: add is disabled with a note at 100 answers", ~M{view} do
+      refute has_element?(view, "#add-possible-answer[disabled]")
+      refute has_element?(view, "#possible-answers-max-note")
+
+      view
+      |> form("#ballot-form")
+      |> render_change(%{ballot: %{possible_answers_sort: List.duplicate("new", 100)}})
+
+      assert has_element?(view, "#ballot_possible_answers_99_value")
+      assert has_element?(view, "#add-possible-answer[disabled]")
+      assert has_element?(view, "#possible-answers-max-note", "100")
+    end
+
     test "success: submitting valid form creates ballot and redirects", ~M{view} do
       payload = %{
         question_title: "What's your favorite color?",
@@ -137,10 +150,14 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
       assert has_element?(view, feedback_selector("question_title"), "can't be blank")
     end
 
-    test "failure: fewer than two answers shows an error", ~M{view} do
+    test "failure: fewer than two answers shows an error below the add button", ~M{view} do
       render_form_submit(view, %{possible_answers: %{"0" => %{value: "Red"}, "1" => %{value: ""}}})
 
-      assert has_element?(view, "#possible-answers-errors", "must have at least two answers")
+      assert has_element?(
+               view,
+               "#add-possible-answer ~ #possible-answers-errors",
+               "must have at least two answers"
+             )
     end
 
     test "failure: a failed save keeps the minimum number of answer rows", ~M{view} do
@@ -159,12 +176,44 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
       refute has_element?(view, "input[name='ballot[possible_answers][1][value]'][value=Red]")
     end
 
-    test "failure: a repeated answer shows an error", ~M{view} do
-      render_form_submit(view, %{
-        possible_answers: %{"0" => %{value: "Pizza"}, "1" => %{value: "pizza"}}
+    test "failure: a row error shows under its row while typing", ~M{view} do
+      too_long = String.duplicate("a", 501)
+
+      view
+      |> form("#ballot-form")
+      |> render_change(%{
+        ballot: %{possible_answers: %{"0" => %{value: "Dune"}, "1" => %{value: too_long}}}
       })
 
-      assert has_element?(view, "#possible-answers-errors", "must not repeat an answer")
+      assert has_element?(view, answer_feedback_selector(1), "should be at most 500 character(s)")
+
+      view
+      |> form("#ballot-form")
+      |> render_change(%{
+        ballot: %{possible_answers: %{"0" => %{value: "Dune"}, "1" => %{value: "dune"}}}
+      })
+
+      assert has_element?(view, answer_feedback_selector(1), "repeats an earlier answer")
+    end
+
+    test "success: typing doesn't show the fewer-than-two or blank row errors", ~M{view} do
+      view
+      |> form("#ballot-form")
+      |> render_change(%{
+        ballot: %{possible_answers: %{"0" => %{value: "Dune"}, "1" => %{value: ""}}}
+      })
+
+      refute has_element?(view, "#possible-answers-errors")
+      refute has_element?(view, answer_feedback_selector(1), "can't be blank")
+    end
+
+    test "failure: a repeated answer shows an error under the repeating row", ~M{view} do
+      render_form_submit(view, %{
+        possible_answers: %{"0" => %{value: "Dune"}, "1" => %{value: "dune"}}
+      })
+
+      assert has_element?(view, answer_feedback_selector(1), "repeats an earlier answer")
+      refute has_element?(view, answer_feedback_selector(0), "repeats an earlier answer")
     end
 
     test "failure: `url_slug` is required", ~M{view} do
@@ -258,5 +307,9 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
 
   defp feedback_selector(field) do
     "div[data-feedback-for=\"ballot[#{field}]\"]"
+  end
+
+  defp answer_feedback_selector(index) do
+    feedback_selector("possible_answers][#{index}][value")
   end
 end

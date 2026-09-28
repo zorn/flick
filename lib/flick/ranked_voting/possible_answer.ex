@@ -22,5 +22,7 @@ defmodule Flick.RankedVoting.PossibleAnswer do
     |> cast(attrs, [:value])
     |> update_change(:value, &String.trim/1)
     |> validate_required([:value])
+    |> validate_length(:value, max: 500)
+    |> validate_format(:value, ~r/\A[^\r\n]*\z/, message: "can't contain new lines")
   end
 end
