@@ -231,6 +231,23 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
       assert Enum.map(updated_ballot.possible_answers, & &1.id) ==
                Enum.map(Enum.take(ballot.possible_answers, 3), & &1.id)
     end
+
+    test "failure: a failed save keeps the minimum number of answer rows", ~M{view} do
+      render_form_submit(view, %{
+        possible_answers: %{
+          "0" => %{value: "Monday"},
+          "1" => %{value: ""},
+          "2" => %{value: ""},
+          "3" => %{value: ""},
+          "4" => %{value: ""}
+        }
+      })
+
+      assert has_element?(view, "#possible-answers-errors", "must have at least two answers")
+      assert has_element?(view, "#ballot_possible_answers_0_value[value=Monday]")
+      assert has_element?(view, "#ballot_possible_answers_1_value")
+      refute has_element?(view, "#ballot_possible_answers_2_value")
+    end
   end
 
   defp render_form_submit(view, payload) do

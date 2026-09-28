@@ -57,8 +57,14 @@ defmodule FlickWeb.Ballots.EditorLive do
 
   # Saving drops blank rows, so a failed save can come back with fewer rows
   # than the minimum. Add empty ones back so the owner has somewhere to type.
+  # On edit, the dropped rows remain as `:replace` changesets; they are left
+  # out here because they are neither shown nor accepted by `put_embed/3`.
   defp pad_possible_answers(changeset) do
-    answers = Ecto.Changeset.get_embed(changeset, :possible_answers)
+    answers =
+      changeset
+      |> Ecto.Changeset.get_embed(:possible_answers)
+      |> Enum.reject(&(&1.action == :replace))
+
     missing = Ballot.min_possible_answers() - length(answers)
 
     if missing > 0 do
