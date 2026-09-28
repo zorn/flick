@@ -23,13 +23,14 @@ import { Socket } from "phoenix"
 import { LiveSocket } from "phoenix_live_view"
 import {hooks as colocatedHooks} from "phoenix-colocated/flick"
 import topbar from "../vendor/topbar"
+import SortableInputsFor from "./hooks/sortable_inputs_for"
 
 const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 const time_zone = Intl.DateTimeFormat().resolvedOptions().timeZone
 const liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
   params: { _csrf_token: csrfToken, time_zone: time_zone },
-  hooks: {...colocatedHooks},
+  hooks: {...colocatedHooks, SortableInputsFor},
 })
 
 // Show progress bar on live navigation and form submits

@@ -42,6 +42,18 @@ defmodule FlickWeb.Vote.VoteCaptureLiveTest do
     end)
   end
 
+  test "lists the answers in the order the ballot owner saved", ~M{view} do
+    option_values =
+      view
+      |> element(ranked_answer_selector(0))
+      |> render()
+      |> LazyHTML.from_fragment()
+      |> LazyHTML.query("option")
+      |> LazyHTML.attribute("value")
+
+    assert option_values == ["", "Hackers", "Sneakers", "WarGames", "The Matrix", "Tron"]
+  end
+
   test "can submit a form and create a vote", ~M{view} do
     payload = %{
       "ranked_answers" => %{

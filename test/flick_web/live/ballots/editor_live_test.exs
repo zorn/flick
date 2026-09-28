@@ -75,6 +75,27 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
       refute has_element?(view, "#possible-answers input[value=Green]")
     end
 
+    test "success: swapping two blank rows still changes the render", ~M{view} do
+      # The hook fixes positions and focus only when the list re-renders. Each
+      # row's persistent id moves with it, so even blank rows trade input ids.
+      assert has_element?(
+               view,
+               "input[name='ballot[possible_answers][0][value]']#ballot_possible_answers_0_value"
+             )
+
+      reorder(view, ["1", "0"])
+
+      assert has_element?(
+               view,
+               "input[name='ballot[possible_answers][0][value]']#ballot_possible_answers_1_value"
+             )
+
+      assert has_element?(
+               view,
+               "input[name='ballot[possible_answers][1][value]']#ballot_possible_answers_0_value"
+             )
+    end
+
     test "success: remove is disabled when only two answers remain", ~M{view} do
       assert has_element?(view, "#remove-possible-answer-0[disabled]")
       assert has_element?(view, "#remove-possible-answer-1[disabled]")
@@ -281,6 +302,101 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
                Enum.map(Enum.take(ballot.possible_answers, 3), & &1.id)
     end
 
+    test "success: rows can be dragged by a handle inside the sortable list", ~M{view} do
+      assert has_element?(view, "#possible-answer-rows[phx-hook=SortableInputsFor]")
+      assert has_element?(view, "#possible-answer-rows [data-handle]")
+    end
+
+    test "success: the move buttons are wired for the sortable list", ~M{view} do
+      assert has_element?(view, "#move-possible-answer-up-1[data-move=up][data-index='1']")
+      assert has_element?(view, "#move-possible-answer-down-1[data-move=down][data-index='1']")
+    end
+
+    test "success: the first row can't move up and the last row can't move down", ~M{view} do
+      assert has_element?(view, "#move-possible-answer-up-0[disabled]")
+      refute has_element?(view, "#move-possible-answer-down-0[disabled]")
+      refute has_element?(view, "#move-possible-answer-up-4[disabled]")
+      assert has_element?(view, "#move-possible-answer-down-4[disabled]")
+    end
+
+    test "success: adding an answer moves the disabled down button to the new last row",
+         ~M{view} do
+      reorder(view, ["0", "1", "2", "3", "4", "new"])
+
+      refute has_element?(view, "#move-possible-answer-down-4[disabled]")
+      assert has_element?(view, "#move-possible-answer-down-5[disabled]")
+    end
+
+    test "success: a reordered list moves the answers", ~M{view} do
+      reorder(view, ["1", "0", "2", "4", "3"])
+
+      assert has_element?(view, answer_row_selector(0, "Tuesday"))
+      assert has_element?(view, answer_row_selector(1, "Monday"))
+      assert has_element?(view, answer_row_selector(2, "Wednesday"))
+      assert has_element?(view, answer_row_selector(3, "Friday"))
+      assert has_element?(view, answer_row_selector(4, "Thursday"))
+    end
+
+    test "success: reordering keeps what the ballot owner typed", ~M{view} do
+      view
+      |> form("#ballot-form")
+      |> render_change(%{
+        ballot: %{
+          possible_answers: %{"1" => %{value: "Taco Tuesday"}},
+          possible_answers_sort: ["1", "0", "2", "3", "4"]
+        }
+      })
+
+      assert has_element?(view, answer_row_selector(0, "Taco Tuesday"))
+      assert has_element?(view, answer_row_selector(1, "Monday"))
+    end
+
+    test "success: a new answer moved to the top saves first", ~M{view, ballot} do
+      reorder(view, ["0", "1", "2", "3", "4", "new"])
+
+      view
+      |> form("#ballot-form")
+      |> render_change(%{
+        ballot: %{
+          possible_answers: %{"5" => %{value: "Sunday"}},
+          possible_answers_sort: ["5", "0", "1", "2", "3", "4"]
+        }
+      })
+
+      assert {:error, {:redirect, _redirect}} =
+               view
+               |> form("#ballot-form")
+               |> render_submit()
+
+      updated_ballot = RankedVoting.get_ballot!(ballot.id)
+
+      assert Ballot.possible_answer_values(updated_ballot) ==
+               ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+
+      assert tl(Enum.map(updated_ballot.possible_answers, & &1.id)) ==
+               Enum.map(ballot.possible_answers, & &1.id)
+    end
+
+    test "success: saving after a reorder keeps the new order and each answer's id",
+         ~M{view, ballot} do
+      reorder(view, ["0", "1", "2", "4", "3"])
+
+      assert {:error, {:redirect, _redirect}} =
+               view
+               |> form("#ballot-form")
+               |> render_submit()
+
+      updated_ballot = RankedVoting.get_ballot!(ballot.id)
+
+      assert Ballot.possible_answer_values(updated_ballot) ==
+               ["Monday", "Tuesday", "Wednesday", "Friday", "Thursday"]
+
+      [monday, tuesday, wednesday, thursday, friday] = Enum.map(ballot.possible_answers, & &1.id)
+
+      assert Enum.map(updated_ballot.possible_answers, & &1.id) ==
+               [monday, tuesday, wednesday, friday, thursday]
+    end
+
     test "success: clearing an existing answer while typing keeps the editor up", ~M{view} do
       view
       |> form("#ballot-form")
@@ -316,6 +432,20 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
 
   defp feedback_selector(field) do
     "div[data-feedback-for=\"ballot[#{field}]\"]"
+  end
+
+  # Dragging a row or pressing a move button reorders the hidden sort inputs in
+  # the browser. The form's change event then sends the new order.
+  defp reorder(view, sort) do
+    view
+    |> form("#ballot-form")
+    |> render_change(%{ballot: %{possible_answers_sort: sort}})
+  end
+
+  # Rows keep their DOM ids when they move, so these tests find a row by its
+  # input name.
+  defp answer_row_selector(index, value) do
+    "input[name='ballot[possible_answers][#{index}][value]'][value='#{value}']"
   end
 
   defp answer_feedback_selector(index) do

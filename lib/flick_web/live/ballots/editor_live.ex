@@ -164,29 +164,55 @@ defmodule FlickWeb.Ballots.EditorLive do
         <fieldset id="possible-answers" class="space-y-3">
           <legend class="text-sm font-semibold leading-6 text-zinc-800">Possible Answers</legend>
           <p class="text-xs text-zinc-500">Voters see answers in this order.</p>
-          <.inputs_for :let={answer_form} field={@form[:possible_answers]}>
-            <div class="flex items-end gap-2">
-              <input type="hidden" name="ballot[possible_answers_sort][]" value={answer_form.index} />
-              <div class="flex-1">
-                <.input
-                  field={answer_form[:value]}
-                  placeholder={answer_placeholder(answer_form.index)}
-                  aria-label={"Answer #{answer_form.index + 1}"}
-                />
+          <%!-- The hook moves rows in the DOM, but it has no `phx-update="ignore"`:
+               the server must keep patching values, errors, and disabled states.
+               Each row's `_persistent_id` moves with it, so every reorder changes
+               the render, even a swap of two blank rows. --%>
+          <div id="possible-answer-rows" phx-hook="SortableInputsFor" class="space-y-3">
+            <.inputs_for :let={answer_form} field={@form[:possible_answers]}>
+              <div data-row class="flex items-end gap-2">
+                <input type="hidden" name="ballot[possible_answers_sort][]" value={answer_form.index} />
+                <span
+                  data-handle
+                  aria-hidden="true"
+                  title="Drag to reorder"
+                  class="cursor-grab touch-none rounded p-1 pb-2.5 text-zinc-400 transition hover:text-zinc-700 active:cursor-grabbing"
+                >
+                  <.icon name="hero-bars-3-mini" class="h-5 w-5" />
+                </span>
+                <div class="flex-1">
+                  <.input
+                    field={answer_form[:value]}
+                    placeholder={answer_placeholder(answer_form.index)}
+                    aria-label={"Answer #{answer_form.index + 1}"}
+                  />
+                </div>
+                <div class="flex items-center text-zinc-400">
+                  <.move_button
+                    index={answer_form.index}
+                    direction="up"
+                    disabled={answer_form.index == 0}
+                  />
+                  <.move_button
+                    index={answer_form.index}
+                    direction="down"
+                    disabled={answer_form.index == @answer_count - 1}
+                  />
+                </div>
+                <button
+                  type="button"
+                  id={"remove-possible-answer-#{answer_form.index}"}
+                  name="ballot[possible_answers_drop][]"
+                  value={answer_form.index}
+                  phx-click={JS.dispatch("change")}
+                  disabled={@answer_count <= Ballot.min_possible_answers()}
+                  class="rounded px-2 py-1 text-sm font-semibold text-rose-600 transition hover:bg-rose-50 disabled:text-zinc-300 disabled:hover:bg-transparent"
+                >
+                  Remove
+                </button>
               </div>
-              <button
-                type="button"
-                id={"remove-possible-answer-#{answer_form.index}"}
-                name="ballot[possible_answers_drop][]"
-                value={answer_form.index}
-                phx-click={JS.dispatch("change")}
-                disabled={@answer_count <= Ballot.min_possible_answers()}
-                class="rounded px-2 py-1 text-sm font-semibold text-rose-600 transition hover:bg-rose-50 disabled:text-zinc-300 disabled:hover:bg-transparent"
-              >
-                Remove
-              </button>
-            </div>
-          </.inputs_for>
+            </.inputs_for>
+          </div>
 
           <input type="hidden" name="ballot[possible_answers_drop][]" />
 
@@ -230,6 +256,30 @@ defmodule FlickWeb.Ballots.EditorLive do
     </Layouts.app>
     """
   end
+
+  attr :index, :integer, required: true
+  attr :direction, :string, required: true, values: ~w(up down)
+  attr :disabled, :boolean, required: true
+
+  defp move_button(assigns) do
+    ~H"""
+    <button
+      type="button"
+      id={"move-possible-answer-#{@direction}-#{@index}"}
+      data-move={@direction}
+      data-index={@index}
+      disabled={@disabled}
+      aria-label={"Move answer #{@index + 1} #{@direction}"}
+      class="rounded p-1 transition hover:bg-zinc-100 hover:text-zinc-700 disabled:opacity-30 disabled:hover:bg-transparent"
+    >
+      <.icon name={move_icon(@direction)} class="h-5 w-5" />
+    </button>
+    """
+  end
+
+  # Tailwind builds only the icon classes it finds spelled out in the source.
+  defp move_icon("up"), do: "hero-chevron-up-mini"
+  defp move_icon("down"), do: "hero-chevron-down-mini"
 
   # The second title's commas show that an answer may contain them.
   defp answer_placeholder(0), do: "Project Hail Mary by Andy Weir"
