@@ -126,3 +126,5 @@ mix boundary.visualize
 ```console
 mix clean && mix compile
 ```
+
+In CI, bump the `cache-key` default in `.github/actions/elixir-setup/action.yml` to discard the cached `_build`.
