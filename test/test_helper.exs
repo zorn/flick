@@ -2,6 +2,7 @@
 # depend on `Credo.Check`, which is unavailable in `:prod`). Credo loads them
 # via the `requires` option in `.credo.exs`; here we load them so their unit
 # tests can reference the modules.
+Code.require_file("credo/checks/case_on_boolean.ex")
 Code.require_file("credo/checks/raw_in_heex.ex")
 
 # Credo is `runtime: false`, so its supervision tree (which our custom-check

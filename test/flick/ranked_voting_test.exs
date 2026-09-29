@@ -420,6 +420,8 @@ defmodule Flick.RankedVotingTest do
       assert :closed = RankedVoting.ballot_status(ballot)
     end
 
+    # VacuousTest misses the call to application code because it goes through apply/3.
+    # credo:disable-for-next-line Jump.CredoChecks.VacuousTest
     test "raises when encountering an unknown status" do
       ballot = %Ballot{published_at: nil, closed_at: DateTime.utc_now()}
 
