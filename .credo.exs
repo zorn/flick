@@ -41,7 +41,7 @@
       # If you create your own checks, you must specify the source files for
       # them here, so they can be loaded by Credo before running the analysis.
       #
-      requires: ["credo/checks/raw_in_heex.ex"],
+      requires: ["credo/checks/*.ex"],
       #
       # If you want to enforce a style guide and need a more traditional linting
       # experience, you can change `strict` to `true` below:
@@ -183,8 +183,63 @@
           {Credo.Check.Warning.WrongTestFileExtension, []},
 
           #
+          ## Jump.CredoChecks (https://github.com/Jump-App/credo_checks)
+          ##
+          ## Catches weak or vacuous tests and LiveView anti-patterns. The
+          ## migration-safety ticket (#234) adds the migration checks,
+          ## PreferTextColumns and PreferChangeOverUpDownMigrations. Flick skips
+          ## UseObanProWorker because it has no Oban. UndeclaredExternalResource
+          ## misfires on `File.posix()` typespecs, but Flick has none.
+          #
+          {Jump.CredoChecks.AssertElementSelectorCanNeverFail, []},
+          {Jump.CredoChecks.AssertReceiveTimeout,
+           min_assert_receive_timeout: 1_000, max_refute_receive_timeout: 100},
+          {Jump.CredoChecks.AvoidFunctionLevelElse, []},
+          {Jump.CredoChecks.AvoidLoggerConfigureInTest, []},
+          {Jump.CredoChecks.AvoidSocketAssignsInTest, []},
+          {Jump.CredoChecks.ConditionalAssertion, []},
+          {Jump.CredoChecks.DoctestIExExamples,
+           derive_test_path: fn filename ->
+             filename
+             |> String.replace_leading("lib/", "test/")
+             |> String.replace_trailing(".ex", "_test.exs")
+           end},
+          {Jump.CredoChecks.ForbiddenFunction,
+           functions: [
+             {:erlang, :binary_to_term,
+              "Use Plug.Crypto.non_executable_binary_to_term/2 instead."}
+           ]},
+          {Jump.CredoChecks.LiveViewFormCanBeRehydrated, []},
+          {Jump.CredoChecks.LiveViewPubSubRequiresConnected, []},
+          {Jump.CredoChecks.NoManualContentDisposition, []},
+          {Jump.CredoChecks.SafeBinaryToTerm, []},
+          {Jump.CredoChecks.TestHasNoAssertions, []},
+          {Jump.CredoChecks.TooManyAssertions, max_assertions: 20},
+          {Jump.CredoChecks.TopLevelAliasImportRequire, []},
+          {Jump.CredoChecks.UndeclaredExternalResource, []},
+          {Jump.CredoChecks.UnusedLiveViewAssign, []},
+          {Jump.CredoChecks.VacuousTest, []},
+          {Jump.CredoChecks.WeakAssertion, []},
+
+          #
+          ## OeditusCredo (https://github.com/Oeditus/oeditus_credo)
+          ##
+          ## Catches concurrency and exception-handling mistakes that compile
+          ## cleanly. A check runs only when it is listed here. Flick skips
+          ## PreferDotAccessForStructs because it misfires on keyword lists and
+          ## maps. The trial in #225 found the rest to be noise here.
+          #
+          {OeditusCredo.Check.Warning.UnmanagedTask, []},
+          {OeditusCredo.Check.Warning.SyncOverAsync, []},
+          {OeditusCredo.Check.Warning.MissingHandleAsync, []},
+          {OeditusCredo.Check.Warning.BlockingInPlug, []},
+          {OeditusCredo.Check.Warning.SwallowingException, []},
+          {OeditusCredo.Check.Refactoring.PreferFunctionCapture, []},
+
+          #
           ## Custom Checks
           #
+          {Flick.Credo.Check.CaseOnBoolean, []},
           {Flick.Credo.Check.RawInHeex, []}
         ],
         disabled: [

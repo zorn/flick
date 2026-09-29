@@ -50,6 +50,8 @@ defmodule Flick.MixProject do
       # For code logic style and enforcement.
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+      {:jump_credo_checks, "~> 0.5", only: [:dev, :test], runtime: false},
+      {:oeditus_credo, "~> 0.11", only: [:dev, :test], runtime: false},
 
       # To Render Markdown.
       {:mdex, "~> 0.14.0"},
