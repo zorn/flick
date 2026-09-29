@@ -5,7 +5,6 @@ defmodule Flick.RankedVoting.Vote do
   """
 
   use Ecto.Schema
-  use Gettext, backend: FlickWeb.Gettext
 
   import Ecto.Changeset
 
@@ -90,7 +89,7 @@ defmodule Flick.RankedVoting.Vote do
 
     validate_change(changeset, :ballot_id, fn :ballot_id, _ ->
       if is_nil(ballot.published_at) do
-        [ballot_id: gettext("ballot must be published")]
+        [ballot_id: "ballot must be published"]
       else
         []
       end
@@ -105,7 +104,7 @@ defmodule Flick.RankedVoting.Vote do
       add_error(
         changeset,
         :ranked_answers,
-        gettext("must have at most %{count} answers", count: allowed_count)
+        "must have at most #{allowed_count} answers"
       )
     else
       changeset
@@ -121,11 +120,16 @@ defmodule Flick.RankedVoting.Vote do
       if Enum.empty?(invalid_answers) do
         []
       else
-        error_label = ngettext("invalid answer", "invalid answers", length(invalid_answers))
-        [ranked_answers: "#{error_label}: #{Enum.join(invalid_answers, ", ")}"]
+        [
+          ranked_answers:
+            "#{invalid_answers_label(invalid_answers)}: #{Enum.join(invalid_answers, ", ")}"
+        ]
       end
     end)
   end
+
+  defp invalid_answers_label([_single]), do: "invalid answer"
+  defp invalid_answers_label(_many), do: "invalid answers"
 
   @spec invalid_answers(Changeset.t(t()), [Changeset.t(RankedAnswer.t())]) :: [String.t()]
   defp invalid_answers(changeset, new_ranked_answers) do
@@ -170,7 +174,7 @@ defmodule Flick.RankedVoting.Vote do
         value = get_field(changeset, :value)
 
         if Map.get(ranked_answer_frequencies, value) > 1 and value not in ["", nil] do
-          add_error(changeset, :value, gettext("duplicates are not allowed"))
+          add_error(changeset, :value, "duplicates are not allowed")
         else
           changeset
         end
@@ -201,7 +205,7 @@ defmodule Flick.RankedVoting.Vote do
         with 0 <- index,
              value <- get_field(changeset, :value),
              true <- value in ["", nil] do
-          add_error(changeset, :value, gettext("can't be blank"))
+          add_error(changeset, :value, "can't be blank")
         else
           _ -> changeset
         end

@@ -10,8 +10,11 @@ defmodule Flick.MixProject do
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
-      compilers: [:phoenix_live_view] ++ Mix.compilers(),
+      # `:boundary` must come before `Mix.compilers()`, so its compile tracer
+      # sees every cross-module call. See docs/module-boundaries.md.
+      compilers: [:boundary, :phoenix_live_view] ++ Mix.compilers(),
       cli: cli(),
+      boundary: [default: [check: [aliases: true]]],
       listeners: [Phoenix.CodeReloader]
     ]
   end
@@ -43,6 +46,9 @@ defmodule Flick.MixProject do
     [
       # For test-driven development.
       {:mix_test_watch, "~> 1.0", only: [:dev, :test], runtime: false},
+
+      # To fail the build when code reaches past a context's public API.
+      {:boundary, "~> 0.11.0", runtime: false},
 
       # To allow our test descriptions to use a condensed map syntax.
       {:tiny_maps, "~> 3.0"},
