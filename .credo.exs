@@ -227,17 +227,16 @@
           ## Migration safety
           ##
           ## Fails an unsafe migration, or one that is hard to roll back, before
-          ## it merges. The checks skip every migration up to the backfill,
-          ## 20260927221423, so applied migrations are never edited. Jump's
-          ## checks take the cutoff as `start_after` below. ExcellentMigrations
-          ## reads it from `config/config.exs`.
+          ## it merges. The checks skip migrations up to and including
+          ## 20260927221423, because applied migrations must not change.
+          ## ExcellentMigrations reads this cutoff from `config/config.exs`.
           ##
           ## Known gaps in ExcellentMigrations:
           ##
           ##   * It detects data writes only through `Repo.*` calls, so it misses
           ##     a backfill written with `repo().query!`.
-          ##   * It flags an index or a foreign key created together with a new
-          ##     table. Mark those with a `safety-assured` comment.
+          ##   * It wrongly flags an index or a foreign key created together with
+          ##     a new table. Mark those with a `safety-assured` comment.
           #
           {ExcellentMigrations.CredoCheck.MigrationsSafety, []},
           {Jump.CredoChecks.PreferChangeOverUpDownMigrations, start_after: "20260927221423"},

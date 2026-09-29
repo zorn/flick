@@ -47,7 +47,7 @@ jobs:
       - name: Run Migrations
         run: mix ecto.create; mix ecto.migrate
 
-      # Fails a migration that can't be rolled back before it merges.
+      # Catches a migration that can't be rolled back.
       - name: Roll Back and Re-run Migrations
         run: mix ecto.rollback --all && mix ecto.migrate
 
