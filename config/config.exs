@@ -79,6 +79,10 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+# The migration-safety Credo check reads its cutoff from here, not from
+# `.credo.exs`. See the migration-safety comment in `.credo.exs`.
+config :excellent_migrations, start_after: "20260927221423"
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"

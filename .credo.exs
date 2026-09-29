@@ -23,6 +23,7 @@
         #
         included: [
           "lib/",
+          "priv/repo/migrations/",
           "src/",
           "test/",
           "web/",
@@ -111,7 +112,9 @@
           {Credo.Check.Readability.SeparateAliasRequire, []},
           {Credo.Check.Readability.SingleFunctionToBlockPipe, []},
           {Credo.Check.Readability.SpaceAfterCommas, []},
-          {Credo.Check.Readability.Specs, []},
+          # Migrations only implement `Ecto.Migration` callbacks, which need no
+          # `@spec`.
+          {Credo.Check.Readability.Specs, files: %{excluded: ["priv/repo/migrations/"]}},
           {Credo.Check.Readability.StrictModuleLayout, []},
           {Credo.Check.Readability.StringSigils, []},
           {Credo.Check.Readability.TrailingBlankLine, []},
@@ -186,8 +189,7 @@
           ## Jump.CredoChecks (https://github.com/Jump-App/credo_checks)
           ##
           ## Catches weak or vacuous tests and LiveView anti-patterns. The
-          ## migration-safety ticket (#234) adds the migration checks,
-          ## PreferTextColumns and PreferChangeOverUpDownMigrations. Flick skips
+          ## migration checks are under "Migration safety" below. Flick skips
           ## UseObanProWorker because it has no Oban. UndeclaredExternalResource
           ## misfires on `File.posix()` typespecs, but Flick has none.
           #
@@ -220,6 +222,26 @@
           {Jump.CredoChecks.UnusedLiveViewAssign, []},
           {Jump.CredoChecks.VacuousTest, []},
           {Jump.CredoChecks.WeakAssertion, []},
+
+          #
+          ## Migration safety
+          ##
+          ## Fails an unsafe migration, or one that is hard to roll back, before
+          ## it merges. The checks skip every migration up to the backfill,
+          ## 20260927221423, so applied migrations are never edited. Jump's
+          ## checks take the cutoff as `start_after` below. ExcellentMigrations
+          ## reads it from `config/config.exs`.
+          ##
+          ## Known gaps in ExcellentMigrations:
+          ##
+          ##   * It detects data writes only through `Repo.*` calls, so it misses
+          ##     a backfill written with `repo().query!`.
+          ##   * It flags an index or a foreign key created together with a new
+          ##     table. Mark those with a `safety-assured` comment.
+          #
+          {ExcellentMigrations.CredoCheck.MigrationsSafety, []},
+          {Jump.CredoChecks.PreferChangeOverUpDownMigrations, start_after: "20260927221423"},
+          {Jump.CredoChecks.PreferTextColumns, start_after: "20260927221423"},
 
           #
           ## OeditusCredo (https://github.com/Oeditus/oeditus_credo)
