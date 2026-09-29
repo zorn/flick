@@ -12,7 +12,7 @@ Boundary turns the rule into a compile-time check. Each boundary lists the bound
 
 ## The boundaries in this app
 
-Every module belongs to exactly one boundary, chosen by its name. A boundary is declared by calling `use Boundary` in its root module.
+Every module belongs to exactly one boundary, chosen by its name. Each boundary declares itself with `use Boundary` in its root module.
 
 | Boundary | Declared in | Exports | May depend on |
 |---|---|---|---|
@@ -29,7 +29,7 @@ A boundary's root module is always callable by a boundary that depends on it. Th
 
 The root `Flick` boundary exports nothing, and nothing depends on it. It holds `Flick.Mailer`, `Flick.NameGenerator`, and `Flick.Release`, which no other boundary may call.
 
-`Flick.Repo`, `Flick.Markdown`, and `Flick.DateTimeFormatter` are leaf boundaries. They depend on nothing, and each is top-level so that other boundaries can list it in `deps`. A boundary can depend only on a sibling, its parent, or a dependency of an ancestor, and it sees only what that boundary exports. A module left inside the root `Flick` boundary is therefore unreachable. The web layer lists the two formatting helpers but not `Flick.Repo`, which is how "the web layer never touches the database" is enforced.
+A boundary can depend only on a sibling, its parent, or a dependency of an ancestor, and it sees only what that boundary exports. A module left inside the root `Flick` boundary is therefore unreachable. That is why `Flick.Repo`, `Flick.Markdown`, and `Flick.DateTimeFormatter` are top-level leaf boundaries: they depend on nothing, and other boundaries can list them in `deps`. The web layer lists the two formatting helpers but not `Flick.Repo`, which is how "the web layer never touches the database" is enforced.
 
 `Flick.Application` is top-level so that it can depend on both `Flick.Repo` and `FlickWeb` to build the supervision tree.
 
@@ -41,7 +41,7 @@ The root `Flick` boundary exports nothing, and nothing depends on it. It holds `
 
 phoenix_storybook compiles the files under `storybook/` into `Storybook.*` modules. `lib/storybook.ex` claims them in a `Storybook` boundary with its checks off, because they are dev scaffolding and not domain code.
 
-The test helpers in `test/support/` are top-level boundaries with their own `deps`. This keeps the application boundaries from gaining a dependency on their behalf.
+The test helpers in `test/support/` are top-level boundaries with their own `deps`, so that no application boundary needs a test-only dependency.
 
 | Boundary | May depend on |
 |---|---|

@@ -645,6 +645,15 @@ defmodule Flick.RankedVotingTest do
       end
     end
 
+    test "failure: a single invalid answer is labeled in the singular",
+         %{published_ballot: published_ballot} do
+      attrs = %{"ranked_answers" => [%{"value" => "Forbidden Hot Dogs"}]}
+
+      assert {:error, changeset} = RankedVoting.create_vote(published_ballot, attrs)
+
+      assert "invalid answer: Forbidden Hot Dogs" in errors_on(changeset).ranked_answers
+    end
+
     test "failure: a vote should not include an answer value that is not present in the ballot",
          %{
            published_ballot: published_ballot

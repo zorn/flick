@@ -8,8 +8,8 @@ Boundary turns "go through the context" from a review convention into a
 compile-time rule before those contexts arrive.
 
 The layout matches LocalCents. The root `Flick` boundary exports nothing, each
-context is its own boundary, and `Flick.Application` uses `top_level?: true`
-rather than being renamed to `FlickApp`, as Boundary's docs prefer. Test
+context is its own boundary, and `Flick.Application` uses `top_level?: true`.
+Boundary's docs prefer renaming it to `FlickApp`, but Flick keeps the name. Test
 helpers declare their own dependencies instead of sharing one unchecked
 boundary.
 
@@ -19,8 +19,10 @@ stays private. The web layer may use `Flick.Markdown` and
 `Flick.DateTimeFormatter`, but never `Flick.Repo` or `Flick.Mailer`.
 
 `Vote` drops `use Gettext, backend: FlickWeb.Gettext`, the only dependency from
-the domain on the web layer. Its validation messages become plain strings with
-`%{count}` bindings. `CoreComponents.translate_error` already translates them at
-render time, and the app ships only `en`.
+the domain on the web layer. Its validation messages become plain strings that
+interpolate their values directly, as `Ballot`'s already do. A `%{count}` binding
+would change the stored error, which existing tests match exactly.
+`CoreComponents.translate_error` still passes them through Gettext at render
+time, and the app ships only `en`.
 
-Decided in [Consider adding Boundry.](https://github.com/zorn/flick/issues/72).
+Context: [#72](https://github.com/zorn/flick/issues/72).

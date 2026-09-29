@@ -11,7 +11,7 @@ defmodule Flick.MixProject do
       aliases: aliases(),
       deps: deps(),
       # `:boundary` must come before `Mix.compilers()`, so its compile tracer
-      # sees every cross-module call. See docs/module-boundaries.md.
+      # sees every cross-module call.
       compilers: [:boundary, :phoenix_live_view] ++ Mix.compilers(),
       cli: cli(),
       boundary: [default: [check: [aliases: true]]],
@@ -47,13 +47,11 @@ defmodule Flick.MixProject do
       # For test-driven development.
       {:mix_test_watch, "~> 1.0", only: [:dev, :test], runtime: false},
 
-      # To fail the build when code reaches past a context's public API.
-      {:boundary, "~> 0.11.0", runtime: false},
-
       # To allow our test descriptions to use a condensed map syntax.
       {:tiny_maps, "~> 3.0"},
 
       # For code logic style and enforcement.
+      {:boundary, "~> 0.11.0", runtime: false},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:jump_credo_checks, "~> 0.5", only: [:dev, :test], runtime: false},
