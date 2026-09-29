@@ -1,0 +1,25 @@
+# Betterleaks findings accepted as false positives. Each line is one finding's
+# fingerprint (`<commit>:<file>:<rule>:<line>`), so a new secret in the same
+# file still fails the scan. Add a comment saying what each fingerprint is.
+
+# Dev `secret_key_base`; production reads `SECRET_KEY_BASE` at runtime.
+37d0a8750f511488f1a55b9cd534e68679f147b9:config/dev.exs:generic-api-key:26
+# Test `secret_key_base`.
+37d0a8750f511488f1a55b9cd534e68679f147b9:config/test.exs:generic-api-key:20
+
+# Dev Postgres password (`postgres`).
+37d0a8750f511488f1a55b9cd534e68679f147b9:config/dev.exs:generic-password:6
+# Test Postgres password (`postgres`).
+37d0a8750f511488f1a55b9cd534e68679f147b9:config/test.exs:generic-password:10
+# Docker Compose Postgres password (`postgres`).
+6a9fd945bf5f30b92f4f88ff352a833c600c3cb0:compose.yml:generic-password:27
+# CI service container Postgres password (`postgres`).
+f97f64dd7918a931a69f3e5b0d4674f604341bc8:.github/workflows/build-and-test.yaml:generic-password:29
+
+# Dev Basic Auth password (`unsafe-password`).
+b73d809a29ff5cb7014f31432b237a484f68c12c:config/dev.exs:generic-password:33
+# Test Basic Auth password (`unsafe-password`).
+b73d809a29ff5cb7014f31432b237a484f68c12c:config/test.exs:generic-password:36
+
+# Generated doc example in `DataCase` (`password: "short"`).
+37d0a8750f511488f1a55b9cd534e68679f147b9:test/support/data_case.ex:generic-password:46

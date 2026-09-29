@@ -69,3 +69,34 @@ jobs:
       - name: Check dependencies for retired packages
         run: mix hex.audit
         if: always()
+
+  # Catches generic secrets, such as `SECRET_KEY_BASE` or a database URL, that
+  # GitHub's free secret scanning has no pattern for. Accepted false positives
+  # go in `.betterleaksignore`. Dependabot does not track this pinned release,
+  # so bump the version and checksum by hand.
+  secret_scan:
+    name: Secret Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      BETTERLEAKS_VERSION: 1.8.1
+      BETTERLEAKS_SHA256: efa407244e1ea8e35f582b8a42becdeac08bdead04f68eb752adda722d583c2a
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          # Scan every commit, not just the tip.
+          fetch-depth: 0
+
+      - name: Install Betterleaks
+        run: |
+          tarball="betterleaks_${BETTERLEAKS_VERSION}_linux_x64.tar.gz"
+          curl --fail --silent --show-error --location --output "$tarball" \
+            "https://github.com/betterleaks/betterleaks/releases/download/v${BETTERLEAKS_VERSION}/${tarball}"
+          echo "${BETTERLEAKS_SHA256}  ${tarball}" | sha256sum --check
+          tar --extract --gzip --file "$tarball" betterleaks
+          sudo install betterleaks /usr/local/bin/betterleaks
+
+      - name: Scan git history for secrets
+        run: betterleaks git . --redact --no-banner --verbose
