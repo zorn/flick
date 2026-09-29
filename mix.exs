@@ -50,13 +50,7 @@ defmodule Flick.MixProject do
       # For code logic style and enforcement.
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
-
-      # Extra Credo checks for test, LiveView, and Elixir quality. See the
-      # `.credo.exs` comment for which checks run.
       {:jump_credo_checks, "~> 0.5", only: [:dev, :test], runtime: false},
-
-      # Extra Credo checks for concurrency and exception-handling mistakes. Only
-      # the checks listed in `.credo.exs` run.
       {:oeditus_credo, "~> 0.11", only: [:dev, :test], runtime: false},
 
       # To Render Markdown.

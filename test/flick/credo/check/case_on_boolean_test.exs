@@ -38,6 +38,29 @@ defmodule Flick.Credo.Check.CaseOnBooleanTest do
     |> assert_issue()
   end
 
+  test "reports each boolean `case` when several are present" do
+    """
+    defmodule Flick.Sample do
+      def mode(connected?) do
+        case connected? do
+          true -> :live
+          false -> :static
+        end
+      end
+
+      def label(published?) do
+        case published? do
+          true -> "Published"
+          false -> "Draft"
+        end
+      end
+    end
+    """
+    |> to_source_file()
+    |> run_check(CaseOnBoolean)
+    |> assert_issues(2)
+  end
+
   test "does not report a guarded `true` clause" do
     """
     defmodule Flick.Sample do

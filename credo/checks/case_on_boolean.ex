@@ -1,8 +1,8 @@
 defmodule Flick.Credo.Check.CaseOnBoolean do
   @moduledoc """
-  Vendored from LocalCents' `case_on_boolean` check (#233).
+  Flags a `case` whose only clauses are `true` and `false`.
 
-  An independent reimplementation of the idea behind
+  Vendored from LocalCents for #233. It is an independent reimplementation of the idea behind
   `ExSlop.Check.Refactor.CaseTrueFalse` (MIT, © 2026 Danila Poyarkov). Flick
   vendors this one rule rather than take on the whole `ex_slop` collection.
   """
@@ -14,9 +14,8 @@ defmodule Flick.Credo.Check.CaseOnBoolean do
     explanations: [
       check: """
       A `case` whose only clauses are `true` and `false` reads better as
-      `if`/`else` — the reader shouldn't have to scan two clauses to work out
-      which branch is the truthy one. This is a common shape in machine-written
-      Elixir.
+      `if`/`else`. With `if`, the reader doesn't scan two clauses to find the
+      truthy branch. This is a common shape in machine-written Elixir.
 
           # bad
           case connected?(socket) do
@@ -47,10 +46,7 @@ defmodule Flick.Credo.Check.CaseOnBoolean do
 
   defp traverse(ast, issues, _issue_meta), do: {ast, issues}
 
-  # True only for exactly two clauses whose head patterns are the literal
-  # booleans `true` and `false` (in either order). A guarded head (`true when ...`)
-  # or an extra `_ ->` catch-all yields a non-boolean pattern, so it falls through
-  # — those are genuine `case`s, not a disguised `if`.
+  # A guard or a catch-all makes a genuine `case`, not a disguised `if`.
   defp boolean_clauses?([_, _] = clauses) do
     patterns = clauses |> Enum.map(&clause_pattern/1) |> Enum.sort()
     patterns == [false, true]

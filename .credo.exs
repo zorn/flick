@@ -41,7 +41,7 @@
       # If you create your own checks, you must specify the source files for
       # them here, so they can be loaded by Credo before running the analysis.
       #
-      requires: ["credo/checks/case_on_boolean.ex", "credo/checks/raw_in_heex.ex"],
+      requires: ["credo/checks/*.ex"],
       #
       # If you want to enforce a style guide and need a more traditional linting
       # experience, you can change `strict` to `true` below:
@@ -185,10 +185,11 @@
           #
           ## Jump.CredoChecks (https://github.com/Jump-App/credo_checks)
           ##
-          ## Catches weak or vacuous tests and LiveView anti-patterns. Options
-          ## match LocalCents. The migration checks (PreferTextColumns and
-          ## PreferChangeOverUpDownMigrations) are left for the migration-safety
-          ## work in #230. UseObanProWorker is left out because Flick has no Oban.
+          ## Catches weak or vacuous tests and LiveView anti-patterns. The
+          ## migration-safety ticket (#234) adds the migration checks,
+          ## PreferTextColumns and PreferChangeOverUpDownMigrations. Flick skips
+          ## UseObanProWorker because it has no Oban. UndeclaredExternalResource
+          ## misfires on `File.posix()` typespecs, but Flick has none.
           #
           {Jump.CredoChecks.AssertElementSelectorCanNeverFail, []},
           {Jump.CredoChecks.AssertReceiveTimeout,
@@ -224,10 +225,9 @@
           ## OeditusCredo (https://github.com/Oeditus/oeditus_credo)
           ##
           ## Catches concurrency and exception-handling mistakes that compile
-          ## cleanly. A check runs only when it is listed here, so Flick opts in
-          ## to six. PreferDotAccessForStructs is left out because it misfires on
-          ## keyword lists and maps. The rest are left out as noise; see the trial
-          ## in #225.
+          ## cleanly. A check runs only when it is listed here. Flick skips
+          ## PreferDotAccessForStructs because it misfires on keyword lists and
+          ## maps. The trial in #225 found the rest to be noise here.
           #
           {OeditusCredo.Check.Warning.UnmanagedTask, []},
           {OeditusCredo.Check.Warning.SyncOverAsync, []},
