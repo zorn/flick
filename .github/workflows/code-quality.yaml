@@ -46,3 +46,26 @@ jobs:
       - name: Check for security vulnerabilities in Phoenix project
         run: mix sobelow --config
         if: always()
+
+  # Runs as its own job so that an advisory reports on its own status line.
+  # Accepted advisories go in `.deps-audit-ignore`.
+  dependency_audit:
+    name: Dependency Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup Elixir Project
+        uses: ./.github/actions/elixir-setup
+        with:
+          build-app: false
+
+      - name: Check dependencies for known vulnerabilities
+        run: mix deps.audit --ignore-file .deps-audit-ignore
+
+      - name: Check dependencies for retired packages
+        run: mix hex.audit
+        if: always()
