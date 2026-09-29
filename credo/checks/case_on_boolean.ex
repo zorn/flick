@@ -2,9 +2,10 @@ defmodule Flick.Credo.Check.CaseOnBoolean do
   @moduledoc """
   Flags a `case` whose only clauses are `true` and `false`.
 
-  Vendored from LocalCents for #233. It is an independent reimplementation of the idea behind
-  `ExSlop.Check.Refactor.CaseTrueFalse` (MIT, © 2026 Danila Poyarkov). Flick
-  vendors this one rule rather than take on the whole `ex_slop` collection.
+  Vendored from LocalCents for #233. It is an independent reimplementation of
+  the idea behind `ExSlop.Check.Refactor.CaseTrueFalse` (MIT, © 2026 Danila
+  Poyarkov). Flick vendors this one rule rather than take on the whole
+  `ex_slop` collection.
   """
 
   use Credo.Check,
