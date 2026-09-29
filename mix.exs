@@ -60,6 +60,9 @@ defmodule Flick.MixProject do
       # For security scans.
       {:sobelow, "~> 0.14", only: [:dev, :test], runtime: false},
 
+      # To check locked dependencies against known security advisories.
+      {:mix_audit, "~> 2.1", only: [:dev, :test], runtime: false},
+
       # For UI component documentation.
       {:phoenix_storybook, "~> 1.0"},
 
@@ -123,12 +126,24 @@ defmodule Flick.MixProject do
         "tailwind storybook --minify",
         "phx.digest"
       ],
+      # Mirrors CI's Mix checks, fastest first. Every new CI check joins this
+      # list unless it needs a tool that isn't a Mix task.
       precommit: [
         "compile --warnings-as-errors",
-        "deps.unlock --unused",
+        "deps.unlock --check-unused",
         "format",
         "credo --strict",
-        "test"
+        "xref graph --label compile-connected --fail-above 0",
+        "sobelow --config",
+        "deps.audit --ignore-file .deps-audit-ignore",
+        # Run in a subprocess: the `compile` step above removes Hex's tasks
+        # from this process's code path, so an in-process `hex.audit` fails
+        # with "task could not be found".
+        "cmd mix hex.audit",
+        # Run in a subprocess so Dialyzer checks the dev build, as CI does,
+        # rather than the test build this alias runs in.
+        "cmd sh -c 'MIX_ENV=dev mix dialyzer'",
+        "test --warnings-as-errors"
       ]
     ]
   end

@@ -1,0 +1,11 @@
+# Advisories accepted for `mix deps.audit`, which both `mix precommit` and CI
+# pass this file to with `--ignore-file`.
+#
+# Add one advisory ID per line, exactly as `mix deps.audit` reports it, with no
+# trailing text. Put the reason on the comment line above it: why the advisory
+# does not affect Flick, or what update it waits on.
+#
+# Example:
+#
+#   # mint 1.10.1: Flick makes no HTTP/2 requests; remove after req updates finch.
+#   GHSA-xxxx-xxxx-xxxx
