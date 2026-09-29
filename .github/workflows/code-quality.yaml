@@ -70,8 +70,8 @@ jobs:
         run: mix hex.audit
         if: always()
 
-  # Catches generic secrets, such as `SECRET_KEY_BASE` or a database URL, that
-  # GitHub's free secret scanning has no pattern for. Accepted false positives
+  # Catches generic secrets that GitHub's free secret scanning has no pattern
+  # for, such as `SECRET_KEY_BASE` or a database URL. Accepted false positives
   # go in `.betterleaksignore`. Dependabot does not track this pinned release,
   # so bump the version and checksum by hand.
   secret_scan:

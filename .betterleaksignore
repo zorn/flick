@@ -1,8 +1,10 @@
 # Betterleaks findings accepted as false positives. Each line is one finding's
-# fingerprint (`<commit>:<file>:<rule>:<line>`), so a new secret in the same
-# file still fails the scan. Add a comment saying what each fingerprint is.
+# fingerprint (`<commit>:<file>:<rule>:<line>`). A new secret in the same file
+# still fails the scan. Every entry is a dev, test, or CI placeholder that no
+# deployed environment uses. Put a comment above each one naming the value it
+# covers.
 
-# Dev `secret_key_base`; production reads `SECRET_KEY_BASE` at runtime.
+# Dev `secret_key_base`.
 37d0a8750f511488f1a55b9cd534e68679f147b9:config/dev.exs:generic-api-key:26
 # Test `secret_key_base`.
 37d0a8750f511488f1a55b9cd534e68679f147b9:config/test.exs:generic-api-key:20
@@ -21,5 +23,5 @@ b73d809a29ff5cb7014f31432b237a484f68c12c:config/dev.exs:generic-password:33
 # Test Basic Auth password (`unsafe-password`).
 b73d809a29ff5cb7014f31432b237a484f68c12c:config/test.exs:generic-password:36
 
-# Generated doc example in `DataCase` (`password: "short"`).
+# Example in the `phx.new`-generated `DataCase` moduledoc (`password: "short"`).
 37d0a8750f511488f1a55b9cd534e68679f147b9:test/support/data_case.ex:generic-password:46
