@@ -15,9 +15,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Lints the workflows and the composite action, including shellcheck over
-  # their `run:` blocks. actionlint's first-party image bundles shellcheck, so
-  # this job needs no Elixir toolchain.
+  # actionlint's image bundles shellcheck, so this job needs no Elixir toolchain.
   actionlint:
     name: Actionlint
     runs-on: ubuntu-latest

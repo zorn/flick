@@ -1,5 +1,5 @@
-# Advisories accepted for `mix deps.audit`, which both `mix precommit` and CI
-# pass this file to with `--ignore-file`.
+# Advisories that `mix deps.audit` accepts. Both `mix precommit` and CI pass
+# this file with `--ignore-file`.
 #
 # Add one advisory ID per line, exactly as `mix deps.audit` reports it, with no
 # trailing text. Put the reason on the comment line above it: why the advisory

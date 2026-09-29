@@ -47,9 +47,8 @@ jobs:
         run: mix sobelow --config
         if: always()
 
-  # A separate job so that a dependency advisory reports as its own status
-  # line. Both audits fail hard; an admin can override to merge, and accepted
-  # advisories go in `.deps-audit-ignore` with a reason.
+  # Runs as its own job so that an advisory reports on its own status line.
+  # Accepted advisories go in `.deps-audit-ignore`.
   dependency_audit:
     name: Dependency Audit
     runs-on: ubuntu-latest

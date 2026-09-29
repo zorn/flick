@@ -126,22 +126,19 @@ defmodule Flick.MixProject do
         "tailwind storybook --minify",
         "phx.digest"
       ],
-      # Mirrors CI's Mix checks, fastest first. Every new CI check joins this
-      # list unless it needs a tool that isn't a Mix task.
+      # Mirrors CI's Mix checks, fastest first.
       precommit: [
-        "compile --warnings-as-errors",
+        "compile --all-warnings --warnings-as-errors",
         "deps.unlock --check-unused",
         "format",
         "credo --strict",
         "xref graph --label compile-connected --fail-above 0",
         "sobelow --config",
         "deps.audit --ignore-file .deps-audit-ignore",
-        # Run in a subprocess: the `compile` step above removes Hex's tasks
-        # from this process's code path, so an in-process `hex.audit` fails
-        # with "task could not be found".
+        # Runs in a subprocess because `compile` drops Hex's tasks from this
+        # code path ("task could not be found").
         "cmd mix hex.audit",
-        # Run in a subprocess so Dialyzer checks the dev build, as CI does,
-        # rather than the test build this alias runs in.
+        # Runs in a subprocess so Dialyzer checks the dev build, as CI does.
         "cmd sh -c 'MIX_ENV=dev mix dialyzer'",
         "test --warnings-as-errors"
       ]
