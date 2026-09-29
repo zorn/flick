@@ -112,8 +112,7 @@
           {Credo.Check.Readability.SeparateAliasRequire, []},
           {Credo.Check.Readability.SingleFunctionToBlockPipe, []},
           {Credo.Check.Readability.SpaceAfterCommas, []},
-          # Migrations only implement `Ecto.Migration` callbacks, which need no
-          # `@spec`.
+          # Migrations only implement `Ecto.Migration` callbacks, which need no `@spec`.
           {Credo.Check.Readability.Specs, files: %{excluded: ["priv/repo/migrations/"]}},
           {Credo.Check.Readability.StrictModuleLayout, []},
           {Credo.Check.Readability.StringSigils, []},
