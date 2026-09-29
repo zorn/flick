@@ -52,6 +52,7 @@ defmodule Flick.MixProject do
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:jump_credo_checks, "~> 0.5", only: [:dev, :test], runtime: false},
       {:oeditus_credo, "~> 0.11", only: [:dev, :test], runtime: false},
+      {:excellent_migrations, "~> 0.1", only: [:dev, :test], runtime: false},
 
       # To Render Markdown.
       {:mdex, "~> 0.14.0"},

@@ -79,6 +79,12 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+# ExcellentMigrations reads its cutoff from here, not from `.credo.exs`. It is a
+# dev and test dependency, so prod would warn that the app is not available.
+if config_env() in [:dev, :test] do
+  config :excellent_migrations, start_after: "20260927221423"
+end
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"
