@@ -49,8 +49,18 @@ defmodule Flick.MixProject do
       "docs/decisions/[0-9]*.md"
       |> Path.wildcard()
       |> Enum.sort_by(&(&1 |> Path.basename() |> Integer.parse() |> elem(0)))
+      |> Enum.map(&decision_extra/1)
 
     ["README.md"] ++ guides() ++ decisions
+  end
+
+  # The sidebar already groups these under Decisions, so the title drops the
+  # `Decision:` prefix. The page heading still comes from the file and keeps it.
+  defp decision_extra(path) do
+    case Regex.run(~r/^# Decision: (.+)$/m, File.read!(path), capture: :all_but_first) do
+      [title] -> {path, title: title}
+      nil -> path
+    end
   end
 
   defp guides, do: ["docs/ubiquitous_language.md", "docs/module-boundaries.md"]
