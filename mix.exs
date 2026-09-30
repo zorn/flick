@@ -26,8 +26,8 @@ defmodule Flick.MixProject do
         extras: extras(),
         groups_for_extras: groups_for_extras(),
         groups_for_modules: groups_for_modules(),
-        # The module-boundaries guides name these hidden (`@moduledoc false`)
-        # modules, so ExDoc must not try to autolink them.
+        # The module-boundaries guide and decision name these hidden
+        # (`@moduledoc false`) modules, so ExDoc must not try to autolink them.
         skip_code_autolink_to: ["Flick.Application", "Storybook"],
         # Keeps the README's image paths working both on GitHub and in the
         # generated HTML.
@@ -39,26 +39,25 @@ defmodule Flick.MixProject do
     ]
   end
 
-  # The decisions are globbed so a new one is published without editing this
-  # list. They sort by their leading number because the file names are not
-  # zero-padded, so a string sort would put `10-` before `2-`.
+  # A glob publishes a new decision without an edit here. The file names are not
+  # zero-padded. Sorting by the leading number keeps `10-` after `2-`.
   #
-  # `docs/research/*.md` is deliberately not published. A research note records
-  # what was true on the day it was written, so publishing it as living docs
-  # invites stale-link churn. A published page that cites one links to it as a
-  # GitHub blob URL instead.
+  # `docs/research/*.md` stays unpublished because each note is a dated snapshot
+  # whose links go stale. Published pages link to one by its GitHub blob URL.
   defp extras do
     decisions =
       "docs/decisions/*.md"
       |> Path.wildcard()
       |> Enum.sort_by(&(&1 |> Path.basename() |> Integer.parse() |> elem(0)))
 
-    ["README.md", "docs/ubiquitous_language.md", "docs/module-boundaries.md"] ++ decisions
+    ["README.md"] ++ guides() ++ decisions
   end
+
+  defp guides, do: ["docs/ubiquitous_language.md", "docs/module-boundaries.md"]
 
   defp groups_for_extras do
     [
-      Guides: ["docs/ubiquitous_language.md", "docs/module-boundaries.md"],
+      Guides: guides(),
       Decisions: ~r{docs/decisions/}
     ]
   end
@@ -202,10 +201,10 @@ defmodule Flick.MixProject do
         # Runs in a subprocess because `compile` drops Hex's tasks from this
         # code path ("task could not be found").
         "cmd mix hex.audit",
-        # Runs in a subprocess so Dialyzer checks the dev build, as CI does.
-        "cmd sh -c 'MIX_ENV=dev mix dialyzer'",
         # Runs in a subprocess because ExDoc is a dev-only dependency.
         "cmd sh -c 'MIX_ENV=dev mix docs --warnings-as-errors'",
+        # Runs in a subprocess so Dialyzer checks the dev build, as CI does.
+        "cmd sh -c 'MIX_ENV=dev mix dialyzer'",
         "test --warnings-as-errors"
       ]
     ]
