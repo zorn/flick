@@ -25,7 +25,7 @@ Every module belongs to exactly one boundary, chosen by its name. Each boundary 
 | `Flick.Application` | `lib/flick/application.ex` | — | `Flick.Repo`, `FlickWeb` |
 | `Storybook` | `lib/storybook.ex` | (checks off) | (checks off) |
 
-A boundary's root module is always callable by a boundary that depends on it. That module is the public API. `exports` only adds more modules to the public surface. For `Flick.RankedVoting`, those are the schemas that LiveViews build and pattern-match. `EmbedParams` is an implementation module, so it stays private.
+A boundary's root module is always callable by a boundary that depends on it. That module is the public API. `exports` only adds more modules to the public surface. For `Flick.RankedVoting`, those are the schemas that LiveViews build and pattern-match. `EmbedParams` is an implementation module, so it stays private. Boundary exports whole modules, so every public function on an exported schema is callable too, including `changeset/2`. Calling changesets only through `RankedVoting` is a convention that Boundary does not enforce (see #244).
 
 The root `Flick` boundary exports nothing, and nothing depends on it. It holds `Flick.Mailer`, `Flick.NameGenerator`, and `Flick.Release`, which no other boundary may call.
 
