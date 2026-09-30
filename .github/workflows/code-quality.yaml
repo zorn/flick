@@ -47,6 +47,10 @@ jobs:
         run: mix sobelow --config
         if: always()
 
+      - name: Check documentation for warnings
+        run: mix docs --warnings-as-errors
+        if: always()
+
   # Runs as its own job so that an advisory reports on its own status line.
   # Accepted advisories go in `.deps-audit-ignore`.
   dependency_audit:

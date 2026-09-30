@@ -15,7 +15,61 @@ defmodule Flick.MixProject do
       compilers: [:boundary, :phoenix_live_view] ++ Mix.compilers(),
       cli: cli(),
       boundary: [default: [check: [aliases: true]]],
-      listeners: [Phoenix.CodeReloader]
+      listeners: [Phoenix.CodeReloader],
+
+      # Docs
+      name: "Flick",
+      source_url: "https://github.com/zorn/flick",
+      source_ref: "main",
+      docs: [
+        main: "readme",
+        extras: extras(),
+        groups_for_extras: groups_for_extras(),
+        groups_for_modules: groups_for_modules(),
+        # The module-boundaries guides name these hidden (`@moduledoc false`)
+        # modules, so ExDoc must not try to autolink them.
+        skip_code_autolink_to: ["Flick.Application", "Storybook"],
+        # Keeps the README's image paths working both on GitHub and in the
+        # generated HTML.
+        assets: %{
+          "docs/images" => "docs/images",
+          "docs/screenshots" => "docs/screenshots"
+        }
+      ]
+    ]
+  end
+
+  # The decisions are globbed so a new one is published without editing this
+  # list. They sort by their leading number because the file names are not
+  # zero-padded, so a string sort would put `10-` before `2-`.
+  #
+  # `docs/research/*.md` is deliberately not published. A research note records
+  # what was true on the day it was written, so publishing it as living docs
+  # invites stale-link churn. A published page that cites one links to it as a
+  # GitHub blob URL instead.
+  defp extras do
+    decisions =
+      "docs/decisions/*.md"
+      |> Path.wildcard()
+      |> Enum.sort_by(&(&1 |> Path.basename() |> Integer.parse() |> elem(0)))
+
+    ["README.md", "docs/ubiquitous_language.md", "docs/module-boundaries.md"] ++ decisions
+  end
+
+  defp groups_for_extras do
+    [
+      Guides: ["docs/ubiquitous_language.md", "docs/module-boundaries.md"],
+      Decisions: ~r{docs/decisions/}
+    ]
+  end
+
+  # A module lands in the first group it matches, so `Storybook` comes before
+  # the `FlickWeb` catch-all that would otherwise claim `FlickWeb.Storybook`.
+  defp groups_for_modules do
+    [
+      Storybook: [~r/^Storybook\./, ~r/^FlickWeb\.Storybook/],
+      Core: [Flick, ~r/^Flick\./],
+      Web: [FlickWeb, ~r/^FlickWeb/]
     ]
   end
 
@@ -63,6 +117,9 @@ defmodule Flick.MixProject do
 
       # To santitize the HTML we expect to see in Markdown content.
       {:html_sanitize_ex, "~> 1.4"},
+
+      # For generating HTML documentation.
+      {:ex_doc, "~> 0.40.4", only: :dev, runtime: false, warn_if_outdated: true},
 
       # For security scans.
       {:sobelow, "~> 0.14", only: [:dev, :test], runtime: false},
@@ -147,6 +204,8 @@ defmodule Flick.MixProject do
         "cmd mix hex.audit",
         # Runs in a subprocess so Dialyzer checks the dev build, as CI does.
         "cmd sh -c 'MIX_ENV=dev mix dialyzer'",
+        # Runs in a subprocess because ExDoc is a dev-only dependency.
+        "cmd sh -c 'MIX_ENV=dev mix docs --warnings-as-errors'",
         "test --warnings-as-errors"
       ]
     ]
