@@ -1,6 +1,6 @@
 # Flick
 
-![Still frame from the movie Election, the character Tracy Flick is holding up a cupcake with the lettering "Pick Flick" across the icing.](docs/pick-flick.png)
+![Still frame from the movie Election, the character Tracy Flick is holding up a cupcake with the lettering "Pick Flick" across the icing.](docs/images/pick-flick.png)
 
 Flick is a simple Elixir / Phoenix LiveView app that helps capture ranked votes. You can see this project in action at <https://rankedvote.app/>.
 
