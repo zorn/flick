@@ -46,7 +46,7 @@ defmodule Flick.MixProject do
   # whose links go stale. Published pages link to one by its GitHub blob URL.
   defp extras do
     decisions =
-      "docs/decisions/*.md"
+      "docs/decisions/[0-9]*.md"
       |> Path.wildcard()
       |> Enum.sort_by(&(&1 |> Path.basename() |> Integer.parse() |> elem(0)))
 
