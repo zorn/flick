@@ -104,7 +104,8 @@ defmodule Flick.RankedVoting.Vote do
       add_error(
         changeset,
         :ranked_answers,
-        "must have at most #{allowed_count} answers"
+        "must have at most %{count} answer(s)",
+        count: allowed_count
       )
     else
       changeset
@@ -122,14 +123,12 @@ defmodule Flick.RankedVoting.Vote do
       else
         [
           ranked_answers:
-            "#{invalid_answers_label(invalid_answers)}: #{Enum.join(invalid_answers, ", ")}"
+            {"invalid answer(s): %{answers}",
+             count: length(invalid_answers), answers: Enum.join(invalid_answers, ", ")}
         ]
       end
     end)
   end
-
-  defp invalid_answers_label([_single]), do: "invalid answer"
-  defp invalid_answers_label(_many), do: "invalid answers"
 
   @spec invalid_answers(Changeset.t(t()), [Changeset.t(RankedAnswer.t())]) :: [String.t()]
   defp invalid_answers(changeset, new_ranked_answers) do

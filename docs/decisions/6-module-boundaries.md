@@ -19,10 +19,11 @@ stays private. The web layer may use `Flick.Markdown` and
 `Flick.DateTimeFormatter`, but never `Flick.Repo` or `Flick.Mailer`.
 
 `Vote` drops `use Gettext, backend: FlickWeb.Gettext`, the only dependency from
-the domain on the web layer. Its validation messages become plain strings that
-interpolate their values directly, as `Ballot`'s already do. A `%{count}` binding
-would change the stored error, which existing tests match exactly.
-`CoreComponents.translate_error` still passes them through Gettext at render
-time, and the app ships only `en`.
+the domain on the web layer. The domain now stores untranslated messages with
+Gettext bindings such as `%{count}`, and `CoreComponents.translate_error`
+translates them at render time. The app ships only `en`, but every domain
+message is in `priv/gettext/errors.pot`, so a new locale needs no code change.
+Values never go into the message itself, because each distinct string would
+need its own catalog entry.
 
 Context: [#72](https://github.com/zorn/flick/issues/72).
