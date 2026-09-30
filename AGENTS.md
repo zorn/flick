@@ -6,6 +6,12 @@ Flick is a ranked voting web application built with Elixir and Phoenix LiveView.
 - Add every new CI check to the `precommit` alias in `mix.exs`, unless it needs a tool that isn't a Mix task. `precommit` mirrors CI's Mix checks, so a green local run predicts a green pull request
 - Use the already included and available `:req` (`Req`) library for HTTP requests, **avoid** `:httpoison`, `:tesla`, and `:httpc`. Req is included by default and is the preferred HTTP client for Phoenix apps
 
+## Hosting
+
+Flick runs on Render, in workspace `tea-cr5894tumphs73e1ml0g` as the web service `flick` (`srv-cr590j08fa8c73acf5u0`). Pass that workspace ID to the Render tools rather than asking which workspace to use. The service is managed by a Blueprint, so `render.yaml` is the source of truth for its settings. A dashboard change that `render.yaml` does not carry is overwritten on the next sync.
+
+These IDs are identifiers, not credentials. Never commit a Render API key or the service's deploy hook URL, since the hook URL embeds a key that triggers deploys.
+
 ## Flick domain knowledge
 
 ### Ballot state machine
