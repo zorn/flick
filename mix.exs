@@ -51,7 +51,7 @@ defmodule Flick.MixProject do
       |> Enum.sort_by(&(&1 |> Path.basename() |> Integer.parse() |> elem(0)))
       |> Enum.map(&decision_extra/1)
 
-    ["README.md"] ++ guides() ++ decisions
+    ["README.md", "docs/ubiquitous_language.md", "docs/module-boundaries.md"] ++ decisions
   end
 
   # The sidebar already groups these under Decisions, so the title drops the
@@ -63,11 +63,9 @@ defmodule Flick.MixProject do
     end
   end
 
-  defp guides, do: ["docs/ubiquitous_language.md", "docs/module-boundaries.md"]
-
   defp groups_for_extras do
     [
-      Guides: guides(),
+      Guides: ~r{^docs/[^/]+\.md$},
       Decisions: ~r{docs/decisions/}
     ]
   end
