@@ -4,6 +4,8 @@ defmodule Flick.Application do
   # for more information on OTP Applications
   @moduledoc false
 
+  use Boundary, top_level?: true, deps: [Flick.Repo, FlickWeb]
+
   use Application
 
   @impl Application

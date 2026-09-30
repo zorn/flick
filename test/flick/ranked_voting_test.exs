@@ -101,7 +101,7 @@ defmodule Flick.RankedVotingTest do
       attrs = BallotFixture.valid_ballot_attributes(%{possible_answers: answers})
 
       assert {:error, changeset} = RankedVoting.create_ballot(attrs)
-      assert "must have at most 100 answers" in errors_on(changeset).possible_answers
+      assert "must have at most 100 answer(s)" in errors_on(changeset).possible_answers
     end
 
     test "failure: a blank possible answer is rejected" do
@@ -507,7 +507,8 @@ defmodule Flick.RankedVotingTest do
 
       # `errors_on/1` reports the blank rows' errors under this key. Read the cap
       # error from the ballot changeset instead.
-      assert {"must have at most 100 answers", []} = changeset.errors[:possible_answers]
+      assert {"must have at most %{count} answer(s)", [count: 100]} =
+               changeset.errors[:possible_answers]
     end
 
     test "failure: an answers map far beyond the answer cap builds no more than one extra answer" do
@@ -517,7 +518,9 @@ defmodule Flick.RankedVotingTest do
       changeset = RankedVoting.change_ballot(ballot, %{"possible_answers" => answers})
 
       assert length(Ecto.Changeset.get_field(changeset, :possible_answers)) == 101
-      assert {"must have at most 100 answers", []} = changeset.errors[:possible_answers]
+
+      assert {"must have at most %{count} answer(s)", [count: 100]} =
+               changeset.errors[:possible_answers]
     end
 
     test "failure: an answers list far beyond the answer cap builds no more than one extra answer" do
@@ -527,7 +530,9 @@ defmodule Flick.RankedVotingTest do
       changeset = RankedVoting.change_ballot(ballot, %{"possible_answers" => answers})
 
       assert length(Ecto.Changeset.get_field(changeset, :possible_answers)) == 101
-      assert {"must have at most 100 answers", []} = changeset.errors[:possible_answers]
+
+      assert {"must have at most %{count} answer(s)", [count: 100]} =
+               changeset.errors[:possible_answers]
     end
   end
 
@@ -628,7 +633,9 @@ defmodule Flick.RankedVotingTest do
       }
 
       assert {:error, changeset} = RankedVoting.create_vote(published_ballot, attrs)
-      assert {"must have at most 4 answers", []} = changeset.errors[:ranked_answers]
+
+      assert {"must have at most %{count} answer(s)", [count: 4]} =
+               changeset.errors[:ranked_answers]
     end
 
     test "failure: ranked answers far beyond the rank limit build no more than one extra answer",
@@ -641,8 +648,20 @@ defmodule Flick.RankedVotingTest do
 
         assert {:error, changeset} = RankedVoting.create_vote(published_ballot, attrs)
         assert length(Ecto.Changeset.get_field(changeset, :ranked_answers)) == 6
-        assert {"must have at most 4 answers", []} = changeset.errors[:ranked_answers]
+
+        assert {"must have at most %{count} answer(s)", [count: 4]} =
+                 changeset.errors[:ranked_answers]
       end
+    end
+
+    test "failure: a single invalid answer carries a count of one for pluralization",
+         %{published_ballot: published_ballot} do
+      attrs = %{"ranked_answers" => [%{"value" => "Forbidden Hot Dogs"}]}
+
+      assert {:error, changeset} = RankedVoting.create_vote(published_ballot, attrs)
+
+      assert {"invalid answer(s): %{answers}", [count: 1, answers: "Forbidden Hot Dogs"]} =
+               changeset.errors[:ranked_answers]
     end
 
     test "failure: a vote should not include an answer value that is not present in the ballot",
@@ -658,7 +677,7 @@ defmodule Flick.RankedVotingTest do
 
       assert {:error, changeset} = RankedVoting.create_vote(published_ballot, attrs)
 
-      assert "invalid answers: Forbidden Hot Dogs, Illegal Cookies" in errors_on(changeset).ranked_answers
+      assert "invalid answer(s): Forbidden Hot Dogs, Illegal Cookies" in errors_on(changeset).ranked_answers
     end
 
     test "failure: a vote should not include duplicate answer values",

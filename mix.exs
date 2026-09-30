@@ -10,8 +10,11 @@ defmodule Flick.MixProject do
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
-      compilers: [:phoenix_live_view] ++ Mix.compilers(),
+      # `:boundary` must come before `Mix.compilers()`, so its compile tracer
+      # sees every cross-module call.
+      compilers: [:boundary, :phoenix_live_view] ++ Mix.compilers(),
       cli: cli(),
+      boundary: [default: [check: [aliases: true]]],
       listeners: [Phoenix.CodeReloader]
     ]
   end
@@ -48,6 +51,7 @@ defmodule Flick.MixProject do
       {:tiny_maps, "~> 3.0"},
 
       # For code logic style and enforcement.
+      {:boundary, "~> 0.11.0", runtime: false},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:jump_credo_checks, "~> 0.5", only: [:dev, :test], runtime: false},

@@ -4,6 +4,8 @@ defmodule Flick.DateTimeFormatter do
   for display to the user.
   """
 
+  use Boundary, top_level?: true, deps: []
+
   @doc """
   Returns a string representation of the given `DateTime` value, displaying it
   using the optional time zone.

@@ -4,6 +4,8 @@ defmodule Support.Fixtures.BallotFixture do
   `Flick.RankedVoting.Ballot` entities for testing.
   """
 
+  use Boundary, top_level?: true, deps: [Flick.RankedVoting]
+
   alias Flick.RankedVoting.Ballot
 
   @doc """

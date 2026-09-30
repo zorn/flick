@@ -34,7 +34,11 @@ inputs:
     description: By default, we will install Hex (mix local.hex --force).
   cache-key:
     required: false
-    default: "v1"
+    # Bumped to v2 to clear the `_build` cached before Boundary. An incremental
+    # compile over that cache rebuilds only some modules, so Boundary reports
+    # "unknown module ... is listed as an export" for modules that exist.
+    # See https://github.com/sasa1977/boundary/issues/72
+    default: "v2"
     description: If you need to reset the cache for some reason, you can change this key.
 outputs:
   otp-version:

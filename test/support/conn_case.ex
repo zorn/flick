@@ -15,6 +15,8 @@ defmodule FlickWeb.ConnCase do
   this option is not recommended for other databases.
   """
 
+  use Boundary, top_level?: true, deps: [Flick.DataCase]
+
   use ExUnit.CaseTemplate
 
   using do

@@ -1,9 +1,11 @@
 defmodule Flick do
   @moduledoc """
-  Flick keeps the contexts that define your domain
-  and business logic.
+  The root boundary. It holds shared infrastructure, such as `Flick.Mailer`
+  and `Flick.Release`, that no other boundary may call.
 
-  Contexts are also responsible for managing your data, regardless
-  if it comes from the database, an external API or others.
+  Each domain context, such as `Flick.RankedVoting`, is a top-level boundary of
+  its own. See `docs/module-boundaries.md`.
   """
+
+  use Boundary, deps: [], exports: []
 end

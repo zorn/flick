@@ -107,3 +107,34 @@ msgstr ""
 
 msgid "must be equal to %{number}"
 msgstr ""
+
+## From Flick.RankedVoting.Ballot
+msgid "can only contain letters, numbers, and hyphens"
+msgstr ""
+
+msgid "must have at least two answers"
+msgstr ""
+
+msgid "must have at most %{count} answer(s)"
+msgid_plural "must have at most %{count} answer(s)"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "repeats an earlier answer"
+msgstr ""
+
+## From Flick.RankedVoting.PossibleAnswer
+msgid "can't contain line breaks"
+msgstr ""
+
+## From Flick.RankedVoting.Vote
+msgid "ballot must be published"
+msgstr ""
+
+msgid "invalid answer(s): %{answers}"
+msgid_plural "invalid answer(s): %{answers}"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "duplicates are not allowed"
+msgstr ""

@@ -3,6 +3,8 @@ defmodule Flick.Markdown do
   Provides functions for securely and consistently rendering Markdown content.
   """
 
+  use Boundary, top_level?: true, deps: []
+
   @doc """
   Renders the provided Markdown content string to HTML.
 

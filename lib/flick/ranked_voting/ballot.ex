@@ -113,7 +113,8 @@ defmodule Flick.RankedVoting.Ballot do
         add_error(
           changeset,
           :possible_answers,
-          "must have at most #{@max_possible_answers} answers"
+          "must have at most %{count} answer(s)",
+          count: @max_possible_answers
         )
 
       true ->

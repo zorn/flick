@@ -3,6 +3,11 @@ defmodule Flick.RankedVoting do
   Provides functions related to managing `Flick.RankedVoting.Ballot` entities.
   """
 
+  use Boundary,
+    top_level?: true,
+    deps: [Flick.Repo],
+    exports: [Ballot, Vote, PossibleAnswer, RankedAnswer]
+
   import Ecto.Query
 
   alias Flick.RankedVoting.Ballot
