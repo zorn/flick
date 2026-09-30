@@ -38,6 +38,16 @@ services:
       property: connectionString
   region: oregon
   buildCommand: ./bin/build.sh
+  # A push that changes only these paths skips the autodeploy, since none of
+  # them reach the release. Ignore a path only if bin/build.sh never reads it,
+  # or a deploy it needed is skipped and the release goes stale. `*` stops at
+  # `/`, so `*.md` covers root Markdown only. https://render.com/docs/monorepo-support
+  buildFilter:
+    ignoredPaths:
+    - .github/**
+    - .claude/**
+    - docs/**
+    - "*.md"
   startCommand: _build/prod/rel/flick/bin/flick eval "Flick.Release.migrate" && _build/prod/rel/flick/bin/flick
     start
   domains:
