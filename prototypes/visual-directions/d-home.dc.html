@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Swiss minimal · Home</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400..600&amp;family=Schibsted+Grotesk:wght@400..900&amp;display=swap">
+<style>
+body{margin:0;background:#fcfcf9;color:#12120f;font-family:'Schibsted Grotesk',ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+*,*::before,*::after{box-sizing:border-box}
+a{-webkit-tap-highlight-color:transparent}
+:focus-visible{outline:2px solid #db3008;outline-offset:3px}
+.d-wrap{padding-left:20px;padding-right:20px}
+@media (min-width:768px){.d-wrap{padding-left:40px;padding-right:40px}}
+.d-mark{transition:color .15s}
+.d-mark:hover{color:#db3008 !important}
+.d-cta-sm{transition:background-color .15s,color .15s}
+.d-cta-sm:hover{background-color:#12120f !important;color:#fcfcf9 !important}
+.d-foot a{transition:color .15s}
+.d-foot a:hover{color:#db3008 !important}
+.d-inline{transition:color .15s,text-decoration-color .15s}
+.d-inline:hover{color:#db3008 !important;text-decoration-color:#db3008 !important}
+.d-cta{transition:background-color .2s}
+.d-cta:hover{background-color:#db3008 !important}
+.d-line{transition:background-color .15s,color .15s}
+.d-line:hover{background-color:#12120f !important;color:#fcfcf9 !important}
+.d-band{transition:color .2s}
+.d-band:hover{color:#db3008 !important}
+.d-arrow{transition:transform .25s cubic-bezier(.2,.7,0,1)}
+.d-cta:hover .d-arrow,.d-line:hover .d-arrow,.d-band:hover .d-arrow{transform:translateX(6px)}
+.d-ns{display:flex;align-items:flex-end;gap:10px}
+.d-n{display:block;font-weight:820;line-height:.74;letter-spacing:-.07em;font-variant-numeric:tabular-nums}
+.d-n1{font-size:184px}.d-n2{font-size:138px}.d-n3{font-size:104px}.d-n4{font-size:78px}.d-n5{font-size:58px}
+.d-h1{font-size:44px}
+.d-hero{grid-template-columns:minmax(0,1fr)}
+.d-sec{grid-template-columns:minmax(0,1fr)}
+.d-bandtxt{font-size:40px}
+@media (min-width:960px){
+.d-ns{gap:24px}
+.d-n1{font-size:420px}.d-n2{font-size:316px}.d-n3{font-size:236px}.d-n4{font-size:176px}.d-n5{font-size:132px}
+.d-h1{font-size:80px}
+.d-hero{grid-template-columns:minmax(0,7fr) minmax(0,5fr)}
+.d-sec{grid-template-columns:minmax(0,4fr) minmax(0,8fr)}
+.d-bandtxt{font-size:88px}
+}
+@keyframes d-up{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+@keyframes d-draw{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.d-up{animation:d-up .9s cubic-bezier(.2,.7,0,1) both}
+.d-draw{transform-origin:left center;animation:d-draw 1.1s cubic-bezier(.2,.7,0,1) .2s both}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none !important;transition:none !important}}
+</style>
+</helmet>
+<div style="background: #fcfcf9; color: #12120f; font-family: 'Schibsted Grotesk', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;">
+
+  <header class="d-wrap" style="border-top: 6px solid #12120f;">
+    <div style="max-width: 1160px; margin: 0 auto; min-height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 16px; border-bottom: 1px solid #12120f;">
+      <a href="d-home.dc.html" class="d-mark" style="display: inline-flex; align-items: center; gap: 10px; min-height: 44px; color: #12120f; text-decoration: none; font-size: 19px; font-weight: 760; letter-spacing: -0.025em;">
+        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" style="display: block; flex: none;"><rect x="0" y="0" width="20" height="2.5" fill="#db3008"></rect><rect x="0" y="4.4" width="16" height="2.5" fill="#12120f"></rect><rect x="0" y="8.8" width="12" height="2.5" fill="#12120f"></rect><rect x="0" y="13.1" width="8" height="2.5" fill="#12120f"></rect><rect x="0" y="17.5" width="4" height="2.5" fill="#12120f"></rect></svg>
+        <span>RankedVote<span style="font-weight: 420; color: #5c5b57;">.app</span></span>
+      </a>
+      <a href="#" class="d-cta-sm" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; border: 1px solid #12120f; color: #12120f; text-decoration: none; font-size: 15px; font-weight: 650;">Create a ballot</a>
+    </div>
+  </header>
+
+  <main>
+    <section aria-labelledby="d-hero-h" class="d-wrap">
+      <div style="max-width: 1160px; margin: 0 auto; padding-top: 40px;">
+        <p style="margin: 0 0 28px; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: #5c5b57;">Ranked voting · Free · Open source</p>
+
+        <div aria-hidden="true" class="d-ns">
+          <span class="d-n d-n1 d-up" style="color: #db3008;">1</span>
+          <span class="d-n d-n2 d-up" style="color: #12120f; animation-delay: 80ms;">2</span>
+          <span class="d-n d-n3 d-up" style="color: #12120f; animation-delay: 160ms;">3</span>
+          <span class="d-n d-n4 d-up" style="color: #12120f; animation-delay: 240ms;">4</span>
+          <span class="d-n d-n5 d-up" style="color: #12120f; animation-delay: 320ms;">5</span>
+        </div>
+        <div aria-hidden="true" class="d-draw" style="height: 2px; margin-top: 18px; background: #12120f;"></div>
+
+        <div class="d-hero" style="display: grid; column-gap: 64px; row-gap: 24px; padding-top: 28px; align-items: end;">
+          <h1 id="d-hero-h" class="d-h1" style="margin: 0; font-weight: 780; line-height: 0.98; letter-spacing: -0.04em; text-wrap: balance;">Rank the choices. Find the consensus.</h1>
+          <div style="display: flex; flex-direction: column; gap: 16px; min-width: 0;">
+            <p style="margin: 0; font-size: 18px; line-height: 1.5;">Most votes ask each voter for one choice. A ranked vote asks voters to put their preferences in order instead, and that leads to a better consensus outcome.</p>
+            <p style="margin: 0; font-size: 18px; line-height: 1.5;">RankedVote.app helps you create, run, and tally ranked-vote ballots quickly. It is free to use and open source. Nobody needs an account to create a ballot or to vote.</p>
+            <a href="#" class="d-cta" style="margin-top: 8px; min-height: 60px; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 0 20px; background: #12120f; color: #fcfcf9; text-decoration: none; font-size: 18px; font-weight: 720; letter-spacing: -0.01em;">
+              <span>Create a ballot</span>
+              <svg class="d-arrow" aria-hidden="true" width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="#fcfcf9" stroke-width="1.75" style="flex: none;"><path d="M2 11h16M12 5l6 6-6 6"></path></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="d-how-h" class="d-wrap" style="margin-top: 96px;">
+      <div style="max-width: 1160px; margin: 0 auto;">
+        <h2 id="d-how-h" style="margin: 0 0 20px; font-size: 15px; font-weight: 780; letter-spacing: 0.03em; text-transform: uppercase;">How it works</h2>
+        <ol style="list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); column-gap: 32px;">
+          <li style="padding: 16px 0 32px; border-top: 2px solid #12120f;">
+            <span aria-hidden="true" style="display: block; font-size: 96px; font-weight: 820; line-height: 0.8; letter-spacing: -0.06em;">1</span>
+            <h3 style="margin: 20px 0 8px; font-size: 24px; font-weight: 760; letter-spacing: -0.02em;"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap;">Step 1: </span>Create</h3>
+            <p style="margin: 0; max-width: 24em; font-size: 17px; line-height: 1.5;">Write a question and the possible answers.</p>
+          </li>
+          <li style="padding: 16px 0 32px; border-top: 2px solid #12120f;">
+            <span aria-hidden="true" style="display: block; font-size: 96px; font-weight: 820; line-height: 0.8; letter-spacing: -0.06em;">2</span>
+            <h3 style="margin: 20px 0 8px; font-size: 24px; font-weight: 760; letter-spacing: -0.02em;"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap;">Step 2: </span>Publish</h3>
+            <p style="margin: 0; max-width: 24em; font-size: 17px; line-height: 1.5;">Publish the ballot to get a link, and share it with your voters.</p>
+          </li>
+          <li style="padding: 16px 0 32px; border-top: 2px solid #12120f;">
+            <span aria-hidden="true" style="display: block; font-size: 96px; font-weight: 820; line-height: 0.8; letter-spacing: -0.06em;">3</span>
+            <h3 style="margin: 20px 0 8px; font-size: 24px; font-weight: 760; letter-spacing: -0.02em;"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap;">Step 3: </span>Tally</h3>
+            <p style="margin: 0; max-width: 24em; font-size: 17px; line-height: 1.5;">Count the votes and find the winner with a point-based count.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section aria-labelledby="d-for-h" class="d-wrap" style="margin-top: 72px;">
+      <div class="d-sec" style="max-width: 1160px; margin: 0 auto; display: grid; column-gap: 64px; row-gap: 16px; padding-top: 16px; border-top: 1px solid #12120f;">
+        <h2 id="d-for-h" style="margin: 0; font-size: 15px; font-weight: 780; letter-spacing: 0.03em; text-transform: uppercase;">Good for picking</h2>
+        <ul style="list-style: none; margin: 0; padding: 0;">
+          <li style="padding: 14px 0; border-bottom: 1px solid #d2d1ce; font-size: 26px; font-weight: 650; line-height: 1.15; letter-spacing: -0.02em;">A book for a book club</li>
+          <li style="padding: 14px 0; border-bottom: 1px solid #d2d1ce; font-size: 26px; font-weight: 650; line-height: 1.15; letter-spacing: -0.02em;">A movie for family night</li>
+          <li style="padding: 14px 0; border-bottom: 1px solid #d2d1ce; font-size: 26px; font-weight: 650; line-height: 1.15; letter-spacing: -0.02em;">A vacation spot for a large group</li>
+          <li style="padding: 14px 0; border-bottom: 1px solid #d2d1ce; font-size: 26px; font-weight: 650; line-height: 1.15; letter-spacing: -0.02em;">A new logo for a company</li>
+          <li style="padding: 14px 0; border-bottom: 1px solid #d2d1ce; font-size: 26px; font-weight: 650; line-height: 1.15; letter-spacing: -0.02em;">Which technical-debt projects come first</li>
+        </ul>
+      </div>
+    </section>
+
+    <section aria-labelledby="d-oss-h" class="d-wrap" style="margin-top: 72px;">
+      <div class="d-sec" style="max-width: 1160px; margin: 0 auto; display: grid; column-gap: 64px; row-gap: 16px; padding-top: 16px; border-top: 1px solid #12120f;">
+        <h2 id="d-oss-h" style="margin: 0; font-size: 15px; font-weight: 780; letter-spacing: 0.03em; text-transform: uppercase;">Free and open source</h2>
+        <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 16px; min-width: 0;">
+          <p style="margin: 0; max-width: 32em; font-size: 22px; font-weight: 500; line-height: 1.4; letter-spacing: -0.01em;">The project behind RankedVote.app is called <a href="https://github.com/zorn/flick" class="d-inline" style="color: #12120f; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px;">Flick</a>. It is written in Elixir and Phoenix LiveView, and it was built for the <a href="https://elixirbookclub.github.io/website/" class="d-inline" style="color: #12120f; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px;">Elixir Book Club</a> to pick its books. It is shared for anyone to use and learn from.</p>
+          <a href="https://github.com/zorn/flick" class="d-line" style="min-height: 52px; display: inline-flex; align-items: center; gap: 12px; padding: 0 18px; border: 1px solid #12120f; color: #12120f; text-decoration: none; font-size: 16px; font-weight: 680;">
+            <span>Read the Flick source on GitHub</span>
+            <svg class="d-arrow" aria-hidden="true" width="18" height="18" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.75" style="flex: none;"><path d="M2 11h16M12 5l6 6-6 6"></path></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section aria-label="Create a ballot" class="d-wrap" style="margin-top: 96px; background: #12120f; color: #fcfcf9;">
+      <div style="max-width: 1160px; margin: 0 auto; padding: 40px 0 48px;">
+        <p style="margin: 0 0 20px; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: #b9b8b3;">Free · Open source · No accounts</p>
+        <a href="#" class="d-band d-bandtxt" style="display: inline-flex; align-items: center; gap: 0.3em; min-height: 44px; color: #fcfcf9; text-decoration: none; font-weight: 780; line-height: 1; letter-spacing: -0.04em;">
+          <span>Create a ballot</span>
+          <svg class="d-arrow" aria-hidden="true" viewBox="0 0 22 22" fill="none" stroke="#db3008" stroke-width="2" style="flex: none; width: 0.8em; height: 0.8em;"><path d="M2 11h16M12 5l6 6-6 6"></path></svg>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="d-wrap d-foot">
+    <div style="max-width: 1160px; margin: 0 auto; padding: 12px 0 40px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(160px, 100%), 1fr)); gap: 0 24px;">
+      <a href="https://github.com/zorn/flick" style="min-height: 44px; display: flex; align-items: center; color: #12120f; text-decoration: none; font-size: 15px; font-weight: 560;">GitHub project</a>
+      <a href="https://updown.io/wwis" style="min-height: 44px; display: flex; align-items: center; color: #12120f; text-decoration: none; font-size: 15px; font-weight: 560;">Uptime</a>
+      <a href="mailto:mike@mikezornek.com" style="min-height: 44px; display: flex; align-items: center; color: #12120f; text-decoration: none; font-size: 15px; font-weight: 560;">Contact site admin</a>
+    </div>
+  </footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":3100}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

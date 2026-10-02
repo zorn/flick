@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Soft and tactile · Results</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&amp;family=Figtree:wght@400..800&amp;display=swap">
+<style>
+body{margin:0;background:#F7EFE3}
+.e-root{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+.e-root *{box-sizing:border-box}
+.e-root a{color:#462F80;text-decoration-thickness:2px;text-underline-offset:3px}
+.e-root a:hover{color:#A13B85}
+.e-root :focus-visible{outline:3px solid #462F80;outline-offset:3px}
+.e-sr{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+.e-press{cursor:pointer;transition:transform .16s cubic-bezier(.34,1.56,.64,1),box-shadow .16s ease}
+.e-press:hover{transform:translateY(-2px)!important}
+.e-press:active{transform:translateY(3px)!important;transition-duration:.05s}
+.e-tang:hover{box-shadow:0 6px 0 #C96736,0 16px 24px -12px rgba(201,103,54,.65)!important}
+.e-tang:active{box-shadow:0 1px 0 #C96736,0 3px 6px -3px rgba(201,103,54,.5)!important}
+.e-plain:hover{box-shadow:0 5px 0 #D0C6B6,0 12px 18px -12px rgba(64,44,30,.45)!important}
+.e-plain:active{box-shadow:0 1px 0 #D0C6B6,0 2px 4px -2px rgba(64,44,30,.3)!important}
+
+/* The winner moment: medal pops, rosette turns, confetti bursts once */
+@keyframes e-pop{0%{transform:scale(.3) rotate(-25deg);opacity:0}60%{transform:scale(1.14) rotate(5deg);opacity:1}100%{transform:none;opacity:1}}
+.e-medal{animation:e-pop .7s cubic-bezier(.2,.8,.25,1) .1s both}
+@keyframes e-spin{to{transform:rotate(360deg)}}
+.e-rosette{animation:e-spin 28s linear infinite}
+@keyframes e-rise{0%{transform:translateY(16px);opacity:0}100%{transform:none;opacity:1}}
+.e-rise{animation:e-rise .55s cubic-bezier(.2,.8,.25,1) .25s both}
+@keyframes e-grow{0%{transform:scaleX(0)}100%{transform:none}}
+.e-grow{transform-origin:left center;animation:e-grow .8s cubic-bezier(.2,.8,.25,1) .45s both}
+
+.e-confetti{position:absolute;left:50%;top:72px;width:0;height:0;pointer-events:none}
+.e-confetti span{position:absolute;left:0;top:0;width:9px;height:13px;border-radius:3px;opacity:0;animation:e-burst 1.7s cubic-bezier(.12,.7,.3,1) .35s both}
+@keyframes e-burst{
+  0%{opacity:0;transform:translate(-50%,-50%) rotate(0deg) scale(.4)}
+  8%{opacity:1}
+  55%{opacity:1;transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) rotate(var(--r)) scale(1)}
+  100%{opacity:0;transform:translate(calc(-50% + var(--x) * 1.15),calc(-50% + var(--y) + 80px)) rotate(calc(var(--r) * 1.7)) scale(.9)}
+}
+.e-confetti span:nth-child(1){--x:-150px;--y:-40px;--r:-220deg;background:#462F80}
+.e-confetti span:nth-child(2){--x:-118px;--y:-92px;--r:160deg;background:#E57255;border-radius:99px;width:10px;height:10px;animation-delay:.38s}
+.e-confetti span:nth-child(3){--x:-70px;--y:-120px;--r:-300deg;background:#F1B464}
+.e-confetti span:nth-child(4){--x:-22px;--y:-138px;--r:200deg;background:#A13B85;animation-delay:.4s}
+.e-confetti span:nth-child(5){--x:30px;--y:-130px;--r:-180deg;background:#EFE39D;border-radius:99px;width:10px;height:10px}
+.e-confetti span:nth-child(6){--x:78px;--y:-112px;--r:280deg;background:#462F80;animation-delay:.42s}
+.e-confetti span:nth-child(7){--x:124px;--y:-80px;--r:-240deg;background:#FF9F61}
+.e-confetti span:nth-child(8){--x:156px;--y:-30px;--r:190deg;background:#A13B85;border-radius:99px;width:10px;height:10px;animation-delay:.37s}
+.e-confetti span:nth-child(9){--x:168px;--y:24px;--r:-160deg;background:#F1B464;animation-delay:.44s}
+.e-confetti span:nth-child(10){--x:-168px;--y:20px;--r:230deg;background:#E57255;animation-delay:.41s}
+.e-confetti span:nth-child(11){--x:-96px;--y:-58px;--r:-120deg;background:#EFE39D;width:7px;height:11px}
+.e-confetti span:nth-child(12){--x:-40px;--y:-84px;--r:140deg;background:#462F80;border-radius:99px;width:8px;height:8px;animation-delay:.45s}
+.e-confetti span:nth-child(13){--x:46px;--y:-88px;--r:-150deg;background:#E57255;width:7px;height:11px;animation-delay:.39s}
+.e-confetti span:nth-child(14){--x:100px;--y:-52px;--r:260deg;background:#FF9F61;border-radius:99px;width:8px;height:8px}
+.e-confetti span:nth-child(15){--x:-136px;--y:-128px;--r:-210deg;background:#A13B85;width:7px;height:11px;animation-delay:.46s}
+.e-confetti span:nth-child(16){--x:138px;--y:-134px;--r:170deg;background:#462F80;width:7px;height:11px;animation-delay:.43s}
+.e-confetti span:nth-child(17){--x:-8px;--y:-96px;--r:320deg;background:#FF9F61;width:7px;height:11px;animation-delay:.48s}
+.e-confetti span:nth-child(18){--x:196px;--y:-70px;--r:-260deg;background:#EFE39D;width:8px;height:8px;border-radius:99px;animation-delay:.4s}
+
+@media (min-width:900px){
+  .e-h1{font-size:54px!important}
+  .e-res-grid{grid-template-columns:minmax(0,5fr) minmax(0,7fr);column-gap:32px!important;align-items:start}
+}
+@media (prefers-reduced-motion:reduce){
+  .e-root *{animation:none!important;transition:none!important}
+  .e-confetti{display:none}
+}
+</style>
+</helmet>
+<div class="e-root" style="background-color:#F7EFE3; background-image:radial-gradient(#E6DBCA 1.2px, transparent 1.6px); background-size:22px 22px; color:#251C34; font-family:Figtree, 'Avenir Next', 'Segoe UI', system-ui, sans-serif; font-size:17px; line-height:1.5">
+  <div style="max-width:1120px; margin:0 auto; padding:0 16px">
+
+    <header style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px; padding:14px 0 6px">
+      <a href="e-home.dc.html" style="display:inline-flex; align-items:center; gap:8px; min-height:44px; color:#251C34; text-decoration:none">
+        <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true">
+          <rect x="1" y="17" width="20" height="9" rx="4.5" fill="#F1B464"></rect>
+          <rect x="4" y="9.5" width="20" height="9" rx="4.5" fill="#E57255"></rect>
+          <rect x="7" y="2" width="20" height="9" rx="4.5" fill="#462F80"></rect>
+        </svg>
+        <span style="font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:19px; letter-spacing:-0.02em; line-height:1">RankedVote<span style="color:#A13B85">.app</span></span>
+      </a>
+      <a href="https://rankedvote.app/ballot/new" class="e-press e-tang" style="display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:0 16px; border-radius:999px; background:#FF9F61; color:#251C34; text-decoration:none; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:700; font-size:15px; box-shadow:0 4px 0 #C96736, 0 10px 18px -12px rgba(201,103,54,.6)">Create a ballot</a>
+    </header>
+
+    <main style="padding:14px 0 8px">
+      <div style="max-width:760px">
+        <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center">
+          <span style="display:inline-flex; align-items:center; gap:6px; padding:5px 12px 5px 9px; border-radius:999px; background:#E8E4FE; color:#462F80; font-size:14px; font-weight:750">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>Final results
+          </span>
+          <span style="font-size:14.5px; font-weight:600; color:#585166">Closed Oct 4, 2026, 9:00 PM EDT</span>
+        </div>
+        <h1 class="e-h1" style="margin:16px 0 10px; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:36px; line-height:1.04; letter-spacing:-0.03em; text-wrap:balance">What should the Elixir Book Club read next?</h1>
+        <p style="margin:0; display:inline-flex; align-items:center; gap:8px; color:#585166; font-weight:600; font-size:16px">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="9" width="16" height="11" rx="2.5"></rect><path d="M8 9V6.5A1.5 1.5 0 0 1 9.5 5h5A1.5 1.5 0 0 1 16 6.5V9"></path><path d="M9 13.5h6"></path></svg>
+          9 votes cast
+        </p>
+      </div>
+
+      <div class="e-res-grid" style="display:grid; gap:36px; margin-top:24px">
+
+        <section aria-labelledby="e-win-h" style="position:relative; overflow:hidden; border-radius:32px; padding:28px 18px 26px; background:#FFE1C7; text-align:center; box-shadow:0 1px 1px rgba(64,44,30,.05), 0 6px 0 #F3C49E, 0 26px 40px -24px rgba(201,103,54,.6)">
+          <div class="e-confetti" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <div class="e-medal" aria-hidden="true" style="position:relative; width:88px; height:88px; margin:0 auto">
+            <div class="e-rosette" style="position:absolute; left:0; top:0; width:88px; height:88px">
+              <span style="position:absolute; left:8px; top:8px; width:72px; height:72px; border-radius:18px; background:#EFE39D"></span>
+              <span style="position:absolute; left:8px; top:8px; width:72px; height:72px; border-radius:18px; background:#EFE39D; transform:rotate(45deg)"></span>
+            </div>
+            <span style="position:absolute; left:13px; top:11px; width:62px; height:62px; border-radius:999px; display:grid; place-items:center; background:#FF9F61; color:#251C34; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:32px; box-shadow:0 4px 0 #C96736, inset 0 -4px 0 rgba(37,28,52,.12)">1</span>
+          </div>
+          <p style="margin:16px 0 0; font-size:13px; font-weight:800; letter-spacing:.14em; text-transform:uppercase">The winner</p>
+          <h2 id="e-win-h" style="margin:6px auto 0; max-width:22ch; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:30px; line-height:1.08; letter-spacing:-0.02em; text-wrap:balance">{{winner.title}}</h2>
+          <p class="e-rise" style="margin:18px 0 0; display:inline-flex; align-items:baseline; gap:6px; padding:8px 18px; border-radius:999px; background:#FFFDF8; font-weight:650; box-shadow:0 3px 0 #F0BE97, 0 10px 16px -10px rgba(201,103,54,.5)">
+            <strong style="font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:26px; line-height:1">{{winner.pts}}</strong> points
+          </p>
+          <p style="margin:12px 0 0; color:#585166; font-size:15.5px; font-weight:600">{{winner.lead}}</p>
+        </section>
+
+        <section aria-labelledby="e-stand-h">
+          <h2 id="e-stand-h" style="margin:0; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:26px; line-height:1.1; letter-spacing:-0.02em">Every choice, by points</h2>
+          <p style="margin:8px 0 0; color:#585166; font-size:16px; max-width:58ch">Each vote gives 5 points to its 1st choice, down to 1 point for its 5th, times the vote's weight. Most points wins.</p>
+
+          <div style="margin-top:14px; padding:12px; border-radius:20px; background:#FFFDF8; box-shadow:inset 0 0 0 1px #E3D9CA">
+            <p style="margin:0 0 8px; font-size:13.5px; font-weight:700; color:#585166">Points for each choice</p>
+            <div style="display:grid; grid-template-columns:repeat(5, minmax(0, 1fr)); gap:6px">
+              <sc-for list="{{legend}}" as="lg" hint-placeholder-count="5">
+                <p style="margin:0; text-align:center; line-height:1.2">
+                  <span aria-hidden="true" style="display:block; height:8px; border-radius:99px; background:{{lg.fill}}; box-shadow:inset 0 0 0 1px rgba(37,28,52,.14)"></span>
+                  <span style="display:block; margin-top:6px; font-size:12.5px; font-weight:700; color:#585166">{{lg.ord}}</span>
+                  <span style="display:block; font-size:15px; font-weight:800">{{lg.pts}} pts</span>
+                </p>
+              </sc-for>
+            </div>
+            <p style="margin:10px 0 0; font-size:13.5px; color:#585166; line-height:1.4">Each bar splits a total by choice. The numbers under it count the votes that ranked the book there, weights included.</p>
+          </div>
+
+          <ol aria-label="Top three" style="list-style:none; margin:18px 0 0; padding:0; display:flex; flex-direction:column; gap:14px">
+            <sc-for list="{{top}}" as="row" hint-placeholder-count="3">
+              <li style="border-radius:24px; padding:16px; background:#FFFDF8; box-shadow:0 1px 1px rgba(64,44,30,.05), 0 4px 0 #E6DBCB, 0 18px 28px -18px rgba(64,44,30,.45)">
+                <div style="display:flex; gap:12px; align-items:flex-start">
+                  <span aria-hidden="true" style="flex:none; width:44px; height:44px; border-radius:14px; display:grid; place-items:center; background:{{row.tokenBg}}; color:#251C34; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:21px; box-shadow:0 3px 0 {{row.tokenLip}}">{{row.place}}</span>
+                  <div style="flex:1; min-width:0">
+                    <p style="margin:0; font-size:12.5px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:#585166">{{row.placeText}}</p>
+                    <h3 style="margin:2px 0 0; font-size:18px; font-weight:700; line-height:1.3; text-wrap:pretty">{{row.title}}</h3>
+                  </div>
+                  <p style="margin:0; flex:none; text-align:right; line-height:1">
+                    <span style="display:block; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:30px; font-variant-numeric:tabular-nums">{{row.pts}}</span>
+                    <span style="display:block; margin-top:3px; font-size:13px; font-weight:650; color:#585166">points</span>
+                  </p>
+                </div>
+                <sc-if value="{{row.mostFirsts}}" hint-placeholder-val="{{false}}">
+                  <p style="margin:10px 0 0 56px; display:inline-flex; align-items:center; gap:6px; padding:4px 11px 4px 8px; border-radius:999px; background:#E8E4FE; color:#462F80; font-size:13.5px; font-weight:750">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.8.8-4.2 4.1 1 5.8-5.2-2.8-5.2 2.8 1-5.8-4.2-4.1 5.8-.8z"></path></svg>
+                    Most 1st-choice votes
+                  </p>
+                </sc-if>
+                <div aria-hidden="true" style="margin-top:14px; height:16px; border-radius:999px; background:#ECE3D6; box-shadow:inset 0 2px 3px rgba(64,44,30,.13)">
+                  <div class="e-grow" style="display:flex; height:16px; width:{{row.barPct}}%; border-radius:999px; overflow:hidden">
+                    <sc-for list="{{row.segs}}" as="seg" hint-placeholder-count="4">
+                      <span style="flex:none; height:16px; width:{{seg.w}}; margin-right:{{seg.mr}}; background:{{seg.fill}}; box-shadow:inset 0 0 0 1px {{seg.line}}"></span>
+                    </sc-for>
+                  </div>
+                </div>
+                <div style="display:grid; grid-template-columns:repeat(5, minmax(0, 1fr)); gap:6px; margin-top:10px">
+                  <sc-for list="{{row.counts}}" as="ct" hint-placeholder-count="5">
+                    <p style="margin:0; padding:6px 0 5px; border-radius:12px; text-align:center; line-height:1.2; background:{{ct.bg}}; box-shadow:{{ct.ring}}">
+                      <span aria-hidden="true" style="display:block; width:20px; height:5px; margin:0 auto 4px; border-radius:99px; background:{{ct.fill}}; box-shadow:inset 0 0 0 1px rgba(37,28,52,.14)"></span>
+                      <span style="display:block; font-size:12px; font-weight:700; color:#585166">{{ct.label}}<span class="e-sr"> choice:</span></span>
+                      <span style="display:block; font-size:17px; font-weight:800; font-variant-numeric:tabular-nums">{{ct.value}}</span>
+                    </p>
+                  </sc-for>
+                </div>
+              </li>
+            </sc-for>
+          </ol>
+
+          <div style="margin-top:16px; border-radius:24px; background:#FFFDF8; box-shadow:inset 0 0 0 1px #E3D9CA">
+            <ol start="4" aria-label="Places 4 to 7" style="list-style:none; margin:0; padding:0">
+              <sc-for list="{{rest}}" as="row" hint-placeholder-count="4">
+                <li style="padding:14px 16px; border-top:{{row.sep}}">
+                  <div style="display:flex; gap:12px; align-items:flex-start">
+                    <span aria-hidden="true" style="flex:none; width:36px; height:36px; border-radius:12px; display:grid; place-items:center; background:#F1E9DC; color:#251C34; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:17px; box-shadow:inset 0 2px 4px rgba(64,44,30,.12)">{{row.place}}</span>
+                    <h3 style="margin:0; padding-top:5px; flex:1; min-width:0; font-size:16px; font-weight:650; line-height:1.3; text-wrap:pretty"><span class="e-sr">{{row.placeText}}: </span>{{row.title}}</h3>
+                    <p style="margin:0; flex:none; text-align:right; line-height:1; padding-top:4px">
+                      <span style="display:block; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:22px; font-variant-numeric:tabular-nums">{{row.pts}}</span>
+                      <span style="display:block; margin-top:3px; font-size:12.5px; font-weight:650; color:#585166">points</span>
+                    </p>
+                  </div>
+                  <div aria-hidden="true" style="margin-top:12px; height:12px; border-radius:999px; background:#ECE3D6; box-shadow:inset 0 2px 3px rgba(64,44,30,.12)">
+                    <div class="e-grow" style="display:flex; height:12px; width:{{row.barPct}}%; border-radius:999px; overflow:hidden">
+                      <sc-for list="{{row.segs}}" as="seg" hint-placeholder-count="4">
+                        <span style="flex:none; height:12px; width:{{seg.w}}; margin-right:{{seg.mr}}; background:{{seg.fill}}; box-shadow:inset 0 0 0 1px {{seg.line}}"></span>
+                      </sc-for>
+                    </div>
+                  </div>
+                  <div style="display:grid; grid-template-columns:repeat(5, minmax(0, 1fr)); gap:6px; margin-top:8px">
+                    <sc-for list="{{row.counts}}" as="ct" hint-placeholder-count="5">
+                      <p style="margin:0; padding:4px 0; border-radius:10px; text-align:center; line-height:1.2; background:{{ct.bg}}; box-shadow:{{ct.ring}}">
+                        <span style="display:block; font-size:11.5px; font-weight:700; color:#585166">{{ct.label}}<span class="e-sr"> choice:</span></span>
+                        <span style="display:block; font-size:15px; font-weight:800; font-variant-numeric:tabular-nums">{{ct.value}}</span>
+                      </p>
+                    </sc-for>
+                  </div>
+                </li>
+              </sc-for>
+            </ol>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+    <footer style="margin-top:48px; padding:20px 0 36px; border-top:1px solid #DED6C9; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:14px 20px">
+      <p style="margin:0; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:16px; color:#585166">RankedVote.app</p>
+      <nav aria-label="Site links" style="display:flex; flex-wrap:wrap; gap:8px">
+        <a href="https://github.com/zorn/flick" class="e-press e-plain" style="display:inline-flex; align-items:center; min-height:44px; padding:0 14px; border-radius:999px; background:#FFFDF8; color:#251C34; text-decoration:none; font-size:14.5px; font-weight:650; box-shadow:0 3px 0 #D0C6B6, 0 8px 14px -10px rgba(64,44,30,.4)">GitHub project</a>
+        <a href="https://updown.io/wwis" class="e-press e-plain" style="display:inline-flex; align-items:center; min-height:44px; padding:0 14px; border-radius:999px; background:#FFFDF8; color:#251C34; text-decoration:none; font-size:14.5px; font-weight:650; box-shadow:0 3px 0 #D0C6B6, 0 8px 14px -10px rgba(64,44,30,.4)">Uptime</a>
+        <a href="mailto:mike@mikezornek.com" class="e-press e-plain" style="display:inline-flex; align-items:center; min-height:44px; padding:0 14px; border-radius:999px; background:#FFFDF8; color:#251C34; text-decoration:none; font-size:14.5px; font-weight:650; box-shadow:0 3px 0 #D0C6B6, 0 8px 14px -10px rgba(64,44,30,.4)">Contact site admin</a>
+      </nav>
+    </footer>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":2900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.titles = {
+      A: 'Elixir in Action, Third Edition by Saša Jurić',
+      B: "Engineering Elixir Applications by Ellie Fairholm and Josep Giralt D'Lacoste",
+      C: 'Machine Learning in Elixir by Sean Moriarity',
+      D: 'Designing Elixir Systems with OTP by James Edward Gray II and Bruce A. Tate',
+      E: 'Elixir Patterns by Hugo Barauna and Alexander Koutmos',
+      F: 'Concurrent Data Processing in Elixir by Svilen Gospodinov',
+      G: 'A Common-Sense Guide to Data Structures and Algorithms, Second Edition by Jay Wengrow'
+    };
+    // Weighted placements, 1st to 5th, from the closed ballot's 9 votes.
+    this.tallies = [
+      { id: 'B', counts: [2, 4, 2, 1, 0] },
+      { id: 'A', counts: [2, 2, 3, 1, 0] },
+      { id: 'C', counts: [3, 1, 0, 0, 2] },
+      { id: 'E', counts: [1, 1, 2, 1, 1] },
+      { id: 'D', counts: [1, 1, 2, 1, 0] },
+      { id: 'F', counts: [0, 1, 1, 1, 1] },
+      { id: 'G', counts: [1, 0, 0, 0, 1] }
+    ];
+    this.ords = ['1st', '2nd', '3rd', '4th', '5th'];
+    this.fills = ['#462F80', '#A13B85', '#E57255', '#F1B464', '#EFE39D'];
+    this.places = ['Winner', '2nd place', '3rd place', '4th place', '5th place', '6th place', '7th place'];
+  }
+
+  fmt(x) {
+    return Number.isInteger(x) ? String(x) : x.toFixed(1);
+  }
+
+  renderVals() {
+    const rows = this.tallies.map((t) => {
+      let pts = 0;
+      t.counts.forEach((c, k) => { pts += c * (5 - k); });
+      return { id: t.id, counts: t.counts, pts: pts };
+    }).sort((a, b) => b.pts - a.pts);
+
+    const max = Math.max(1, rows[0].pts);
+    let maxFirsts = 0;
+    rows.forEach((r) => { if (r.counts[0] > maxFirsts) maxFirsts = r.counts[0]; });
+
+    const built = rows.map((r, i) => {
+      const parts = [];
+      r.counts.forEach((c, k) => {
+        if (c > 0) parts.push({ k: k, pts: c * (5 - k) });
+      });
+      const segs = parts.map((p, j) => {
+        const share = Math.round((p.pts / r.pts) * 100000) / 1000;
+        const last = j === parts.length - 1;
+        return {
+          w: last ? share + '%' : 'calc(' + share + '% - 2px)',
+          mr: last ? '0px' : '2px',
+          fill: this.fills[p.k],
+          line: p.k === 4 ? 'rgba(37,28,52,.2)' : 'transparent'
+        };
+      });
+      const mostFirsts = r.counts[0] === maxFirsts && i !== 0;
+      const counts = r.counts.map((c, k) => {
+        const hl = mostFirsts && k === 0;
+        return {
+          label: this.ords[k],
+          value: this.fmt(c),
+          fill: this.fills[k],
+          bg: hl ? '#E8E4FE' : 'rgba(37,28,52,.045)',
+          ring: hl ? 'inset 0 0 0 2px #462F80' : 'none'
+        };
+      });
+      return {
+        place: i + 1,
+        placeText: this.places[i],
+        title: this.titles[r.id],
+        pts: this.fmt(r.pts),
+        rawPts: r.pts,
+        barPct: Math.round((r.pts / max) * 1000) / 10,
+        segs: segs,
+        counts: counts,
+        mostFirsts: mostFirsts,
+        tokenBg: i === 0 ? '#FF9F61' : '#FFE1C7',
+        tokenLip: i === 0 ? '#C96736' : '#F0BE97',
+        sep: i === 3 ? 'none' : '1px solid #EDE4D6'
+      };
+    });
+
+    const lead = built[0].rawPts - built[1].rawPts;
+    const winner = {
+      title: built[0].title,
+      pts: built[0].pts,
+      lead: lead > 0 ? this.fmt(lead) + ' points ahead of 2nd place' : 'Tied with 2nd place'
+    };
+
+    const legend = this.ords.map((o, k) => ({ ord: o, pts: 5 - k, fill: this.fills[k] }));
+
+    return {
+      winner: winner,
+      legend: legend,
+      top: built.slice(0, 3),
+      rest: built.slice(3)
+    };
+  }
+}
+</script>
+</body>
+</html>

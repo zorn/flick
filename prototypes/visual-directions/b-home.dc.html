@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Pick Flick · Home</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&amp;family=Archivo:wdth,wght@62..125,400..900&amp;family=Permanent+Marker&amp;display=swap">
+<style>
+body{margin:0;background:#F1F3F7}
+*,*::before,*::after{box-sizing:border-box}
+.sr{position:absolute !important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+a{color:#14213D;text-underline-offset:3px}
+a:hover{color:#C81D25}
+:focus-visible{outline:3px solid #14213D;outline-offset:3px}
+.on-dark :focus-visible{outline-color:#FFD23F}
+.btn{transition:transform .12s ease,box-shadow .12s ease,background-color .15s ease}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 #14213D !important}
+.btn:active{transform:translate(3px,3px);box-shadow:0 0 0 #14213D !important}
+.btn-red:hover{background:#A3141B !important;color:#FFFFFF !important}
+.btn-yellow:hover{color:#14213D !important}
+.mark{transition:transform .25s cubic-bezier(.2,.9,.3,1.4)}
+.wordmark:hover .mark{transform:rotate(-18deg) scale(1.08)}
+.dark-link:hover{color:#FFFFFF !important}
+.foot:hover{color:#FFD23F !important}
+.pins{transition:transform .3s ease}
+@keyframes drop{0%{translate:0 -44px;scale:1.45;opacity:0}65%{translate:0 4px;scale:.94;opacity:1}100%{translate:0 0;scale:1}}
+.drop{animation:drop .55s cubic-bezier(.2,.9,.3,1.2) both}
+.drop-2{animation-delay:.12s}
+.drop-3{animation-delay:.24s}
+@media (min-width:900px){
+.pins{transform:scale(1.5) rotate(-4deg)}
+}
+@media (prefers-reduced-motion:reduce){.drop{animation:none}.btn,.mark,.pins{transition:none}}
+</style>
+</helmet>
+<div style="background:#F1F3F7;color:#14213D;font-family:Archivo,'Franklin Gothic Medium','Trebuchet MS',system-ui,sans-serif;font-size:17px;line-height:1.45;overflow-x:clip">
+
+  <header style="background:#FFFFFF">
+    <div style="max-width:1120px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px 12px;flex-wrap:wrap">
+      <a href="b-home.dc.html" class="wordmark" style="display:inline-flex;align-items:center;gap:8px;min-height:44px;text-decoration:none;color:#14213D">
+        <span class="mark" aria-hidden="true" style="flex:none;width:34px;height:34px;border-radius:50%;background:#C81D25;color:#FFFFFF;border:2px solid #14213D;box-shadow:inset 0 0 0 2px #C81D25,inset 0 0 0 4px #FFFFFF;display:flex;align-items:center;justify-content:center;font-family:Anton,Impact,sans-serif;font-size:17px;line-height:1">1</span>
+        <span style="display:inline-flex;align-items:baseline;white-space:nowrap"><span style="font-family:Anton,Impact,sans-serif;font-size:23px;line-height:1;letter-spacing:.02em;text-transform:uppercase">RankedVote</span><span style="display:inline-block;margin-left:2px;font-family:'Permanent Marker','Marker Felt',cursive;font-size:17px;line-height:1;color:#C81D25;transform:rotate(-7deg) translateY(-2px)">.app</span></span>
+      </a>
+      <a href="https://rankedvote.app/ballot/new" class="btn" style="display:inline-flex;align-items:center;min-height:44px;padding:0 12px;background:#FFD23F;color:#14213D;border:2px solid #14213D;box-shadow:3px 3px 0 #14213D;font-weight:800;font-stretch:78%;font-size:14px;letter-spacing:.04em;text-transform:uppercase;text-decoration:none">Create a ballot</a>
+    </div>
+    <div aria-hidden="true" style="height:12px;border-top:3px solid #14213D;border-bottom:3px solid #14213D;background:repeating-linear-gradient(-45deg,#C81D25 0 8px,#FFFFFF 8px 16px,#14213D 16px 24px,#FFFFFF 24px 32px)"></div>
+  </header>
+
+  <main style="max-width:1120px;margin:0 auto;padding:30px 16px 0;display:flex;flex-direction:column;gap:64px">
+
+    <section aria-labelledby="hero-h" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(440px,100%),1fr));gap:30px 48px;align-items:center">
+      <div style="position:relative;padding:30px 18px 30px;background:#FFFFFF;border:3px solid #14213D;box-shadow:10px 10px 0 #C81D25;overflow:hidden">
+        <div aria-hidden="true" style="position:absolute;top:-70px;right:-80px;width:280px;height:280px;border-radius:50%;background-image:radial-gradient(circle,#C81D25 2px,transparent 2.5px);background-size:12px 12px;opacity:.24"></div>
+        <p style="position:relative;display:inline-block;margin:0;padding:6px 18px 5px;background:#E8DDB9;color:#14213D;font-family:'Permanent Marker','Marker Felt',cursive;font-size:16px;line-height:1.2;transform:rotate(-2deg);clip-path:polygon(2% 0,98% 6%,100% 50%,97% 100%,3% 94%,0 50%)">Free · open source · no accounts</p>
+        <h1 id="hero-h" style="position:relative;margin:18px 0 0;font-family:Anton,Impact,sans-serif;font-weight:400;font-size:clamp(56px,8vw,92px);line-height:.94;letter-spacing:.005em;text-transform:uppercase">
+          <span style="display:block;text-shadow:4px 4px 0 #FFD23F">Don't pick</span>
+          <span style="display:block;text-shadow:4px 4px 0 #FFD23F">just one.</span>
+          <span style="display:inline-block;margin-top:14px;padding:6px 14px 2px;background:#FFD23F;border:3px solid #14213D;box-shadow:5px 5px 0 #14213D;transform:rotate(-2.5deg)">Rank 'em.</span>
+        </h1>
+        <p style="position:relative;margin:26px 0 0;max-width:560px;font-size:20px;line-height:1.45;font-weight:600;text-wrap:pretty">Most votes ask everyone for a single choice. In a ranked vote, each voter ranks their favorites instead, and the group lands on a better consensus.</p>
+        <p style="position:relative;margin:12px 0 0;max-width:560px;font-size:17px;line-height:1.5;text-wrap:pretty">RankedVote.app helps you create, run, and tally a ranked vote, fast. It's free and open source, and nobody needs an account to make a ballot or to vote.</p>
+        <a href="https://rankedvote.app/ballot/new" class="btn btn-red" style="position:relative;margin-top:24px;display:inline-flex;align-items:center;gap:10px;min-height:62px;padding:6px 22px;background:#C81D25;color:#FFFFFF;border:3px solid #14213D;box-shadow:5px 5px 0 #14213D;font-family:Anton,Impact,sans-serif;font-size:28px;line-height:1;letter-spacing:.04em;text-transform:uppercase;text-decoration:none">
+          Create a ballot
+          <svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+        </a>
+      </div>
+
+      <div aria-hidden="true" style="display:flex;justify-content:center;align-items:center;padding:20px 0 30px">
+        <div class="pins" style="display:flex;align-items:center">
+          <span class="drop" style="flex:none;width:112px;height:112px;border-radius:50%;background:#C81D25;color:#FFFFFF;border:3px solid #14213D;box-shadow:inset 0 0 0 6px #C81D25,inset 0 0 0 9px #FFFFFF,6px 6px 0 #14213D;display:flex;flex-direction:column;align-items:center;justify-content:center;transform:rotate(-10deg);position:relative;z-index:3">
+            <span style="font-family:Anton,Impact,sans-serif;font-size:46px;line-height:1">1<span style="font-size:18px;text-transform:uppercase">st</span></span>
+            <span style="margin-top:2px;font-weight:900;font-stretch:75%;font-size:12px;letter-spacing:.18em;text-transform:uppercase">Choice</span>
+          </span>
+          <span class="drop drop-2" style="flex:none;margin-left:-16px;margin-top:56px;width:104px;height:104px;border-radius:50%;background:#14213D;color:#FFFFFF;border:3px solid #14213D;box-shadow:inset 0 0 0 6px #14213D,inset 0 0 0 9px #FFD23F,6px 6px 0 #C81D25;display:flex;flex-direction:column;align-items:center;justify-content:center;transform:rotate(8deg);position:relative;z-index:2">
+            <span style="font-family:Anton,Impact,sans-serif;font-size:42px;line-height:1">2<span style="font-size:16px;text-transform:uppercase">nd</span></span>
+            <span style="margin-top:2px;font-weight:900;font-stretch:75%;font-size:12px;letter-spacing:.18em;text-transform:uppercase">Choice</span>
+          </span>
+          <span class="drop drop-3" style="flex:none;margin-left:-14px;margin-top:-30px;width:96px;height:96px;border-radius:50%;background:#FFD23F;color:#14213D;border:3px solid #14213D;box-shadow:inset 0 0 0 6px #FFD23F,inset 0 0 0 9px #14213D,6px 6px 0 #14213D;display:flex;flex-direction:column;align-items:center;justify-content:center;transform:rotate(-4deg);position:relative;z-index:1">
+            <span style="font-family:Anton,Impact,sans-serif;font-size:38px;line-height:1">3<span style="font-size:15px;text-transform:uppercase">rd</span></span>
+            <span style="margin-top:2px;font-weight:900;font-stretch:75%;font-size:11px;letter-spacing:.18em;text-transform:uppercase">Choice</span>
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="uses-h">
+      <h2 id="uses-h" style="margin:0;font-family:Anton,Impact,sans-serif;font-weight:400;font-size:clamp(40px,6vw,64px);line-height:1;letter-spacing:.01em;text-transform:uppercase;text-wrap:balance;text-shadow:3px 3px 0 #FFD23F">What's on your ballot?</h2>
+      <p style="margin:12px 0 0;max-width:560px;font-size:17px;line-height:1.5">Any choice a group has to make together. A few to get you started:</p>
+      <ul style="list-style:none;margin:30px 0 0;padding:0;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:24px 18px">
+        <li style="width:150px;height:150px;border-radius:50%;padding:16px;background:#C81D25;color:#FFFFFF;border:3px solid #14213D;box-shadow:5px 5px 0 #14213D;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;transform:rotate(-6deg)">
+          <span style="font-family:Anton,Impact,sans-serif;font-size:34px;line-height:1;letter-spacing:.05em">Pick</span>
+          <span style="margin-top:4px;font-weight:800;font-size:15px;line-height:1.2">the book club's next book</span>
+        </li>
+        <li style="position:relative;width:156px;padding:22px 14px 16px;background:#FFD23F;color:#14213D;border:3px solid #14213D;box-shadow:5px 5px 0 #14213D;display:flex;flex-direction:column;align-items:center;text-align:center;transform:rotate(4deg)">
+          <span aria-hidden="true" style="position:absolute;top:-12px;left:50%;width:70px;height:22px;margin-left:-35px;background:#E8DDB9;opacity:.92;transform:rotate(-4deg)"></span>
+          <span style="font-family:Anton,Impact,sans-serif;font-size:34px;line-height:1;letter-spacing:.05em">Pick</span>
+          <span style="margin-top:4px;font-weight:800;font-size:15px;line-height:1.2">a movie for family night</span>
+        </li>
+        <li style="width:212px;height:128px;border-radius:50%;padding:14px 28px;background:#14213D;color:#FFFFFF;border:3px solid #14213D;box-shadow:inset 0 0 0 5px #14213D,inset 0 0 0 7px #FFD23F,5px 5px 0 #C81D25;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;transform:rotate(-3deg)">
+          <span style="font-family:Anton,Impact,sans-serif;font-size:32px;line-height:1;letter-spacing:.05em;color:#FFD23F">Pick</span>
+          <span style="margin-top:4px;font-weight:800;font-size:15px;line-height:1.2">a vacation spot for a big group</span>
+        </li>
+        <li style="width:164px;height:164px;padding:4px;background:#14213D;transform:rotate(9deg);clip-path:polygon(50% 0%,61% 13%,77% 7%,79% 23%,95% 25%,89% 40%,100% 50%,89% 60%,95% 75%,79% 77%,77% 93%,61% 87%,50% 100%,39% 87%,23% 93%,21% 77%,5% 75%,11% 60%,0% 50%,11% 40%,5% 25%,21% 23%,23% 7%,39% 13%)">
+          <span style="width:100%;height:100%;padding:34px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:#FFD23F;color:#14213D;clip-path:polygon(50% 0%,61% 13%,77% 7%,79% 23%,95% 25%,89% 40%,100% 50%,89% 60%,95% 75%,79% 77%,77% 93%,61% 87%,50% 100%,39% 87%,23% 93%,21% 77%,5% 75%,11% 60%,0% 50%,11% 40%,5% 25%,21% 23%,23% 7%,39% 13%)">
+            <span style="font-family:Anton,Impact,sans-serif;font-size:28px;line-height:1;letter-spacing:.05em">Pick</span>
+            <span style="margin-top:3px;font-weight:800;font-size:13px;line-height:1.15">a new company logo</span>
+          </span>
+        </li>
+        <li style="width:168px;padding:16px 12px;border-radius:22px;background:#FFFFFF;color:#14213D;border:3px solid #C81D25;box-shadow:0 0 0 3px #14213D,6px 6px 0 3px #14213D;display:flex;flex-direction:column;align-items:center;text-align:center;transform:rotate(-2deg)">
+          <span style="font-family:Anton,Impact,sans-serif;font-size:32px;line-height:1;letter-spacing:.05em;color:#C81D25">Rank</span>
+          <span style="margin-top:4px;font-weight:800;font-size:15px;line-height:1.2">your tech-debt projects, most urgent first</span>
+        </li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="how-h">
+      <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:6px 16px;padding-bottom:10px;border-bottom:3px solid #14213D">
+        <h2 id="how-h" style="margin:0;font-family:Anton,Impact,sans-serif;font-weight:400;font-size:clamp(40px,6vw,64px);line-height:1;letter-spacing:.01em;text-transform:uppercase">How it works</h2>
+        <p style="margin:0;font-family:'Permanent Marker','Marker Felt',cursive;font-size:19px;color:#C81D25;transform:rotate(-3deg)">1, 2, 3. That's it.</p>
+      </div>
+      <ol role="list" style="list-style:none;margin:28px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:24px">
+        <li style="display:flex;gap:16px;align-items:flex-start;padding:20px 18px;background:#FFFFFF;border:3px solid #14213D;box-shadow:6px 6px 0 #14213D">
+          <span aria-hidden="true" style="flex:none;width:64px;height:64px;border-radius:50%;background:#C81D25;color:#FFFFFF;border:3px solid #14213D;box-shadow:inset 0 0 0 3px #C81D25,inset 0 0 0 5px #FFFFFF;display:flex;align-items:center;justify-content:center;font-family:Anton,Impact,sans-serif;font-size:32px;line-height:1;transform:rotate(-8deg)">1</span>
+          <div style="min-width:0">
+            <h3 style="margin:2px 0 0;font-family:Anton,Impact,sans-serif;font-weight:400;font-size:30px;line-height:1;letter-spacing:.03em;text-transform:uppercase"><span class="sr">Step 1: </span>Create</h3>
+            <p style="margin:8px 0 0;font-size:17px;line-height:1.45">Write a question and the possible answers. That's your ballot.</p>
+          </div>
+        </li>
+        <li style="display:flex;gap:16px;align-items:flex-start;padding:20px 18px;background:#FFFFFF;border:3px solid #14213D;box-shadow:6px 6px 0 #14213D">
+          <span aria-hidden="true" style="flex:none;width:64px;height:64px;border-radius:50%;background:#14213D;color:#FFFFFF;border:3px solid #14213D;box-shadow:inset 0 0 0 3px #14213D,inset 0 0 0 5px #FFD23F;display:flex;align-items:center;justify-content:center;font-family:Anton,Impact,sans-serif;font-size:32px;line-height:1;transform:rotate(6deg)">2</span>
+          <div style="min-width:0">
+            <h3 style="margin:2px 0 0;font-family:Anton,Impact,sans-serif;font-weight:400;font-size:30px;line-height:1;letter-spacing:.03em;text-transform:uppercase"><span class="sr">Step 2: </span>Publish</h3>
+            <p style="margin:8px 0 0;font-size:17px;line-height:1.45">Publish the ballot to get a link. Share the link with your voters.</p>
+          </div>
+        </li>
+        <li style="display:flex;gap:16px;align-items:flex-start;padding:20px 18px;background:#FFFFFF;border:3px solid #14213D;box-shadow:6px 6px 0 #14213D">
+          <span aria-hidden="true" style="flex:none;width:64px;height:64px;border-radius:50%;background:#FFD23F;color:#14213D;border:3px solid #14213D;box-shadow:inset 0 0 0 3px #FFD23F,inset 0 0 0 5px #14213D;display:flex;align-items:center;justify-content:center;font-family:Anton,Impact,sans-serif;font-size:32px;line-height:1;transform:rotate(-4deg)">3</span>
+          <div style="min-width:0">
+            <h3 style="margin:2px 0 0;font-family:Anton,Impact,sans-serif;font-weight:400;font-size:30px;line-height:1;letter-spacing:.03em;text-transform:uppercase"><span class="sr">Step 3: </span>Tally</h3>
+            <p style="margin:8px 0 0;font-size:17px;line-height:1.45">Tally the votes. A point-based count finds the winner.</p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <section class="on-dark" aria-labelledby="oss-h" style="padding:28px 18px;background:#14213D;color:#FFFFFF;border:3px solid #14213D;box-shadow:8px 8px 0 #FFD23F">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:24px 36px">
+        <div aria-hidden="true" style="flex:none;width:140px;height:140px;border-radius:50%;background:#FFFFFF;color:#14213D;border:3px solid #FFFFFF;box-shadow:inset 0 0 0 7px #FFFFFF,inset 0 0 0 12px #C81D25,6px 6px 0 #C81D25;display:flex;flex-direction:column;align-items:center;justify-content:center;transform:rotate(-9deg)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#FFD23F" stroke="#14213D" stroke-width="1.6" stroke-linejoin="round"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z"></path></svg>
+          <span style="font-family:Anton,Impact,sans-serif;font-size:36px;line-height:.95;letter-spacing:.04em;text-transform:uppercase">Pick</span>
+          <span style="font-family:Anton,Impact,sans-serif;font-size:36px;line-height:.95;letter-spacing:.04em;text-transform:uppercase;color:#C81D25">Flick</span>
+        </div>
+        <div style="flex:1 1 300px;min-width:0">
+          <h2 id="oss-h" style="margin:0;font-family:Anton,Impact,sans-serif;font-weight:400;font-size:clamp(36px,5vw,52px);line-height:1;letter-spacing:.01em;text-transform:uppercase">Free and open source</h2>
+          <p style="margin:12px 0 0;max-width:620px;font-size:17px;line-height:1.55">The project behind this site is called Flick. It's written in Elixir and Phoenix LiveView. It was built for the <a class="dark-link" href="https://elixirbookclub.github.io/website/" style="color:#FFD23F;font-weight:700;text-underline-offset:4px">Elixir Book Club</a> to pick its books, and it's shared for anyone to use and learn from.</p>
+          <a href="https://github.com/zorn/flick" class="btn btn-yellow" style="margin-top:18px;display:inline-flex;align-items:center;gap:8px;min-height:50px;padding:0 18px;background:#FFD23F;color:#14213D;border:3px solid #FFFFFF;box-shadow:4px 4px 0 #C81D25;font-weight:900;font-stretch:85%;font-size:16px;letter-spacing:.05em;text-transform:uppercase;text-decoration:none">
+            See Flick on GitHub
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"></path></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="cta-h" style="position:relative;padding:40px 18px 44px;background:#FFD23F;color:#14213D;border:3px solid #14213D;box-shadow:8px 8px 0 #14213D;text-align:center">
+      <span aria-hidden="true" style="position:absolute;top:-13px;left:26px;width:90px;height:24px;background:#E8DDB9;opacity:.92;transform:rotate(-6deg)"></span>
+      <span aria-hidden="true" style="position:absolute;top:-12px;right:30px;width:76px;height:24px;background:#E8DDB9;opacity:.92;transform:rotate(5deg)"></span>
+      <h2 id="cta-h" style="margin:0;font-family:Anton,Impact,sans-serif;font-weight:400;font-size:clamp(44px,7vw,80px);line-height:.98;letter-spacing:.01em;text-transform:uppercase;text-wrap:balance">Put it to a vote.</h2>
+      <p style="margin:12px auto 0;max-width:460px;font-size:18px;line-height:1.45;font-weight:600">Your question, your answers, and one link to share.</p>
+      <a href="https://rankedvote.app/ballot/new" class="btn btn-red" style="margin-top:24px;display:inline-flex;align-items:center;gap:10px;min-height:62px;padding:6px 22px;background:#C81D25;color:#FFFFFF;border:3px solid #14213D;box-shadow:5px 5px 0 #14213D;font-family:Anton,Impact,sans-serif;font-size:28px;line-height:1;letter-spacing:.04em;text-transform:uppercase;text-decoration:none">
+        Create a ballot
+        <svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+      </a>
+    </section>
+
+  </main>
+
+  <footer class="on-dark" style="margin-top:64px;background:#14213D;color:#FFFFFF;border-top:6px solid #C81D25">
+    <div style="max-width:1120px;margin:0 auto;padding:28px 16px 40px;display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:16px 32px">
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <p style="margin:0;font-family:Anton,Impact,sans-serif;font-size:24px;line-height:1;letter-spacing:.02em;text-transform:uppercase">RankedVote<span style="color:#FFD23F">.app</span></p>
+        <p style="margin:0;font-size:14px;color:#C9D1E3">Runs on Flick, a free and open-source Elixir app.</p>
+      </div>
+      <nav aria-label="Site">
+        <ul style="list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:0 22px">
+          <li><a class="foot" href="https://github.com/zorn/flick" style="display:inline-flex;align-items:center;min-height:44px;color:#FFFFFF;font-weight:700;text-underline-offset:4px">GitHub project</a></li>
+          <li><a class="foot" href="https://updown.io/wwis" style="display:inline-flex;align-items:center;min-height:44px;color:#FFFFFF;font-weight:700;text-underline-offset:4px">Uptime</a></li>
+          <li><a class="foot" href="mailto:mike@mikezornek.com" style="display:inline-flex;align-items:center;min-height:44px;color:#FFFFFF;font-weight:700;text-underline-offset:4px">Contact site admin</a></li>
+        </ul>
+      </nav>
+    </div>
+  </footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":4000}}'>
+class Component extends DCLogic {
+  renderVals() {
+    // Static page: all copy lives in the markup so it can be edited in place.
+    return {};
+  }
+}
+</script>
+</body>
+</html>

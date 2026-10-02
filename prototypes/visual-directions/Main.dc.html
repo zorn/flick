@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Library card · Vote</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&amp;family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&amp;display=swap" />
+<style>
+body{margin:0;background:#E8DDC4;color:#1E2A47;font-family:"Libre Caslon Text","Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+*,*::before,*::after{box-sizing:border-box}
+a{color:#1E2A47;text-decoration-thickness:1px;text-underline-offset:3px;transition:color .15s ease}
+a:hover{color:#9E2852}
+button,input{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}
+:focus-visible{outline:3px solid #1E2A47;outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.ink{position:relative}
+.ink::after{content:"";position:absolute;inset:-3px;pointer-events:none;background-image:radial-gradient(circle at 30% 40%,#FBF6E9 0 .7px,transparent 1.2px),radial-gradient(circle at 70% 25%,#FBF6E9 0 1px,transparent 1.5px),radial-gradient(circle at 45% 75%,#FBF6E9 0 .6px,transparent 1.1px),radial-gradient(ellipse 9px 3px at 30% 60%,rgba(251,246,233,.55),transparent 70%);background-size:9px 11px,13px 7px,6px 9px,29px 23px;opacity:.8}
+.wordmark{transition:transform .2s ease}
+.wordmark:hover{transform:rotate(-1.5deg) scale(1.03)}
+.cta{transition:transform .15s ease,box-shadow .15s ease}
+.cta:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 #1E2A47 !important;color:#1E2A47}
+.cta:active{transform:translate(2px,2px);box-shadow:0 0 0 #1E2A47 !important}
+.row{transition:background-color .15s ease}
+.row:hover{background-color:#F3EAD3 !important}
+.row:focus-visible{outline-offset:-4px}
+.slot{transition:transform .12s ease}
+.row:active .slot{transform:scale(.92)}
+.ghost{opacity:0;transition:opacity .15s ease}
+.row:hover .ghost,.row:focus-visible .ghost{opacity:1}
+.stamp-in{animation:thunk .34s cubic-bezier(.2,.8,.3,1.25) both}
+@keyframes thunk{0%{transform:scale(1.9);opacity:0}55%{transform:scale(.9);opacity:1}100%{transform:scale(1);opacity:1}}
+.tbtn{transition:background-color .15s ease,color .15s ease}
+.tbtn:hover:not(:disabled){background-color:#1E2A47 !important;color:#FBF6E9 !important}
+.tdel:hover:not(:disabled){background-color:#9E2852 !important;color:#FBF6E9 !important}
+.tbtn:disabled{opacity:.38;cursor:not-allowed !important}
+.quiet{transition:background-color .15s ease}
+.quiet:hover{background-color:#F3EAD3 !important}
+.submit{transition:background-color .15s ease,transform .1s ease,box-shadow .1s ease}
+.submit:hover{background-color:#9E2852 !important;box-shadow:0 3px 0 #5E1430 !important}
+.submit:active{transform:translateY(3px);box-shadow:0 0 0 #0E1528 !important}
+.name-in{transition:border-color .15s ease}
+.name-in:focus{border-bottom-color:#9E2852 !important}
+@media (min-width:880px){
+.vote-grid{grid-template-columns:minmax(0,1.45fr) minmax(0,1fr) !important;gap:28px !important}
+.slip{position:sticky;top:20px}
+.h1{font-size:44px !important}
+.card-pad{padding-left:32px !important;padding-right:32px !important}
+.rule{margin-left:-32px !important;margin-right:-32px !important}
+}
+@media (prefers-reduced-motion:reduce){
+.stamp-in{animation:none}
+.row,.tbtn,.submit,.cta,.wordmark,.ghost,.slot{transition:none}
+}
+</style>
+</helmet>
+<div style="background-color:#E8DDC4;background-image:radial-gradient(rgba(30,42,71,0.05) 0.6px,transparent 1px),radial-gradient(rgba(120,90,40,0.06) 0.8px,transparent 1.3px);background-size:5px 5px,11px 9px;padding:0 12px 28px;">
+
+  <header style="max-width:1040px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding:16px 0 18px;">
+    <a href="a-home.dc.html" class="wordmark" style="display:inline-flex;padding:4px 2px;color:#9E2852;text-decoration:none;">
+      <span class="ink" style="display:inline-flex;align-items:center;padding:9px 12px 8px;border:2px solid #9E2852;outline:1px solid #9E2852;outline-offset:-6px;border-radius:3px;transform:rotate(-2deg);mix-blend-mode:multiply;font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;font-size:15px;letter-spacing:0.05em;line-height:1;text-transform:uppercase;">RankedVote.app</span>
+    </a>
+    <a href="#" class="cta" style="display:inline-flex;align-items:center;min-height:44px;padding:0 14px;border:1.5px solid #1E2A47;border-radius:3px;background:#FBF6E9;box-shadow:3px 3px 0 #1E2A47;color:#1E2A47;text-decoration:none;font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;font-size:14px;">Create a ballot</a>
+  </header>
+
+  <main style="max-width:1040px;margin:0 auto;">
+    <p class="sr" role="status" aria-live="polite">{{announce}}</p>
+
+    <sc-if value="{{voting}}" hint-placeholder-val="{{true}}">
+
+      <article aria-labelledby="ballot-q" class="card-pad" style="position:relative;background:#FBF6E9;border-radius:5px;box-shadow:0 1px 0 rgba(30,42,71,0.10),0 18px 30px -22px rgba(30,42,71,0.55);padding:16px 18px 46px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;font-family:'Courier Prime','Courier New',Courier,monospace;font-size:13px;line-height:1.35;color:#4F5A72;">
+          <p style="margin:0;"><span style="display:block;text-transform:uppercase;letter-spacing:0.12em;">Ballot</span><span style="display:block;">ebc-next-read</span></p>
+          <p style="margin:0;text-align:right;"><span style="display:block;text-transform:uppercase;letter-spacing:0.12em;">Status</span><span style="display:block;">Accepting votes</span></p>
+        </div>
+        <div aria-hidden="true" class="rule" style="border-top:1px solid #D58C9F;margin:12px -18px 0;"></div>
+        <h1 id="ballot-q" class="h1" style="font-size:30px;line-height:1.14;font-weight:400;letter-spacing:-0.01em;margin:16px 0 14px;max-width:24ch;text-wrap:balance;">What should the Elixir Book Club read next?</h1>
+        <div style="max-width:62ch;font-size:17px;line-height:26px;background-image:repeating-linear-gradient(to bottom,transparent 0,transparent 25px,#CFDBE8 25px,#CFDBE8 26px);">
+          <p style="margin:0;">Rank up to five books you'd like to read next. Your first choice earns the most points. We'll start the winner at our next meeting.</p>
+        </div>
+        <span aria-hidden="true" style="position:absolute;left:50%;bottom:14px;width:16px;height:16px;margin-left:-8px;border-radius:50%;background:#E8DDC4;box-shadow:inset 0 1px 2px rgba(30,42,71,0.35);"></span>
+      </article>
+
+      <div class="vote-grid" style="display:grid;grid-template-columns:minmax(0,1fr);gap:20px;align-items:start;margin-top:20px;">
+
+        <section aria-labelledby="rank-h" style="background:#FBF6E9;border-radius:5px;box-shadow:0 1px 0 rgba(30,42,71,0.10),0 18px 30px -22px rgba(30,42,71,0.55);padding:18px 0 6px;">
+          <div style="padding:0 18px;">
+            <h2 id="rank-h" style="margin:0;font-size:24px;line-height:1.2;font-weight:400;">Rank your choices</h2>
+            <p id="rank-help" style="margin:8px 0 0;font-size:16px;line-height:1.5;">Tap the books in the order you prefer them. The first one you tap is your 1st choice. Tap a stamped book again to take its stamp off. Only a 1st choice is required.</p>
+            <div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px 14px;margin-top:14px;">
+              <div aria-hidden="true" style="display:flex;gap:5px;">
+                <sc-for list="{{meter}}" as="m" hint-placeholder-count="5">
+                  <span style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;border:1.5px {{m.line}} {{m.color}};border-radius:2px;color:{{m.color}};font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;font-size:14px;transform:rotate({{m.rot}});">{{m.n}}</span>
+                </sc-for>
+              </div>
+              <p style="margin:0;font-family:'Courier Prime','Courier New',Courier,monospace;font-size:14px;line-height:1.3;">{{countText}}</p>
+              <sc-if value="{{hasStamps}}" hint-placeholder-val="{{true}}">
+                <button type="button" class="quiet" onClick="{{clearAll}}" style="margin-left:auto;min-height:44px;padding:0 10px;border:0;border-radius:3px;background:transparent;font-family:'Courier Prime','Courier New',Courier,monospace;font-size:14px;text-decoration:underline;text-underline-offset:3px;cursor:pointer;">Clear all</button>
+              </sc-if>
+            </div>
+            <sc-if value="{{showError}}" hint-placeholder-val="{{false}}">
+              <p role="alert" style="display:flex;align-items:flex-start;gap:10px;margin:12px 0 0;padding:10px 12px;border:1.5px dashed #9E2852;border-radius:3px;color:#9E2852;font-family:'Courier Prime','Courier New',Courier,monospace;font-size:14px;line-height:1.45;">
+                <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" style="flex:none;margin-top:1px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"><circle cx="12" cy="12" r="9.5" /><path d="M12 7v6M12 16.5v.5" /></svg>
+                <span>Your vote needs a 1st choice. Tap a book to stamp it Rank 1.</span>
+              </p>
+            </sc-if>
+            <sc-if value="{{showFull}}" hint-placeholder-val="{{false}}">
+              <p style="margin:12px 0 0;padding:10px 12px;border:1.5px dashed #1E2A47;border-radius:3px;font-family:'Courier Prime','Courier New',Courier,monospace;font-size:14px;line-height:1.45;">All five ranks are used. Tap a stamped book to free a rank.</p>
+            </sc-if>
+          </div>
+
+          <div aria-hidden="true" style="display:grid;grid-template-columns:78px minmax(0,1fr);margin-top:16px;border-top:2px solid #1E2A47;border-bottom:1px solid #1E2A47;font-family:'Courier Prime','Courier New',Courier,monospace;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:#4F5A72;">
+            <span style="padding:7px 0;text-align:center;border-right:1px solid #DCA7B5;">Rank</span>
+            <span style="padding:7px 14px;">Choice</span>
+          </div>
+          <ul role="list" aria-describedby="rank-help" style="list-style:none;margin:0;padding:0;">
+            <sc-for list="{{answers}}" as="a" hint-placeholder-count="7">
+              <li style="border-bottom:1px solid #B4C6DA;">
+                <button type="button" class="row" aria-pressed="{{a.pressed}}" onClick="{{a.toggle}}" style="display:grid;grid-template-columns:78px minmax(0,1fr);width:100%;min-height:78px;padding:0;border:0;border-radius:0;background-color:{{a.bg}};text-align:left;cursor:pointer;">
+                  <span style="display:flex;align-items:center;justify-content:center;padding:10px 0;border-right:1px solid #DCA7B5;">
+                    <span class="slot" style="display:block;">
+                      <sc-if value="{{a.ranked}}" hint-placeholder-val="{{false}}">
+                        <span class="stamp-in" style="display:block;">
+                          <span class="ink" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:58px;height:52px;border:2px solid #9E2852;outline:1px solid #9E2852;outline-offset:-6px;border-radius:3px;color:#9E2852;font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;line-height:1;text-transform:uppercase;transform:rotate({{a.rot}});mix-blend-mode:multiply;">
+                            <span style="font-size:10px;letter-spacing:0.16em;">Rank</span>
+                            <span style="font-size:24px;">{{a.rank}}</span>
+                          </span>
+                        </span>
+                      </sc-if>
+                      <sc-if value="{{a.unranked}}" hint-placeholder-val="{{true}}">
+                        <span style="display:flex;align-items:center;justify-content:center;width:58px;height:52px;border:1.5px dashed #8E98AD;border-radius:3px;font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;line-height:1;text-transform:uppercase;color:#C27A92;">
+                          <span class="sr">Not ranked.</span>
+                          <span class="ghost" aria-hidden="true" style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+                            <span style="font-size:10px;letter-spacing:0.16em;">{{a.ghostLabel}}</span>
+                            <span style="font-size:24px;">{{a.ghost}}</span>
+                          </span>
+                        </span>
+                      </sc-if>
+                    </span>
+                  </span>
+                  <span style="display:flex;align-items:center;padding:12px 16px 12px 14px;font-size:17px;line-height:1.38;">{{a.title}}</span>
+                </button>
+              </li>
+            </sc-for>
+          </ul>
+        </section>
+
+        <aside class="slip" aria-labelledby="slip-h" style="background:#F4EAD1;border-radius:3px;box-shadow:0 1px 0 rgba(30,42,71,0.10),0 18px 30px -22px rgba(30,42,71,0.55);padding:16px 16px 20px;">
+          <div style="padding-bottom:10px;border-bottom:3px double #1E2A47;text-align:center;">
+            <p style="margin:0;font-family:'Courier Prime','Courier New',Courier,monospace;font-size:12px;letter-spacing:0.24em;text-transform:uppercase;color:#4F5A72;">Ranks 1 to 5</p>
+            <h2 id="slip-h" style="margin:2px 0 0;font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;font-size:22px;letter-spacing:0.18em;text-transform:uppercase;">Your order</h2>
+          </div>
+          <div aria-hidden="true" style="display:grid;grid-template-columns:60px minmax(0,1fr);border-bottom:1px solid #1E2A47;font-family:'Courier Prime','Courier New',Courier,monospace;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#4F5A72;">
+            <span style="padding:6px 0;text-align:center;border-right:1px solid #DCA7B5;">Rank</span>
+            <span style="padding:6px 12px;">Choice</span>
+          </div>
+          <ol role="list" style="list-style:none;margin:0;padding:0;">
+            <sc-for list="{{slip}}" as="s" hint-placeholder-count="5">
+              <li style="display:grid;grid-template-columns:60px minmax(0,1fr);border-bottom:1px solid #B4C6DA;">
+                <span style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:13px 0 12px;border-right:1px solid #DCA7B5;font-family:'Courier Prime','Courier New',Courier,monospace;line-height:1;">
+                  <span style="font-size:16px;font-weight:700;color:{{s.ordColor}};">{{s.ordinal}}</span>
+                  <span style="font-size:12px;color:#4F5A72;">{{s.points}}</span>
+                </span>
+                <div style="min-width:0;padding:10px 0 12px 12px;">
+                  <sc-if value="{{s.filled}}" hint-placeholder-val="{{true}}">
+                    <p style="margin:0;font-size:16px;line-height:1.4;">{{s.title}}</p>
+                    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;">
+                      <button type="button" class="tbtn" onClick="{{s.up}}" disabled="{{s.upDisabled}}" aria-label="{{s.upLabel}}" style="display:inline-flex;align-items:center;gap:5px;min-height:44px;padding:0 11px;border:1.5px solid #1E2A47;border-radius:3px;background:transparent;color:#1E2A47;font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;font-size:14px;cursor:pointer;">
+                        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"><path d="M12 19V5M5.5 11.5L12 5l6.5 6.5" /></svg>
+                        <span>Up</span>
+                      </button>
+                      <button type="button" class="tbtn" onClick="{{s.down}}" disabled="{{s.downDisabled}}" aria-label="{{s.downLabel}}" style="display:inline-flex;align-items:center;gap:5px;min-height:44px;padding:0 11px;border:1.5px solid #1E2A47;border-radius:3px;background:transparent;color:#1E2A47;font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;font-size:14px;cursor:pointer;">
+                        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"><path d="M12 5v14M5.5 12.5L12 19l6.5-6.5" /></svg>
+                        <span>Down</span>
+                      </button>
+                      <button type="button" class="tbtn tdel" onClick="{{s.remove}}" aria-label="{{s.removeLabel}}" style="display:inline-flex;align-items:center;gap:5px;min-height:44px;padding:0 11px;border:1.5px solid #9E2852;border-radius:3px;background:transparent;color:#9E2852;font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;font-size:14px;cursor:pointer;">
+                        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" /></svg>
+                        <span>Remove</span>
+                      </button>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{s.empty}}" hint-placeholder-val="{{false}}">
+                    <p style="margin:0;padding-top:3px;font-size:15px;line-height:1.4;font-style:italic;color:{{s.emptyColor}};">{{s.emptyText}}</p>
+                  </sc-if>
+                </div>
+              </li>
+            </sc-for>
+          </ol>
+
+          <div style="margin-top:20px;">
+            <label for="voter-name" style="display:block;font-family:'Courier Prime','Courier New',Courier,monospace;font-size:13px;letter-spacing:0.1em;text-transform:uppercase;color:#4F5A72;">Name (optional)</label>
+            <input id="voter-name" class="name-in" type="text" value="{{name}}" onChange="{{onName}}" style="display:block;width:100%;height:46px;margin-top:2px;padding:0 4px;border:0;border-bottom:1.5px solid #1E2A47;border-radius:0;background:transparent;color:#1E2A47;font-family:'Courier Prime','Courier New',Courier,monospace;font-size:18px;" />
+            <p style="margin:6px 0 0;font-size:14px;line-height:1.45;color:#4F5A72;">The ballot's creator sees this name next to your vote.</p>
+          </div>
+          <button type="button" class="submit" onClick="{{submit}}" style="display:block;width:100%;min-height:54px;margin-top:18px;padding:0 16px;border:0;border-radius:3px;background:#1E2A47;box-shadow:0 3px 0 #0E1528;color:#FBF6E9;font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;font-size:16px;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;">Submit vote</button>
+          <sc-if value="{{showError}}" hint-placeholder-val="{{false}}">
+            <p style="margin:10px 0 0;font-family:'Courier Prime','Courier New',Courier,monospace;font-size:14px;line-height:1.45;color:#9E2852;">Add a 1st choice first: tap a book to stamp it.</p>
+          </sc-if>
+        </aside>
+
+      </div>
+    </sc-if>
+
+    <sc-if value="{{submitted}}" hint-placeholder-val="{{false}}">
+      <article aria-labelledby="done-h" class="card-pad" style="position:relative;max-width:720px;margin:0 auto;background:#FBF6E9;border-radius:5px;box-shadow:0 1px 0 rgba(30,42,71,0.10),0 18px 30px -22px rgba(30,42,71,0.55);padding:16px 18px 50px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;font-family:'Courier Prime','Courier New',Courier,monospace;font-size:13px;line-height:1.35;color:#4F5A72;">
+          <p style="margin:0;"><span style="display:block;text-transform:uppercase;letter-spacing:0.12em;">Ballot</span><span style="display:block;">ebc-next-read</span></p>
+        </div>
+        <div aria-hidden="true" class="rule" style="border-top:1px solid #D58C9F;margin:12px -18px 0;"></div>
+        <div aria-hidden="true" style="display:flex;justify-content:center;padding:30px 0 6px;">
+          <span class="stamp-in" style="display:block;">
+            <span class="ink" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 22px 12px;border:3px solid #9E2852;outline:1.5px solid #9E2852;outline-offset:-9px;border-radius:4px;color:#9E2852;font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;line-height:1;text-transform:uppercase;transform:rotate(-6deg);mix-blend-mode:multiply;">
+              <span style="font-size:12px;letter-spacing:0.32em;">Vote</span>
+              <span style="font-size:34px;letter-spacing:0.08em;">Received</span>
+            </span>
+          </span>
+        </div>
+        <h1 id="done-h" style="margin:18px 0 6px;font-size:30px;line-height:1.15;font-weight:400;text-align:center;text-wrap:balance;">{{doneTitle}}</h1>
+        <p style="margin:0 auto;max-width:34ch;font-size:16px;line-height:1.5;text-align:center;color:#4F5A72;">What should the Elixir Book Club read next?</p>
+
+        <div style="max-width:560px;margin:26px auto 0;background:#F4EAD1;border-radius:3px;padding:14px 14px 16px;">
+          <h2 style="margin:0;padding-bottom:8px;border-bottom:3px double #1E2A47;font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;font-size:18px;letter-spacing:0.18em;text-align:center;text-transform:uppercase;">Your order</h2>
+          <ol role="list" style="list-style:none;margin:0;padding:0;">
+            <sc-for list="{{echo}}" as="e" hint-placeholder-count="3">
+              <li style="display:grid;grid-template-columns:56px minmax(0,1fr);border-bottom:1px solid #B4C6DA;">
+                <span style="padding:13px 0 12px;border-right:1px solid #DCA7B5;font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;font-size:16px;line-height:1.2;text-align:center;color:#9E2852;">{{e.ordinal}}</span>
+                <span style="padding:11px 0 11px 12px;font-size:16px;line-height:1.4;">{{e.title}}</span>
+              </li>
+            </sc-for>
+          </ol>
+          <p style="margin:12px 0 0;font-family:'Courier Prime','Courier New',Courier,monospace;font-size:14px;line-height:1.4;">Signed: <span>{{signed}}</span></p>
+        </div>
+
+        <p style="max-width:46ch;margin:22px auto 0;font-size:16px;line-height:1.5;text-align:center;">The results go public when the ballot's creator closes the ballot.</p>
+        <div style="display:flex;justify-content:center;margin-top:22px;">
+          <a href="a-home.dc.html" class="cta" style="display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:0 18px;border:1.5px solid #1E2A47;border-radius:3px;background:#FBF6E9;box-shadow:3px 3px 0 #1E2A47;color:#1E2A47;text-decoration:none;font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;font-size:15px;">
+            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"><path d="M19 12H5M11.5 5.5L5 12l6.5 6.5" /></svg>
+            <span>Back to RankedVote.app</span>
+          </a>
+        </div>
+        <span aria-hidden="true" style="position:absolute;left:50%;bottom:16px;width:16px;height:16px;margin-left:-8px;border-radius:50%;background:#E8DDC4;box-shadow:inset 0 1px 2px rgba(30,42,71,0.35);"></span>
+      </article>
+    </sc-if>
+  </main>
+
+  <footer style="max-width:1040px;margin:40px auto 0;padding-top:12px;border-top:1px solid #1E2A47;display:flex;flex-wrap:wrap;gap:0 22px;font-family:'Courier Prime','Courier New',Courier,monospace;font-size:14px;">
+    <a href="https://github.com/zorn/flick" style="display:inline-flex;align-items:center;min-height:44px;">GitHub project</a>
+    <a href="https://updown.io/wwis" style="display:inline-flex;align-items:center;min-height:44px;">Uptime</a>
+    <a href="mailto:mike@mikezornek.com" style="display:inline-flex;align-items:center;min-height:44px;">Contact site admin</a>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":2700}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    // Opens with three stamps (Mike's top three) so the stamp look shows at a glance.
+    this.state = { order: ["B", "A", "E"], name: "", submitted: false, error: false, full: false, announce: "" };
+  }
+
+  answerList() {
+    return [
+      { id: "A", title: "Elixir in Action, Third Edition by Saša Jurić" },
+      { id: "B", title: "Engineering Elixir Applications by Ellie Fairholm and Josep Giralt D'Lacoste" },
+      { id: "C", title: "Machine Learning in Elixir by Sean Moriarity" },
+      { id: "D", title: "Designing Elixir Systems with OTP by James Edward Gray II and Bruce A. Tate" },
+      { id: "E", title: "Elixir Patterns by Hugo Barauna and Alexander Koutmos" },
+      { id: "F", title: "Concurrent Data Processing in Elixir by Svilen Gospodinov" },
+      { id: "G", title: "A Common-Sense Guide to Data Structures and Algorithms, Second Edition by Jay Wengrow" }
+    ];
+  }
+
+  titleOf(id) {
+    const hit = this.answerList().find(a => a.id === id);
+    return hit ? hit.title : "";
+  }
+
+  leftText(n) {
+    if (n === 0) return "No ranks left.";
+    if (n === 1) return "1 rank left.";
+    return n + " ranks left.";
+  }
+
+  toggle(id) {
+    const order = this.state.order;
+    if (order.indexOf(id) >= 0) {
+      const next = order.filter(x => x !== id);
+      this.setState({ order: next, error: false, full: false, announce: "Stamp removed from " + this.titleOf(id) + ". Later ranks moved up. " + this.leftText(5 - next.length) });
+      return;
+    }
+    if (order.length >= 5) {
+      this.setState({ full: true, announce: "All five ranks are used. Remove a stamp to rank this book." });
+      return;
+    }
+    const next = order.concat([id]);
+    this.setState({ order: next, error: false, full: false, announce: "Rank " + next.length + " stamped on " + this.titleOf(id) + ". " + this.leftText(5 - next.length) });
+  }
+
+  move(i, d) {
+    const next = this.state.order.slice();
+    const j = i + d;
+    if (j < 0 || j >= next.length) return;
+    const t = next[i];
+    next[i] = next[j];
+    next[j] = t;
+    this.setState({ order: next, full: false, announce: this.titleOf(t) + " is now Rank " + (j + 1) + "." });
+  }
+
+  remove(i) {
+    const id = this.state.order[i];
+    const next = this.state.order.filter((x, k) => k !== i);
+    this.setState({ order: next, full: false, announce: "Removed " + this.titleOf(id) + ". Later ranks moved up. " + this.leftText(5 - next.length) });
+  }
+
+  renderVals() {
+    const ORD = ["1st", "2nd", "3rd", "4th", "5th"];
+    const PTS = ["5 pts", "4 pts", "3 pts", "2 pts", "1 pt"];
+    const ROT = ["-5deg", "3deg", "-2deg", "4deg", "-3deg"];
+    const order = this.state.order;
+    const used = order.length;
+    const left = 5 - used;
+    const full = used >= 5;
+
+    const answers = this.answerList().map(a => {
+      const i = order.indexOf(a.id);
+      const ranked = i >= 0;
+      return {
+        title: a.title,
+        ranked: ranked,
+        unranked: !ranked,
+        pressed: ranked,
+        rank: ranked ? String(i + 1) : "",
+        rot: ranked ? ROT[i] : "0deg",
+        bg: ranked ? "rgba(158, 40, 82, 0.05)" : "transparent",
+        ghost: full ? "" : String(used + 1),
+        ghostLabel: full ? "" : "Rank",
+        toggle: () => this.toggle(a.id)
+      };
+    });
+
+    const meter = [0, 1, 2, 3, 4].map(i => ({
+      n: String(i + 1),
+      line: i < used ? "solid" : "dashed",
+      color: i < used ? "#9E2852" : "#8E98AD",
+      rot: i < used ? ROT[i] : "0deg"
+    }));
+
+    const slip = [0, 1, 2, 3, 4].map(i => {
+      const filled = i < used;
+      const title = filled ? this.titleOf(order[i]) : "";
+      let emptyText = "Optional.";
+      if (i === used) emptyText = i === 0 ? "Required. Your first tap goes here." : "Your next tap goes here.";
+      return {
+        ordinal: ORD[i],
+        points: PTS[i],
+        filled: filled,
+        empty: !filled,
+        title: title,
+        ordColor: filled ? "#9E2852" : "#4F5A72",
+        emptyText: emptyText,
+        emptyColor: i === 0 && this.state.error ? "#9E2852" : "#4F5A72",
+        upDisabled: i === 0,
+        downDisabled: i >= used - 1,
+        upLabel: "Move up: " + title,
+        downLabel: "Move down: " + title,
+        removeLabel: "Remove: " + title,
+        up: () => this.move(i, -1),
+        down: () => this.move(i, 1),
+        remove: () => this.remove(i)
+      };
+    });
+
+    const name = this.state.name;
+    const trimmed = name.trim();
+
+    return {
+      voting: !this.state.submitted,
+      submitted: this.state.submitted,
+      announce: this.state.announce,
+      answers: answers,
+      meter: meter,
+      slip: slip,
+      countText: used + " of 5 ranks used · " + (left === 0 ? "none left" : left + " left"),
+      hasStamps: used > 0,
+      showError: this.state.error,
+      showFull: this.state.full && full,
+      name: name,
+      onName: e => this.setState({ name: e.target.value }),
+      clearAll: () => this.setState({ order: [], error: false, full: false, announce: "All stamps cleared. 5 ranks left." }),
+      submit: () => {
+        if (this.state.order.length === 0) {
+          this.setState({ error: true, announce: "" });
+        } else {
+          this.setState({ submitted: true, error: false, announce: "" });
+        }
+      },
+      echo: order.map((id, i) => ({ ordinal: ORD[i], title: this.titleOf(id) })),
+      doneTitle: trimmed ? "Your vote is in, " + trimmed + "." : "Your vote is in.",
+      signed: trimmed || "No name given"
+    };
+  }
+}
+</script>
+</body>
+</html>

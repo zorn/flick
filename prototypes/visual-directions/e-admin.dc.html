@@ -1,0 +1,573 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Soft and tactile · Ballot admin</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&amp;family=Figtree:wght@400..800&amp;display=swap">
+<style>
+body{margin:0;background:#F7EFE3}
+.e-root{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+.e-root *{box-sizing:border-box}
+.e-root button,.e-root input{font-family:inherit}
+.e-root a{color:#462F80;text-decoration-thickness:2px;text-underline-offset:3px}
+.e-root a:hover{color:#A13B85}
+.e-root :focus-visible{outline:3px solid #462F80;outline-offset:3px}
+.e-sr{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+.e-press{cursor:pointer;transition:transform .16s cubic-bezier(.34,1.56,.64,1),box-shadow .16s ease,background-color .2s ease,color .2s ease}
+.e-press:hover{transform:translateY(-2px)!important}
+.e-press:active{transform:translateY(3px)!important;transition-duration:.05s}
+.e-tang:hover{box-shadow:0 6px 0 #C96736,0 16px 24px -12px rgba(201,103,54,.65)!important}
+.e-tang:active{box-shadow:0 1px 0 #C96736,0 3px 6px -3px rgba(201,103,54,.5)!important}
+.e-mint:hover{box-shadow:0 6px 0 #7CCB9F,0 16px 24px -12px rgba(5,102,65,.4)!important}
+.e-mint:active{box-shadow:0 1px 0 #7CCB9F!important}
+.e-berry:hover{box-shadow:0 6px 0 #751E5F,0 16px 24px -12px rgba(117,30,95,.6)!important}
+.e-berry:active{box-shadow:0 1px 0 #751E5F,0 3px 6px -3px rgba(117,30,95,.5)!important}
+.e-plain:hover{box-shadow:0 5px 0 #D0C6B6,0 12px 18px -12px rgba(64,44,30,.45)!important}
+.e-plain:active{box-shadow:0 1px 0 #D0C6B6,0 2px 4px -2px rgba(64,44,30,.3)!important}
+.e-key:hover{box-shadow:0 4px 0 rgba(37,28,52,.22),0 10px 14px -8px rgba(37,28,52,.4)!important}
+.e-key:active{box-shadow:0 1px 0 rgba(37,28,52,.22)!important}
+.e-input:focus{border-color:#462F80!important}
+
+@keyframes e-pulse{0%{box-shadow:0 0 0 0 rgba(38,158,95,.55)}100%{box-shadow:0 0 0 9px rgba(38,158,95,0)}}
+.e-pulse{animation:e-pulse 1.6s ease-out infinite}
+@keyframes e-rise{0%{transform:translateY(12px);opacity:0}100%{transform:none;opacity:1}}
+.e-rise{animation:e-rise .4s cubic-bezier(.2,.8,.25,1) both}
+@keyframes e-copied{0%{transform:scale(.6) rotate(-30deg)}60%{transform:scale(1.25) rotate(6deg)}100%{transform:none}}
+.e-copied-icon{animation:e-copied .4s cubic-bezier(.2,.8,.25,1)}
+
+@media (min-width:960px){
+  .e-h1{font-size:48px!important}
+  .e-admin-grid{grid-template-columns:minmax(0,5fr) minmax(0,7fr);grid-template-areas:"warn results" "share results" "votes votes" "close close";grid-template-rows:auto 1fr auto auto;align-items:start;column-gap:28px!important}
+  .e-a-warn{grid-area:warn}
+  .e-a-share{grid-area:share}
+  .e-a-results{grid-area:results}
+  .e-a-votes{grid-area:votes}
+  .e-a-close{grid-area:close}
+}
+@media (prefers-reduced-motion:reduce){
+  .e-root *{animation:none!important;transition:none!important}
+}
+</style>
+</helmet>
+<div class="e-root" style="background-color:#F7EFE3; background-image:radial-gradient(#E6DBCA 1.2px, transparent 1.6px); background-size:22px 22px; color:#251C34; font-family:Figtree, 'Avenir Next', 'Segoe UI', system-ui, sans-serif; font-size:17px; line-height:1.5">
+  <div style="max-width:1120px; margin:0 auto; padding:0 16px">
+
+    <header style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px; padding:14px 0 6px">
+      <a href="e-home.dc.html" style="display:inline-flex; align-items:center; gap:8px; min-height:44px; color:#251C34; text-decoration:none">
+        <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true">
+          <rect x="1" y="17" width="20" height="9" rx="4.5" fill="#F1B464"></rect>
+          <rect x="4" y="9.5" width="20" height="9" rx="4.5" fill="#E57255"></rect>
+          <rect x="7" y="2" width="20" height="9" rx="4.5" fill="#462F80"></rect>
+        </svg>
+        <span style="font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:19px; letter-spacing:-0.02em; line-height:1">RankedVote<span style="color:#A13B85">.app</span></span>
+      </a>
+      <a href="https://rankedvote.app/ballot/new" class="e-press e-tang" style="display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:0 16px; border-radius:999px; background:#FF9F61; color:#251C34; text-decoration:none; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:700; font-size:15px; box-shadow:0 4px 0 #C96736, 0 10px 18px -12px rgba(201,103,54,.6)">Create a ballot</a>
+    </header>
+
+    <main style="padding:14px 0 8px">
+      <p class="e-sr" aria-live="polite">{{announce}}</p>
+
+      <div style="max-width:760px">
+        <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center">
+          <span style="display:inline-flex; align-items:center; gap:6px; padding:5px 12px 5px 9px; border-radius:999px; background:#251C34; color:#FFFDF8; font-size:14px; font-weight:700">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="15" r="4"></circle><path d="M11 12l8-8"></path><path d="M16 7l2.5 2.5"></path><path d="M13.5 9.5 16 12"></path></svg>
+            Ballot admin
+          </span>
+          <sc-if value="{{isOpen}}" hint-placeholder-val="{{true}}">
+            <span style="display:inline-flex; align-items:center; gap:8px; padding:5px 12px 5px 10px; border-radius:999px; background:#D5F4E2; color:#056641; font-size:14px; font-weight:750">
+              <span class="e-pulse" aria-hidden="true" style="width:8px; height:8px; border-radius:999px; background:#269E5F"></span>Published · accepting votes
+            </span>
+          </sc-if>
+          <sc-if value="{{isClosed}}" hint-placeholder-val="{{false}}">
+            <span style="display:inline-flex; align-items:center; gap:6px; padding:5px 12px 5px 10px; border-radius:999px; background:#E8E4FE; color:#462F80; font-size:14px; font-weight:750">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2.5"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>Closed · results are public
+            </span>
+          </sc-if>
+        </div>
+        <h1 class="e-h1" style="margin:16px 0 8px; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:34px; line-height:1.05; letter-spacing:-0.03em; text-wrap:balance">What should the Elixir Book Club read next?</h1>
+        <p style="margin:0; color:#585166; font-size:16px; font-weight:600">Published Sep 28, 2026, 7:30 PM EDT</p>
+      </div>
+
+      <div class="e-admin-grid" style="display:grid; gap:20px; margin-top:24px">
+
+        <section class="e-a-warn" aria-labelledby="e-warn-h" style="border-radius:26px; padding:18px; background:#FBEFC2; box-shadow:0 1px 1px rgba(64,44,30,.05), 0 4px 0 #EBD98C, 0 16px 26px -18px rgba(120,96,20,.45)">
+          <div style="display:flex; gap:12px; align-items:flex-start">
+            <span aria-hidden="true" style="flex:none; width:44px; height:44px; border-radius:14px; display:grid; place-items:center; background:#FFFDF8; color:#251C34; box-shadow:0 3px 0 #E3CF7A">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3.5h10a1 1 0 0 1 1 1V20.5l-6-4-6 4V4.5a1 1 0 0 1 1-1z"></path></svg>
+            </span>
+            <div style="min-width:0">
+              <h2 id="e-warn-h" style="margin:0; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:22px; line-height:1.15; letter-spacing:-0.015em">Bookmark this page</h2>
+              <p style="margin:6px 0 0; font-size:16px; line-height:1.45">RankedVote.app has no accounts, so this page's address is the only way back to manage your ballot. Anyone with it can manage the ballot, so keep it to yourself.</p>
+            </div>
+          </div>
+          <p style="margin:14px 0 0; padding:12px 14px; border-radius:16px; background:#FFFDF8; box-shadow:inset 0 2px 5px rgba(64,44,30,.1); font-size:15px; font-weight:650; line-height:1.4; overflow-wrap:anywhere"><span class="e-sr">Admin address: </span>https://rankedvote.app/ballot/ebc-next-read/9c1f4e2a-6b7d-4f3e-a8c2-5d0b1e7f3a64</p>
+        </section>
+
+        <section class="e-a-share" aria-labelledby="e-share-h" style="border-radius:26px; padding:18px; background:#FFFDF8; box-shadow:0 1px 1px rgba(64,44,30,.04), 0 2px 4px rgba(64,44,30,.05), 0 10px 22px -8px rgba(64,44,30,.14), 0 26px 44px -26px rgba(64,44,30,.3)">
+          <h2 id="e-share-h" style="margin:0; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:22px; line-height:1.15; letter-spacing:-0.015em">Share with voters</h2>
+          <p style="margin:6px 0 0; font-size:16px; color:#585166">Send this link to everyone who should vote.</p>
+          <p style="margin:14px 0 0; padding:12px 14px; border-radius:16px; background:#F1E9DC; box-shadow:inset 0 2px 5px rgba(64,44,30,.12); font-size:16px; font-weight:700; line-height:1.4; overflow-wrap:anywhere">
+            <a href="e-vote.dc.html">https://rankedvote.app/ballot/ebc-next-read</a>
+          </p>
+          <button type="button" class="e-press {{copyClass}}" onClick="{{onCopy}}" style="margin-top:14px; width:100%; min-height:56px; display:flex; align-items:center; justify-content:center; gap:10px; border:0; border-radius:18px; color:#251C34; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:19px; background:{{copyBg}}; box-shadow:{{copyShadow}}">
+            <sc-if value="{{notCopied}}" hint-placeholder-val="{{true}}">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.5" y="8.5" width="11.5" height="11.5" rx="3"></rect><path d="M15.5 8.5V6.5a2.5 2.5 0 0 0-2.5-2.5H6.5A2.5 2.5 0 0 0 4 6.5V13a2.5 2.5 0 0 0 2.5 2.5h2"></path></svg>
+              Copy voter link
+            </sc-if>
+            <sc-if value="{{copied}}" hint-placeholder-val="{{false}}">
+              <svg class="e-copied-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+              Copied
+            </sc-if>
+          </button>
+        </section>
+
+        <section class="e-a-results" aria-labelledby="e-res-h" style="border-radius:26px; padding:18px 16px 8px; background:#FFFDF8; box-shadow:0 1px 1px rgba(64,44,30,.04), 0 2px 4px rgba(64,44,30,.05), 0 10px 22px -8px rgba(64,44,30,.14), 0 26px 44px -26px rgba(64,44,30,.3)">
+          <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px 10px">
+            <h2 id="e-res-h" style="margin:0; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:22px; line-height:1.15; letter-spacing:-0.015em">Early results</h2>
+            <span style="display:inline-flex; align-items:center; padding:3px 10px; border-radius:999px; background:#FBEFC2; font-size:13px; font-weight:800; letter-spacing:.06em; text-transform:uppercase">{{resultsLabel}}</span>
+          </div>
+          <p style="margin:6px 0 0; font-size:15.5px; color:#585166">{{resultsMeta}}</p>
+          <div aria-hidden="true" style="margin-top:12px; display:flex; flex-wrap:wrap; gap:6px 12px; font-size:13px; font-weight:700; color:#585166">
+            <sc-for list="{{legend}}" as="lg" hint-placeholder-count="5">
+              <span style="display:inline-flex; align-items:center; gap:5px"><span style="width:14px; height:8px; border-radius:99px; background:{{lg.fill}}; box-shadow:inset 0 0 0 1px rgba(37,28,52,.14)"></span>{{lg.text}}</span>
+            </sc-for>
+          </div>
+          <ol aria-label="Early results by points" style="list-style:none; margin:10px 0 0; padding:0">
+            <sc-for list="{{results}}" as="row" hint-placeholder-count="7">
+              <li style="padding:12px 0; border-top:{{row.sep}}">
+                <div style="display:flex; gap:10px; align-items:flex-start">
+                  <span aria-hidden="true" style="flex:none; width:32px; height:32px; border-radius:10px; display:grid; place-items:center; background:{{row.tokenBg}}; color:#251C34; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:16px; box-shadow:{{row.tokenShadow}}">{{row.place}}</span>
+                  <p style="margin:0; padding-top:4px; flex:1; min-width:0; font-size:15.5px; font-weight:650; line-height:1.3; text-wrap:pretty"><span class="e-sr">Place {{row.place}}: </span>{{row.title}}</p>
+                  <p style="margin:0; flex:none; padding-top:1px; text-align:right; line-height:1.1"><span style="font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:21px; font-variant-numeric:tabular-nums">{{row.pts}}</span><span style="display:block; font-size:12px; font-weight:650; color:#585166">points</span></p>
+                </div>
+                <sc-if value="{{row.mostFirsts}}" hint-placeholder-val="{{false}}">
+                  <p style="margin:6px 0 0 42px; display:inline-flex; align-items:center; gap:5px; padding:2px 10px 2px 7px; border-radius:999px; background:#E8E4FE; color:#462F80; font-size:12.5px; font-weight:750">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.8.8-4.2 4.1 1 5.8-5.2-2.8-5.2 2.8 1-5.8-4.2-4.1 5.8-.8z"></path></svg>
+                    Most 1st-choice votes
+                  </p>
+                </sc-if>
+                <div aria-hidden="true" style="margin-top:10px; height:10px; border-radius:999px; background:#ECE3D6; box-shadow:inset 0 2px 3px rgba(64,44,30,.12)">
+                  <div style="display:flex; height:10px; width:{{row.barPct}}%; border-radius:999px; overflow:hidden; transition:width .4s cubic-bezier(.2,.8,.25,1)">
+                    <sc-for list="{{row.segs}}" as="seg" hint-placeholder-count="4">
+                      <span style="flex:none; height:10px; width:{{seg.w}}; margin-right:{{seg.mr}}; background:{{seg.fill}}; box-shadow:inset 0 0 0 1px {{seg.line}}"></span>
+                    </sc-for>
+                  </div>
+                </div>
+                <div style="display:grid; grid-template-columns:repeat(5, minmax(0, 1fr)); gap:5px; margin-top:7px">
+                  <sc-for list="{{row.counts}}" as="ct" hint-placeholder-count="5">
+                    <p style="margin:0; padding:3px 0; border-radius:9px; text-align:center; line-height:1.2; background:{{ct.bg}}; box-shadow:{{ct.ring}}">
+                      <span style="display:block; font-size:11px; font-weight:700; color:#585166">{{ct.label}}<span class="e-sr"> choice:</span></span>
+                      <span style="display:block; font-size:14px; font-weight:800; font-variant-numeric:tabular-nums">{{ct.value}}</span>
+                    </p>
+                  </sc-for>
+                </div>
+              </li>
+            </sc-for>
+          </ol>
+        </section>
+
+        <section class="e-a-votes" aria-labelledby="e-votes-h">
+          <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px 10px; padding:0 4px">
+            <h2 id="e-votes-h" style="margin:0; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:24px; line-height:1.15; letter-spacing:-0.015em">Votes</h2>
+            <span style="display:inline-flex; align-items:center; justify-content:center; min-width:30px; height:28px; padding:0 9px; border-radius:999px; background:#251C34; color:#FFFDF8; font-size:14px; font-weight:800">{{voteCount}}</span>
+          </div>
+          <p style="margin:6px 4px 0; font-size:16px; color:#585166">A vote with weight 2 counts twice. Use Edit to change a vote's weight.</p>
+
+          <div style="margin-top:14px; padding:14px; border-radius:22px; background:#FFFDF8; box-shadow:inset 0 0 0 1px #E3D9CA">
+            <h3 style="margin:0; font-size:13px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:#585166">Choice key</h3>
+            <ul style="list-style:none; margin:10px 0 0; padding:0; display:grid; grid-template-columns:repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap:8px 16px">
+              <sc-for list="{{bookKey}}" as="k" hint-placeholder-count="7">
+                <li style="display:flex; gap:10px; align-items:flex-start; font-size:15px; line-height:1.35">
+                  <span aria-hidden="true" style="flex:none; width:28px; height:28px; border-radius:9px; display:grid; place-items:center; box-shadow:inset 0 0 0 2px #251C34; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:14px">{{k.letter}}</span>
+                  <span style="padding-top:3px"><span class="e-sr">{{k.letter}}: </span>{{k.title}}</span>
+                </li>
+              </sc-for>
+            </ul>
+          </div>
+
+          <ol aria-label="Votes in the order received" style="list-style:none; margin:14px 0 0; padding:0; display:grid; grid-template-columns:repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap:12px">
+            <sc-for list="{{votes}}" as="v" hint-placeholder-count="9">
+              <li style="border-radius:22px; padding:14px; background:#FFFDF8; box-shadow:{{v.cardShadow}}">
+                <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px 10px; min-height:44px">
+                  <h3 style="margin:0; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:750; font-size:19px; line-height:1.2; color:{{v.nameColor}}; font-style:{{v.nameStyle}}">{{v.displayName}}</h3>
+                  <sc-if value="{{v.notEditing}}" hint-placeholder-val="{{true}}">
+                    <div style="display:flex; align-items:center; gap:8px">
+                      <span style="display:inline-flex; align-items:center; gap:5px; min-height:32px; padding:0 12px; border-radius:999px; background:{{v.weightBg}}; font-size:14px; font-weight:800"><span style="font-weight:600; color:#585166">Weight</span>{{v.weightText}}</span>
+                      <button type="button" class="e-press e-plain" ref="{{v.editRef}}" onClick="{{v.startEdit}}" style="display:inline-flex; align-items:center; gap:6px; min-height:44px; padding:0 14px; border:0; border-radius:14px; background:#FFFDF8; color:#251C34; font-size:15px; font-weight:700; box-shadow:inset 0 0 0 1.5px #DED6C9, 0 3px 0 #D0C6B6, 0 8px 14px -10px rgba(64,44,30,.4)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9a2.83 2.83 0 0 0-4-4L4 16v4z"></path><path d="M13.5 6.5l4 4"></path></svg>
+                        Edit<span class="e-sr"> weight for {{v.displayName}}</span>
+                      </button>
+                    </div>
+                  </sc-if>
+                </div>
+                <ol aria-label="Picks for {{v.displayName}}" style="list-style:none; margin:10px 0 0; padding:0; display:flex; flex-wrap:wrap; gap:6px">
+                  <sc-for list="{{v.picks}}" as="p" hint-placeholder-count="5">
+                    <li style="display:inline-flex; align-items:center; gap:6px; padding:3px 11px 3px 3px; border-radius:999px; background:{{p.tint}}">
+                      <span aria-hidden="true" style="width:26px; height:26px; border-radius:999px; display:grid; place-items:center; background:{{p.fill}}; color:{{p.ink}}; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:13px; box-shadow:inset 0 -2px 0 rgba(37,28,52,.2)">{{p.num}}</span>
+                      <span aria-hidden="true" style="font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:15px">{{p.letter}}</span>
+                      <span class="e-sr">Rank {{p.num}}: {{p.title}}</span>
+                    </li>
+                  </sc-for>
+                </ol>
+                <sc-if value="{{v.editing}}" hint-placeholder-val="{{false}}">
+                  <div class="e-rise" style="margin-top:14px; padding:14px; border-radius:18px; background:#F1E9DC; box-shadow:inset 0 2px 6px rgba(64,44,30,.12)">
+                    <label for="e-weight-input" style="display:block; font-size:15.5px; font-weight:750">Weight for {{v.displayName}}</label>
+                    <p style="margin:2px 0 0; font-size:14px; color:#585166">A vote with weight 2 counts twice.</p>
+                    <div style="display:flex; flex-wrap:wrap; align-items:center; gap:10px 12px; margin-top:10px">
+                      <div style="display:flex; align-items:center; gap:6px">
+                        <button type="button" class="e-press e-key" onClick="{{v.stepDown}}" aria-label="Lower the weight by 0.5" style="width:44px; height:44px; display:grid; place-items:center; padding:0; border:0; border-radius:14px; background:#FFFDF8; color:#251C34; box-shadow:0 3px 0 rgba(37,28,52,.18), 0 6px 10px -6px rgba(37,28,52,.35)">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"></path></svg>
+                        </button>
+                        <input id="e-weight-input" class="e-input" ref="{{v.inputRef}}" type="text" inputmode="decimal" value="{{v.editValue}}" onChange="{{v.onEditInput}}" style="width:76px; height:48px; padding:0 8px; text-align:center; border-radius:14px; border:2px solid {{v.editBorder}}; background:#FFFDF8; color:#251C34; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:22px">
+                        <button type="button" class="e-press e-key" onClick="{{v.stepUp}}" aria-label="Raise the weight by 0.5" style="width:44px; height:44px; display:grid; place-items:center; padding:0; border:0; border-radius:14px; background:#FFFDF8; color:#251C34; box-shadow:0 3px 0 rgba(37,28,52,.18), 0 6px 10px -6px rgba(37,28,52,.35)">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
+                        </button>
+                      </div>
+                      <div style="display:flex; gap:8px">
+                        <button type="button" class="e-press e-tang" onClick="{{v.saveEdit}}" style="min-height:44px; padding:0 18px; border:0; border-radius:14px; background:#FF9F61; color:#251C34; font-size:15.5px; font-weight:800; box-shadow:0 4px 0 #C96736, 0 10px 16px -10px rgba(201,103,54,.6)">Save</button>
+                        <button type="button" class="e-press e-plain" onClick="{{v.cancelEdit}}" style="min-height:44px; padding:0 16px; border:0; border-radius:14px; background:#FFFDF8; color:#251C34; font-size:15.5px; font-weight:700; box-shadow:inset 0 0 0 1.5px #DED6C9, 0 3px 0 #D0C6B6">Cancel</button>
+                      </div>
+                    </div>
+                    <sc-if value="{{v.showEditError}}" hint-placeholder-val="{{false}}">
+                      <p role="alert" style="margin:10px 0 0; color:#A92227; font-size:14.5px; font-weight:700">{{v.editError}}</p>
+                    </sc-if>
+                  </div>
+                </sc-if>
+              </li>
+            </sc-for>
+          </ol>
+        </section>
+
+        <section class="e-a-close" aria-labelledby="e-close-h" style="border-radius:26px; padding:18px; background:#FFFDF8; box-shadow:inset 0 0 0 2px #F0BEDD, 0 10px 22px -12px rgba(117,30,95,.25)">
+          <div style="max-width:620px">
+            <h2 id="e-close-h" style="margin:0; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:22px; line-height:1.15; letter-spacing:-0.015em">Close the ballot</h2>
+            <sc-if value="{{closeIdle}}" hint-placeholder-val="{{true}}">
+              <p style="margin:6px 0 0; font-size:16px">Close the ballot when you no longer want to accept votes.</p>
+              <div style="display:flex; gap:10px; align-items:flex-start; margin-top:12px; padding:12px 14px; border-radius:16px; background:#FBDEF0">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#751E5F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none; margin-top:2px"><rect x="5" y="11" width="14" height="9" rx="2.5"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
+                <p style="margin:0; font-size:15px; line-height:1.45"><strong>Closing is final.</strong> Voting stops for everyone, and the results become public at <span style="font-weight:700; overflow-wrap:anywhere">https://rankedvote.app/ballot/ebc-next-read/results</span>.</p>
+              </div>
+              <button type="button" class="e-press e-berry" ref="{{closeRef}}" onClick="{{askClose}}" style="margin-top:14px; min-height:52px; padding:0 22px; border:0; border-radius:16px; background:#A13B85; color:#FFFDF8; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:17px; box-shadow:0 4px 0 #751E5F, 0 12px 18px -12px rgba(117,30,95,.6)">Close the ballot</button>
+            </sc-if>
+            <sc-if value="{{closeConfirm}}" hint-placeholder-val="{{false}}">
+              <div class="e-rise" role="group" aria-labelledby="e-confirm-q" style="margin-top:12px; padding:16px; border-radius:18px; background:#FBDEF0; box-shadow:inset 0 2px 6px rgba(117,30,95,.15)">
+                <p id="e-confirm-q" style="margin:0; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:19px; line-height:1.2">Close it for good?</p>
+                <p style="margin:6px 0 0; font-size:15.5px; line-height:1.45">Voting stops now and can't restart. Everyone with the results link sees the final count.</p>
+                <div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:14px">
+                  <button type="button" class="e-press e-berry" onClick="{{confirmClose}}" style="min-height:48px; padding:0 18px; border:0; border-radius:14px; background:#A13B85; color:#FFFDF8; font-size:16px; font-weight:800; box-shadow:0 4px 0 #751E5F, 0 12px 18px -12px rgba(117,30,95,.6)">Yes, close the ballot</button>
+                  <button type="button" class="e-press e-plain" ref="{{keepRef}}" onClick="{{keepOpen}}" style="min-height:48px; padding:0 18px; border:0; border-radius:14px; background:#FFFDF8; color:#251C34; font-size:16px; font-weight:700; box-shadow:inset 0 0 0 1.5px #DED6C9, 0 3px 0 #D0C6B6">Keep it open</button>
+                </div>
+              </div>
+            </sc-if>
+            <sc-if value="{{closeDone}}" hint-placeholder-val="{{false}}">
+              <div class="e-rise" style="margin-top:12px; padding:16px; border-radius:18px; background:#E8E4FE">
+                <p style="margin:0; font-weight:750; font-size:16.5px">The ballot is closed. Voting has stopped, and the results are public.</p>
+                <a href="e-results.dc.html" ref="{{resultsRef}}" class="e-press e-plain" style="margin-top:12px; display:inline-flex; align-items:center; gap:8px; min-height:48px; padding:0 18px; border-radius:14px; background:#FFFDF8; color:#251C34; text-decoration:none; font-weight:750; font-size:16px; box-shadow:0 3px 0 #D0C6B6, 0 8px 14px -10px rgba(64,44,30,.4)">
+                  See the final results
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="M13 5.5 19.5 12 13 18.5"></path></svg>
+                </a>
+              </div>
+            </sc-if>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+    <footer style="margin-top:48px; padding:20px 0 36px; border-top:1px solid #DED6C9; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:14px 20px">
+      <p style="margin:0; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:16px; color:#585166">RankedVote.app</p>
+      <nav aria-label="Site links" style="display:flex; flex-wrap:wrap; gap:8px">
+        <a href="https://github.com/zorn/flick" class="e-press e-plain" style="display:inline-flex; align-items:center; min-height:44px; padding:0 14px; border-radius:999px; background:#FFFDF8; color:#251C34; text-decoration:none; font-size:14.5px; font-weight:650; box-shadow:0 3px 0 #D0C6B6, 0 8px 14px -10px rgba(64,44,30,.4)">GitHub project</a>
+        <a href="https://updown.io/wwis" class="e-press e-plain" style="display:inline-flex; align-items:center; min-height:44px; padding:0 14px; border-radius:999px; background:#FFFDF8; color:#251C34; text-decoration:none; font-size:14.5px; font-weight:650; box-shadow:0 3px 0 #D0C6B6, 0 8px 14px -10px rgba(64,44,30,.4)">Uptime</a>
+        <a href="mailto:mike@mikezornek.com" class="e-press e-plain" style="display:inline-flex; align-items:center; min-height:44px; padding:0 14px; border-radius:999px; background:#FFFDF8; color:#251C34; text-decoration:none; font-size:14.5px; font-weight:650; box-shadow:0 3px 0 #D0C6B6, 0 8px 14px -10px rgba(64,44,30,.4)">Contact site admin</a>
+      </nav>
+    </footer>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":4600}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.ids = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+    this.titles = {
+      A: 'Elixir in Action, Third Edition by Saša Jurić',
+      B: "Engineering Elixir Applications by Ellie Fairholm and Josep Giralt D'Lacoste",
+      C: 'Machine Learning in Elixir by Sean Moriarity',
+      D: 'Designing Elixir Systems with OTP by James Edward Gray II and Bruce A. Tate',
+      E: 'Elixir Patterns by Hugo Barauna and Alexander Koutmos',
+      F: 'Concurrent Data Processing in Elixir by Svilen Gospodinov',
+      G: 'A Common-Sense Guide to Data Structures and Algorithms, Second Edition by Jay Wengrow'
+    };
+    this.ords = ['1st', '2nd', '3rd', '4th', '5th'];
+    this.ramp = [
+      { fill: '#462F80', ink: '#FFFDF8', tint: '#E8E4FE' },
+      { fill: '#A13B85', ink: '#FFFDF8', tint: '#FBDEF0' },
+      { fill: '#E57255', ink: '#251C34', tint: '#FFE0D4' },
+      { fill: '#F1B464', ink: '#251C34', tint: '#FFE9CC' },
+      { fill: '#EFE39D', ink: '#251C34', tint: '#F9F3CD' }
+    ];
+    this.editEls = {};
+    this.inputEl = null;
+    this.closeEl = null;
+    this.keepEl = null;
+    this.resultsEl = null;
+    this.pendingFocus = null;
+    this.copyTimer = null;
+    this.state = {
+      votes: [
+        { key: 'v1', name: 'Mike', weight: 1, picks: ['B', 'A', 'E', 'D', 'F'] },
+        { key: 'v2', name: 'Priya', weight: 2, picks: ['C', 'B', 'A'] },
+        { key: 'v3', name: 'Tomás', weight: 1, picks: ['A', 'B', 'D', 'E', 'C'] },
+        { key: 'v4', name: 'Jen', weight: 1, picks: ['B', 'E', 'A'] },
+        { key: 'v5', name: 'Arjun', weight: 1, picks: ['D', 'A', 'B', 'F', 'E'] },
+        { key: 'v6', name: '', weight: 1, picks: ['C', 'F', 'B', 'A', 'G'] },
+        { key: 'v7', name: 'Kiko', weight: 1, picks: ['E', 'B', 'D'] },
+        { key: 'v8', name: 'Dana', weight: 1, picks: ['A', 'D', 'E', 'B', 'C'] },
+        { key: 'v9', name: 'Lars', weight: 1, picks: ['G', 'C', 'F'] }
+      ],
+      editing: null,
+      editValue: '',
+      editError: '',
+      copied: false,
+      closeStep: 'open',
+      announce: ''
+    };
+  }
+
+  fmt(x) {
+    const r = Math.round(x * 10) / 10;
+    return Number.isInteger(r) ? String(r) : r.toFixed(1);
+  }
+
+  fmtW(w) {
+    return String(Math.round(w * 100) / 100);
+  }
+
+  nameOf(v) {
+    return v.name || 'No name';
+  }
+
+  findVote(key) {
+    for (let i = 0; i < this.state.votes.length; i++) {
+      if (this.state.votes[i].key === key) return this.state.votes[i];
+    }
+    return null;
+  }
+
+  componentWillUnmount() {
+    if (this.copyTimer) clearTimeout(this.copyTimer);
+  }
+
+  componentDidUpdate() {
+    const p = this.pendingFocus;
+    if (!p) return;
+    this.pendingFocus = null;
+    let el = null;
+    if (p.kind === 'input') el = this.inputEl;
+    if (p.kind === 'edit') el = this.editEls[p.key];
+    if (p.kind === 'keep') el = this.keepEl;
+    if (p.kind === 'close') el = this.closeEl;
+    if (p.kind === 'results') el = this.resultsEl;
+    if (el && typeof el.focus === 'function') el.focus();
+  }
+
+  copy() {
+    if (this.copyTimer) clearTimeout(this.copyTimer);
+    this.setState({ copied: true, announce: 'Voter link copied.' });
+    this.copyTimer = setTimeout(() => {
+      this.copyTimer = null;
+      this.setState({ copied: false });
+    }, 2400);
+  }
+
+  startEdit(key) {
+    const v = this.findVote(key);
+    if (!v) return;
+    this.pendingFocus = { kind: 'input' };
+    this.setState({ editing: key, editValue: this.fmtW(v.weight), editError: '' });
+  }
+
+  cancelEdit() {
+    const key = this.state.editing;
+    this.pendingFocus = { kind: 'edit', key: key };
+    this.setState({ editing: null, editError: '' });
+  }
+
+  step(delta) {
+    const v = this.findVote(this.state.editing);
+    let x = parseFloat(String(this.state.editValue).replace(',', '.'));
+    if (isNaN(x)) x = v ? v.weight : 1;
+    const next = Math.max(0, Math.round((x + delta) * 100) / 100);
+    this.setState({ editValue: this.fmtW(next), editError: '' });
+  }
+
+  saveEdit() {
+    const key = this.state.editing;
+    const raw = String(this.state.editValue).trim().replace(',', '.');
+    if (!/^\d+(\.\d+)?$/.test(raw)) {
+      this.setState({ editError: 'Enter a weight of 0 or more, like 1 or 1.5.' });
+      return;
+    }
+    const w = parseFloat(raw);
+    const votes = this.state.votes.map((v) => (v.key === key ? { key: v.key, name: v.name, weight: w, picks: v.picks } : v));
+    const v = this.findVote(key);
+    this.pendingFocus = { kind: 'edit', key: key };
+    this.setState({
+      votes: votes,
+      editing: null,
+      editError: '',
+      announce: 'Weight for ' + (v ? this.nameOf(v) : 'this vote') + ' is now ' + this.fmtW(w) + '. Early results updated.'
+    });
+  }
+
+  renderVals() {
+    const s = this.state;
+    const isClosed = s.closeStep === 'closed';
+
+    // Tally: 5 points for a 1st choice down to 1 for a 5th, times the vote's weight.
+    const pts = {};
+    const counts = {};
+    this.ids.forEach((id) => { pts[id] = 0; counts[id] = [0, 0, 0, 0, 0]; });
+    let totalWeight = 0;
+    s.votes.forEach((v) => {
+      totalWeight += v.weight;
+      v.picks.forEach((id, k) => {
+        pts[id] += (5 - k) * v.weight;
+        counts[id][k] += v.weight;
+      });
+    });
+    const order = this.ids.slice().sort((a, b) => (pts[b] - pts[a]) || (this.ids.indexOf(a) - this.ids.indexOf(b)));
+    const max = Math.max(1, pts[order[0]]);
+    let maxFirsts = 0;
+    order.forEach((id) => { if (counts[id][0] > maxFirsts) maxFirsts = counts[id][0]; });
+
+    const results = order.map((id, i) => {
+      const p = pts[id];
+      const parts = [];
+      counts[id].forEach((c, k) => { if (c > 0) parts.push({ k: k, pts: c * (5 - k) }); });
+      const segs = parts.map((q, j) => {
+        const share = Math.round((q.pts / p) * 100000) / 1000;
+        const last = j === parts.length - 1;
+        return {
+          w: last ? share + '%' : 'calc(' + share + '% - 2px)',
+          mr: last ? '0px' : '2px',
+          fill: this.ramp[q.k].fill,
+          line: q.k === 4 ? 'rgba(37,28,52,.2)' : 'transparent'
+        };
+      });
+      const mostFirsts = maxFirsts > 0 && counts[id][0] === maxFirsts && i !== 0;
+      return {
+        place: i + 1,
+        title: this.titles[id],
+        pts: this.fmt(p),
+        barPct: Math.round((p / max) * 1000) / 10,
+        segs: segs,
+        mostFirsts: mostFirsts,
+        tokenBg: i === 0 ? '#FF9F61' : (i < 3 ? '#FFE1C7' : '#F1E9DC'),
+        tokenShadow: i === 0 ? '0 3px 0 #C96736' : (i < 3 ? '0 3px 0 #F0BE97' : 'inset 0 2px 4px rgba(64,44,30,.12)'),
+        sep: i === 0 ? 'none' : '1px solid #EDE4D6',
+        counts: counts[id].map((c, k) => {
+          const hl = mostFirsts && k === 0;
+          return {
+            label: this.ords[k],
+            value: this.fmt(c),
+            bg: hl ? '#E8E4FE' : 'rgba(37,28,52,.045)',
+            ring: hl ? 'inset 0 0 0 2px #462F80' : 'none'
+          };
+        })
+      };
+    });
+
+    const n = s.votes.length;
+    const resultsMeta = (isClosed ? 'Final count of ' : '') + n + (n === 1 ? ' vote' : ' votes') + (isClosed ? '' : ' so far') + ' · total weight ' + this.fmtW(totalWeight) + '. ' + (isClosed ? 'The ballot is closed.' : 'These can change until you close the ballot.');
+
+    const votes = s.votes.map((v) => {
+      const editing = s.editing === v.key;
+      return {
+        displayName: this.nameOf(v),
+        nameColor: v.name ? '#251C34' : '#585166',
+        nameStyle: v.name ? 'normal' : 'italic',
+        weightText: this.fmtW(v.weight),
+        weightBg: v.weight !== 1 ? '#FFE1C7' : 'rgba(37,28,52,.06)',
+        editing: editing,
+        notEditing: !editing,
+        cardShadow: editing
+          ? '0 1px 1px rgba(64,44,30,.05), 0 4px 0 #E2D7C6, 0 22px 34px -18px rgba(64,44,30,.5)'
+          : '0 1px 1px rgba(64,44,30,.05), 0 3px 0 #E8DFD2, 0 12px 20px -16px rgba(64,44,30,.4)',
+        picks: v.picks.map((id, k) => ({
+          num: k + 1,
+          letter: id,
+          title: this.titles[id],
+          fill: this.ramp[k].fill,
+          ink: this.ramp[k].ink,
+          tint: this.ramp[k].tint
+        })),
+        startEdit: () => this.startEdit(v.key),
+        editRef: (el) => { this.editEls[v.key] = el; },
+        inputRef: (el) => { if (el || editing) this.inputEl = el; },
+        editValue: s.editValue,
+        editBorder: s.editError ? '#A92227' : '#DED6C9',
+        onEditInput: (e) => this.setState({ editValue: e.target.value, editError: '' }),
+        stepDown: () => this.step(-0.5),
+        stepUp: () => this.step(0.5),
+        saveEdit: () => this.saveEdit(),
+        cancelEdit: () => this.cancelEdit(),
+        showEditError: !!s.editError,
+        editError: s.editError
+      };
+    });
+
+    const legend = this.ords.map((o, k) => ({ text: o + ' · ' + (5 - k) + ' pts', fill: this.ramp[k].fill }));
+    const bookKey = this.ids.map((id) => ({ letter: id, title: this.titles[id] }));
+
+    return {
+      announce: s.announce,
+      isOpen: !isClosed,
+      isClosed: isClosed,
+      copied: s.copied,
+      notCopied: !s.copied,
+      copyClass: s.copied ? 'e-mint' : 'e-tang',
+      copyBg: s.copied ? '#D5F4E2' : '#FF9F61',
+      copyShadow: s.copied
+        ? '0 4px 0 #7CCB9F, 0 12px 20px -12px rgba(5,102,65,.4)'
+        : '0 4px 0 #C96736, 0 12px 20px -12px rgba(201,103,54,.6)',
+      onCopy: () => this.copy(),
+      resultsLabel: isClosed ? 'Final' : 'Provisional',
+      resultsMeta: resultsMeta,
+      legend: legend,
+      results: results,
+      voteCount: n,
+      bookKey: bookKey,
+      votes: votes,
+      closeIdle: s.closeStep === 'open',
+      closeConfirm: s.closeStep === 'confirm',
+      closeDone: isClosed,
+      closeRef: (el) => { this.closeEl = el; },
+      keepRef: (el) => { this.keepEl = el; },
+      resultsRef: (el) => { this.resultsEl = el; },
+      askClose: () => {
+        this.pendingFocus = { kind: 'keep' };
+        this.setState({ closeStep: 'confirm' });
+      },
+      keepOpen: () => {
+        this.pendingFocus = { kind: 'close' };
+        this.setState({ closeStep: 'open' });
+      },
+      confirmClose: () => {
+        this.pendingFocus = { kind: 'results' };
+        this.setState({ closeStep: 'closed', editing: null, editError: '', announce: 'The ballot is closed. Results are public.' });
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Pick Flick · Vote</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&amp;family=Archivo:wdth,wght@62..125,400..900&amp;family=Permanent+Marker&amp;display=swap">
+<style>
+body{margin:0;background:#F1F3F7}
+*,*::before,*::after{box-sizing:border-box}
+.sr{position:absolute !important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+a{color:#14213D;text-underline-offset:3px}
+a:hover{color:#C81D25}
+:focus-visible{outline:3px solid #14213D;outline-offset:3px}
+.on-dark :focus-visible{outline-color:#FFD23F}
+.btn{transition:transform .12s ease,box-shadow .12s ease,background-color .15s ease}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 #14213D !important}
+.btn:active{transform:translate(3px,3px);box-shadow:0 0 0 #14213D !important}
+.btn-red:hover{background:#A3141B !important;color:#FFFFFF !important}
+.mark{transition:transform .25s cubic-bezier(.2,.9,.3,1.4)}
+.wordmark:hover .mark{transform:rotate(-18deg) scale(1.08)}
+.pick{transition:transform .12s ease,box-shadow .12s ease,background-color .2s ease}
+.pick:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 #14213D !important}
+.pick:active{transform:translate(2px,2px);box-shadow:0 0 0 #14213D !important}
+.pick[aria-disabled="true"]{cursor:not-allowed}
+.pick[aria-disabled="true"]:hover,.pick[aria-disabled="true"]:active{transform:none;box-shadow:3px 3px 0 #14213D !important}
+.ctl{transition:background-color .12s ease,color .12s ease,transform .1s ease}
+.ctl:hover:not(:disabled){background:#FFD23F !important}
+.ctl:active:not(:disabled){transform:translateY(2px)}
+.ctl:disabled{opacity:.3;cursor:not-allowed}
+.ctl-x:hover:not(:disabled){background:#C81D25 !important;color:#FFFFFF !important}
+.field:focus{outline:none;border-color:#C81D25 !important;box-shadow:4px 4px 0 #FFD23F !important}
+.foot:hover{color:#FFD23F !important}
+@keyframes pinIn{0%{transform:scale(1.9) rotate(-24deg);opacity:0}60%{transform:scale(.9) rotate(5deg);opacity:1}100%{transform:scale(1) rotate(0)}}
+.pin-in{animation:pinIn .42s cubic-bezier(.2,.9,.3,1.25) both}
+@keyframes slap{0%{transform:scale(2.6) rotate(-32deg);opacity:0}55%{transform:scale(.9) rotate(-4deg);opacity:1}78%{transform:scale(1.05) rotate(-10deg)}100%{transform:scale(1) rotate(-8deg)}}
+.slap{animation:slap .62s cubic-bezier(.2,.9,.3,1.15) .12s both}
+@media (min-width:900px){
+.vote-grid{grid-template-columns:minmax(0,1fr) minmax(0,420px) !important;column-gap:40px !important;align-items:start}
+.ticket-col{grid-column:2;grid-row:1}
+.submit-col{grid-column:2;grid-row:2}
+.list-col{grid-column:1;grid-row:1 / span 2}
+}
+@media (prefers-reduced-motion:reduce){.pin-in,.slap{animation:none}.btn,.pick,.ctl,.mark{transition:none}}
+</style>
+</helmet>
+<div style="background:#F1F3F7;color:#14213D;font-family:Archivo,'Franklin Gothic Medium','Trebuchet MS',system-ui,sans-serif;font-size:17px;line-height:1.45;overflow-x:clip">
+
+  <header style="background:#FFFFFF">
+    <div style="max-width:1120px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px 12px;flex-wrap:wrap">
+      <a href="b-home.dc.html" class="wordmark" style="display:inline-flex;align-items:center;gap:8px;min-height:44px;text-decoration:none;color:#14213D">
+        <span class="mark" aria-hidden="true" style="flex:none;width:34px;height:34px;border-radius:50%;background:#C81D25;color:#FFFFFF;border:2px solid #14213D;box-shadow:inset 0 0 0 2px #C81D25,inset 0 0 0 4px #FFFFFF;display:flex;align-items:center;justify-content:center;font-family:Anton,Impact,sans-serif;font-size:17px;line-height:1">1</span>
+        <span style="display:inline-flex;align-items:baseline;white-space:nowrap"><span style="font-family:Anton,Impact,sans-serif;font-size:23px;line-height:1;letter-spacing:.02em;text-transform:uppercase">RankedVote</span><span style="display:inline-block;margin-left:2px;font-family:'Permanent Marker','Marker Felt',cursive;font-size:17px;line-height:1;color:#C81D25;transform:rotate(-7deg) translateY(-2px)">.app</span></span>
+      </a>
+      <a href="https://rankedvote.app/ballot/new" class="btn" style="display:inline-flex;align-items:center;min-height:44px;padding:0 12px;background:#FFD23F;color:#14213D;border:2px solid #14213D;box-shadow:3px 3px 0 #14213D;font-weight:800;font-stretch:78%;font-size:14px;letter-spacing:.04em;text-transform:uppercase;text-decoration:none">Create a ballot</a>
+    </div>
+    <div aria-hidden="true" style="height:12px;border-top:3px solid #14213D;border-bottom:3px solid #14213D;background:repeating-linear-gradient(-45deg,#C81D25 0 8px,#FFFFFF 8px 16px,#14213D 16px 24px,#FFFFFF 24px 32px)"></div>
+  </header>
+
+  <main style="max-width:1120px;margin:0 auto;padding:26px 16px 0">
+
+    <sc-if value="{{voting}}" hint-placeholder-val="{{true}}">
+      <div style="position:relative;display:flex;flex-direction:column">
+        <div aria-hidden="true" style="position:absolute;top:-30px;right:-60px;width:230px;height:230px;border-radius:50%;background-image:radial-gradient(circle,#C81D25 1.7px,transparent 2.1px);background-size:11px 11px;opacity:.22;pointer-events:none"></div>
+        <p style="position:relative;align-self:flex-start;margin:0;padding:6px 18px 5px;background:#E8DDB9;color:#14213D;font-family:'Permanent Marker','Marker Felt',cursive;font-size:17px;line-height:1.2;transform:rotate(-2deg);clip-path:polygon(2% 0,98% 6%,100% 50%,97% 100%,3% 94%,0 50%)">Polls are open</p>
+        <h1 style="position:relative;margin:16px 0 0;max-width:900px;font-family:Anton,Impact,sans-serif;font-weight:400;font-size:clamp(40px,7vw,76px);line-height:1;letter-spacing:.005em;text-transform:uppercase;text-wrap:balance;text-shadow:3px 3px 0 #FFD23F">What should the Elixir Book Club read next?</h1>
+        <p style="position:relative;margin:14px 0 0;max-width:640px;font-size:18px;line-height:1.5;text-wrap:pretty">Rank up to five books you'd like to read next. Your first choice earns the most points. We'll start the winner at our next meeting.</p>
+
+        <div class="vote-grid" style="display:grid;grid-template-columns:minmax(0,1fr);gap:30px;margin-top:30px">
+
+          <section class="ticket-col" aria-labelledby="ticket-h" style="position:relative;background:#FFFFFF;border:3px solid #14213D;box-shadow:7px 7px 0 #C81D25">
+            <span aria-hidden="true" style="position:absolute;top:-13px;left:22px;width:86px;height:24px;background:#E8DDB9;opacity:.92;transform:rotate(-5deg)"></span>
+            <span aria-hidden="true" style="position:absolute;top:-11px;right:26px;width:70px;height:24px;background:#E8DDB9;opacity:.92;transform:rotate(4deg)"></span>
+            <div style="background:#14213D;color:#FFFFFF;padding:18px 16px 14px;display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:6px 14px">
+              <h2 id="ticket-h" style="margin:0;font-family:Anton,Impact,sans-serif;font-weight:400;font-size:32px;line-height:1;letter-spacing:.02em;text-transform:uppercase">Your ticket</h2>
+              <p aria-live="polite" style="margin:0;font-weight:800;font-stretch:85%;font-size:15px;letter-spacing:.03em;color:#FFD23F">{{countText}}</p>
+            </div>
+            <p style="margin:0;padding:12px 16px 0;font-size:15px;line-height:1.4;color:#4A5573">Only your 1st choice is required. Fill as many spots as you like, top to bottom.</p>
+            <sc-if value="{{showError}}" hint-placeholder-val="{{false}}">
+              <p role="alert" style="margin:12px 16px 0;padding:10px 12px;display:flex;gap:9px;align-items:flex-start;background:#FBE3E4;border:2px solid #C81D25;color:#14213D;font-weight:700;font-size:15px;line-height:1.35">
+                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C81D25" stroke-width="2.6" stroke-linecap="round" style="flex:none;margin-top:1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 7.5v5.5M12 16.5v.01"></path></svg>
+                <span>Pin a 1st choice before you cast your vote. Tap a book below to start.</span>
+              </p>
+            </sc-if>
+            <sc-if value="{{showFullNote}}" hint-placeholder-val="{{false}}">
+              <p role="status" style="margin:12px 16px 0;padding:10px 12px;background:#FFF3C4;border:2px solid #14213D;color:#14213D;font-weight:700;font-size:15px;line-height:1.35">Your ticket is full. Remove a pick to make room for another.</p>
+            </sc-if>
+            <ol aria-label="Your ranking, 1st to 5th" style="list-style:none;margin:0;padding:12px 16px 16px;display:flex;flex-direction:column;gap:10px">
+              <sc-for list="{{slots}}" as="spot" hint-placeholder-count="5">
+                <li>
+                  <sc-if value="{{spot.filled}}" hint-placeholder-val="{{true}}">
+                    <div style="display:flex;gap:12px;align-items:flex-start;padding:10px;background:#FFFFFF;border:2px solid #14213D">
+                      <span class="pin-in" aria-hidden="true" style="flex:none;width:56px;height:56px;border-radius:50%;background:{{spot.pinBg}};color:{{spot.pinFg}};border:2px solid #14213D;box-shadow:inset 0 0 0 3px {{spot.pinBg}},inset 0 0 0 5px {{spot.pinRing}},2px 2px 0 #14213D;display:flex;align-items:center;justify-content:center;font-family:Anton,Impact,sans-serif;line-height:1"><span style="font-size:25px">{{spot.n}}<span style="font-size:12px;letter-spacing:.03em;text-transform:uppercase">{{spot.suffix}}</span></span></span>
+                      <div style="flex:1 1 auto;min-width:0;display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px">
+                        <p style="margin:0;flex:1 1 210px;min-width:0;font-size:16px;font-weight:650;line-height:1.3;overflow-wrap:anywhere;text-wrap:pretty"><span class="sr">{{spot.ordinal}} choice: </span>{{spot.title}}</p>
+                        <div style="display:flex;gap:6px">
+                          <button type="button" class="ctl" onClick="{{spot.up}}" disabled="{{spot.upDisabled}}" aria-label="{{spot.upLabel}}" style="width:44px;height:44px;padding:0;display:flex;align-items:center;justify-content:center;background:#FFFFFF;color:#14213D;border:2px solid #14213D;cursor:pointer">
+                            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5.5 11.5L12 5l6.5 6.5"></path></svg>
+                          </button>
+                          <button type="button" class="ctl" onClick="{{spot.down}}" disabled="{{spot.downDisabled}}" aria-label="{{spot.downLabel}}" style="width:44px;height:44px;padding:0;display:flex;align-items:center;justify-content:center;background:#FFFFFF;color:#14213D;border:2px solid #14213D;cursor:pointer">
+                            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5.5 12.5L12 19l6.5-6.5"></path></svg>
+                          </button>
+                          <button type="button" class="ctl ctl-x" onClick="{{spot.remove}}" aria-label="{{spot.removeLabel}}" style="width:44px;height:44px;padding:0;display:flex;align-items:center;justify-content:center;background:#FFFFFF;color:#C81D25;border:2px solid #14213D;cursor:pointer">
+                            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"></path></svg>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{spot.empty}}" hint-placeholder-val="{{false}}">
+                    <div style="display:flex;gap:12px;align-items:center;min-height:80px;padding:10px;background:{{spot.emptyBg}};border:2px dashed {{spot.emptyBorder}}">
+                      <span aria-hidden="true" style="flex:none;width:56px;height:56px;border-radius:50%;border:2px dashed #4A5573;color:#4A5573;display:flex;align-items:center;justify-content:center;font-family:Anton,Impact,sans-serif;line-height:1"><span style="font-size:25px">{{spot.n}}<span style="font-size:12px;letter-spacing:.03em;text-transform:uppercase">{{spot.suffix}}</span></span></span>
+                      <div style="flex:1 1 auto;min-width:0">
+                        <p style="margin:0;font-weight:800;font-size:16px;line-height:1.3">{{spot.emptyTitle}}</p>
+                        <p style="margin:2px 0 0;font-size:14px;line-height:1.35;color:#4A5573">{{spot.emptyHint}}</p>
+                      </div>
+                      <sc-if value="{{spot.isNext}}" hint-placeholder-val="{{false}}">
+                        <span aria-hidden="true" style="flex:none;align-self:flex-start;padding:3px 10px;background:#FFD23F;color:#14213D;border:2px solid #14213D;border-radius:999px;font-weight:900;font-size:12px;letter-spacing:.1em;text-transform:uppercase;transform:rotate(5deg)">Next</span>
+                      </sc-if>
+                    </div>
+                  </sc-if>
+                </li>
+              </sc-for>
+            </ol>
+          </section>
+
+          <section class="list-col" aria-labelledby="list-h">
+            <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:4px 12px;padding-bottom:8px;border-bottom:3px solid #14213D">
+              <h2 id="list-h" style="margin:0;font-family:Anton,Impact,sans-serif;font-weight:400;font-size:32px;line-height:1;letter-spacing:.02em;text-transform:uppercase">On the ballot</h2>
+              <p style="margin:0;font-weight:800;font-stretch:85%;font-size:15px;letter-spacing:.03em">7 books · {{leftText}}</p>
+            </div>
+            <p style="margin:10px 0 0;font-size:15px;line-height:1.4;color:#4A5573">Tap a book to pin it to the next open spot on your ticket. Tap a pinned book to unpin it. This list keeps its order.</p>
+            <ul style="list-style:none;margin:16px 0 0;padding:0;display:flex;flex-direction:column;gap:12px">
+              <sc-for list="{{answers}}" as="ans" hint-placeholder-count="7">
+                <li>
+                  <button type="button" class="pick" onClick="{{ans.toggle}}" aria-pressed="{{ans.pressed}}" aria-disabled="{{ans.blocked}}" style="width:100%;min-height:68px;display:flex;align-items:flex-start;gap:12px;padding:12px;text-align:left;background:{{ans.rowBg}};color:#14213D;border:2px solid #14213D;box-shadow:3px 3px 0 #14213D;font-family:inherit;cursor:pointer">
+                    <span aria-hidden="true" style="flex:none;width:42px;height:42px;border-radius:50%;background:{{ans.dotBg}};color:{{ans.dotFg}};border:2px {{ans.dotBorder}} #14213D;display:flex;align-items:center;justify-content:center;font-family:Anton,Impact,sans-serif;font-size:20px;line-height:1">{{ans.dotText}}</span>
+                    <span style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:7px">
+                      <span style="font-size:16px;font-weight:650;line-height:1.3;overflow-wrap:anywhere;text-wrap:pretty">{{ans.title}}</span>
+                      <sc-if value="{{ans.pinned}}" hint-placeholder-val="{{false}}">
+                        <span style="display:inline-flex;align-items:center;gap:5px;padding:3px 9px 3px 7px;background:#C81D25;color:#FFFFFF;font-weight:800;font-stretch:85%;font-size:13px;letter-spacing:.06em;text-transform:uppercase">
+                          <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3.5h6l-1.2 6.2 3.4 3.3H6.8l3.4-3.3z"></path><path d="M12 13v7.5"></path></svg>
+                          {{ans.stateText}}
+                        </span>
+                      </sc-if>
+                      <sc-if value="{{ans.canPin}}" hint-placeholder-val="{{true}}">
+                        <span style="display:inline-flex;align-items:center;gap:5px;padding:2px 9px 2px 7px;background:#FFFFFF;color:#14213D;border:2px solid #14213D;font-weight:800;font-stretch:85%;font-size:13px;letter-spacing:.06em;text-transform:uppercase">
+                          <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>
+                          {{ans.stateText}}
+                        </span>
+                      </sc-if>
+                      <sc-if value="{{ans.isBlocked}}" hint-placeholder-val="{{false}}">
+                        <span style="display:inline-flex;align-items:center;padding:3px 0;color:#4A5573;font-weight:800;font-stretch:85%;font-size:13px;letter-spacing:.06em;text-transform:uppercase">{{ans.stateText}}</span>
+                      </sc-if>
+                    </span>
+                  </button>
+                </li>
+              </sc-for>
+            </ul>
+          </section>
+
+          <section class="submit-col" aria-labelledby="cast-h" style="display:flex;flex-direction:column;gap:14px;padding:16px;background:#FFFFFF;border:3px solid #14213D">
+            <h2 id="cast-h" class="sr">Cast your vote</h2>
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <label for="voter-name" style="font-weight:800;font-size:16px">Name (optional)</label>
+              <p id="name-hint" style="margin:0 0 6px;font-size:14px;line-height:1.35;color:#4A5573">Sign your ballot so the organizer knows it's yours, or leave it blank.</p>
+              <input id="voter-name" class="field" type="text" aria-describedby="name-hint" value="{{name}}" onChange="{{onName}}" style="width:100%;min-height:50px;padding:10px 12px;background:#FFFFFF;color:#14213D;border:2px solid #14213D;border-radius:0;font-family:'Permanent Marker','Marker Felt',cursive;font-size:20px">
+            </div>
+            <sc-if value="{{showError}}" hint-placeholder-val="{{false}}">
+              <p style="margin:0;font-weight:700;font-size:15px;line-height:1.35;color:#C81D25">Your ticket is empty. Pin a 1st choice above.</p>
+            </sc-if>
+            <button type="button" class="btn btn-red" onClick="{{submit}}" style="min-height:62px;display:flex;align-items:center;justify-content:center;gap:10px;padding:8px 18px;background:#C81D25;color:#FFFFFF;border:3px solid #14213D;box-shadow:5px 5px 0 #14213D;font-family:Anton,Impact,sans-serif;font-weight:400;font-size:28px;line-height:1;letter-spacing:.04em;text-transform:uppercase;cursor:pointer">
+              Cast my vote
+              <svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l4.8 4.8L19.5 7"></path></svg>
+            </button>
+            <p style="margin:0;text-align:center;font-size:14px;line-height:1.35;color:#4A5573">{{castHint}}</p>
+          </section>
+
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{submitted}}" hint-placeholder-val="{{false}}">
+      <section aria-labelledby="done-h" style="max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:22px">
+        <div style="display:flex;justify-content:center;padding:18px 0 6px">
+          <div class="slap" aria-hidden="true" style="width:206px;height:206px;border-radius:50%;background:#FFFFFF;color:#14213D;border:4px solid #14213D;box-shadow:inset 0 0 0 9px #FFFFFF,inset 0 0 0 16px #C81D25,8px 8px 0 #14213D;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;transform:rotate(-8deg)">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="#FFD23F" stroke="#14213D" stroke-width="1.6" stroke-linejoin="round"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z"></path></svg>
+            <span style="font-family:Anton,Impact,sans-serif;font-size:48px;line-height:.95;letter-spacing:.02em;text-transform:uppercase">I voted</span>
+            <span style="font-weight:900;font-stretch:75%;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:#C81D25">RankedVote.app</span>
+          </div>
+        </div>
+        <div>
+          <p style="margin:0;font-weight:800;font-stretch:85%;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:#4A5573">What should the Elixir Book Club read next?</p>
+          <h1 id="done-h" style="margin:8px 0 0;font-family:Anton,Impact,sans-serif;font-weight:400;font-size:clamp(40px,7vw,64px);line-height:1;letter-spacing:.005em;text-transform:uppercase;text-wrap:balance;text-shadow:3px 3px 0 #FFD23F">{{doneHeading}}</h1>
+          <p style="margin:12px 0 0;font-size:18px;line-height:1.5;text-wrap:pretty">Here is the ticket you cast. The results go public when the ballot's creator closes voting.</p>
+        </div>
+        <ol aria-label="Your ranking" style="list-style:none;margin:0;padding:16px;display:flex;flex-direction:column;gap:10px;background:#FFFFFF;border:3px solid #14213D;box-shadow:7px 7px 0 #C81D25">
+          <sc-for list="{{cast}}" as="c" hint-placeholder-count="2">
+            <li style="display:flex;gap:12px;align-items:center">
+              <span aria-hidden="true" style="flex:none;width:52px;height:52px;border-radius:50%;background:{{c.pinBg}};color:{{c.pinFg}};border:2px solid #14213D;box-shadow:inset 0 0 0 3px {{c.pinBg}},inset 0 0 0 5px {{c.pinRing}},2px 2px 0 #14213D;display:flex;align-items:center;justify-content:center;font-family:Anton,Impact,sans-serif;line-height:1"><span style="font-size:23px">{{c.n}}<span style="font-size:11px;letter-spacing:.03em;text-transform:uppercase">{{c.suffix}}</span></span></span>
+              <p style="margin:0;min-width:0;font-size:16px;font-weight:650;line-height:1.3;overflow-wrap:anywhere"><span class="sr">{{c.ordinal}} choice: </span>{{c.title}}</p>
+            </li>
+          </sc-for>
+        </ol>
+        <a href="b-home.dc.html" class="btn" style="align-self:flex-start;display:inline-flex;align-items:center;gap:8px;min-height:52px;padding:0 18px;background:#FFD23F;color:#14213D;border:3px solid #14213D;box-shadow:4px 4px 0 #14213D;font-weight:800;font-stretch:85%;font-size:16px;letter-spacing:.04em;text-transform:uppercase;text-decoration:none">
+          <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"></path></svg>
+          Back to RankedVote.app
+        </a>
+      </section>
+    </sc-if>
+
+  </main>
+
+  <footer class="on-dark" style="margin-top:64px;background:#14213D;color:#FFFFFF;border-top:6px solid #C81D25">
+    <div style="max-width:1120px;margin:0 auto;padding:28px 16px 40px;display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:16px 32px">
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <p style="margin:0;font-family:Anton,Impact,sans-serif;font-size:24px;line-height:1;letter-spacing:.02em;text-transform:uppercase">RankedVote<span style="color:#FFD23F">.app</span></p>
+        <p style="margin:0;font-size:14px;color:#C9D1E3">Runs on Flick, a free and open-source Elixir app.</p>
+      </div>
+      <nav aria-label="Site">
+        <ul style="list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:0 22px">
+          <li><a class="foot" href="https://github.com/zorn/flick" style="display:inline-flex;align-items:center;min-height:44px;color:#FFFFFF;font-weight:700;text-underline-offset:4px">GitHub project</a></li>
+          <li><a class="foot" href="https://updown.io/wwis" style="display:inline-flex;align-items:center;min-height:44px;color:#FFFFFF;font-weight:700;text-underline-offset:4px">Uptime</a></li>
+          <li><a class="foot" href="mailto:mike@mikezornek.com" style="display:inline-flex;align-items:center;min-height:44px;color:#FFFFFF;font-weight:700;text-underline-offset:4px">Contact site admin</a></li>
+        </ul>
+      </nav>
+    </div>
+  </footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":3100}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    // Starts with two picks so the canvas shows filled, next-up, and open spots at once.
+    this.state = { picks: ['B', 'A'], name: '', submitted: false, error: false, fullNote: false };
+  }
+
+  renderVals() {
+    const ANSWERS = [
+      { id: 'A', title: 'Elixir in Action, Third Edition by Saša Jurić' },
+      { id: 'B', title: "Engineering Elixir Applications by Ellie Fairholm and Josep Giralt D'Lacoste" },
+      { id: 'C', title: 'Machine Learning in Elixir by Sean Moriarity' },
+      { id: 'D', title: 'Designing Elixir Systems with OTP by James Edward Gray II and Bruce A. Tate' },
+      { id: 'E', title: 'Elixir Patterns by Hugo Barauna and Alexander Koutmos' },
+      { id: 'F', title: 'Concurrent Data Processing in Elixir by Svilen Gospodinov' },
+      { id: 'G', title: 'A Common-Sense Guide to Data Structures and Algorithms, Second Edition by Jay Wengrow' },
+    ];
+    const MAX = 5;
+    const ORD = ['1st', '2nd', '3rd', '4th', '5th'];
+    const SUF = ['st', 'nd', 'rd', 'th', 'th'];
+    // Each rank wears its own campaign-button colors.
+    const PIN = [
+      { bg: '#C81D25', fg: '#FFFFFF', ring: '#FFFFFF' },
+      { bg: '#14213D', fg: '#FFFFFF', ring: '#FFD23F' },
+      { bg: '#FFD23F', fg: '#14213D', ring: '#14213D' },
+      { bg: '#FFFFFF', fg: '#C81D25', ring: '#C81D25' },
+      { bg: '#14213D', fg: '#FFD23F', ring: '#FFFFFF' },
+    ];
+
+    const s = this.state;
+    const picks = s.picks;
+    const byId = {};
+    ANSWERS.forEach((a) => { byId[a.id] = a; });
+    const full = picks.length >= MAX;
+    const left = MAX - picks.length;
+
+    // Every change rebuilds a packed list, so the ticket never has a gap or a duplicate.
+    const setPicks = (next) => this.setState({ picks: next, error: false, fullNote: false });
+    const move = (i, d) => {
+      const j = i + d;
+      if (j < 0 || j >= picks.length) return;
+      const next = picks.slice();
+      const t = next[i];
+      next[i] = next[j];
+      next[j] = t;
+      setPicks(next);
+    };
+
+    const slots = ORD.map((ord, i) => {
+      const id = picks[i];
+      const filled = Boolean(id);
+      const title = filled ? byId[id].title : '';
+      const isNext = !filled && i === picks.length;
+      return {
+        n: String(i + 1),
+        suffix: SUF[i],
+        ordinal: ord,
+        filled: filled,
+        empty: !filled,
+        isNext: isNext,
+        title: title,
+        pinBg: PIN[i].bg,
+        pinFg: PIN[i].fg,
+        pinRing: PIN[i].ring,
+        emptyTitle: i === 0 ? '1st choice · required' : ord + ' choice · optional',
+        emptyHint: isNext ? 'Up next. Tap a book below to pin it here.' : 'Open spot.',
+        emptyBg: isNext ? '#FFF3C4' : '#FFFFFF',
+        emptyBorder: s.error && i === 0 ? '#C81D25' : '#4A5573',
+        upDisabled: i === 0,
+        downDisabled: i >= picks.length - 1,
+        upLabel: 'Move up: ' + title,
+        downLabel: 'Move down: ' + title,
+        removeLabel: 'Remove from ticket: ' + title,
+        up: () => move(i, -1),
+        down: () => move(i, 1),
+        remove: () => setPicks(picks.filter((_, k) => k !== i)),
+      };
+    });
+
+    const answers = ANSWERS.map((a) => {
+      const idx = picks.indexOf(a.id);
+      const pinned = idx >= 0;
+      const blocked = !pinned && full;
+      return {
+        title: a.title,
+        pinned: pinned,
+        canPin: !pinned && !full,
+        isBlocked: blocked,
+        pressed: pinned ? 'true' : 'false',
+        blocked: blocked ? 'true' : 'false',
+        dotText: pinned ? String(idx + 1) : '',
+        dotBg: pinned ? PIN[idx].bg : '#FFFFFF',
+        dotFg: pinned ? PIN[idx].fg : '#14213D',
+        dotBorder: pinned ? 'solid' : 'dashed',
+        rowBg: pinned ? '#FFF3C4' : '#FFFFFF',
+        stateText: pinned ? 'Pinned #' + (idx + 1) : (full ? 'Ticket full' : 'Pin it'),
+        toggle: () => {
+          if (pinned) setPicks(picks.filter((p) => p !== a.id));
+          else if (full) this.setState({ fullNote: true });
+          else setPicks(picks.concat([a.id]));
+        },
+      };
+    });
+
+    const cast = picks.map((id, i) => ({
+      n: String(i + 1),
+      suffix: SUF[i],
+      ordinal: ORD[i],
+      title: byId[id].title,
+      pinBg: PIN[i].bg,
+      pinFg: PIN[i].fg,
+      pinRing: PIN[i].ring,
+    }));
+
+    const name = s.name.trim();
+    let castHint = 'Pin at least a 1st choice to vote.';
+    if (picks.length > 0 && left > 0) castHint = 'You can pin ' + left + ' more, or cast your vote now.';
+    if (full) castHint = 'Your ticket is full. Ready when you are.';
+
+    return {
+      voting: !s.submitted,
+      submitted: s.submitted,
+      countText: full ? '5 of 5 pinned · ticket full' : picks.length + ' of 5 pinned · ' + left + (left === 1 ? ' spot left' : ' spots left'),
+      leftText: full ? 'ticket full' : left + (left === 1 ? ' spot left' : ' spots left'),
+      showError: s.error,
+      showFullNote: s.fullNote && full,
+      slots: slots,
+      answers: answers,
+      name: s.name,
+      onName: (e) => this.setState({ name: e.target.value }),
+      castHint: castHint,
+      submit: () => {
+        if (picks.length === 0) {
+          this.setState({ error: true });
+          return;
+        }
+        this.setState({ submitted: true, error: false, fullNote: false });
+      },
+      cast: cast,
+      doneHeading: name ? 'Thanks, ' + name + '. Your vote is in.' : 'Your vote is in.',
+    };
+  }
+}
+</script>
+</body>
+</html>

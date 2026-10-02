@@ -1,0 +1,56 @@
+{
+  "v": 3,
+  "createdOnFiles": {"v": 1, "at": "2026-10-02T15:29:19Z"},
+  "title": "RankedVote Visual Directions",
+  "launch": {"view": "canvas"},
+  "pages": [],
+  "boards": {
+    "Main.dc.html":      {"x": 0,    "y": 0,     "w": 390, "h": 2700, "title": "a · Library card — Vote", "expand": "fill", "is_interactive": true},
+    "b-vote.dc.html":    {"x": 470,  "y": 0,     "w": 390, "h": 3100, "title": "b · Pick Flick — Vote", "expand": "fill", "is_interactive": true},
+    "c-vote.dc.html":    {"x": 940,  "y": 0,     "w": 390, "h": 3400, "title": "c · Official ballot — Vote", "expand": "fill", "is_interactive": true},
+    "d-vote.dc.html":    {"x": 1410, "y": 0,     "w": 390, "h": 2050, "title": "d · Swiss minimal — Vote", "expand": "fill", "is_interactive": true},
+    "e-vote.dc.html":    {"x": 1880, "y": 0,     "w": 390, "h": 2700, "title": "e · Soft and tactile — Vote", "expand": "fill", "is_interactive": true},
+    "f-vote.dc.html":    {"x": 2350, "y": 0,     "w": 390, "h": 2700, "title": "f · Elixir after dark — Vote", "expand": "fill", "is_interactive": true},
+
+    "a-results.dc.html": {"x": 0,    "y": 3800,  "w": 390, "h": 3000, "title": "a · Library card — Results", "expand": "fill"},
+    "b-results.dc.html": {"x": 470,  "y": 3800,  "w": 390, "h": 3100, "title": "b · Pick Flick — Results", "expand": "fill"},
+    "c-results.dc.html": {"x": 940,  "y": 3800,  "w": 390, "h": 3300, "title": "c · Official ballot — Results", "expand": "fill"},
+    "d-results.dc.html": {"x": 1410, "y": 3800,  "w": 390, "h": 2800, "title": "d · Swiss minimal — Results", "expand": "fill"},
+    "e-results.dc.html": {"x": 1880, "y": 3800,  "w": 390, "h": 2900, "title": "e · Soft and tactile — Results", "expand": "fill"},
+    "f-results.dc.html": {"x": 2350, "y": 3800,  "w": 390, "h": 2400, "title": "f · Elixir after dark — Results", "expand": "fill", "is_interactive": true},
+
+    "a-admin.dc.html":   {"x": 0,    "y": 7500,  "w": 390, "h": 5200, "title": "a · Library card — Ballot admin", "expand": "fill", "is_interactive": true},
+    "b-admin.dc.html":   {"x": 470,  "y": 7500,  "w": 390, "h": 4800, "title": "b · Pick Flick — Ballot admin", "expand": "fill", "is_interactive": true},
+    "c-admin.dc.html":   {"x": 940,  "y": 7500,  "w": 390, "h": 3600, "title": "c · Official ballot — Ballot admin", "expand": "fill", "is_interactive": true},
+    "d-admin.dc.html":   {"x": 1410, "y": 7500,  "w": 390, "h": 3900, "title": "d · Swiss minimal — Ballot admin", "expand": "fill", "is_interactive": true},
+    "e-admin.dc.html":   {"x": 1880, "y": 7500,  "w": 390, "h": 4600, "title": "e · Soft and tactile — Ballot admin", "expand": "fill", "is_interactive": true},
+    "f-admin.dc.html":   {"x": 2350, "y": 7500,  "w": 390, "h": 3900, "title": "f · Elixir after dark — Ballot admin", "expand": "fill", "is_interactive": true},
+
+    "a-home.dc.html":    {"x": 0,    "y": 13100, "w": 390, "h": 3500, "title": "a · Library card — Home", "expand": "fill"},
+    "b-home.dc.html":    {"x": 470,  "y": 13100, "w": 390, "h": 4000, "title": "b · Pick Flick — Home", "expand": "fill"},
+    "c-home.dc.html":    {"x": 940,  "y": 13100, "w": 390, "h": 3100, "title": "c · Official ballot — Home", "expand": "fill"},
+    "d-home.dc.html":    {"x": 1410, "y": 13100, "w": 390, "h": 3100, "title": "d · Swiss minimal — Home", "expand": "fill"},
+    "e-home.dc.html":    {"x": 1880, "y": 13100, "w": 390, "h": 3750, "title": "e · Soft and tactile — Home", "expand": "fill"},
+    "f-home.dc.html":    {"x": 2350, "y": 13100, "w": 390, "h": 3800, "title": "f · Elixir after dark — Home", "expand": "fill"}
+  },
+  "order": [
+    "Main.dc.html", "b-vote.dc.html", "c-vote.dc.html", "d-vote.dc.html", "e-vote.dc.html", "f-vote.dc.html",
+    "a-results.dc.html", "b-results.dc.html", "c-results.dc.html", "d-results.dc.html", "e-results.dc.html", "f-results.dc.html",
+    "a-admin.dc.html", "b-admin.dc.html", "c-admin.dc.html", "d-admin.dc.html", "e-admin.dc.html", "f-admin.dc.html",
+    "a-home.dc.html", "b-home.dc.html", "c-home.dc.html", "d-home.dc.html", "e-home.dc.html", "f-home.dc.html"
+  ],
+  "notes": {
+    "rowVote":    {"x": 0, "y": -640,  "text": "Vote", "kind": "title1", "maxW": 2740},
+    "colA":       {"x": 0,    "y": -320, "text": "a · Library card", "kind": "title1", "maxW": 390},
+    "colB":       {"x": 470,  "y": -320, "text": "b · Pick Flick", "kind": "title1", "maxW": 390},
+    "colC":       {"x": 940,  "y": -320, "text": "c · Official ballot", "kind": "title1", "maxW": 390},
+    "colD":       {"x": 1410, "y": -320, "text": "d · Swiss minimal", "kind": "title1", "maxW": 390},
+    "colE":       {"x": 1880, "y": -320, "text": "e · Soft and tactile", "kind": "title1", "maxW": 390},
+    "colF":       {"x": 2350, "y": -320, "text": "f · Elixir after dark", "kind": "title1", "maxW": 390},
+    "rowResults": {"x": 0, "y": 3500,  "text": "Results", "kind": "title1", "maxW": 2740},
+    "rowAdmin":   {"x": 0, "y": 7200,  "text": "Ballot admin", "kind": "title1", "maxW": 2740},
+    "rowHome":    {"x": 0, "y": 12800, "text": "Home", "kind": "title1", "maxW": 2740},
+    "howToRead":  {"x": -560, "y": 0, "w": 460, "text": "Six directions for RankedVote.app, one per column. Each row is one screen, and every direction uses the same Elixir Book Club ballot.\n\nThe vote and ballot admin pages work: press Play on one, or open it full-window to see how it widens on a desktop. Each wordmark links to that direction's home page."}
+  },
+  "designSystems": []
+}

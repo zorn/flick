@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Library card · Ballot admin</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&amp;family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&amp;display=swap" />
+<style>
+body{margin:0;background:#E8DDC4;color:#1E2A47;font-family:"Libre Caslon Text","Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+*,*::before,*::after{box-sizing:border-box}
+a{color:#1E2A47;text-decoration-thickness:1px;text-underline-offset:3px;transition:color .15s ease}
+a:hover{color:#9E2852}
+button,input{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}
+:focus-visible{outline:3px solid #1E2A47;outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.ink{position:relative}
+.ink::after{content:"";position:absolute;inset:-3px;pointer-events:none;background-image:radial-gradient(circle at 30% 40%,#FBF6E9 0 .7px,transparent 1.2px),radial-gradient(circle at 70% 25%,#FBF6E9 0 1px,transparent 1.5px),radial-gradient(circle at 45% 75%,#FBF6E9 0 .6px,transparent 1.1px),radial-gradient(ellipse 9px 3px at 30% 60%,rgba(251,246,233,.55),transparent 70%);background-size:9px 11px,13px 7px,6px 9px,29px 23px;opacity:.8}
+.wordmark{transition:transform .2s ease}
+.wordmark:hover{transform:rotate(-1.5deg) scale(1.03)}
+.cta{transition:transform .15s ease,box-shadow .15s ease}
+.cta:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 #1E2A47 !important;color:#1E2A47}
+.cta:active{transform:translate(2px,2px);box-shadow:0 0 0 #1E2A47 !important}
+.tbtn{transition:background-color .15s ease,color .15s ease}
+.tbtn:hover{background-color:#1E2A47 !important;color:#FBF6E9 !important}
+.danger{transition:background-color .15s ease,color .15s ease,transform .1s ease}
+.danger:hover{background-color:#9E2852 !important;color:#FBF6E9 !important}
+.danger:active{transform:translateY(2px)}
+.danger-solid{transition:background-color .15s ease,transform .1s ease}
+.danger-solid:hover{background-color:#7E1E40 !important}
+.danger-solid:active{transform:translateY(2px)}
+.ink-solid{transition:background-color .15s ease,transform .1s ease}
+.ink-solid:hover{background-color:#33416A !important}
+.ink-solid:active{transform:translateY(2px)}
+.weight-in:focus{border-color:#9E2852 !important}
+.record{transition:transform .2s ease,box-shadow .2s ease}
+.record:hover{transform:rotate(-0.4deg)}
+.stamp-in{animation:thunk .34s cubic-bezier(.2,.8,.3,1.25) both}
+@keyframes thunk{0%{transform:scale(1.9);opacity:0}55%{transform:scale(.9);opacity:1}100%{transform:scale(1);opacity:1}}
+.bar{transition:width .4s cubic-bezier(.2,.7,.2,1)}
+@media (min-width:880px){
+.h1{font-size:42px !important}
+.card-pad{padding-left:32px !important;padding-right:32px !important}
+.rule{margin-left:-32px !important;margin-right:-32px !important}
+.admin-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important;gap:24px !important}
+}
+@media (prefers-reduced-motion:reduce){
+.stamp-in{animation:none}
+.cta,.wordmark,.tbtn,.danger,.danger-solid,.ink-solid,.record,.bar{transition:none}
+}
+</style>
+</helmet>
+<div style="background-color:#E8DDC4;background-image:radial-gradient(rgba(30,42,71,0.05) 0.6px,transparent 1px),radial-gradient(rgba(120,90,40,0.06) 0.8px,transparent 1.3px);background-size:5px 5px,11px 9px;padding:0 12px 28px;">
+
+  <header style="max-width:1040px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding:16px 0 18px;">
+    <a href="a-home.dc.html" class="wordmark" style="display:inline-flex;padding:4px 2px;color:#9E2852;text-decoration:none;">
+      <span class="ink" style="display:inline-flex;align-items:center;padding:9px 12px 8px;border:2px solid #9E2852;outline:1px solid #9E2852;outline-offset:-6px;border-radius:3px;transform:rotate(-2deg);mix-blend-mode:multiply;font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;font-size:15px;letter-spacing:0.05em;line-height:1;text-transform:uppercase;">RankedVote.app</span>
+    </a>
+    <a href="#" class="cta" style="display:inline-flex;align-items:center;min-height:44px;padding:0 14px;border:1.5px solid #1E2A47;border-radius:3px;background:#FBF6E9;box-shadow:3px 3px 0 #1E2A47;color:#1E2A47;text-decoration:none;font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;font-size:14px;">Create a ballot</a>
+  </header>
+
+  <main style="max-width:1040px;margin:0 auto;display:flex;flex-direction:column;gap:20px;">
+    <p class="sr" role="status" aria-live="polite">{{announce}}</p>
+
+    <article aria-labelledby="ballot-q" class="card-pad" style="position:relative;background:#FBF6E9;border-radius:5px;box-shadow:0 1px 0 rgba(30,42,71,0.10),0 18px 30px -22px rgba(30,42,71,0.55);padding:16px 18px 48px;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;font-family:'Courier Prime','Courier New',Courier,monospace;font-size:13px;line-height:1.35;color:#4F5A72;">
+        <p style="margin:0;"><span style="display:block;text-transform:uppercase;letter-spacing:0.12em;">Ballot admin</span><span style="display:block;">ebc-next-read</span></p>
+        <p style="margin:0;text-align:right;"><span style="display:block;text-transform:uppercase;letter-spacing:0.12em;">Status</span><span style="display:block;">{{statusShort}}</span></p>
+      </div>
+      <div aria-hidden="true" class="rule" style="border-top:1px solid #D58C9F;margin:12px -18px 0;"></div>
+      <h1 id="ballot-q" class="h1" style="font-size:30px;line-height:1.14;font-weight:400;letter-spacing:-0.01em;margin:16px 0 14px;max-width:24ch;text-wrap:balance;">What should the Elixir Book Club read next?</h1>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px 20px;">
+        <p style="margin:0;font-family:'Courier Prime','Courier New',Courier,monospace;font-size:15px;line-height:1.5;">
+          <span style="display:block;">Published Sep 28, 2026, 7:30 PM EDT</span>
+          <span style="display:block;font-weight:700;">{{statusLine}}</span>
+        </p>
+        <span aria-hidden="true" class="ink" style="display:inline-flex;flex-direction:column;align-items:center;gap:5px;padding:10px 14px 9px;border:2px solid #9E2852;border-radius:50% / 38%;color:#9E2852;font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;line-height:1;text-transform:uppercase;transform:rotate(-6deg);mix-blend-mode:multiply;">
+          <span style="font-size:10px;letter-spacing:0.28em;">Published</span>
+          <span style="font-size:19px;letter-spacing:0.08em;">Sep 28 2026</span>
+        </span>
+      </div>
+      <span aria-hidden="true" style="position:absolute;left:50%;bottom:16px;width:16px;height:16px;margin-left:-8px;border-radius:50%;background:#E8DDC4;box-shadow:inset 0 1px 2px rgba(30,42,71,0.35);"></span>
+    </article>
+
+    <div class="admin-grid" style="display:grid;grid-template-columns:minmax(0,1fr);gap:20px;align-items:start;">
+      <div style="display:flex;flex-direction:column;gap:20px;min-width:0;">
+
+        <section aria-labelledby="bookmark-h" style="position:relative;background:#F4EAD1;border-radius:3px;box-shadow:0 1px 0 rgba(30,42,71,0.10),0 18px 30px -22px rgba(30,42,71,0.55);padding:18px 18px 20px;">
+          <svg aria-hidden="true" width="26" height="72" viewBox="0 0 26 72" style="position:absolute;top:-6px;right:22px;"><path d="M0 0H26V72L13 61L0 72Z" style="fill:#9E2852;" /><path d="M4 0V64" style="stroke:#FBF6E9;stroke-width:1;opacity:0.35;" /></svg>
+          <h2 id="bookmark-h" style="margin:0;padding-right:44px;font-size:22px;line-height:1.2;font-weight:400;">Bookmark this page</h2>
+          <p style="margin:8px 0 0;padding-right:30px;font-size:16px;line-height:1.5;">RankedVote.app has no accounts. This page's address is the only way back to manage your ballot, so bookmark it now and keep it private.</p>
+          <p style="margin:14px 0 4px;font-family:'Courier Prime','Courier New',Courier,monospace;font-size:12px;letter-spacing:0.14em;text-transform:uppercase;color:#4F5A72;">This page's address</p>
+          <p style="margin:0;padding:10px 12px;border:1.5px dashed #8E98AD;border-radius:3px;background:#FBF6E9;font-family:'Courier Prime','Courier New',Courier,monospace;font-size:14px;line-height:1.45;word-break:break-all;">https://rankedvote.app/ballot/ebc-next-read/9c1f4e2a-6b7d-4f3e-a8c2-5d0b1e7f3a64</p>
+        </section>
+
+        <section aria-labelledby="share-h" style="background:#FBF6E9;border-radius:5px;box-shadow:0 1px 0 rgba(30,42,71,0.10),0 18px 30px -22px rgba(30,42,71,0.55);padding:18px 18px 20px;">
+          <h2 id="share-h" style="margin:0;font-size:22px;line-height:1.2;font-weight:400;">Voter link</h2>
+          <p style="margin:8px 0 0;font-size:16px;line-height:1.5;">Share this link with your voters.</p>
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;margin-top:12px;">
+            <a href="Main.dc.html" style="flex:1 1 220px;min-width:0;display:block;padding:10px 0;border-bottom:1.5px solid #1E2A47;font-family:'Courier Prime','Courier New',Courier,monospace;font-size:15px;line-height:1.45;word-break:break-all;text-decoration:none;">https://rankedvote.app/ballot/ebc-next-read</a>
+            <button type="button" class="tbtn" onClick="{{copy}}" style="display:inline-flex;align-items:center;justify-content:center;gap:7px;min-width:124px;min-height:44px;padding:0 14px;border:1.5px solid #1E2A47;border-radius:3px;background:{{copyBg}};color:{{copyFg}};font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;font-size:14px;cursor:pointer;">
+              <sc-if value="{{notCopied}}" hint-placeholder-val="{{true}}">
+                <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"><rect x="8" y="8" width="12" height="12" rx="1.5" /><path d="M16 8V5.5A1.5 1.5 0 0 0 14.5 4h-9A1.5 1.5 0 0 0 4 5.5v9A1.5 1.5 0 0 0 5.5 16H8" /></svg>
+              </sc-if>
+              <sc-if value="{{copied}}" hint-placeholder-val="{{false}}">
+                <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
+              </sc-if>
+              <span>{{copyLabel}}</span>
+            </button>
+          </div>
+        </section>
+
+        <section aria-labelledby="close-h" style="background:#FBF6E9;border-radius:5px;box-shadow:0 1px 0 rgba(30,42,71,0.10),0 18px 30px -22px rgba(30,42,71,0.55);padding:18px 18px 20px;border-top:4px double #9E2852;">
+          <h2 id="close-h" style="margin:0;font-size:22px;line-height:1.2;font-weight:400;">Close the ballot</h2>
+          <sc-if value="{{notClosed}}" hint-placeholder-val="{{true}}">
+            <p style="margin:8px 0 0;font-size:16px;line-height:1.5;">Close the ballot when you no longer want to accept votes.</p>
+            <p style="margin:10px 0 0;font-size:16px;line-height:1.5;"><strong>Closing is final.</strong> Voting stops for good, and the results become public at:</p>
+            <p style="margin:6px 0 0;font-family:'Courier Prime','Courier New',Courier,monospace;font-size:14px;line-height:1.45;word-break:break-all;color:#4F5A72;">https://rankedvote.app/ballot/ebc-next-read/results</p>
+          </sc-if>
+          <sc-if value="{{isOpen}}" hint-placeholder-val="{{true}}">
+            <button type="button" class="danger" onClick="{{startClose}}" style="display:inline-flex;align-items:center;gap:8px;min-height:48px;margin-top:16px;padding:0 18px;border:2px solid #9E2852;border-radius:3px;background:transparent;color:#9E2852;font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;font-size:15px;cursor:pointer;">
+              <svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"><rect x="5" y="11" width="14" height="9.5" rx="1.5" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>
+              <span>Close ballot</span>
+            </button>
+          </sc-if>
+          <sc-if value="{{isConfirm}}" hint-placeholder-val="{{false}}">
+            <div role="group" aria-labelledby="confirm-h" style="margin-top:16px;padding:14px;border:1.5px dashed #9E2852;border-radius:3px;background:#F4EAD1;">
+              <p id="confirm-h" style="margin:0;font-size:17px;line-height:1.4;font-weight:700;">Close the ballot now?</p>
+              <p style="margin:6px 0 0;font-size:15px;line-height:1.5;">Voters can't vote after this, and you can't reopen it.</p>
+              <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;">
+                <button type="button" class="danger-solid" onClick="{{confirmClose}}" style="min-height:48px;padding:0 16px;border:0;border-radius:3px;background:#9E2852;color:#FBF6E9;font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;font-size:15px;cursor:pointer;">Yes, close the ballot</button>
+                <button type="button" class="tbtn" onClick="{{keepOpen}}" style="min-height:48px;padding:0 16px;border:1.5px solid #1E2A47;border-radius:3px;background:transparent;color:#1E2A47;font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;font-size:15px;cursor:pointer;">Keep accepting votes</button>
+              </div>
+            </div>
+          </sc-if>
+          <sc-if value="{{isClosed}}" hint-placeholder-val="{{false}}">
+            <div style="display:flex;align-items:center;flex-wrap:wrap;gap:16px 22px;margin-top:14px;">
+              <span class="stamp-in" aria-hidden="true" style="display:block;">
+                <span class="ink" style="display:inline-flex;padding:10px 16px 9px;border:3px solid #9E2852;outline:1.5px solid #9E2852;outline-offset:-8px;border-radius:4px;color:#9E2852;font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;font-size:28px;letter-spacing:0.14em;line-height:1;text-transform:uppercase;transform:rotate(-7deg);mix-blend-mode:multiply;">Closed</span>
+              </span>
+              <div style="flex:1 1 200px;">
+                <p style="margin:0;font-size:16px;line-height:1.5;">Voting has stopped. The results are public now.</p>
+                <a href="a-results.dc.html" class="cta" style="display:inline-flex;align-items:center;gap:8px;min-height:44px;margin-top:10px;padding:0 14px;border:1.5px solid #1E2A47;border-radius:3px;background:#FBF6E9;box-shadow:3px 3px 0 #1E2A47;color:#1E2A47;text-decoration:none;font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;font-size:14px;">View the results</a>
+              </div>
+            </div>
+          </sc-if>
+        </section>
+      </div>
+
+      <section aria-labelledby="early-h" style="background:#FBF6E9;border-radius:5px;box-shadow:0 1px 0 rgba(30,42,71,0.10),0 18px 30px -22px rgba(30,42,71,0.55);padding:18px 0 6px;min-width:0;">
+        <div style="padding:0 18px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px 12px;">
+            <h2 id="early-h" style="margin:0;font-size:22px;line-height:1.2;font-weight:400;">Early results</h2>
+            <span class="ink" style="display:inline-flex;padding:6px 9px 5px;border:2px solid #9E2852;border-radius:3px;color:#9E2852;font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;font-size:13px;letter-spacing:0.16em;line-height:1;text-transform:uppercase;transform:rotate(-3deg);mix-blend-mode:multiply;">{{earlyStamp}}</span>
+          </div>
+          <p style="margin:8px 0 0;font-size:15px;line-height:1.5;">{{earlyNote}}</p>
+          <p style="margin:6px 0 0;font-family:'Courier Prime','Courier New',Courier,monospace;font-size:13px;line-height:1.5;color:#4F5A72;">5 points for a 1st choice down to 1 for a 5th, times the vote's weight. A circle marks the most votes at that place.</p>
+        </div>
+        <ol role="list" style="list-style:none;margin:14px 0 0;padding:0;border-top:2px solid #1E2A47;">
+          <sc-for list="{{early}}" as="r" hint-placeholder-count="7">
+            <li style="display:grid;grid-template-columns:38px minmax(0,1fr);border-bottom:1px solid #B4C6DA;">
+              <span style="padding:12px 0;border-right:1px solid #DCA7B5;font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;font-size:16px;line-height:1.2;text-align:center;"><span class="sr">Place </span>{{r.place}}</span>
+              <div style="min-width:0;padding:10px 14px 10px 12px;">
+                <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;">
+                  <p style="margin:0;font-size:15px;line-height:1.4;">{{r.title}}</p>
+                  <p style="flex:none;margin:0;font-family:'Courier Prime','Courier New',Courier,monospace;line-height:1.2;text-align:right;"><span style="font-size:18px;font-weight:700;">{{r.points}}</span> <span style="font-size:12px;">pts</span></p>
+                </div>
+                <div aria-hidden="true" style="height:8px;margin-top:8px;border-bottom:1px solid #B4C6DA;">
+                  <div class="bar" style="height:8px;width:{{r.barWidth}};background:{{r.barColor}};border-radius:0 2px 2px 0;"></div>
+                </div>
+                <p style="display:flex;flex-wrap:wrap;gap:2px 10px;margin:6px 0 0;font-family:'Courier Prime','Courier New',Courier,monospace;font-size:13px;line-height:1;color:#4F5A72;">
+                  <span style="display:inline-flex;align-items:center;gap:4px;">1st <span style="display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;border:1.5px solid {{r.k1.ring}};border-radius:52% 46% 50% 48%;font-weight:700;color:#1E2A47;">{{r.k1.count}}</span><span class="sr">{{r.k1.lead}}</span></span>
+                  <span style="display:inline-flex;align-items:center;gap:4px;">2nd <span style="display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;border:1.5px solid {{r.k2.ring}};border-radius:52% 46% 50% 48%;font-weight:700;color:#1E2A47;">{{r.k2.count}}</span><span class="sr">{{r.k2.lead}}</span></span>
+                  <span style="display:inline-flex;align-items:center;gap:4px;">3rd <span style="display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;border:1.5px solid {{r.k3.ring}};border-radius:52% 46% 50% 48%;font-weight:700;color:#1E2A47;">{{r.k3.count}}</span><span class="sr">{{r.k3.lead}}</span></span>
+                  <span style="display:inline-flex;align-items:center;gap:4px;">4th <span style="display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;border:1.5px solid {{r.k4.ring}};border-radius:52% 46% 50% 48%;font-weight:700;color:#1E2A47;">{{r.k4.count}}</span><span class="sr">{{r.k4.lead}}</span></span>
+                  <span style="display:inline-flex;align-items:center;gap:4px;">5th <span style="display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;border:1.5px solid {{r.k5.ring}};border-radius:52% 46% 50% 48%;font-weight:700;color:#1E2A47;">{{r.k5.count}}</span><span class="sr">{{r.k5.lead}}</span></span>
+                </p>
+              </div>
+            </li>
+          </sc-for>
+        </ol>
+      </section>
+    </div>
+
+    <section aria-labelledby="votes-h" style="margin-top:8px;">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:6px 16px;padding:0 4px 12px;border-bottom:2px solid #1E2A47;">
+        <h2 id="votes-h" style="margin:0;font-size:26px;line-height:1.2;font-weight:400;">Votes</h2>
+        <p style="margin:0;font-family:'Courier Prime','Courier New',Courier,monospace;font-size:14px;line-height:1.4;">9 votes · total weight <span>{{totalWeight}}</span></p>
+      </div>
+      <p style="margin:12px 4px 0;max-width:62ch;font-size:16px;line-height:1.5;">Each vote is a checkout record below. Edit a weight to change how much a vote counts. A vote with weight 2 counts twice.</p>
+
+      <div style="margin-top:16px;background:#F4EAD1;border-radius:3px;box-shadow:0 1px 0 rgba(30,42,71,0.10),0 18px 30px -22px rgba(30,42,71,0.55);padding:14px 16px 8px;">
+        <h3 style="margin:0;padding-bottom:8px;border-bottom:3px double #1E2A47;font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;font-size:15px;letter-spacing:0.18em;text-transform:uppercase;">Answer key</h3>
+        <ul role="list" style="list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(420px,100%),1fr));column-gap:24px;">
+          <sc-for list="{{answerKey}}" as="k" hint-placeholder-count="7">
+            <li style="display:flex;align-items:flex-start;gap:12px;padding:9px 0;border-bottom:1px solid #B4C6DA;">
+              <span style="flex:none;display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border:1.5px solid #1E2A47;border-radius:2px;font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;font-size:16px;">{{k.id}}</span>
+              <span style="padding-top:4px;font-size:15px;line-height:1.4;">{{k.title}}</span>
+            </li>
+          </sc-for>
+        </ul>
+      </div>
+
+      <ol role="list" style="list-style:none;margin:18px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:14px;">
+        <sc-for list="{{records}}" as="v" hint-placeholder-count="9">
+          <li class="record" style="background:#FBF6E9;border-radius:4px;box-shadow:0 1px 0 rgba(30,42,71,0.10),0 12px 22px -18px rgba(30,42,71,0.55);padding:12px 14px 14px;">
+            <article aria-labelledby="vn-{{v.key}}">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+                <div style="min-width:0;">
+                  <p style="margin:0;font-family:'Courier Prime','Courier New',Courier,monospace;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:#4F5A72;">{{v.no}}</p>
+                  <h3 id="vn-{{v.key}}" style="margin:2px 0 0;font-size:19px;line-height:1.25;font-weight:400;font-style:{{v.nameStyle}};color:{{v.nameColor}};">{{v.name}}</h3>
+                </div>
+                <sc-if value="{{v.notEditing}}" hint-placeholder-val="{{true}}">
+                  <div style="flex:none;display:flex;align-items:center;gap:10px;">
+                    <p style="margin:0;font-family:'Courier Prime','Courier New',Courier,monospace;line-height:1.1;text-align:right;">
+                      <span style="display:block;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#4F5A72;">Weight</span>
+                      <span style="display:block;font-size:20px;font-weight:700;color:{{v.weightColor}};">{{v.weightText}}</span>
+                    </p>
+                    <sc-if value="{{v.showEdit}}" hint-placeholder-val="{{true}}">
+                      <button type="button" class="tbtn" onClick="{{v.startEdit}}" aria-label="{{v.editLabel}}" style="display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 12px;border:1.5px solid #1E2A47;border-radius:3px;background:transparent;color:#1E2A47;font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;font-size:14px;cursor:pointer;">
+                        <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"><path d="M4 20h4L19 9l-4-4L4 16v4zM13.5 6.5l4 4" /></svg>
+                        <span>Edit</span>
+                      </button>
+                    </sc-if>
+                  </div>
+                </sc-if>
+              </div>
+
+              <sc-if value="{{v.editing}}" hint-placeholder-val="{{false}}">
+                <div style="margin-top:10px;padding:10px 12px 12px;border:1.5px dashed #1E2A47;border-radius:3px;background:#F4EAD1;">
+                  <div style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:8px;">
+                    <div style="display:flex;flex-direction:column;gap:3px;">
+                      <label for="w-{{v.key}}" style="font-family:'Courier Prime','Courier New',Courier,monospace;font-size:12px;letter-spacing:0.14em;text-transform:uppercase;color:#4F5A72;">Weight</label>
+                      <input id="w-{{v.key}}" class="weight-in" type="number" min="0" step="0.5" value="{{v.draft}}" onChange="{{v.onDraft}}" style="width:92px;height:44px;padding:0 10px;border:1.5px solid #1E2A47;border-radius:3px;background:#FBF6E9;color:#1E2A47;font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;font-size:18px;" />
+                    </div>
+                    <button type="button" class="ink-solid" onClick="{{v.save}}" aria-label="{{v.saveLabel}}" style="min-height:44px;padding:0 14px;border:0;border-radius:3px;background:#1E2A47;color:#FBF6E9;font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;font-size:14px;cursor:pointer;">Save</button>
+                    <button type="button" class="tbtn" onClick="{{v.cancel}}" style="min-height:44px;padding:0 14px;border:1.5px solid #1E2A47;border-radius:3px;background:transparent;color:#1E2A47;font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;font-size:14px;cursor:pointer;">Cancel</button>
+                  </div>
+                  <sc-if value="{{v.hasError}}" hint-placeholder-val="{{false}}">
+                    <p role="alert" style="margin:8px 0 0;font-family:'Courier Prime','Courier New',Courier,monospace;font-size:13px;line-height:1.45;color:#9E2852;">{{v.error}}</p>
+                  </sc-if>
+                </div>
+              </sc-if>
+
+              <table style="width:100%;margin-top:12px;border-collapse:collapse;table-layout:fixed;">
+                <caption class="sr">{{v.caption}}</caption>
+                <thead>
+                  <tr>
+                    <th scope="col" style="padding:5px 0;border-top:2px solid #1E2A47;border-bottom:1px solid #1E2A47;font-family:'Courier Prime','Courier New',Courier,monospace;font-size:12px;font-weight:700;color:#4F5A72;text-align:center;">1st</th>
+                    <th scope="col" style="padding:5px 0;border-top:2px solid #1E2A47;border-bottom:1px solid #1E2A47;border-left:1px solid #DCA7B5;font-family:'Courier Prime','Courier New',Courier,monospace;font-size:12px;font-weight:700;color:#4F5A72;text-align:center;">2nd</th>
+                    <th scope="col" style="padding:5px 0;border-top:2px solid #1E2A47;border-bottom:1px solid #1E2A47;border-left:1px solid #DCA7B5;font-family:'Courier Prime','Courier New',Courier,monospace;font-size:12px;font-weight:700;color:#4F5A72;text-align:center;">3rd</th>
+                    <th scope="col" style="padding:5px 0;border-top:2px solid #1E2A47;border-bottom:1px solid #1E2A47;border-left:1px solid #DCA7B5;font-family:'Courier Prime','Courier New',Courier,monospace;font-size:12px;font-weight:700;color:#4F5A72;text-align:center;">4th</th>
+                    <th scope="col" style="padding:5px 0;border-top:2px solid #1E2A47;border-bottom:1px solid #1E2A47;border-left:1px solid #DCA7B5;font-family:'Courier Prime','Courier New',Courier,monospace;font-size:12px;font-weight:700;color:#4F5A72;text-align:center;">5th</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td style="padding:8px 0 6px;border-bottom:1px solid #B4C6DA;font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;font-size:20px;text-align:center;"><span aria-hidden="true">{{v.p1.letter}}</span><span class="sr">{{v.p1.sr}}</span></td>
+                    <td style="padding:8px 0 6px;border-bottom:1px solid #B4C6DA;border-left:1px solid #DCA7B5;font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;font-size:20px;text-align:center;"><span aria-hidden="true">{{v.p2.letter}}</span><span class="sr">{{v.p2.sr}}</span></td>
+                    <td style="padding:8px 0 6px;border-bottom:1px solid #B4C6DA;border-left:1px solid #DCA7B5;font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;font-size:20px;text-align:center;"><span aria-hidden="true">{{v.p3.letter}}</span><span class="sr">{{v.p3.sr}}</span></td>
+                    <td style="padding:8px 0 6px;border-bottom:1px solid #B4C6DA;border-left:1px solid #DCA7B5;font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;font-size:20px;text-align:center;color:{{v.p4.color}};"><span aria-hidden="true">{{v.p4.letter}}</span><span class="sr">{{v.p4.sr}}</span></td>
+                    <td style="padding:8px 0 6px;border-bottom:1px solid #B4C6DA;border-left:1px solid #DCA7B5;font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;font-size:20px;text-align:center;color:{{v.p5.color}};"><span aria-hidden="true">{{v.p5.letter}}</span><span class="sr">{{v.p5.sr}}</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </article>
+          </li>
+        </sc-for>
+      </ol>
+    </section>
+  </main>
+
+  <footer style="max-width:1040px;margin:40px auto 0;padding-top:12px;border-top:1px solid #1E2A47;display:flex;flex-wrap:wrap;gap:0 22px;font-family:'Courier Prime','Courier New',Courier,monospace;font-size:14px;">
+    <a href="https://github.com/zorn/flick" style="display:inline-flex;align-items:center;min-height:44px;">GitHub project</a>
+    <a href="https://updown.io/wwis" style="display:inline-flex;align-items:center;min-height:44px;">Uptime</a>
+    <a href="mailto:mike@mikezornek.com" style="display:inline-flex;align-items:center;min-height:44px;">Contact site admin</a>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":5200}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    // Priya's record opens in edit mode so the inline weight editor shows at a glance.
+    this.state = {
+      copied: false,
+      closeStep: "open",
+      weights: [1, 2, 1, 1, 1, 1, 1, 1, 1],
+      editing: 1,
+      draft: "2",
+      weightError: "",
+      announce: ""
+    };
+    this.copyTimer = null;
+  }
+
+  componentWillUnmount() {
+    if (this.copyTimer) clearTimeout(this.copyTimer);
+  }
+
+  answerList() {
+    return [
+      { id: "A", title: "Elixir in Action, Third Edition by Saša Jurić" },
+      { id: "B", title: "Engineering Elixir Applications by Ellie Fairholm and Josep Giralt D'Lacoste" },
+      { id: "C", title: "Machine Learning in Elixir by Sean Moriarity" },
+      { id: "D", title: "Designing Elixir Systems with OTP by James Edward Gray II and Bruce A. Tate" },
+      { id: "E", title: "Elixir Patterns by Hugo Barauna and Alexander Koutmos" },
+      { id: "F", title: "Concurrent Data Processing in Elixir by Svilen Gospodinov" },
+      { id: "G", title: "A Common-Sense Guide to Data Structures and Algorithms, Second Edition by Jay Wengrow" }
+    ];
+  }
+
+  voteList() {
+    return [
+      { name: "Mike", picks: ["B", "A", "E", "D", "F"] },
+      { name: "Priya", picks: ["C", "B", "A"] },
+      { name: "Tomás", picks: ["A", "B", "D", "E", "C"] },
+      { name: "Jen", picks: ["B", "E", "A"] },
+      { name: "Arjun", picks: ["D", "A", "B", "F", "E"] },
+      { name: "", picks: ["C", "F", "B", "A", "G"] },
+      { name: "Kiko", picks: ["E", "B", "D"] },
+      { name: "Dana", picks: ["A", "D", "E", "B", "C"] },
+      { name: "Lars", picks: ["G", "C", "F"] }
+    ];
+  }
+
+  fmt(n) {
+    const r = Math.round(n * 10) / 10;
+    return r % 1 === 0 ? String(r) : r.toFixed(1);
+  }
+
+  startEdit(i) {
+    this.setState({ editing: i, draft: this.fmt(this.state.weights[i]), weightError: "" });
+  }
+
+  saveEdit(i) {
+    const raw = String(this.state.draft).trim();
+    const n = Number(raw);
+    if (raw === "" || isNaN(n) || n < 0) {
+      this.setState({ weightError: "Enter a weight of 0 or more, such as 1 or 2." });
+      return;
+    }
+    const weights = this.state.weights.slice();
+    weights[i] = n;
+    this.setState({ weights: weights, editing: null, weightError: "", announce: "Weight saved. Early results updated." });
+  }
+
+  copyLink() {
+    this.setState({ copied: true, announce: "Voter link copied." });
+    if (this.copyTimer) clearTimeout(this.copyTimer);
+    this.copyTimer = setTimeout(() => this.setState({ copied: false, announce: "" }), 2500);
+  }
+
+  renderVals() {
+    const PTS = [5, 4, 3, 2, 1];
+    const answers = this.answerList();
+    const votes = this.voteList();
+    const weights = this.state.weights;
+    const titleOf = {};
+    answers.forEach(a => { titleOf[a.id] = a.title; });
+
+    const rows = answers.map((a, i) => ({ id: a.id, title: a.title, order: i, points: 0, counts: [0, 0, 0, 0, 0] }));
+    const byId = {};
+    rows.forEach(r => { byId[r.id] = r; });
+    votes.forEach((v, vi) => {
+      v.picks.forEach((id, k) => {
+        byId[id].points += PTS[k] * weights[vi];
+        byId[id].counts[k] += weights[vi];
+      });
+    });
+    rows.sort((x, y) => (y.points - x.points) || (x.order - y.order));
+
+    const top = rows[0].points || 1;
+    const leaders = [0, 1, 2, 3, 4].map(k => {
+      const vals = rows.map(r => r.counts[k]);
+      const m = Math.max.apply(null, vals);
+      return vals.filter(v => v === m).length === 1 && m > 0 ? m : -1;
+    });
+    const cell = (r, k) => {
+      const c = r.counts[k];
+      const lead = leaders[k] === c;
+      return { count: this.fmt(c), ring: lead ? "#9E2852" : "transparent", lead: lead ? ", the most at this place" : "" };
+    };
+    const early = rows.map((r, i) => ({
+      place: String(i + 1),
+      title: r.title,
+      points: this.fmt(r.points),
+      barWidth: (r.points / top * 100).toFixed(1) + "%",
+      barColor: i === 0 ? "#9E2852" : "#1E2A47",
+      k1: cell(r, 0),
+      k2: cell(r, 1),
+      k3: cell(r, 2),
+      k4: cell(r, 3),
+      k5: cell(r, 4)
+    }));
+
+    const totalWeight = this.fmt(weights.reduce((s, w) => s + w, 0));
+    const step = this.state.closeStep;
+    const closed = step === "closed";
+
+    const records = votes.map((v, i) => {
+      const editing = this.state.editing === i;
+      const display = v.name || "No name";
+      const pick = k => {
+        const id = v.picks[k];
+        return id
+          ? { letter: id, sr: titleOf[id] + ".", color: "#1E2A47" }
+          : { letter: "—", sr: "No pick.", color: "#4F5A72" };
+      };
+      return {
+        key: String(i),
+        no: "No. " + (i + 1),
+        name: display,
+        nameStyle: v.name ? "normal" : "italic",
+        nameColor: v.name ? "#1E2A47" : "#4F5A72",
+        weightText: this.fmt(weights[i]),
+        weightColor: weights[i] === 1 ? "#1E2A47" : "#9E2852",
+        editing: editing,
+        notEditing: !editing,
+        showEdit: !closed,
+        editLabel: "Edit weight: " + display,
+        saveLabel: "Save weight: " + display,
+        draft: this.state.draft,
+        onDraft: e => this.setState({ draft: e.target.value, weightError: "" }),
+        startEdit: () => this.startEdit(i),
+        save: () => this.saveEdit(i),
+        cancel: () => this.setState({ editing: null, weightError: "" }),
+        hasError: editing && this.state.weightError !== "",
+        error: this.state.weightError,
+        caption: "Picks for " + display + ", 1st to 5th",
+        p1: pick(0),
+        p2: pick(1),
+        p3: pick(2),
+        p4: pick(3),
+        p5: pick(4)
+      };
+    });
+
+    return {
+      announce: this.state.announce,
+      statusShort: closed ? "Closed" : "Accepting votes",
+      statusLine: closed ? "Closed. Voting has stopped." : "Accepting votes.",
+      copy: () => this.copyLink(),
+      copied: this.state.copied,
+      notCopied: !this.state.copied,
+      copyLabel: this.state.copied ? "Copied" : "Copy link",
+      copyBg: this.state.copied ? "#1E2A47" : "transparent",
+      copyFg: this.state.copied ? "#FBF6E9" : "#1E2A47",
+      isOpen: step === "open",
+      isConfirm: step === "confirm",
+      isClosed: closed,
+      notClosed: !closed,
+      startClose: () => this.setState({ closeStep: "confirm" }),
+      keepOpen: () => this.setState({ closeStep: "open" }),
+      confirmClose: () => this.setState({ closeStep: "closed", editing: null, announce: "Ballot closed. Voting has stopped." }),
+      earlyStamp: closed ? "Final" : "Provisional",
+      earlyNote: closed
+        ? "From 9 votes, total weight " + totalWeight + ". The ballot is closed, so these totals are final."
+        : "From 9 votes so far, total weight " + totalWeight + ". These totals can change until you close the ballot.",
+      early: early,
+      totalWeight: totalWeight,
+      answerKey: answers,
+      records: records
+    };
+  }
+}
+</script>
+</body>
+</html>

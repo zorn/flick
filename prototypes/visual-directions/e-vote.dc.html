@@ -1,0 +1,616 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Soft and tactile · Vote</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&amp;family=Figtree:wght@400..800&amp;display=swap">
+<style>
+body{margin:0;background:#F7EFE3}
+.e-root{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+.e-root *{box-sizing:border-box}
+.e-root button,.e-root input{font-family:inherit}
+.e-root a{color:#462F80;text-decoration-thickness:2px;text-underline-offset:3px}
+.e-root a:hover{color:#A13B85}
+.e-root :focus-visible{outline:3px solid #462F80;outline-offset:3px}
+.e-sr{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* Tactile press: lift on hover, sink on press */
+.e-press{cursor:pointer;transition:transform .16s cubic-bezier(.34,1.56,.64,1),box-shadow .16s ease,background-color .2s ease}
+.e-press:hover{transform:translateY(-2px)!important}
+.e-press:active{transform:translateY(3px)!important;transition-duration:.05s}
+.e-tang:hover{box-shadow:0 6px 0 #C96736,0 16px 24px -12px rgba(201,103,54,.65)!important}
+.e-tang:active{box-shadow:0 1px 0 #C96736,0 3px 6px -3px rgba(201,103,54,.5)!important}
+.e-plain:hover{box-shadow:0 5px 0 #D0C6B6,0 12px 18px -12px rgba(64,44,30,.45)!important}
+.e-plain:active{box-shadow:0 1px 0 #D0C6B6,0 2px 4px -2px rgba(64,44,30,.3)!important}
+.e-key:hover{box-shadow:0 4px 0 rgba(37,28,52,.22),0 10px 14px -8px rgba(37,28,52,.4)!important}
+.e-key:active{box-shadow:0 1px 0 rgba(37,28,52,.22)!important}
+.e-press:disabled{opacity:.32;cursor:not-allowed;transform:none!important;box-shadow:none!important}
+
+/* Pool answers: raised chiclets that sink when ranked */
+.e-pick,.e-picked{cursor:pointer;transition:transform .2s cubic-bezier(.34,1.56,.64,1),box-shadow .2s ease,background-color .25s ease}
+.e-pick:hover{transform:translateY(-3px)!important;box-shadow:0 1px 1px rgba(64,44,30,.05),0 7px 0 #E2D7C6,0 18px 26px -14px rgba(64,44,30,.45)!important}
+.e-pick:active{transform:translateY(3px)!important;box-shadow:0 1px 0 #E2D7C6,0 2px 4px rgba(64,44,30,.1)!important;transition-duration:.05s}
+.e-picked:hover .e-picked-x{background:#251C34!important;color:#FFFDF8!important}
+.e-picked-x{transition:background-color .15s ease,color .15s ease}
+
+.e-grip{cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;transition:background-color .15s ease}
+.e-grip:hover{background:rgba(37,28,52,.07)}
+.e-input:focus{background:#FFFDF8!important;border-color:#462F80!important}
+
+/* The pick-up: a lifted card while dragging */
+.e-lifted{box-shadow:0 26px 40px -16px rgba(64,44,30,.55),0 8px 14px rgba(64,44,30,.12)!important;cursor:grabbing}
+.e-shifting{transition:transform .22s cubic-bezier(.2,.8,.25,1)}
+
+@keyframes e-drop{0%{transform:translateY(-26px) scale(.9) rotate(-3deg);opacity:0}55%{transform:translateY(5px) scale(1.02) rotate(.5deg);opacity:1}78%{transform:translateY(-2px) scale(.995)}100%{transform:none;opacity:1}}
+.e-drop{animation:e-drop .52s cubic-bezier(.2,.8,.25,1)}
+@keyframes e-from-below-a{0%{transform:translateY(40px)}60%{transform:translateY(-5px)}100%{transform:none}}
+@keyframes e-from-below-b{0%{transform:translateY(40px)}60%{transform:translateY(-5px)}100%{transform:none}}
+@keyframes e-from-above-a{0%{transform:translateY(-40px)}60%{transform:translateY(5px)}100%{transform:none}}
+@keyframes e-from-above-b{0%{transform:translateY(-40px)}60%{transform:translateY(5px)}100%{transform:none}}
+.e-from-below-a{animation:e-from-below-a .4s cubic-bezier(.2,.8,.25,1)}
+.e-from-below-b{animation:e-from-below-b .4s cubic-bezier(.2,.8,.25,1)}
+.e-from-above-a{animation:e-from-above-a .4s cubic-bezier(.2,.8,.25,1)}
+.e-from-above-b{animation:e-from-above-b .4s cubic-bezier(.2,.8,.25,1)}
+@keyframes e-land-a{0%{transform:scale(1.03) rotate(-1deg)}40%{transform:scale(.97,1.03)}70%{transform:scale(1.01,.99)}100%{transform:none}}
+@keyframes e-land-b{0%{transform:scale(1.03) rotate(-1deg)}40%{transform:scale(.97,1.03)}70%{transform:scale(1.01,.99)}100%{transform:none}}
+.e-land-a{animation:e-land-a .42s ease-out}
+.e-land-b{animation:e-land-b .42s ease-out}
+@keyframes e-breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.09)}}
+.e-breathe{animation:e-breathe 1.8s ease-in-out infinite}
+@keyframes e-shake-a{0%,100%{transform:none}20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(2px)}}
+@keyframes e-shake-b{0%,100%{transform:none}20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(2px)}}
+.e-shake-a{animation:e-shake-a .42s ease}
+.e-shake-b{animation:e-shake-b .42s ease}
+@keyframes e-rise{0%{transform:translateY(18px);opacity:0}100%{transform:none;opacity:1}}
+.e-rise{animation:e-rise .5s cubic-bezier(.2,.8,.25,1) both}
+@keyframes e-pop{0%{transform:scale(.3) rotate(-20deg);opacity:0}60%{transform:scale(1.15) rotate(4deg);opacity:1}100%{transform:none;opacity:1}}
+.e-pop{animation:e-pop .6s cubic-bezier(.2,.8,.25,1) .1s both}
+.e-confirm-list li:nth-child(1){animation-delay:.2s}
+.e-confirm-list li:nth-child(2){animation-delay:.28s}
+.e-confirm-list li:nth-child(3){animation-delay:.36s}
+.e-confirm-list li:nth-child(4){animation-delay:.44s}
+.e-confirm-list li:nth-child(5){animation-delay:.52s}
+
+@media (min-width:900px){
+  .e-h1{font-size:56px!important}
+  .e-vote-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"rank pool" "send pool";grid-template-rows:auto 1fr;align-items:start;column-gap:32px!important}
+  .e-area-rank{grid-area:rank}
+  .e-area-pool{grid-area:pool}
+  .e-area-send{grid-area:send}
+}
+@media (prefers-reduced-motion:reduce){
+  .e-root *{animation:none!important;transition:none!important}
+}
+</style>
+</helmet>
+<div class="e-root" style="background-color:#F7EFE3; background-image:radial-gradient(#E6DBCA 1.2px, transparent 1.6px); background-size:22px 22px; color:#251C34; font-family:Figtree, 'Avenir Next', 'Segoe UI', system-ui, sans-serif; font-size:17px; line-height:1.5">
+  <div style="max-width:1120px; margin:0 auto; padding:0 16px">
+
+    <header style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px; padding:14px 0 6px">
+      <a href="e-home.dc.html" style="display:inline-flex; align-items:center; gap:8px; min-height:44px; color:#251C34; text-decoration:none">
+        <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true">
+          <rect x="1" y="17" width="20" height="9" rx="4.5" fill="#F1B464"></rect>
+          <rect x="4" y="9.5" width="20" height="9" rx="4.5" fill="#E57255"></rect>
+          <rect x="7" y="2" width="20" height="9" rx="4.5" fill="#462F80"></rect>
+        </svg>
+        <span style="font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:19px; letter-spacing:-0.02em; line-height:1">RankedVote<span style="color:#A13B85">.app</span></span>
+      </a>
+      <a href="https://rankedvote.app/ballot/new" class="e-press e-tang" style="display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:0 16px; border-radius:999px; background:#FF9F61; color:#251C34; text-decoration:none; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:700; font-size:15px; box-shadow:0 4px 0 #C96736, 0 10px 18px -12px rgba(201,103,54,.6)">Create a ballot</a>
+    </header>
+
+    <main style="padding:14px 0 8px">
+      <div style="max-width:760px">
+        <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center">
+          <span style="display:inline-flex; align-items:center; gap:7px; padding:5px 12px 5px 10px; border-radius:999px; background:#D5F4E2; color:#056641; font-size:14px; font-weight:700">
+            <span aria-hidden="true" style="width:8px; height:8px; border-radius:999px; background:#269E5F"></span>Open for votes
+          </span>
+          <span style="display:inline-flex; align-items:center; padding:5px 12px; border-radius:999px; background:#FFFDF8; color:#585166; font-size:14px; font-weight:600; box-shadow:inset 0 0 0 1px #DED6C9">7 choices · rank up to 5</span>
+        </div>
+        <h1 class="e-h1" style="margin:16px 0 12px; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:36px; line-height:1.04; letter-spacing:-0.03em; text-wrap:balance">What should the Elixir Book Club read next?</h1>
+        <div style="color:#585166; font-size:17px; max-width:60ch">
+          <p style="margin:0">Rank up to five books you'd like to read next. Your first choice earns the most points. We'll start the winner at our next meeting.</p>
+        </div>
+      </div>
+
+      <p class="e-sr" aria-live="polite">{{announce}}</p>
+
+      <sc-if value="{{notSubmitted}}" hint-placeholder-val="{{true}}">
+        <div class="e-vote-grid" style="display:grid; gap:28px; margin-top:28px">
+
+          <section class="e-area-rank" aria-labelledby="e-rank-h">
+            <div class="{{trayClass}}" style="background:#FFFDF8; border-radius:28px; padding:18px 12px 12px; box-shadow:0 1px 1px rgba(64,44,30,.04), 0 2px 4px rgba(64,44,30,.05), 0 10px 22px -8px rgba(64,44,30,.14), 0 26px 44px -26px rgba(64,44,30,.3)">
+              <div style="display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:8px 12px; padding:0 6px">
+                <div>
+                  <h2 id="e-rank-h" style="margin:0; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:25px; line-height:1.1; letter-spacing:-0.02em">Your ranking</h2>
+                  <p style="margin:4px 0 0; font-size:15px; color:#585166">Only your 1st choice is required.</p>
+                </div>
+                <div style="display:flex; align-items:center; gap:8px">
+                  <span aria-hidden="true" style="display:flex; gap:4px">
+                    <sc-for list="{{pips}}" as="pip" hint-placeholder-count="5">
+                      <span style="width:10px; height:10px; border-radius:999px; background:{{pip.bg}}; box-shadow:inset 0 0 0 1.5px {{pip.ring}}"></span>
+                    </sc-for>
+                  </span>
+                  <span style="font-size:14.5px; font-weight:700">{{countText}}</span>
+                </div>
+              </div>
+
+              <sc-if value="{{showError}}" hint-placeholder-val="{{false}}">
+                <div role="alert" style="display:flex; gap:10px; align-items:flex-start; margin:14px 2px 0; padding:12px 14px; border-radius:16px; background:#FFE3DF; color:#A92227; font-size:15px; font-weight:650; line-height:1.4">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none; margin-top:1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 7.5v5.5"></path><path d="M12 16.5v.01"></path></svg>
+                  <span>Pick a 1st choice before you submit. Tap any choice in the list below.</span>
+                </div>
+              </sc-if>
+
+              <ol aria-label="Your ranking, 1st to 5th" style="list-style:none; margin:14px 0 0; padding:0; display:flex; flex-direction:column; gap:10px">
+                <sc-for list="{{slots}}" as="slot" hint-placeholder-count="5">
+                  <li style="position:relative">
+                    <sc-if value="{{slot.empty}}" hint-placeholder-val="{{true}}">
+                      <div style="display:flex; align-items:center; gap:12px; min-height:64px; padding:10px 12px; border-radius:20px; background:#F1E9DC; border:2px solid {{slot.wellBorder}}; box-shadow:inset 0 3px 7px rgba(64,44,30,.13), inset 0 -1px 0 rgba(255,255,255,.7)">
+                        <span class="{{slot.ghostCls}}" aria-hidden="true" style="flex:none; width:40px; height:40px; border-radius:999px; display:grid; place-items:center; border:2px dashed {{slot.ghostRing}}; color:#585166; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:17px">{{slot.num}}</span>
+                        <p style="margin:0; font-size:15px; line-height:1.35; color:#585166"><span class="e-sr">Rank {{slot.num}}, empty. </span><strong aria-hidden="true" style="color:#251C34; font-weight:750">{{slot.ord}}</strong><span aria-hidden="true"> · </span>{{slot.hint}}</p>
+                      </div>
+                    </sc-if>
+                    <sc-if value="{{slot.filled}}" hint-placeholder-val="{{false}}">
+                      <div class="{{slot.cls}}" style="position:relative; z-index:{{slot.z}}; transform:{{slot.transform}}; border-radius:20px; padding:12px 10px 8px 12px; background:{{slot.tint}}; box-shadow:0 1px 1px rgba(64,44,30,.06), 0 4px 0 {{slot.edge}}, 0 14px 22px -14px rgba(64,44,30,.45)">
+                        <div style="display:flex; gap:12px; align-items:flex-start">
+                          <span aria-hidden="true" style="flex:none; width:40px; height:40px; border-radius:999px; display:grid; place-items:center; background:{{slot.fill}}; color:{{slot.ink}}; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:18px; box-shadow:inset 0 -3px 0 rgba(37,28,52,.22)">{{slot.num}}</span>
+                          <p style="margin:0; padding-top:8px; flex:1; min-width:0; font-weight:650; font-size:16.5px; line-height:1.3; text-wrap:pretty"><span class="e-sr">Rank {{slot.num}}: </span>{{slot.title}}</p>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:6px; margin-top:6px">
+                          <span class="e-grip" aria-hidden="true" title="Drag to reorder" onPointerDown="{{slot.gripDown}}" onPointerMove="{{slot.gripMove}}" onPointerUp="{{slot.gripUp}}" onPointerCancel="{{slot.gripCancel}}" style="display:inline-flex; align-items:center; gap:7px; min-height:44px; padding:0 10px 0 8px; border-radius:14px; color:#585166; font-size:13.5px; font-weight:700">
+                            <svg width="12" height="18" viewBox="0 0 12 18" fill="currentColor" aria-hidden="true"><circle cx="3" cy="3" r="1.7"></circle><circle cx="9" cy="3" r="1.7"></circle><circle cx="3" cy="9" r="1.7"></circle><circle cx="9" cy="9" r="1.7"></circle><circle cx="3" cy="15" r="1.7"></circle><circle cx="9" cy="15" r="1.7"></circle></svg>
+                            {{slot.ord}} choice
+                          </span>
+                          <span style="flex:1"></span>
+                          <button type="button" class="e-press e-key" ref="{{slot.upRef}}" onClick="{{slot.moveUp}}" disabled="{{slot.upDisabled}}" aria-label="Move {{slot.ord}} choice up" style="flex:none; width:44px; height:44px; display:grid; place-items:center; padding:0; border:0; border-radius:14px; background:#FFFDF8; color:#251C34; box-shadow:0 3px 0 rgba(37,28,52,.18), 0 6px 10px -6px rgba(37,28,52,.35)">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"></path><path d="M5.5 11.5 12 5l6.5 6.5"></path></svg>
+                          </button>
+                          <button type="button" class="e-press e-key" ref="{{slot.downRef}}" onClick="{{slot.moveDown}}" disabled="{{slot.downDisabled}}" aria-label="Move {{slot.ord}} choice down" style="flex:none; width:44px; height:44px; display:grid; place-items:center; padding:0; border:0; border-radius:14px; background:#FFFDF8; color:#251C34; box-shadow:0 3px 0 rgba(37,28,52,.18), 0 6px 10px -6px rgba(37,28,52,.35)">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M5.5 12.5 12 19l6.5-6.5"></path></svg>
+                          </button>
+                          <button type="button" class="e-press e-key" ref="{{slot.removeRef}}" onClick="{{slot.remove}}" aria-label="Remove {{slot.ord}} choice" style="flex:none; width:44px; height:44px; display:grid; place-items:center; padding:0; border:0; border-radius:14px; background:#FFFDF8; color:#A92227; box-shadow:0 3px 0 rgba(37,28,52,.18), 0 6px 10px -6px rgba(37,28,52,.35)">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12"></path><path d="M18 6 6 18"></path></svg>
+                          </button>
+                        </div>
+                      </div>
+                    </sc-if>
+                  </li>
+                </sc-for>
+              </ol>
+            </div>
+          </section>
+
+          <section class="e-area-pool" aria-labelledby="e-pool-h">
+            <div style="display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:2px 12px; padding:0 6px">
+              <h2 id="e-pool-h" style="margin:0; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:25px; line-height:1.1; letter-spacing:-0.02em">The choices</h2>
+              <p style="margin:0; font-size:15px; color:#585166">{{poolHint}}</p>
+            </div>
+            <sc-if value="{{showNotice}}" hint-placeholder-val="{{false}}">
+              <p role="status" style="margin:12px 0 0; padding:12px 14px; border-radius:16px; background:#E8E4FE; color:#462F80; font-size:15px; font-weight:650">{{notice}}</p>
+            </sc-if>
+            <ul style="list-style:none; margin:14px 0 0; padding:0; display:flex; flex-direction:column; gap:10px">
+              <sc-for list="{{pool}}" as="item" hint-placeholder-count="7">
+                <li>
+                  <button type="button" class="{{item.cls}}" ref="{{item.ref}}" onClick="{{item.toggle}}" style="width:100%; display:flex; align-items:flex-start; gap:12px; min-height:64px; padding:14px 14px; border:0; border-radius:20px; text-align:left; color:#251C34; font-size:17px; background:{{item.bg}}; box-shadow:{{item.shadow}}; transform:{{item.shift}}">
+                    <sc-if value="{{item.unranked}}" hint-placeholder-val="{{true}}">
+                      <span aria-hidden="true" style="flex:none; width:36px; height:36px; border-radius:999px; display:grid; place-items:center; border:2px dashed #CFC4B2; color:#585166">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
+                      </span>
+                    </sc-if>
+                    <sc-if value="{{item.ranked}}" hint-placeholder-val="{{false}}">
+                      <span aria-hidden="true" style="flex:none; width:36px; height:36px; border-radius:999px; display:grid; place-items:center; background:{{item.fill}}; color:{{item.ink}}; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:16px; box-shadow:inset 0 -3px 0 rgba(37,28,52,.22)">{{item.num}}</span>
+                    </sc-if>
+                    <span style="flex:1; min-width:0">
+                      <span style="display:block; font-weight:650; font-size:16.5px; line-height:1.3; text-wrap:pretty">{{item.title}}</span>
+                      <sc-if value="{{item.unranked}}" hint-placeholder-val="{{true}}">
+                        <span style="display:block; margin-top:4px; font-size:14px; font-weight:650; color:#585166">{{item.addText}}</span>
+                      </sc-if>
+                      <sc-if value="{{item.ranked}}" hint-placeholder-val="{{false}}">
+                        <span style="display:block; margin-top:4px; font-size:14px; color:#585166"><strong style="color:#251C34; font-weight:800">Ranked {{item.ord}}</strong> · Tap to remove</span>
+                      </sc-if>
+                    </span>
+                    <sc-if value="{{item.ranked}}" hint-placeholder-val="{{false}}">
+                      <span class="e-picked-x" aria-hidden="true" style="flex:none; width:28px; height:28px; margin-top:4px; border-radius:999px; display:grid; place-items:center; background:rgba(37,28,52,.08); color:#251C34">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12"></path><path d="M18 6 6 18"></path></svg>
+                      </span>
+                    </sc-if>
+                  </button>
+                </li>
+              </sc-for>
+            </ul>
+          </section>
+
+          <section class="e-area-send" aria-label="Send your vote" style="background:#FFFDF8; border-radius:28px; padding:20px 18px 22px; box-shadow:0 1px 1px rgba(64,44,30,.04), 0 2px 4px rgba(64,44,30,.05), 0 10px 22px -8px rgba(64,44,30,.14)">
+            <label for="e-name" style="display:block; margin:0 0 8px; font-size:16px; font-weight:750">Name (optional)</label>
+            <input id="e-name" class="e-input" type="text" autocomplete="name" value="{{name}}" onChange="{{onName}}" style="display:block; width:100%; min-height:52px; padding:12px 16px; border-radius:16px; border:2px solid transparent; background:#F1E9DC; box-shadow:inset 0 3px 6px rgba(64,44,30,.12); color:#251C34; font-size:17px; transition:background-color .2s ease, border-color .2s ease">
+            <button type="button" class="e-press e-tang" onClick="{{onSubmit}}" style="margin-top:18px; width:100%; min-height:58px; display:flex; align-items:center; justify-content:center; gap:10px; border:0; border-radius:18px; background:#FF9F61; color:#251C34; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:19px; letter-spacing:-0.01em; box-shadow:0 4px 0 #C96736, 0 12px 20px -12px rgba(201,103,54,.6)">
+              Submit my vote
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="M13 5.5 19.5 12 13 18.5"></path></svg>
+            </button>
+            <sc-if value="{{showError}}" hint-placeholder-val="{{false}}">
+              <p style="margin:12px 0 0; text-align:center; color:#A92227; font-size:15px; font-weight:650">Your ranking is empty. Pick a 1st choice first.</p>
+            </sc-if>
+          </section>
+
+        </div>
+      </sc-if>
+
+      <sc-if value="{{submitted}}" hint-placeholder-val="{{false}}">
+        <section class="e-rise" aria-labelledby="e-done-h" style="margin-top:28px; max-width:640px; background:#FFFDF8; border-radius:32px; padding:28px 18px 24px; box-shadow:0 1px 1px rgba(64,44,30,.04), 0 2px 4px rgba(64,44,30,.05), 0 12px 26px -10px rgba(64,44,30,.18), 0 30px 50px -30px rgba(64,44,30,.35)">
+          <span class="e-pop" aria-hidden="true" style="width:64px; height:64px; border-radius:999px; display:grid; place-items:center; background:#D5F4E2; color:#056641; box-shadow:0 4px 0 #9FDDBB, 0 12px 20px -12px rgba(5,102,65,.5)">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+          </span>
+          <h2 id="e-done-h" style="margin:18px 0 6px; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:30px; line-height:1.1; letter-spacing:-0.02em">{{greeting}}</h2>
+          <p style="margin:0; color:#585166">Here is the ranking you sent.</p>
+          <ol class="e-confirm-list" style="list-style:none; margin:18px 0 0; padding:0; display:flex; flex-direction:column; gap:8px">
+            <sc-for list="{{confirmList}}" as="c" hint-placeholder-count="2">
+              <li class="e-rise" style="display:flex; align-items:flex-start; gap:12px; padding:10px 12px; border-radius:18px; background:{{c.tint}}">
+                <span aria-hidden="true" style="flex:none; width:34px; height:34px; border-radius:999px; display:grid; place-items:center; background:{{c.fill}}; color:{{c.ink}}; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:16px; box-shadow:inset 0 -3px 0 rgba(37,28,52,.22)">{{c.num}}</span>
+                <span style="padding-top:5px; font-weight:650; font-size:16px; line-height:1.3"><span class="e-sr">Rank {{c.num}}: </span>{{c.title}}</span>
+              </li>
+            </sc-for>
+          </ol>
+          <p style="margin:20px 0 0; color:#585166; font-size:16px">The results go public when the ballot's creator closes it.</p>
+          <a href="e-home.dc.html" class="e-press e-plain" style="margin-top:18px; display:inline-flex; align-items:center; gap:8px; min-height:48px; padding:0 18px; border-radius:999px; background:#FFFDF8; color:#251C34; text-decoration:none; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:700; font-size:16px; box-shadow:inset 0 0 0 1.5px #DED6C9, 0 3px 0 #D0C6B6, 0 8px 14px -10px rgba(64,44,30,.4)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"></path><path d="M11 5.5 4.5 12 11 18.5"></path></svg>
+            Back to RankedVote.app
+          </a>
+        </section>
+      </sc-if>
+    </main>
+
+    <footer style="margin-top:48px; padding:20px 0 36px; border-top:1px solid #DED6C9; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:14px 20px">
+      <p style="margin:0; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:16px; color:#585166">RankedVote.app</p>
+      <nav aria-label="Site links" style="display:flex; flex-wrap:wrap; gap:8px">
+        <a href="https://github.com/zorn/flick" class="e-press e-plain" style="display:inline-flex; align-items:center; min-height:44px; padding:0 14px; border-radius:999px; background:#FFFDF8; color:#251C34; text-decoration:none; font-size:14.5px; font-weight:650; box-shadow:0 3px 0 #D0C6B6, 0 8px 14px -10px rgba(64,44,30,.4)">GitHub project</a>
+        <a href="https://updown.io/wwis" class="e-press e-plain" style="display:inline-flex; align-items:center; min-height:44px; padding:0 14px; border-radius:999px; background:#FFFDF8; color:#251C34; text-decoration:none; font-size:14.5px; font-weight:650; box-shadow:0 3px 0 #D0C6B6, 0 8px 14px -10px rgba(64,44,30,.4)">Uptime</a>
+        <a href="mailto:mike@mikezornek.com" class="e-press e-plain" style="display:inline-flex; align-items:center; min-height:44px; padding:0 14px; border-radius:999px; background:#FFFDF8; color:#251C34; text-decoration:none; font-size:14.5px; font-weight:650; box-shadow:0 3px 0 #D0C6B6, 0 8px 14px -10px rgba(64,44,30,.4)">Contact site admin</a>
+      </nav>
+    </footer>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":2700},"startWithPicks":{"editor":"boolean","default":true}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.answers = [
+      { id: 'A', title: 'Elixir in Action, Third Edition by Saša Jurić' },
+      { id: 'B', title: "Engineering Elixir Applications by Ellie Fairholm and Josep Giralt D'Lacoste" },
+      { id: 'C', title: 'Machine Learning in Elixir by Sean Moriarity' },
+      { id: 'D', title: 'Designing Elixir Systems with OTP by James Edward Gray II and Bruce A. Tate' },
+      { id: 'E', title: 'Elixir Patterns by Hugo Barauna and Alexander Koutmos' },
+      { id: 'F', title: 'Concurrent Data Processing in Elixir by Svilen Gospodinov' },
+      { id: 'G', title: 'A Common-Sense Guide to Data Structures and Algorithms, Second Edition by Jay Wengrow' }
+    ];
+    this.ords = ['1st', '2nd', '3rd', '4th', '5th'];
+    // Rank ramp: lightness steps from dark violet (1st) to pale butter (5th).
+    this.ramp = [
+      { fill: '#462F80', ink: '#FFFDF8', tint: '#E8E4FE', edge: '#C9C0F5', pip: '#462F80' },
+      { fill: '#A13B85', ink: '#FFFDF8', tint: '#FBDEF0', edge: '#EDBBDA', pip: '#A13B85' },
+      { fill: '#E57255', ink: '#251C34', tint: '#FFE0D4', edge: '#F5BFAA', pip: '#E57255' },
+      { fill: '#F1B464', ink: '#251C34', tint: '#FFE9CC', edge: '#F0CC97', pip: '#E0A04F' },
+      { fill: '#EFE39D', ink: '#251C34', tint: '#F9F3CD', edge: '#E3D68A', pip: '#CDBB55' }
+    ];
+    this.upEls = [];
+    this.downEls = [];
+    this.removeEls = [];
+    this.poolEls = {};
+    this.pendingFocus = null;
+    this.state = {
+      ranking: this.seedRanking(),
+      name: '',
+      error: false,
+      errorTick: 0,
+      notice: '',
+      announce: '',
+      submitted: false,
+      drag: null,
+      tick: 0,
+      motion: null
+    };
+  }
+
+  seedRanking() {
+    // Lever: start mid-ranking (two picks) so the canvas shows wells and cards together.
+    const p = this.props || {};
+    return (p.startWithPicks ?? true) ? ['A', 'C'] : [];
+  }
+
+  titleOf(id) {
+    for (let i = 0; i < this.answers.length; i++) {
+      if (this.answers[i].id === id) return this.answers[i].title;
+    }
+    return '';
+  }
+
+  leftText(n) {
+    const left = 5 - n;
+    if (left === 0) return 'All five ranks are used.';
+    return left === 1 ? '1 rank left.' : left + ' ranks left.';
+  }
+
+  toggle(id) {
+    const r = this.state.ranking;
+    const at = r.indexOf(id);
+    if (at >= 0) {
+      this.removeAt(at, 'pool');
+      return;
+    }
+    if (r.length >= 5) {
+      const msg = 'All five ranks are taken. Remove one to add this choice.';
+      this.setState({ notice: msg, announce: msg });
+      return;
+    }
+    const next = r.concat([id]);
+    this.setState({
+      ranking: next,
+      error: false,
+      notice: '',
+      motion: { type: 'add', index: next.length - 1 },
+      announce: this.titleOf(id) + ' is your ' + this.ords[next.length - 1] + ' choice. ' + this.leftText(next.length)
+    });
+  }
+
+  removeAt(i, from) {
+    const r = this.state.ranking.slice();
+    const id = r.splice(i, 1)[0];
+    if (from === 'slot') {
+      if (r.length === 0) this.pendingFocus = { kind: 'pool', id: id };
+      else this.pendingFocus = { kind: 'remove', index: Math.min(i, r.length - 1) };
+    }
+    this.setState({
+      ranking: r,
+      notice: '',
+      motion: null,
+      drag: null,
+      announce: 'Removed ' + this.titleOf(id) + '. ' + this.leftText(r.length)
+    });
+  }
+
+  move(i, dir) {
+    const j = i + dir;
+    const r = this.state.ranking.slice();
+    if (j < 0 || j >= r.length) return;
+    const id = r[i];
+    r[i] = r[j];
+    r[j] = id;
+    this.pendingFocus = { kind: dir < 0 ? 'up' : 'down', index: j };
+    this.setState({
+      ranking: r,
+      notice: '',
+      tick: this.state.tick + 1,
+      motion: { type: 'move', landed: j, other: i, dir: dir },
+      announce: this.titleOf(id) + ' moved to ' + this.ords[j] + '.'
+    });
+  }
+
+  dragTarget(d) {
+    const n = this.state.ranking.length;
+    const t = d.from + Math.round(d.dy / d.pitch);
+    return Math.max(0, Math.min(n - 1, t));
+  }
+
+  gripDown(i, e) {
+    if (this.state.ranking.length < 2) return;
+    if (typeof e.button === 'number' && e.button !== 0) return;
+    const el = e.currentTarget;
+    try { el.setPointerCapture(e.pointerId); } catch (err) {}
+    let pitch = 130;
+    let scale = 1;
+    const li = el && el.closest ? el.closest('li') : null;
+    if (li) {
+      const rect = li.getBoundingClientRect();
+      const h = li.offsetHeight || rect.height;
+      if (h) {
+        scale = rect.height / h || 1;
+        pitch = h + 10;
+      }
+    }
+    if (e.preventDefault) e.preventDefault();
+    this.setState({ drag: { from: i, startY: e.clientY, dy: 0, pitch: pitch, scale: scale }, notice: '' });
+  }
+
+  gripMove(e) {
+    const d = this.state.drag;
+    if (!d) return;
+    this.setState({
+      drag: { from: d.from, startY: d.startY, pitch: d.pitch, scale: d.scale, dy: (e.clientY - d.startY) / d.scale }
+    });
+  }
+
+  gripUp() {
+    const d = this.state.drag;
+    if (!d) return;
+    const to = this.dragTarget(d);
+    if (to === d.from) {
+      this.setState({ drag: null, tick: this.state.tick + 1, motion: { type: 'drop', landed: to } });
+      return;
+    }
+    const r = this.state.ranking.slice();
+    const id = r.splice(d.from, 1)[0];
+    r.splice(to, 0, id);
+    this.setState({
+      ranking: r,
+      drag: null,
+      tick: this.state.tick + 1,
+      motion: { type: 'drop', landed: to },
+      announce: this.titleOf(id) + ' moved to ' + this.ords[to] + '.'
+    });
+  }
+
+  gripCancel() {
+    if (this.state.drag) this.setState({ drag: null });
+  }
+
+  submit() {
+    if (this.state.ranking.length === 0) {
+      this.setState({ error: true, errorTick: this.state.errorTick + 1 });
+      return;
+    }
+    this.setState({ submitted: true, error: false, drag: null, announce: 'Your vote is in.' });
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps && prevProps.startWithPicks !== this.props.startWithPicks) {
+      this.setState({ ranking: this.seedRanking(), submitted: false, error: false, notice: '', motion: null, drag: null });
+      return;
+    }
+    const p = this.pendingFocus;
+    if (!p) return;
+    this.pendingFocus = null;
+    let el = null;
+    if (p.kind === 'pool') {
+      el = this.poolEls[p.id];
+    } else {
+      const bank = p.kind === 'up' ? this.upEls : (p.kind === 'down' ? this.downEls : this.removeEls);
+      el = bank[p.index];
+      if (el && el.disabled) {
+        const alt = p.kind === 'up' ? this.downEls : this.upEls;
+        el = alt[p.index];
+      }
+    }
+    if (el && typeof el.focus === 'function') el.focus();
+  }
+
+  renderVals() {
+    const s = this.state;
+    const r = s.ranking;
+    const n = r.length;
+    const d = s.drag;
+    const target = d ? this.dragTarget(d) : -1;
+    const m = s.motion;
+    const parity = s.tick % 2 === 0 ? 'a' : 'b';
+    const showError = s.error && n === 0;
+
+    const slots = [0, 1, 2, 3, 4].map((i) => {
+      const id = r[i];
+      const c = this.ramp[i];
+      const filled = !!id;
+      const isNext = i === n;
+      let cls = 'e-slotcard';
+      let transform = 'none';
+      let z = 1;
+      if (d && filled) {
+        if (i === d.from) {
+          cls += ' e-lifted';
+          transform = 'translateY(' + d.dy + 'px) rotate(-1.2deg) scale(1.025)';
+          z = 6;
+        } else {
+          cls += ' e-shifting';
+          if (d.from < i && i <= target) transform = 'translateY(' + (-d.pitch) + 'px)';
+          else if (target <= i && i < d.from) transform = 'translateY(' + d.pitch + 'px)';
+        }
+      } else if (m && filled) {
+        if (m.type === 'add' && m.index === i) cls += ' e-drop';
+        if (m.type === 'move' && m.landed === i) cls += (m.dir < 0 ? ' e-from-below-' : ' e-from-above-') + parity;
+        if (m.type === 'move' && m.other === i) cls += (m.dir < 0 ? ' e-from-above-' : ' e-from-below-') + parity;
+        if (m.type === 'drop' && m.landed === i) cls += ' e-land-' + parity;
+      }
+      let hint = 'Optional';
+      if (isNext) hint = i === 0 ? 'Required. Tap a choice below.' : 'Up next. Tap a choice below.';
+      return {
+        num: i + 1,
+        ord: this.ords[i],
+        filled: filled,
+        empty: !filled,
+        title: filled ? this.titleOf(id) : '',
+        hint: hint,
+        ghostCls: isNext ? 'e-breathe' : '',
+        ghostRing: isNext ? '#462F80' : '#CFC4B2',
+        wellBorder: showError && i === 0 ? '#A92227' : 'transparent',
+        cls: cls,
+        transform: transform,
+        z: z,
+        tint: c.tint,
+        edge: c.edge,
+        fill: c.fill,
+        ink: c.ink,
+        upDisabled: i === 0,
+        downDisabled: i >= n - 1,
+        moveUp: () => this.move(i, -1),
+        moveDown: () => this.move(i, 1),
+        remove: () => this.removeAt(i, 'slot'),
+        gripDown: (e) => this.gripDown(i, e),
+        gripMove: (e) => this.gripMove(e),
+        gripUp: () => this.gripUp(),
+        gripCancel: () => this.gripCancel(),
+        upRef: (el) => { this.upEls[i] = el; },
+        downRef: (el) => { this.downEls[i] = el; },
+        removeRef: (el) => { this.removeEls[i] = el; }
+      };
+    });
+
+    const full = n >= 5;
+    const pool = this.answers.map((a) => {
+      const at = r.indexOf(a.id);
+      const ranked = at >= 0;
+      const c = ranked ? this.ramp[at] : null;
+      return {
+        title: a.title,
+        ranked: ranked,
+        unranked: !ranked,
+        num: at + 1,
+        ord: ranked ? this.ords[at] : '',
+        fill: c ? c.fill : '#FFFDF8',
+        ink: c ? c.ink : '#251C34',
+        bg: c ? c.tint : '#FFFDF8',
+        shadow: ranked
+          ? 'inset 0 2px 6px rgba(64,44,30,.14), inset 0 0 0 1px rgba(64,44,30,.05)'
+          : '0 1px 1px rgba(64,44,30,.05), 0 4px 0 #E2D7C6, 0 12px 20px -14px rgba(64,44,30,.4)',
+        shift: ranked ? 'translateY(3px)' : 'none',
+        cls: ranked ? 'e-picked' : 'e-pick',
+        addText: full ? 'Ranks full. Remove one first.' : 'Add as ' + this.ords[n],
+        toggle: () => this.toggle(a.id),
+        ref: (el) => { this.poolEls[a.id] = el; }
+      };
+    });
+
+    const pips = [0, 1, 2, 3, 4].map((i) => ({
+      bg: i < n ? this.ramp[i].fill : 'transparent',
+      ring: i < n ? this.ramp[i].pip : '#CFC4B2'
+    }));
+    const left = 5 - n;
+    const countText = n === 0 ? 'None ranked · 5 left' : n + ' of 5 ranked · ' + (left === 0 ? 'none left' : left + ' left');
+    const poolHint = full ? 'All five ranks are full. Tap a ranked choice to remove it.' : 'Tap a choice to rank it ' + this.ords[n] + '.';
+
+    const nm = (s.name || '').trim();
+    const greeting = nm ? 'Thanks, ' + nm + '. Your vote is in.' : 'Thanks! Your vote is in.';
+    const confirmList = r.map((id, i) => ({
+      num: i + 1,
+      title: this.titleOf(id),
+      fill: this.ramp[i].fill,
+      ink: this.ramp[i].ink,
+      tint: this.ramp[i].tint
+    }));
+
+    return {
+      announce: s.announce,
+      notSubmitted: !s.submitted,
+      submitted: s.submitted,
+      trayClass: showError ? 'e-shake-' + (s.errorTick % 2 === 0 ? 'a' : 'b') : '',
+      pips: pips,
+      countText: countText,
+      showError: showError,
+      slots: slots,
+      poolHint: poolHint,
+      showNotice: !!s.notice,
+      notice: s.notice,
+      pool: pool,
+      name: s.name,
+      onName: (e) => this.setState({ name: e.target.value }),
+      onSubmit: () => this.submit(),
+      greeting: greeting,
+      confirmList: confirmList
+    };
+  }
+}
+</script>
+</body>
+</html>

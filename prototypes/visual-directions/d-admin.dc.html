@@ -1,0 +1,713 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Swiss minimal · Ballot admin</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400..600&amp;family=Schibsted+Grotesk:wght@400..900&amp;display=swap">
+<style>
+body{margin:0;background:#fcfcf9;color:#12120f;font-family:'Schibsted Grotesk',ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+*,*::before,*::after{box-sizing:border-box}
+a,button,input{-webkit-tap-highlight-color:transparent}
+:focus-visible{outline:2px solid #db3008;outline-offset:3px}
+.d-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.d-wrap{padding-left:20px;padding-right:20px}
+@media (min-width:768px){.d-wrap{padding-left:40px;padding-right:40px}}
+.d-mark{transition:color .15s}
+.d-mark:hover{color:#db3008 !important}
+.d-cta-sm{transition:background-color .15s,color .15s}
+.d-cta-sm:hover{background-color:#12120f !important;color:#fcfcf9 !important}
+.d-foot a{transition:color .15s}
+.d-foot a:hover{color:#db3008 !important}
+.d-h1{font-size:36px}
+.d-sec{grid-template-columns:minmax(0,1fr)}
+.d-mxt{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.d-ed{flex-direction:column;align-items:stretch}
+@media (min-width:720px){
+.d-mxt{position:static;width:auto;height:auto;margin:0;overflow:visible;clip:auto;white-space:normal;display:block}
+.d-ed{flex-direction:row;align-items:center}
+}
+@media (min-width:960px){
+.d-h1{font-size:56px}
+.d-sec{grid-template-columns:minmax(0,3fr) minmax(0,9fr)}
+}
+.d-copy{transition:background-color .15s,color .15s}
+.d-copy:hover{background-color:#12120f !important;color:#fcfcf9 !important}
+.d-url{transition:color .15s}
+.d-url:hover{color:#db3008 !important}
+.d-txt{transition:background-color .15s,color .15s}
+.d-txt:hover{background-color:#12120f !important;color:#fcfcf9 !important}
+.d-solid{transition:background-color .15s}
+.d-solid:hover{background-color:#db3008 !important}
+.d-danger{transition:background-color .2s,color .2s,border-color .2s}
+.d-danger:hover{background-color:#db3008 !important;border-color:#db3008 !important;color:#fcfcf9 !important}
+.d-confirm{transition:background-color .15s}
+.d-confirm:hover{background-color:#12120f !important}
+.d-line{transition:background-color .15s,color .15s}
+.d-line:hover{background-color:#12120f !important;color:#fcfcf9 !important}
+.d-in:focus{border-color:#db3008 !important}
+.d-in:focus-visible{outline:2px solid #db3008;outline-offset:2px}
+@keyframes d-pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.d-live{animation:d-pulse 2.4s ease-in-out infinite}
+@keyframes d-rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.d-rise{animation:d-rise .35s cubic-bezier(.2,.7,0,1) both}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none !important;transition:none !important}}
+</style>
+</helmet>
+<div style="background: #fcfcf9; color: #12120f; font-family: 'Schibsted Grotesk', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;">
+
+  <header class="d-wrap" style="border-top: 6px solid #12120f;">
+    <div style="max-width: 1160px; margin: 0 auto; min-height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 16px; border-bottom: 1px solid #12120f;">
+      <a href="d-home.dc.html" class="d-mark" style="display: inline-flex; align-items: center; gap: 10px; min-height: 44px; color: #12120f; text-decoration: none; font-size: 19px; font-weight: 760; letter-spacing: -0.025em;">
+        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" style="display: block; flex: none;"><rect x="0" y="0" width="20" height="2.5" fill="#db3008"></rect><rect x="0" y="4.4" width="16" height="2.5" fill="#12120f"></rect><rect x="0" y="8.8" width="12" height="2.5" fill="#12120f"></rect><rect x="0" y="13.1" width="8" height="2.5" fill="#12120f"></rect><rect x="0" y="17.5" width="4" height="2.5" fill="#12120f"></rect></svg>
+        <span>RankedVote<span style="font-weight: 420; color: #5c5b57;">.app</span></span>
+      </a>
+      <a href="#" class="d-cta-sm" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; border: 1px solid #12120f; color: #12120f; text-decoration: none; font-size: 15px; font-weight: 650;">Create a ballot</a>
+    </div>
+  </header>
+
+  <main class="d-wrap">
+    <div style="max-width: 1160px; margin: 0 auto; padding-top: 32px;">
+
+      <p style="margin: 0 0 16px; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: #5c5b57;">Ballot admin</p>
+      <h1 class="d-h1" style="margin: 0; max-width: 16em; font-weight: 760; line-height: 1.02; letter-spacing: -0.035em; text-wrap: balance;">What should the Elixir Book Club read next?</h1>
+
+      <dl style="margin: 28px 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); column-gap: 24px;">
+        <div style="padding: 12px 0; border-top: 1px solid #12120f;">
+          <dt style="font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; color: #5c5b57;">Status</dt>
+          <dd style="margin: 6px 0 0; display: flex; align-items: center; gap: 10px; font-size: 17px; font-weight: 700;">
+            <sc-if value="{{isLive}}" hint-placeholder-val="{{true}}"><svg class="d-live" aria-hidden="true" width="10" height="10" viewBox="0 0 10 10" style="flex: none;"><rect width="10" height="10" fill="#db3008"></rect></svg></sc-if>
+            <span>{{statusText}}</span>
+          </dd>
+        </div>
+        <div style="padding: 12px 0; border-top: 1px solid #12120f;">
+          <dt style="font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; color: #5c5b57;">Published</dt>
+          <dd style="margin: 6px 0 0; font-size: 17px; font-weight: 700;">Sep 28, 2026, 7:30 PM EDT</dd>
+        </div>
+        <div style="padding: 12px 0; border-top: 1px solid #12120f;">
+          <dt style="font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; color: #5c5b57;">Votes</dt>
+          <dd style="margin: 6px 0 0; font-size: 17px; font-weight: 700;">{{voteCountText}}</dd>
+        </div>
+      </dl>
+
+      <p class="d-sr" role="status">{{announce}}</p>
+
+      <div style="margin-top: 40px; display: flex; flex-direction: column;">
+
+        <section aria-labelledby="d-s-book" class="d-sec" style="display: grid; column-gap: 48px; row-gap: 12px; padding: 20px 0 36px; border-top: 2px solid #db3008;">
+          <h2 id="d-s-book" style="margin: 0; font-size: 15px; font-weight: 780; line-height: 1.3; letter-spacing: 0.03em; text-transform: uppercase; color: #db3008;">Bookmark this page</h2>
+          <div style="min-width: 0;">
+            <p style="margin: 0; max-width: 36em; font-size: 17px; line-height: 1.5;">RankedVote.app has no accounts. This page's address is the only way back to manage this ballot, so bookmark it or save the link somewhere safe.</p>
+            <div style="margin-top: 16px; display: grid; grid-template-columns: minmax(0, 1fr) auto; border: 1px solid #12120f;">
+              <code style="padding: 12px 14px; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 14px; line-height: 1.5; word-break: break-all;">https://rankedvote.app/ballot/ebc-next-read/9c1f4e2a-6b7d-4f3e-a8c2-5d0b1e7f3a64</code>
+              <button type="button" class="d-copy" onClick="{{onCopyAdmin}}" aria-label="{{copyAdminAria}}" style="min-width: 92px; min-height: 48px; padding: 0 14px; border: 0; border-left: 1px solid #12120f; border-radius: 0; background: {{copyAdminBg}}; font: inherit; font-size: 15px; font-weight: 700; color: {{copyAdminFg}}; cursor: pointer;">{{copyAdminLabel}}</button>
+            </div>
+          </div>
+        </section>
+
+        <section aria-labelledby="d-s-share" class="d-sec" style="display: grid; column-gap: 48px; row-gap: 12px; padding: 20px 0 36px; border-top: 1px solid #12120f;">
+          <h2 id="d-s-share" style="margin: 0; font-size: 15px; font-weight: 780; line-height: 1.3; letter-spacing: 0.03em; text-transform: uppercase;">Voter link</h2>
+          <div style="min-width: 0;">
+            <p style="margin: 0; max-width: 36em; font-size: 17px; line-height: 1.5;">Share this link with your voters. Anyone who has it can vote.</p>
+            <div style="margin-top: 16px; display: grid; grid-template-columns: minmax(0, 1fr) auto; border: 1px solid #12120f;">
+              <a href="d-vote.dc.html" class="d-url" style="display: flex; align-items: center; padding: 12px 14px; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; line-height: 1.5; color: #12120f; word-break: break-all; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px;">https://rankedvote.app/ballot/ebc-next-read</a>
+              <button type="button" class="d-copy" onClick="{{onCopyVoter}}" aria-label="{{copyVoterAria}}" style="min-width: 92px; min-height: 48px; padding: 0 14px; border: 0; border-left: 1px solid #12120f; border-radius: 0; background: {{copyVoterBg}}; font: inherit; font-size: 15px; font-weight: 700; color: {{copyVoterFg}}; cursor: pointer;">{{copyVoterLabel}}</button>
+            </div>
+          </div>
+        </section>
+
+        <section aria-labelledby="d-s-close" class="d-sec" style="display: grid; column-gap: 48px; row-gap: 12px; padding: 20px 0 36px; border-top: 1px solid #12120f;">
+          <h2 id="d-s-close" style="margin: 0; font-size: 15px; font-weight: 780; line-height: 1.3; letter-spacing: 0.03em; text-transform: uppercase;">Close the ballot</h2>
+          <div style="min-width: 0;">
+            <sc-if value="{{isOpen}}" hint-placeholder-val="{{true}}">
+              <p style="margin: 0; max-width: 36em; font-size: 17px; line-height: 1.5;">Close the ballot when you no longer want to accept votes.</p>
+              <p style="margin: 12px 0 0; max-width: 36em; font-size: 17px; line-height: 1.5;"><strong style="font-weight: 750;">Closing is final.</strong> Voting stops, and the results become public at <span style="font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 14px; word-break: break-all;">https://rankedvote.app/ballot/ebc-next-read/results</span>.</p>
+              <button type="button" class="d-danger" onClick="{{onClose}}" style="margin-top: 20px; min-height: 52px; padding: 0 20px; border: 2px solid #12120f; border-radius: 0; background: transparent; font: inherit; font-size: 16px; font-weight: 750; color: #12120f; cursor: pointer;">Close the ballot</button>
+            </sc-if>
+            <sc-if value="{{isConfirm}}" hint-placeholder-val="{{false}}">
+              <div class="d-rise" role="alert" style="padding: 20px; border: 2px solid #db3008;">
+                <p style="margin: 0; font-size: 20px; font-weight: 760; line-height: 1.2; letter-spacing: -0.015em;">Close this ballot for good?</p>
+                <p style="margin: 8px 0 0; max-width: 34em; font-size: 16px; line-height: 1.5;">Voting stops now and the results become public. You cannot reopen the ballot.</p>
+                <div style="margin-top: 18px; display: flex; flex-wrap: wrap; gap: 10px;">
+                  <button type="button" class="d-confirm" onClick="{{onConfirmClose}}" style="min-height: 48px; padding: 0 18px; border: 0; border-radius: 0; background: #db3008; font: inherit; font-size: 16px; font-weight: 750; color: #fcfcf9; cursor: pointer;">Yes, close the ballot</button>
+                  <button type="button" class="d-line" onClick="{{onKeepOpen}}" style="min-height: 48px; padding: 0 18px; border: 1px solid #12120f; border-radius: 0; background: transparent; font: inherit; font-size: 16px; font-weight: 650; color: #12120f; cursor: pointer;">Keep accepting votes</button>
+                </div>
+              </div>
+            </sc-if>
+            <sc-if value="{{isClosed}}" hint-placeholder-val="{{false}}">
+              <div class="d-rise">
+                <p style="margin: 0; max-width: 36em; font-size: 17px; line-height: 1.5;"><strong style="font-weight: 750;">The ballot is closed.</strong> Voting has stopped, and the results are public.</p>
+                <a href="d-results.dc.html" class="d-line" style="margin-top: 16px; min-height: 52px; display: inline-flex; align-items: center; gap: 12px; padding: 0 18px; border: 1px solid #12120f; color: #12120f; text-decoration: none; font-size: 16px; font-weight: 700;">See the results</a>
+              </div>
+            </sc-if>
+          </div>
+        </section>
+
+        <section aria-labelledby="d-s-key" class="d-sec" style="display: grid; column-gap: 48px; row-gap: 12px; padding: 20px 0 36px; border-top: 1px solid #12120f;">
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <h2 id="d-s-key" style="margin: 0; font-size: 15px; font-weight: 780; line-height: 1.3; letter-spacing: 0.03em; text-transform: uppercase;">Answer key</h2>
+            <p style="margin: 0; font-size: 14px; line-height: 1.4; color: #5c5b57;">The tables below use these letters.</p>
+          </div>
+          <dl style="margin: 0; border-top: 1px solid #d2d1ce;">
+            <div style="display: grid; grid-template-columns: 32px minmax(0, 1fr); column-gap: 14px; align-items: start; padding: 10px 0; border-bottom: 1px solid #d2d1ce;">
+              <dt style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: 1px solid #12120f; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">A</dt>
+              <dd style="margin: 0; padding-top: 5px; font-size: 16px; line-height: 1.35;">Elixir in Action, Third Edition by Saša Jurić</dd>
+            </div>
+            <div style="display: grid; grid-template-columns: 32px minmax(0, 1fr); column-gap: 14px; align-items: start; padding: 10px 0; border-bottom: 1px solid #d2d1ce;">
+              <dt style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: 1px solid #12120f; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">B</dt>
+              <dd style="margin: 0; padding-top: 5px; font-size: 16px; line-height: 1.35;">Engineering Elixir Applications by Ellie Fairholm and Josep Giralt D'Lacoste</dd>
+            </div>
+            <div style="display: grid; grid-template-columns: 32px minmax(0, 1fr); column-gap: 14px; align-items: start; padding: 10px 0; border-bottom: 1px solid #d2d1ce;">
+              <dt style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: 1px solid #12120f; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">C</dt>
+              <dd style="margin: 0; padding-top: 5px; font-size: 16px; line-height: 1.35;">Machine Learning in Elixir by Sean Moriarity</dd>
+            </div>
+            <div style="display: grid; grid-template-columns: 32px minmax(0, 1fr); column-gap: 14px; align-items: start; padding: 10px 0; border-bottom: 1px solid #d2d1ce;">
+              <dt style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: 1px solid #12120f; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">D</dt>
+              <dd style="margin: 0; padding-top: 5px; font-size: 16px; line-height: 1.35;">Designing Elixir Systems with OTP by James Edward Gray II and Bruce A. Tate</dd>
+            </div>
+            <div style="display: grid; grid-template-columns: 32px minmax(0, 1fr); column-gap: 14px; align-items: start; padding: 10px 0; border-bottom: 1px solid #d2d1ce;">
+              <dt style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: 1px solid #12120f; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">E</dt>
+              <dd style="margin: 0; padding-top: 5px; font-size: 16px; line-height: 1.35;">Elixir Patterns by Hugo Barauna and Alexander Koutmos</dd>
+            </div>
+            <div style="display: grid; grid-template-columns: 32px minmax(0, 1fr); column-gap: 14px; align-items: start; padding: 10px 0; border-bottom: 1px solid #d2d1ce;">
+              <dt style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: 1px solid #12120f; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">F</dt>
+              <dd style="margin: 0; padding-top: 5px; font-size: 16px; line-height: 1.35;">Concurrent Data Processing in Elixir by Svilen Gospodinov</dd>
+            </div>
+            <div style="display: grid; grid-template-columns: 32px minmax(0, 1fr); column-gap: 14px; align-items: start; padding: 10px 0; border-bottom: 1px solid #d2d1ce;">
+              <dt style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: 1px solid #12120f; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">G</dt>
+              <dd style="margin: 0; padding-top: 5px; font-size: 16px; line-height: 1.35;">A Common-Sense Guide to Data Structures and Algorithms, Second Edition by Jay Wengrow</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section aria-labelledby="d-s-early" class="d-sec" style="display: grid; column-gap: 48px; row-gap: 12px; padding: 20px 0 36px; border-top: 1px solid #12120f;">
+          <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 10px;">
+            <h2 id="d-s-early" style="margin: 0; font-size: 15px; font-weight: 780; line-height: 1.3; letter-spacing: 0.03em; text-transform: uppercase;">Early results</h2>
+            <span style="padding: 3px 7px; border: 1px solid #12120f; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;">{{resultsTag}}</span>
+          </div>
+          <div style="min-width: 0;">
+            <p style="margin: 0 0 16px; max-width: 36em; font-size: 16px; line-height: 1.5;">{{resultsNote}}</p>
+            <div style="overflow-x: auto;">
+              <table style="width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums;">
+                <caption class="d-sr">Early results: points and weighted placements at each rank</caption>
+                <thead>
+                  <tr style="border-top: 2px solid #12120f; border-bottom: 1px solid #12120f;">
+                    <th scope="col" style="padding: 10px 6px 10px 0; width: 40px; text-align: left; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; color: #5c5b57;">Place</th>
+                    <th scope="col" style="padding: 10px 6px 10px 0; width: 30%; text-align: left; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; color: #5c5b57;">Answer</th>
+                    <th scope="col" style="padding: 10px 6px 10px 0; text-align: right; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; color: #12120f;">Points</th>
+                    <th scope="col" style="padding: 10px 3px; text-align: right; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; color: #5c5b57;">1st</th>
+                    <th scope="col" style="padding: 10px 3px; text-align: right; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; color: #5c5b57;">2nd</th>
+                    <th scope="col" style="padding: 10px 3px; text-align: right; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; color: #5c5b57;">3rd</th>
+                    <th scope="col" style="padding: 10px 3px; text-align: right; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; color: #5c5b57;">4th</th>
+                    <th scope="col" style="padding: 10px 0 10px 3px; text-align: right; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; color: #5c5b57;">5th</th>
+                  </tr>
+                </thead>
+                <tbody style="font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace;">
+                  <tr style="border-bottom: 1px solid #d2d1ce;">
+                    <td style="padding: 10px 6px 10px 0; vertical-align: top; font-family: 'Schibsted Grotesk', ui-sans-serif, system-ui, sans-serif; font-size: 22px; font-weight: 800; line-height: 1; letter-spacing: -0.04em; color: {{r0.placeColor}};">{{r0.place}}</td>
+                    <th scope="row" style="padding: 12px 6px 10px 0; vertical-align: top; text-align: left; font-weight: 400;"><span style="font-size: 15px; font-weight: 600;">{{r0.letter}}</span><span class="d-mxt" style="font-family: 'Schibsted Grotesk', ui-sans-serif, system-ui, sans-serif; font-size: 14px; line-height: 1.3; font-weight: 500; margin-top: 2px;">{{r0.title}}</span><span aria-hidden="true" style="display: block; margin-top: 6px; height: 2px; width: {{r0.pct}}; background: {{r0.barColor}}; transition: width .4s cubic-bezier(.2,.7,0,1);"></span></th>
+                    <td style="padding: 12px 6px 10px 0; vertical-align: top; text-align: right; font-size: 16px; font-weight: 600;">{{r0.points}}</td>
+                    <td style="padding: 12px 3px 10px; vertical-align: top; text-align: right; font-size: 15px; color: {{r0.k1}}; font-weight: {{r0.w1}};">{{r0.c1}}<span class="d-sr">{{r0.m1}}</span></td>
+                    <td style="padding: 12px 3px 10px; vertical-align: top; text-align: right; font-size: 15px; color: {{r0.k2}}; font-weight: {{r0.w2}};">{{r0.c2}}<span class="d-sr">{{r0.m2}}</span></td>
+                    <td style="padding: 12px 3px 10px; vertical-align: top; text-align: right; font-size: 15px; color: {{r0.k3}}; font-weight: {{r0.w3}};">{{r0.c3}}<span class="d-sr">{{r0.m3}}</span></td>
+                    <td style="padding: 12px 3px 10px; vertical-align: top; text-align: right; font-size: 15px; color: {{r0.k4}}; font-weight: {{r0.w4}};">{{r0.c4}}<span class="d-sr">{{r0.m4}}</span></td>
+                    <td style="padding: 12px 0 10px 3px; vertical-align: top; text-align: right; font-size: 15px; color: {{r0.k5}}; font-weight: {{r0.w5}};">{{r0.c5}}<span class="d-sr">{{r0.m5}}</span></td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid #d2d1ce;">
+                    <td style="padding: 10px 6px 10px 0; vertical-align: top; font-family: 'Schibsted Grotesk', ui-sans-serif, system-ui, sans-serif; font-size: 22px; font-weight: 800; line-height: 1; letter-spacing: -0.04em; color: {{r1.placeColor}};">{{r1.place}}</td>
+                    <th scope="row" style="padding: 12px 6px 10px 0; vertical-align: top; text-align: left; font-weight: 400;"><span style="font-size: 15px; font-weight: 600;">{{r1.letter}}</span><span class="d-mxt" style="font-family: 'Schibsted Grotesk', ui-sans-serif, system-ui, sans-serif; font-size: 14px; line-height: 1.3; font-weight: 500; margin-top: 2px;">{{r1.title}}</span><span aria-hidden="true" style="display: block; margin-top: 6px; height: 2px; width: {{r1.pct}}; background: {{r1.barColor}}; transition: width .4s cubic-bezier(.2,.7,0,1);"></span></th>
+                    <td style="padding: 12px 6px 10px 0; vertical-align: top; text-align: right; font-size: 16px; font-weight: 600;">{{r1.points}}</td>
+                    <td style="padding: 12px 3px 10px; vertical-align: top; text-align: right; font-size: 15px; color: {{r1.k1}}; font-weight: {{r1.w1}};">{{r1.c1}}<span class="d-sr">{{r1.m1}}</span></td>
+                    <td style="padding: 12px 3px 10px; vertical-align: top; text-align: right; font-size: 15px; color: {{r1.k2}}; font-weight: {{r1.w2}};">{{r1.c2}}<span class="d-sr">{{r1.m2}}</span></td>
+                    <td style="padding: 12px 3px 10px; vertical-align: top; text-align: right; font-size: 15px; color: {{r1.k3}}; font-weight: {{r1.w3}};">{{r1.c3}}<span class="d-sr">{{r1.m3}}</span></td>
+                    <td style="padding: 12px 3px 10px; vertical-align: top; text-align: right; font-size: 15px; color: {{r1.k4}}; font-weight: {{r1.w4}};">{{r1.c4}}<span class="d-sr">{{r1.m4}}</span></td>
+                    <td style="padding: 12px 0 10px 3px; vertical-align: top; text-align: right; font-size: 15px; color: {{r1.k5}}; font-weight: {{r1.w5}};">{{r1.c5}}<span class="d-sr">{{r1.m5}}</span></td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid #d2d1ce;">
+                    <td style="padding: 10px 6px 10px 0; vertical-align: top; font-family: 'Schibsted Grotesk', ui-sans-serif, system-ui, sans-serif; font-size: 22px; font-weight: 800; line-height: 1; letter-spacing: -0.04em; color: {{r2.placeColor}};">{{r2.place}}</td>
+                    <th scope="row" style="padding: 12px 6px 10px 0; vertical-align: top; text-align: left; font-weight: 400;"><span style="font-size: 15px; font-weight: 600;">{{r2.letter}}</span><span class="d-mxt" style="font-family: 'Schibsted Grotesk', ui-sans-serif, system-ui, sans-serif; font-size: 14px; line-height: 1.3; font-weight: 500; margin-top: 2px;">{{r2.title}}</span><span aria-hidden="true" style="display: block; margin-top: 6px; height: 2px; width: {{r2.pct}}; background: {{r2.barColor}}; transition: width .4s cubic-bezier(.2,.7,0,1);"></span></th>
+                    <td style="padding: 12px 6px 10px 0; vertical-align: top; text-align: right; font-size: 16px; font-weight: 600;">{{r2.points}}</td>
+                    <td style="padding: 12px 3px 10px; vertical-align: top; text-align: right; font-size: 15px; color: {{r2.k1}}; font-weight: {{r2.w1}};">{{r2.c1}}<span class="d-sr">{{r2.m1}}</span></td>
+                    <td style="padding: 12px 3px 10px; vertical-align: top; text-align: right; font-size: 15px; color: {{r2.k2}}; font-weight: {{r2.w2}};">{{r2.c2}}<span class="d-sr">{{r2.m2}}</span></td>
+                    <td style="padding: 12px 3px 10px; vertical-align: top; text-align: right; font-size: 15px; color: {{r2.k3}}; font-weight: {{r2.w3}};">{{r2.c3}}<span class="d-sr">{{r2.m3}}</span></td>
+                    <td style="padding: 12px 3px 10px; vertical-align: top; text-align: right; font-size: 15px; color: {{r2.k4}}; font-weight: {{r2.w4}};">{{r2.c4}}<span class="d-sr">{{r2.m4}}</span></td>
+                    <td style="padding: 12px 0 10px 3px; vertical-align: top; text-align: right; font-size: 15px; color: {{r2.k5}}; font-weight: {{r2.w5}};">{{r2.c5}}<span class="d-sr">{{r2.m5}}</span></td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid #d2d1ce;">
+                    <td style="padding: 10px 6px 10px 0; vertical-align: top; font-family: 'Schibsted Grotesk', ui-sans-serif, system-ui, sans-serif; font-size: 22px; font-weight: 800; line-height: 1; letter-spacing: -0.04em; color: {{r3.placeColor}};">{{r3.place}}</td>
+                    <th scope="row" style="padding: 12px 6px 10px 0; vertical-align: top; text-align: left; font-weight: 400;"><span style="font-size: 15px; font-weight: 600;">{{r3.letter}}</span><span class="d-mxt" style="font-family: 'Schibsted Grotesk', ui-sans-serif, system-ui, sans-serif; font-size: 14px; line-height: 1.3; font-weight: 500; margin-top: 2px;">{{r3.title}}</span><span aria-hidden="true" style="display: block; margin-top: 6px; height: 2px; width: {{r3.pct}}; background: {{r3.barColor}}; transition: width .4s cubic-bezier(.2,.7,0,1);"></span></th>
+                    <td style="padding: 12px 6px 10px 0; vertical-align: top; text-align: right; font-size: 16px; font-weight: 600;">{{r3.points}}</td>
+                    <td style="padding: 12px 3px 10px; vertical-align: top; text-align: right; font-size: 15px; color: {{r3.k1}}; font-weight: {{r3.w1}};">{{r3.c1}}<span class="d-sr">{{r3.m1}}</span></td>
+                    <td style="padding: 12px 3px 10px; vertical-align: top; text-align: right; font-size: 15px; color: {{r3.k2}}; font-weight: {{r3.w2}};">{{r3.c2}}<span class="d-sr">{{r3.m2}}</span></td>
+                    <td style="padding: 12px 3px 10px; vertical-align: top; text-align: right; font-size: 15px; color: {{r3.k3}}; font-weight: {{r3.w3}};">{{r3.c3}}<span class="d-sr">{{r3.m3}}</span></td>
+                    <td style="padding: 12px 3px 10px; vertical-align: top; text-align: right; font-size: 15px; color: {{r3.k4}}; font-weight: {{r3.w4}};">{{r3.c4}}<span class="d-sr">{{r3.m4}}</span></td>
+                    <td style="padding: 12px 0 10px 3px; vertical-align: top; text-align: right; font-size: 15px; color: {{r3.k5}}; font-weight: {{r3.w5}};">{{r3.c5}}<span class="d-sr">{{r3.m5}}</span></td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid #d2d1ce;">
+                    <td style="padding: 10px 6px 10px 0; vertical-align: top; font-family: 'Schibsted Grotesk', ui-sans-serif, system-ui, sans-serif; font-size: 22px; font-weight: 800; line-height: 1; letter-spacing: -0.04em; color: {{r4.placeColor}};">{{r4.place}}</td>
+                    <th scope="row" style="padding: 12px 6px 10px 0; vertical-align: top; text-align: left; font-weight: 400;"><span style="font-size: 15px; font-weight: 600;">{{r4.letter}}</span><span class="d-mxt" style="font-family: 'Schibsted Grotesk', ui-sans-serif, system-ui, sans-serif; font-size: 14px; line-height: 1.3; font-weight: 500; margin-top: 2px;">{{r4.title}}</span><span aria-hidden="true" style="display: block; margin-top: 6px; height: 2px; width: {{r4.pct}}; background: {{r4.barColor}}; transition: width .4s cubic-bezier(.2,.7,0,1);"></span></th>
+                    <td style="padding: 12px 6px 10px 0; vertical-align: top; text-align: right; font-size: 16px; font-weight: 600;">{{r4.points}}</td>
+                    <td style="padding: 12px 3px 10px; vertical-align: top; text-align: right; font-size: 15px; color: {{r4.k1}}; font-weight: {{r4.w1}};">{{r4.c1}}<span class="d-sr">{{r4.m1}}</span></td>
+                    <td style="padding: 12px 3px 10px; vertical-align: top; text-align: right; font-size: 15px; color: {{r4.k2}}; font-weight: {{r4.w2}};">{{r4.c2}}<span class="d-sr">{{r4.m2}}</span></td>
+                    <td style="padding: 12px 3px 10px; vertical-align: top; text-align: right; font-size: 15px; color: {{r4.k3}}; font-weight: {{r4.w3}};">{{r4.c3}}<span class="d-sr">{{r4.m3}}</span></td>
+                    <td style="padding: 12px 3px 10px; vertical-align: top; text-align: right; font-size: 15px; color: {{r4.k4}}; font-weight: {{r4.w4}};">{{r4.c4}}<span class="d-sr">{{r4.m4}}</span></td>
+                    <td style="padding: 12px 0 10px 3px; vertical-align: top; text-align: right; font-size: 15px; color: {{r4.k5}}; font-weight: {{r4.w5}};">{{r4.c5}}<span class="d-sr">{{r4.m5}}</span></td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid #d2d1ce;">
+                    <td style="padding: 10px 6px 10px 0; vertical-align: top; font-family: 'Schibsted Grotesk', ui-sans-serif, system-ui, sans-serif; font-size: 22px; font-weight: 800; line-height: 1; letter-spacing: -0.04em; color: {{r5.placeColor}};">{{r5.place}}</td>
+                    <th scope="row" style="padding: 12px 6px 10px 0; vertical-align: top; text-align: left; font-weight: 400;"><span style="font-size: 15px; font-weight: 600;">{{r5.letter}}</span><span class="d-mxt" style="font-family: 'Schibsted Grotesk', ui-sans-serif, system-ui, sans-serif; font-size: 14px; line-height: 1.3; font-weight: 500; margin-top: 2px;">{{r5.title}}</span><span aria-hidden="true" style="display: block; margin-top: 6px; height: 2px; width: {{r5.pct}}; background: {{r5.barColor}}; transition: width .4s cubic-bezier(.2,.7,0,1);"></span></th>
+                    <td style="padding: 12px 6px 10px 0; vertical-align: top; text-align: right; font-size: 16px; font-weight: 600;">{{r5.points}}</td>
+                    <td style="padding: 12px 3px 10px; vertical-align: top; text-align: right; font-size: 15px; color: {{r5.k1}}; font-weight: {{r5.w1}};">{{r5.c1}}<span class="d-sr">{{r5.m1}}</span></td>
+                    <td style="padding: 12px 3px 10px; vertical-align: top; text-align: right; font-size: 15px; color: {{r5.k2}}; font-weight: {{r5.w2}};">{{r5.c2}}<span class="d-sr">{{r5.m2}}</span></td>
+                    <td style="padding: 12px 3px 10px; vertical-align: top; text-align: right; font-size: 15px; color: {{r5.k3}}; font-weight: {{r5.w3}};">{{r5.c3}}<span class="d-sr">{{r5.m3}}</span></td>
+                    <td style="padding: 12px 3px 10px; vertical-align: top; text-align: right; font-size: 15px; color: {{r5.k4}}; font-weight: {{r5.w4}};">{{r5.c4}}<span class="d-sr">{{r5.m4}}</span></td>
+                    <td style="padding: 12px 0 10px 3px; vertical-align: top; text-align: right; font-size: 15px; color: {{r5.k5}}; font-weight: {{r5.w5}};">{{r5.c5}}<span class="d-sr">{{r5.m5}}</span></td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid #12120f;">
+                    <td style="padding: 10px 6px 10px 0; vertical-align: top; font-family: 'Schibsted Grotesk', ui-sans-serif, system-ui, sans-serif; font-size: 22px; font-weight: 800; line-height: 1; letter-spacing: -0.04em; color: {{r6.placeColor}};">{{r6.place}}</td>
+                    <th scope="row" style="padding: 12px 6px 10px 0; vertical-align: top; text-align: left; font-weight: 400;"><span style="font-size: 15px; font-weight: 600;">{{r6.letter}}</span><span class="d-mxt" style="font-family: 'Schibsted Grotesk', ui-sans-serif, system-ui, sans-serif; font-size: 14px; line-height: 1.3; font-weight: 500; margin-top: 2px;">{{r6.title}}</span><span aria-hidden="true" style="display: block; margin-top: 6px; height: 2px; width: {{r6.pct}}; background: {{r6.barColor}}; transition: width .4s cubic-bezier(.2,.7,0,1);"></span></th>
+                    <td style="padding: 12px 6px 10px 0; vertical-align: top; text-align: right; font-size: 16px; font-weight: 600;">{{r6.points}}</td>
+                    <td style="padding: 12px 3px 10px; vertical-align: top; text-align: right; font-size: 15px; color: {{r6.k1}}; font-weight: {{r6.w1}};">{{r6.c1}}<span class="d-sr">{{r6.m1}}</span></td>
+                    <td style="padding: 12px 3px 10px; vertical-align: top; text-align: right; font-size: 15px; color: {{r6.k2}}; font-weight: {{r6.w2}};">{{r6.c2}}<span class="d-sr">{{r6.m2}}</span></td>
+                    <td style="padding: 12px 3px 10px; vertical-align: top; text-align: right; font-size: 15px; color: {{r6.k3}}; font-weight: {{r6.w3}};">{{r6.c3}}<span class="d-sr">{{r6.m3}}</span></td>
+                    <td style="padding: 12px 3px 10px; vertical-align: top; text-align: right; font-size: 15px; color: {{r6.k4}}; font-weight: {{r6.w4}};">{{r6.c4}}<span class="d-sr">{{r6.m4}}</span></td>
+                    <td style="padding: 12px 0 10px 3px; vertical-align: top; text-align: right; font-size: 15px; color: {{r6.k5}}; font-weight: {{r6.w5}};">{{r6.c5}}<span class="d-sr">{{r6.m5}}</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p style="margin: 12px 0 0; max-width: 40em; font-size: 14px; line-height: 1.5; color: #5c5b57;">A first choice earns 5 points, a second 4, and so on down to 1 for a fifth, times the vote's weight. Bold red marks the most placements at a rank; a tie gets no mark.</p>
+          </div>
+        </section>
+
+        <section aria-labelledby="d-s-votes" class="d-sec" style="display: grid; column-gap: 48px; row-gap: 12px; padding: 20px 0 36px; border-top: 1px solid #12120f;">
+          <h2 id="d-s-votes" style="margin: 0; font-size: 15px; font-weight: 780; line-height: 1.3; letter-spacing: 0.03em; text-transform: uppercase;">Votes</h2>
+          <div style="min-width: 0;">
+            <p style="margin: 0 0 16px; max-width: 36em; font-size: 16px; line-height: 1.5;">{{voteSummary}} A vote with weight 2 counts twice. Picks use the answer key letters.</p>
+            <div style="overflow-x: auto;">
+              <table style="width: 100%; border-collapse: collapse;">
+                <caption class="d-sr">Votes in the order received, with each vote's weight and its picks by answer letter</caption>
+                <thead>
+                  <tr style="border-top: 2px solid #12120f; border-bottom: 1px solid #12120f;">
+                    <th scope="col" style="padding: 10px 8px 10px 0; text-align: left; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; color: #5c5b57;">Voter</th>
+                    <th scope="col" style="padding: 10px 8px 10px 0; text-align: left; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; color: #5c5b57;">Weight</th>
+                    <th scope="col" style="padding: 6px 2px; width: 34px; text-align: center; font-size: 20px; font-weight: 800; line-height: 1; letter-spacing: -0.04em;"><span aria-hidden="true">1</span><span class="d-sr">Rank 1</span></th>
+                    <th scope="col" style="padding: 6px 2px; width: 34px; text-align: center; font-size: 20px; font-weight: 800; line-height: 1; letter-spacing: -0.04em;"><span aria-hidden="true">2</span><span class="d-sr">Rank 2</span></th>
+                    <th scope="col" style="padding: 6px 2px; width: 34px; text-align: center; font-size: 20px; font-weight: 800; line-height: 1; letter-spacing: -0.04em;"><span aria-hidden="true">3</span><span class="d-sr">Rank 3</span></th>
+                    <th scope="col" style="padding: 6px 2px; width: 34px; text-align: center; font-size: 20px; font-weight: 800; line-height: 1; letter-spacing: -0.04em;"><span aria-hidden="true">4</span><span class="d-sr">Rank 4</span></th>
+                    <th scope="col" style="padding: 6px 0 6px 2px; width: 34px; text-align: center; font-size: 20px; font-weight: 800; line-height: 1; letter-spacing: -0.04em;"><span aria-hidden="true">5</span><span class="d-sr">Rank 5</span></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style="border-bottom: 1px solid #d2d1ce; background: {{v0.rowBg}};">
+                    <th scope="row" style="padding: 16px 8px 12px 0; vertical-align: top; text-align: left; font-size: 15px; font-weight: 620; line-height: 1.3; color: {{v0.nameColor}}; font-style: {{v0.nameStyle}};">{{v0.name}}</th>
+                    <td style="padding: 4px 8px 4px 0; vertical-align: top;">
+                      <sc-if value="{{v0.viewing}}" hint-placeholder-val="{{true}}">
+                        <div style="display: flex; align-items: center; gap: 2px; min-height: 44px;">
+                          <span style="min-width: 24px; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 16px; color: {{v0.wColor}}; font-weight: {{v0.wWeight}};">{{v0.weightText}}</span>
+                          <button type="button" class="d-txt" onClick="{{v0.onEdit}}" aria-label="{{v0.editLabel}}" style="min-height: 44px; padding: 0 8px; border: 0; border-radius: 0; background: transparent; font: inherit; font-size: 13px; font-weight: 650; color: #12120f; text-decoration: underline; text-underline-offset: 3px; cursor: pointer;">Edit</button>
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{v0.editing}}" hint-placeholder-val="{{false}}">
+                        <div class="d-ed d-rise" style="display: flex; gap: 6px; padding: 4px 0;">
+                          <label for="d-w-0" class="d-sr">{{v0.inputLabel}}</label>
+                          <input id="d-w-0" class="d-in" type="text" inputmode="decimal" value="{{draft}}" onChange="{{onDraft}}" aria-invalid="{{draftInvalid}}" aria-describedby="d-w-err" style="width: 72px; height: 44px; padding: 0 10px; border: 1px solid #12120f; border-radius: 0; background: #fcfcf9; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 16px; color: #12120f;">
+                          <button type="button" class="d-solid" onClick="{{onSave}}" aria-label="{{v0.saveLabel}}" style="min-height: 44px; padding: 0 12px; border: 0; border-radius: 0; background: #12120f; font: inherit; font-size: 14px; font-weight: 700; color: #fcfcf9; cursor: pointer;">Save</button>
+                          <button type="button" class="d-txt" onClick="{{onCancel}}" style="min-height: 44px; padding: 0 10px; border: 1px solid #12120f; border-radius: 0; background: transparent; font: inherit; font-size: 14px; font-weight: 650; color: #12120f; cursor: pointer;">Cancel</button>
+                        </div>
+                      </sc-if>
+                    </td>
+                    <td style="padding: 16px 2px 12px; vertical-align: top; text-align: center; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">{{v0.p1}}</td>
+                    <td style="padding: 16px 2px 12px; vertical-align: top; text-align: center; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">{{v0.p2}}</td>
+                    <td style="padding: 16px 2px 12px; vertical-align: top; text-align: center; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">{{v0.p3}}</td>
+                    <td style="padding: 16px 2px 12px; vertical-align: top; text-align: center; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">{{v0.p4}}</td>
+                    <td style="padding: 16px 0 12px 2px; vertical-align: top; text-align: center; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">{{v0.p5}}</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid #d2d1ce; background: {{v1.rowBg}};">
+                    <th scope="row" style="padding: 16px 8px 12px 0; vertical-align: top; text-align: left; font-size: 15px; font-weight: 620; line-height: 1.3; color: {{v1.nameColor}}; font-style: {{v1.nameStyle}};">{{v1.name}}</th>
+                    <td style="padding: 4px 8px 4px 0; vertical-align: top;">
+                      <sc-if value="{{v1.viewing}}" hint-placeholder-val="{{true}}">
+                        <div style="display: flex; align-items: center; gap: 2px; min-height: 44px;">
+                          <span style="min-width: 24px; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 16px; color: {{v1.wColor}}; font-weight: {{v1.wWeight}};">{{v1.weightText}}</span>
+                          <button type="button" class="d-txt" onClick="{{v1.onEdit}}" aria-label="{{v1.editLabel}}" style="min-height: 44px; padding: 0 8px; border: 0; border-radius: 0; background: transparent; font: inherit; font-size: 13px; font-weight: 650; color: #12120f; text-decoration: underline; text-underline-offset: 3px; cursor: pointer;">Edit</button>
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{v1.editing}}" hint-placeholder-val="{{false}}">
+                        <div class="d-ed d-rise" style="display: flex; gap: 6px; padding: 4px 0;">
+                          <label for="d-w-1" class="d-sr">{{v1.inputLabel}}</label>
+                          <input id="d-w-1" class="d-in" type="text" inputmode="decimal" value="{{draft}}" onChange="{{onDraft}}" aria-invalid="{{draftInvalid}}" aria-describedby="d-w-err" style="width: 72px; height: 44px; padding: 0 10px; border: 1px solid #12120f; border-radius: 0; background: #fcfcf9; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 16px; color: #12120f;">
+                          <button type="button" class="d-solid" onClick="{{onSave}}" aria-label="{{v1.saveLabel}}" style="min-height: 44px; padding: 0 12px; border: 0; border-radius: 0; background: #12120f; font: inherit; font-size: 14px; font-weight: 700; color: #fcfcf9; cursor: pointer;">Save</button>
+                          <button type="button" class="d-txt" onClick="{{onCancel}}" style="min-height: 44px; padding: 0 10px; border: 1px solid #12120f; border-radius: 0; background: transparent; font: inherit; font-size: 14px; font-weight: 650; color: #12120f; cursor: pointer;">Cancel</button>
+                        </div>
+                      </sc-if>
+                    </td>
+                    <td style="padding: 16px 2px 12px; vertical-align: top; text-align: center; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">{{v1.p1}}</td>
+                    <td style="padding: 16px 2px 12px; vertical-align: top; text-align: center; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">{{v1.p2}}</td>
+                    <td style="padding: 16px 2px 12px; vertical-align: top; text-align: center; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">{{v1.p3}}</td>
+                    <td style="padding: 16px 2px 12px; vertical-align: top; text-align: center; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">{{v1.p4}}</td>
+                    <td style="padding: 16px 0 12px 2px; vertical-align: top; text-align: center; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">{{v1.p5}}</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid #d2d1ce; background: {{v2.rowBg}};">
+                    <th scope="row" style="padding: 16px 8px 12px 0; vertical-align: top; text-align: left; font-size: 15px; font-weight: 620; line-height: 1.3; color: {{v2.nameColor}}; font-style: {{v2.nameStyle}};">{{v2.name}}</th>
+                    <td style="padding: 4px 8px 4px 0; vertical-align: top;">
+                      <sc-if value="{{v2.viewing}}" hint-placeholder-val="{{true}}">
+                        <div style="display: flex; align-items: center; gap: 2px; min-height: 44px;">
+                          <span style="min-width: 24px; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 16px; color: {{v2.wColor}}; font-weight: {{v2.wWeight}};">{{v2.weightText}}</span>
+                          <button type="button" class="d-txt" onClick="{{v2.onEdit}}" aria-label="{{v2.editLabel}}" style="min-height: 44px; padding: 0 8px; border: 0; border-radius: 0; background: transparent; font: inherit; font-size: 13px; font-weight: 650; color: #12120f; text-decoration: underline; text-underline-offset: 3px; cursor: pointer;">Edit</button>
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{v2.editing}}" hint-placeholder-val="{{false}}">
+                        <div class="d-ed d-rise" style="display: flex; gap: 6px; padding: 4px 0;">
+                          <label for="d-w-2" class="d-sr">{{v2.inputLabel}}</label>
+                          <input id="d-w-2" class="d-in" type="text" inputmode="decimal" value="{{draft}}" onChange="{{onDraft}}" aria-invalid="{{draftInvalid}}" aria-describedby="d-w-err" style="width: 72px; height: 44px; padding: 0 10px; border: 1px solid #12120f; border-radius: 0; background: #fcfcf9; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 16px; color: #12120f;">
+                          <button type="button" class="d-solid" onClick="{{onSave}}" aria-label="{{v2.saveLabel}}" style="min-height: 44px; padding: 0 12px; border: 0; border-radius: 0; background: #12120f; font: inherit; font-size: 14px; font-weight: 700; color: #fcfcf9; cursor: pointer;">Save</button>
+                          <button type="button" class="d-txt" onClick="{{onCancel}}" style="min-height: 44px; padding: 0 10px; border: 1px solid #12120f; border-radius: 0; background: transparent; font: inherit; font-size: 14px; font-weight: 650; color: #12120f; cursor: pointer;">Cancel</button>
+                        </div>
+                      </sc-if>
+                    </td>
+                    <td style="padding: 16px 2px 12px; vertical-align: top; text-align: center; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">{{v2.p1}}</td>
+                    <td style="padding: 16px 2px 12px; vertical-align: top; text-align: center; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">{{v2.p2}}</td>
+                    <td style="padding: 16px 2px 12px; vertical-align: top; text-align: center; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">{{v2.p3}}</td>
+                    <td style="padding: 16px 2px 12px; vertical-align: top; text-align: center; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">{{v2.p4}}</td>
+                    <td style="padding: 16px 0 12px 2px; vertical-align: top; text-align: center; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">{{v2.p5}}</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid #d2d1ce; background: {{v3.rowBg}};">
+                    <th scope="row" style="padding: 16px 8px 12px 0; vertical-align: top; text-align: left; font-size: 15px; font-weight: 620; line-height: 1.3; color: {{v3.nameColor}}; font-style: {{v3.nameStyle}};">{{v3.name}}</th>
+                    <td style="padding: 4px 8px 4px 0; vertical-align: top;">
+                      <sc-if value="{{v3.viewing}}" hint-placeholder-val="{{true}}">
+                        <div style="display: flex; align-items: center; gap: 2px; min-height: 44px;">
+                          <span style="min-width: 24px; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 16px; color: {{v3.wColor}}; font-weight: {{v3.wWeight}};">{{v3.weightText}}</span>
+                          <button type="button" class="d-txt" onClick="{{v3.onEdit}}" aria-label="{{v3.editLabel}}" style="min-height: 44px; padding: 0 8px; border: 0; border-radius: 0; background: transparent; font: inherit; font-size: 13px; font-weight: 650; color: #12120f; text-decoration: underline; text-underline-offset: 3px; cursor: pointer;">Edit</button>
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{v3.editing}}" hint-placeholder-val="{{false}}">
+                        <div class="d-ed d-rise" style="display: flex; gap: 6px; padding: 4px 0;">
+                          <label for="d-w-3" class="d-sr">{{v3.inputLabel}}</label>
+                          <input id="d-w-3" class="d-in" type="text" inputmode="decimal" value="{{draft}}" onChange="{{onDraft}}" aria-invalid="{{draftInvalid}}" aria-describedby="d-w-err" style="width: 72px; height: 44px; padding: 0 10px; border: 1px solid #12120f; border-radius: 0; background: #fcfcf9; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 16px; color: #12120f;">
+                          <button type="button" class="d-solid" onClick="{{onSave}}" aria-label="{{v3.saveLabel}}" style="min-height: 44px; padding: 0 12px; border: 0; border-radius: 0; background: #12120f; font: inherit; font-size: 14px; font-weight: 700; color: #fcfcf9; cursor: pointer;">Save</button>
+                          <button type="button" class="d-txt" onClick="{{onCancel}}" style="min-height: 44px; padding: 0 10px; border: 1px solid #12120f; border-radius: 0; background: transparent; font: inherit; font-size: 14px; font-weight: 650; color: #12120f; cursor: pointer;">Cancel</button>
+                        </div>
+                      </sc-if>
+                    </td>
+                    <td style="padding: 16px 2px 12px; vertical-align: top; text-align: center; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">{{v3.p1}}</td>
+                    <td style="padding: 16px 2px 12px; vertical-align: top; text-align: center; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">{{v3.p2}}</td>
+                    <td style="padding: 16px 2px 12px; vertical-align: top; text-align: center; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">{{v3.p3}}</td>
+                    <td style="padding: 16px 2px 12px; vertical-align: top; text-align: center; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">{{v3.p4}}</td>
+                    <td style="padding: 16px 0 12px 2px; vertical-align: top; text-align: center; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">{{v3.p5}}</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid #d2d1ce; background: {{v4.rowBg}};">
+                    <th scope="row" style="padding: 16px 8px 12px 0; vertical-align: top; text-align: left; font-size: 15px; font-weight: 620; line-height: 1.3; color: {{v4.nameColor}}; font-style: {{v4.nameStyle}};">{{v4.name}}</th>
+                    <td style="padding: 4px 8px 4px 0; vertical-align: top;">
+                      <sc-if value="{{v4.viewing}}" hint-placeholder-val="{{true}}">
+                        <div style="display: flex; align-items: center; gap: 2px; min-height: 44px;">
+                          <span style="min-width: 24px; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 16px; color: {{v4.wColor}}; font-weight: {{v4.wWeight}};">{{v4.weightText}}</span>
+                          <button type="button" class="d-txt" onClick="{{v4.onEdit}}" aria-label="{{v4.editLabel}}" style="min-height: 44px; padding: 0 8px; border: 0; border-radius: 0; background: transparent; font: inherit; font-size: 13px; font-weight: 650; color: #12120f; text-decoration: underline; text-underline-offset: 3px; cursor: pointer;">Edit</button>
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{v4.editing}}" hint-placeholder-val="{{false}}">
+                        <div class="d-ed d-rise" style="display: flex; gap: 6px; padding: 4px 0;">
+                          <label for="d-w-4" class="d-sr">{{v4.inputLabel}}</label>
+                          <input id="d-w-4" class="d-in" type="text" inputmode="decimal" value="{{draft}}" onChange="{{onDraft}}" aria-invalid="{{draftInvalid}}" aria-describedby="d-w-err" style="width: 72px; height: 44px; padding: 0 10px; border: 1px solid #12120f; border-radius: 0; background: #fcfcf9; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 16px; color: #12120f;">
+                          <button type="button" class="d-solid" onClick="{{onSave}}" aria-label="{{v4.saveLabel}}" style="min-height: 44px; padding: 0 12px; border: 0; border-radius: 0; background: #12120f; font: inherit; font-size: 14px; font-weight: 700; color: #fcfcf9; cursor: pointer;">Save</button>
+                          <button type="button" class="d-txt" onClick="{{onCancel}}" style="min-height: 44px; padding: 0 10px; border: 1px solid #12120f; border-radius: 0; background: transparent; font: inherit; font-size: 14px; font-weight: 650; color: #12120f; cursor: pointer;">Cancel</button>
+                        </div>
+                      </sc-if>
+                    </td>
+                    <td style="padding: 16px 2px 12px; vertical-align: top; text-align: center; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">{{v4.p1}}</td>
+                    <td style="padding: 16px 2px 12px; vertical-align: top; text-align: center; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">{{v4.p2}}</td>
+                    <td style="padding: 16px 2px 12px; vertical-align: top; text-align: center; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">{{v4.p3}}</td>
+                    <td style="padding: 16px 2px 12px; vertical-align: top; text-align: center; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">{{v4.p4}}</td>
+                    <td style="padding: 16px 0 12px 2px; vertical-align: top; text-align: center; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">{{v4.p5}}</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid #d2d1ce; background: {{v5.rowBg}};">
+                    <th scope="row" style="padding: 16px 8px 12px 0; vertical-align: top; text-align: left; font-size: 15px; font-weight: 620; line-height: 1.3; color: {{v5.nameColor}}; font-style: {{v5.nameStyle}};">{{v5.name}}</th>
+                    <td style="padding: 4px 8px 4px 0; vertical-align: top;">
+                      <sc-if value="{{v5.viewing}}" hint-placeholder-val="{{true}}">
+                        <div style="display: flex; align-items: center; gap: 2px; min-height: 44px;">
+                          <span style="min-width: 24px; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 16px; color: {{v5.wColor}}; font-weight: {{v5.wWeight}};">{{v5.weightText}}</span>
+                          <button type="button" class="d-txt" onClick="{{v5.onEdit}}" aria-label="{{v5.editLabel}}" style="min-height: 44px; padding: 0 8px; border: 0; border-radius: 0; background: transparent; font: inherit; font-size: 13px; font-weight: 650; color: #12120f; text-decoration: underline; text-underline-offset: 3px; cursor: pointer;">Edit</button>
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{v5.editing}}" hint-placeholder-val="{{false}}">
+                        <div class="d-ed d-rise" style="display: flex; gap: 6px; padding: 4px 0;">
+                          <label for="d-w-5" class="d-sr">{{v5.inputLabel}}</label>
+                          <input id="d-w-5" class="d-in" type="text" inputmode="decimal" value="{{draft}}" onChange="{{onDraft}}" aria-invalid="{{draftInvalid}}" aria-describedby="d-w-err" style="width: 72px; height: 44px; padding: 0 10px; border: 1px solid #12120f; border-radius: 0; background: #fcfcf9; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 16px; color: #12120f;">
+                          <button type="button" class="d-solid" onClick="{{onSave}}" aria-label="{{v5.saveLabel}}" style="min-height: 44px; padding: 0 12px; border: 0; border-radius: 0; background: #12120f; font: inherit; font-size: 14px; font-weight: 700; color: #fcfcf9; cursor: pointer;">Save</button>
+                          <button type="button" class="d-txt" onClick="{{onCancel}}" style="min-height: 44px; padding: 0 10px; border: 1px solid #12120f; border-radius: 0; background: transparent; font: inherit; font-size: 14px; font-weight: 650; color: #12120f; cursor: pointer;">Cancel</button>
+                        </div>
+                      </sc-if>
+                    </td>
+                    <td style="padding: 16px 2px 12px; vertical-align: top; text-align: center; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">{{v5.p1}}</td>
+                    <td style="padding: 16px 2px 12px; vertical-align: top; text-align: center; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">{{v5.p2}}</td>
+                    <td style="padding: 16px 2px 12px; vertical-align: top; text-align: center; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">{{v5.p3}}</td>
+                    <td style="padding: 16px 2px 12px; vertical-align: top; text-align: center; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">{{v5.p4}}</td>
+                    <td style="padding: 16px 0 12px 2px; vertical-align: top; text-align: center; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">{{v5.p5}}</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid #d2d1ce; background: {{v6.rowBg}};">
+                    <th scope="row" style="padding: 16px 8px 12px 0; vertical-align: top; text-align: left; font-size: 15px; font-weight: 620; line-height: 1.3; color: {{v6.nameColor}}; font-style: {{v6.nameStyle}};">{{v6.name}}</th>
+                    <td style="padding: 4px 8px 4px 0; vertical-align: top;">
+                      <sc-if value="{{v6.viewing}}" hint-placeholder-val="{{true}}">
+                        <div style="display: flex; align-items: center; gap: 2px; min-height: 44px;">
+                          <span style="min-width: 24px; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 16px; color: {{v6.wColor}}; font-weight: {{v6.wWeight}};">{{v6.weightText}}</span>
+                          <button type="button" class="d-txt" onClick="{{v6.onEdit}}" aria-label="{{v6.editLabel}}" style="min-height: 44px; padding: 0 8px; border: 0; border-radius: 0; background: transparent; font: inherit; font-size: 13px; font-weight: 650; color: #12120f; text-decoration: underline; text-underline-offset: 3px; cursor: pointer;">Edit</button>
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{v6.editing}}" hint-placeholder-val="{{false}}">
+                        <div class="d-ed d-rise" style="display: flex; gap: 6px; padding: 4px 0;">
+                          <label for="d-w-6" class="d-sr">{{v6.inputLabel}}</label>
+                          <input id="d-w-6" class="d-in" type="text" inputmode="decimal" value="{{draft}}" onChange="{{onDraft}}" aria-invalid="{{draftInvalid}}" aria-describedby="d-w-err" style="width: 72px; height: 44px; padding: 0 10px; border: 1px solid #12120f; border-radius: 0; background: #fcfcf9; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 16px; color: #12120f;">
+                          <button type="button" class="d-solid" onClick="{{onSave}}" aria-label="{{v6.saveLabel}}" style="min-height: 44px; padding: 0 12px; border: 0; border-radius: 0; background: #12120f; font: inherit; font-size: 14px; font-weight: 700; color: #fcfcf9; cursor: pointer;">Save</button>
+                          <button type="button" class="d-txt" onClick="{{onCancel}}" style="min-height: 44px; padding: 0 10px; border: 1px solid #12120f; border-radius: 0; background: transparent; font: inherit; font-size: 14px; font-weight: 650; color: #12120f; cursor: pointer;">Cancel</button>
+                        </div>
+                      </sc-if>
+                    </td>
+                    <td style="padding: 16px 2px 12px; vertical-align: top; text-align: center; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">{{v6.p1}}</td>
+                    <td style="padding: 16px 2px 12px; vertical-align: top; text-align: center; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">{{v6.p2}}</td>
+                    <td style="padding: 16px 2px 12px; vertical-align: top; text-align: center; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">{{v6.p3}}</td>
+                    <td style="padding: 16px 2px 12px; vertical-align: top; text-align: center; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">{{v6.p4}}</td>
+                    <td style="padding: 16px 0 12px 2px; vertical-align: top; text-align: center; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">{{v6.p5}}</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid #d2d1ce; background: {{v7.rowBg}};">
+                    <th scope="row" style="padding: 16px 8px 12px 0; vertical-align: top; text-align: left; font-size: 15px; font-weight: 620; line-height: 1.3; color: {{v7.nameColor}}; font-style: {{v7.nameStyle}};">{{v7.name}}</th>
+                    <td style="padding: 4px 8px 4px 0; vertical-align: top;">
+                      <sc-if value="{{v7.viewing}}" hint-placeholder-val="{{true}}">
+                        <div style="display: flex; align-items: center; gap: 2px; min-height: 44px;">
+                          <span style="min-width: 24px; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 16px; color: {{v7.wColor}}; font-weight: {{v7.wWeight}};">{{v7.weightText}}</span>
+                          <button type="button" class="d-txt" onClick="{{v7.onEdit}}" aria-label="{{v7.editLabel}}" style="min-height: 44px; padding: 0 8px; border: 0; border-radius: 0; background: transparent; font: inherit; font-size: 13px; font-weight: 650; color: #12120f; text-decoration: underline; text-underline-offset: 3px; cursor: pointer;">Edit</button>
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{v7.editing}}" hint-placeholder-val="{{false}}">
+                        <div class="d-ed d-rise" style="display: flex; gap: 6px; padding: 4px 0;">
+                          <label for="d-w-7" class="d-sr">{{v7.inputLabel}}</label>
+                          <input id="d-w-7" class="d-in" type="text" inputmode="decimal" value="{{draft}}" onChange="{{onDraft}}" aria-invalid="{{draftInvalid}}" aria-describedby="d-w-err" style="width: 72px; height: 44px; padding: 0 10px; border: 1px solid #12120f; border-radius: 0; background: #fcfcf9; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 16px; color: #12120f;">
+                          <button type="button" class="d-solid" onClick="{{onSave}}" aria-label="{{v7.saveLabel}}" style="min-height: 44px; padding: 0 12px; border: 0; border-radius: 0; background: #12120f; font: inherit; font-size: 14px; font-weight: 700; color: #fcfcf9; cursor: pointer;">Save</button>
+                          <button type="button" class="d-txt" onClick="{{onCancel}}" style="min-height: 44px; padding: 0 10px; border: 1px solid #12120f; border-radius: 0; background: transparent; font: inherit; font-size: 14px; font-weight: 650; color: #12120f; cursor: pointer;">Cancel</button>
+                        </div>
+                      </sc-if>
+                    </td>
+                    <td style="padding: 16px 2px 12px; vertical-align: top; text-align: center; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">{{v7.p1}}</td>
+                    <td style="padding: 16px 2px 12px; vertical-align: top; text-align: center; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">{{v7.p2}}</td>
+                    <td style="padding: 16px 2px 12px; vertical-align: top; text-align: center; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">{{v7.p3}}</td>
+                    <td style="padding: 16px 2px 12px; vertical-align: top; text-align: center; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">{{v7.p4}}</td>
+                    <td style="padding: 16px 0 12px 2px; vertical-align: top; text-align: center; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">{{v7.p5}}</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid #12120f; background: {{v8.rowBg}};">
+                    <th scope="row" style="padding: 16px 8px 12px 0; vertical-align: top; text-align: left; font-size: 15px; font-weight: 620; line-height: 1.3; color: {{v8.nameColor}}; font-style: {{v8.nameStyle}};">{{v8.name}}</th>
+                    <td style="padding: 4px 8px 4px 0; vertical-align: top;">
+                      <sc-if value="{{v8.viewing}}" hint-placeholder-val="{{true}}">
+                        <div style="display: flex; align-items: center; gap: 2px; min-height: 44px;">
+                          <span style="min-width: 24px; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 16px; color: {{v8.wColor}}; font-weight: {{v8.wWeight}};">{{v8.weightText}}</span>
+                          <button type="button" class="d-txt" onClick="{{v8.onEdit}}" aria-label="{{v8.editLabel}}" style="min-height: 44px; padding: 0 8px; border: 0; border-radius: 0; background: transparent; font: inherit; font-size: 13px; font-weight: 650; color: #12120f; text-decoration: underline; text-underline-offset: 3px; cursor: pointer;">Edit</button>
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{v8.editing}}" hint-placeholder-val="{{false}}">
+                        <div class="d-ed d-rise" style="display: flex; gap: 6px; padding: 4px 0;">
+                          <label for="d-w-8" class="d-sr">{{v8.inputLabel}}</label>
+                          <input id="d-w-8" class="d-in" type="text" inputmode="decimal" value="{{draft}}" onChange="{{onDraft}}" aria-invalid="{{draftInvalid}}" aria-describedby="d-w-err" style="width: 72px; height: 44px; padding: 0 10px; border: 1px solid #12120f; border-radius: 0; background: #fcfcf9; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 16px; color: #12120f;">
+                          <button type="button" class="d-solid" onClick="{{onSave}}" aria-label="{{v8.saveLabel}}" style="min-height: 44px; padding: 0 12px; border: 0; border-radius: 0; background: #12120f; font: inherit; font-size: 14px; font-weight: 700; color: #fcfcf9; cursor: pointer;">Save</button>
+                          <button type="button" class="d-txt" onClick="{{onCancel}}" style="min-height: 44px; padding: 0 10px; border: 1px solid #12120f; border-radius: 0; background: transparent; font: inherit; font-size: 14px; font-weight: 650; color: #12120f; cursor: pointer;">Cancel</button>
+                        </div>
+                      </sc-if>
+                    </td>
+                    <td style="padding: 16px 2px 12px; vertical-align: top; text-align: center; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">{{v8.p1}}</td>
+                    <td style="padding: 16px 2px 12px; vertical-align: top; text-align: center; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">{{v8.p2}}</td>
+                    <td style="padding: 16px 2px 12px; vertical-align: top; text-align: center; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">{{v8.p3}}</td>
+                    <td style="padding: 16px 2px 12px; vertical-align: top; text-align: center; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">{{v8.p4}}</td>
+                    <td style="padding: 16px 0 12px 2px; vertical-align: top; text-align: center; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600;">{{v8.p5}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <sc-if value="{{draftError}}" hint-placeholder-val="{{false}}">
+              <p id="d-w-err" role="alert" style="margin: 12px 0 0; display: flex; align-items: flex-start; gap: 10px; color: #db3008; font-size: 15px; font-weight: 680; line-height: 1.35;"><svg aria-hidden="true" width="10" height="10" viewBox="0 0 10 10" style="flex: none; margin-top: 5px;"><rect width="10" height="10" fill="#db3008"></rect></svg><span>{{draftErrorText}}</span></p>
+            </sc-if>
+            <p style="margin: 12px 0 0; font-size: 14px; line-height: 1.5; color: #5c5b57;">A dash means the voter left that rank empty. Saving a weight updates the early results above.</p>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="d-wrap d-foot" style="margin-top: 64px;">
+    <div style="max-width: 1160px; margin: 0 auto; padding: 12px 0 40px; border-top: 1px solid #12120f; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(160px, 100%), 1fr)); gap: 0 24px;">
+      <a href="https://github.com/zorn/flick" style="min-height: 44px; display: flex; align-items: center; color: #12120f; text-decoration: none; font-size: 15px; font-weight: 560;">GitHub project</a>
+      <a href="https://updown.io/wwis" style="min-height: 44px; display: flex; align-items: center; color: #12120f; text-decoration: none; font-size: 15px; font-weight: 560;">Uptime</a>
+      <a href="mailto:mike@mikezornek.com" style="min-height: 44px; display: flex; align-items: center; color: #12120f; text-decoration: none; font-size: 15px; font-weight: 560;">Contact site admin</a>
+    </div>
+  </footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":3900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      votes: [
+        { name: 'Mike', weight: 1, picks: ['B', 'A', 'E', 'D', 'F'] },
+        { name: 'Priya', weight: 2, picks: ['C', 'B', 'A'] },
+        { name: 'Tomás', weight: 1, picks: ['A', 'B', 'D', 'E', 'C'] },
+        { name: 'Jen', weight: 1, picks: ['B', 'E', 'A'] },
+        { name: 'Arjun', weight: 1, picks: ['D', 'A', 'B', 'F', 'E'] },
+        { name: '', weight: 1, picks: ['C', 'F', 'B', 'A', 'G'] },
+        { name: 'Kiko', weight: 1, picks: ['E', 'B', 'D'] },
+        { name: 'Dana', weight: 1, picks: ['A', 'D', 'E', 'B', 'C'] },
+        { name: 'Lars', weight: 1, picks: ['G', 'C', 'F'] }
+      ],
+      editing: null,
+      draft: '',
+      draftError: false,
+      copiedVoter: false,
+      copiedAdmin: false,
+      closeStep: 'open',
+      announce: ''
+    };
+  }
+
+  renderVals() {
+    const s = this.state;
+    const TITLES = {
+      A: 'Elixir in Action, Third Edition by Saša Jurić',
+      B: "Engineering Elixir Applications by Ellie Fairholm and Josep Giralt D'Lacoste",
+      C: 'Machine Learning in Elixir by Sean Moriarity',
+      D: 'Designing Elixir Systems with OTP by James Edward Gray II and Bruce A. Tate',
+      E: 'Elixir Patterns by Hugo Barauna and Alexander Koutmos',
+      F: 'Concurrent Data Processing in Elixir by Svilen Gospodinov',
+      G: 'A Common-Sense Guide to Data Structures and Algorithms, Second Edition by Jay Wengrow'
+    };
+    const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+    const fmt = (x) => {
+      const r = Math.round(x * 10) / 10;
+      return Number.isInteger(r) ? String(r) : r.toFixed(1);
+    };
+    const fmtW = (w) => String(Math.round(w * 100) / 100);
+
+    const pts = {};
+    const br = {};
+    LETTERS.forEach((l) => { pts[l] = 0; br[l] = [0, 0, 0, 0, 0]; });
+    s.votes.forEach((v) => {
+      v.picks.forEach((l, i) => {
+        pts[l] += (5 - i) * v.weight;
+        br[l][i] += v.weight;
+      });
+    });
+    const order = LETTERS.slice().sort((a, b) => (pts[b] - pts[a]) || (LETTERS.indexOf(a) - LETTERS.indexOf(b)));
+    const top = pts[order[0]];
+    const colMax = [0, 1, 2, 3, 4].map((c) => {
+      const vals = LETTERS.map((l) => br[l][c]);
+      const mx = Math.max.apply(null, vals);
+      const count = vals.filter((x) => x === mx).length;
+      return mx > 0 && count === 1 ? mx : null;
+    });
+    const rows = order.map((l, idx) => {
+      const row = {
+        place: String(idx + 1),
+        letter: l,
+        title: TITLES[l],
+        points: fmt(pts[l]),
+        pct: (top > 0 ? (pts[l] / top) * 100 : 0).toFixed(1) + '%',
+        barColor: idx === 0 ? '#db3008' : '#12120f',
+        placeColor: idx === 0 ? '#db3008' : '#12120f'
+      };
+      for (let c = 0; c < 5; c++) {
+        const val = br[l][c];
+        const most = colMax[c] !== null && val === colMax[c];
+        row['c' + (c + 1)] = fmt(val);
+        row['k' + (c + 1)] = most ? '#db3008' : (val === 0 ? '#5c5b57' : '#12120f');
+        row['w' + (c + 1)] = most ? '700' : '400';
+        row['m' + (c + 1)] = most ? ' (most at this rank)' : '';
+      }
+      return row;
+    });
+
+    const startEdit = (i) => () => this.setState({ editing: i, draft: fmtW(s.votes[i].weight), draftError: false });
+    const vrows = s.votes.map((v, i) => {
+      const isEd = s.editing === i;
+      const nm = v.name || 'No name';
+      return {
+        name: nm,
+        nameColor: v.name ? '#12120f' : '#5c5b57',
+        nameStyle: v.name ? 'normal' : 'italic',
+        weightText: fmtW(v.weight),
+        wColor: v.weight !== 1 ? '#db3008' : '#12120f',
+        wWeight: v.weight !== 1 ? '700' : '400',
+        p1: v.picks[0] || '–',
+        p2: v.picks[1] || '–',
+        p3: v.picks[2] || '–',
+        p4: v.picks[3] || '–',
+        p5: v.picks[4] || '–',
+        viewing: !isEd,
+        editing: isEd,
+        rowBg: isEd ? '#f3f2ee' : 'transparent',
+        onEdit: startEdit(i),
+        editLabel: 'Edit weight for ' + nm,
+        inputLabel: 'Weight for ' + nm,
+        saveLabel: 'Save weight for ' + nm
+      };
+    });
+
+    const totalW = s.votes.reduce((a, v) => a + v.weight, 0);
+    const voteCount = s.votes.length;
+    const closed = s.closeStep === 'closed';
+
+    const out = {
+      isLive: !closed,
+      statusText: closed ? 'Closed. Results are public.' : 'Published. Accepting votes.',
+      voteCountText: closed ? voteCount + ' votes cast' : voteCount + ' votes so far',
+      announce: s.announce,
+
+      copyAdminLabel: s.copiedAdmin ? 'Copied' : 'Copy',
+      copyAdminAria: s.copiedAdmin ? 'Copied the admin link' : 'Copy the admin link',
+      copyAdminBg: s.copiedAdmin ? '#12120f' : 'transparent',
+      copyAdminFg: s.copiedAdmin ? '#fcfcf9' : '#12120f',
+      onCopyAdmin: () => this.setState({ copiedAdmin: true, announce: 'Admin link copied.' }),
+      copyVoterLabel: s.copiedVoter ? 'Copied' : 'Copy',
+      copyVoterAria: s.copiedVoter ? 'Copied the voter link' : 'Copy the voter link',
+      copyVoterBg: s.copiedVoter ? '#12120f' : 'transparent',
+      copyVoterFg: s.copiedVoter ? '#fcfcf9' : '#12120f',
+      onCopyVoter: () => this.setState({ copiedVoter: true, announce: 'Voter link copied.' }),
+
+      isOpen: s.closeStep === 'open',
+      isConfirm: s.closeStep === 'confirm',
+      isClosed: closed,
+      onClose: () => this.setState({ closeStep: 'confirm' }),
+      onConfirmClose: () => this.setState({ closeStep: 'closed', announce: 'The ballot is closed.' }),
+      onKeepOpen: () => this.setState({ closeStep: 'open' }),
+
+      resultsTag: closed ? 'Final' : 'Provisional',
+      resultsNote: closed
+        ? 'Based on all ' + voteCount + ' votes. These are the final results.'
+        : 'Based on ' + voteCount + ' votes so far. These totals can change until you close the ballot. Only this page shows them.',
+      voteSummary: voteCount + ' votes, total weight ' + fmt(totalW) + '.',
+
+      draft: s.draft,
+      draftError: s.draftError,
+      draftInvalid: s.draftError ? 'true' : 'false',
+      draftErrorText: 'Enter a weight of 0 or more, such as 1, 2, or 1.5.',
+      onDraft: (e) => this.setState({ draft: e.target.value, draftError: false }),
+      onSave: () => {
+        const t = String(s.draft).trim();
+        const w = Number(t);
+        if (t === '' || !isFinite(w) || w < 0) {
+          this.setState({ draftError: true });
+          return;
+        }
+        const i = s.editing;
+        const votes = s.votes.map((v, k) => (k === i ? { name: v.name, weight: w, picks: v.picks } : v));
+        this.setState({ votes: votes, editing: null, draft: '', draftError: false, announce: 'Weight saved for ' + (s.votes[i].name || 'No name') + '. Early results updated.' });
+      },
+      onCancel: () => this.setState({ editing: null, draft: '', draftError: false })
+    };
+    rows.forEach((r, i) => { out['r' + i] = r; });
+    vrows.forEach((v, i) => { out['v' + i] = v; });
+    return out;
+  }
+}
+</script>
+</body>
+</html>

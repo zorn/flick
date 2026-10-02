@@ -1,0 +1,792 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Elixir after dark · Ballot admin</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap">
+<style>
+body { margin: 0; background: #110B18; }
+* { box-sizing: border-box; }
+::selection { background: #4B275F; color: #EDE9F2; }
+a { color: #C9A3F5; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+a:hover { color: #DDBDFF; }
+a:focus-visible, button:focus-visible, input:focus-visible, [tabindex]:focus-visible { outline: 2px solid #C9A3F5; outline-offset: 2px; }
+input::placeholder { color: #938B9E; opacity: 1; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+.wm .wm-box { transition: background-color .2s ease, color .2s ease; }
+.wm:hover .wm-box { background: #C9A3F5 !important; color: #110B18 !important; }
+.btn-pri { transition: background-color .15s ease, transform .1s ease; }
+.btn-pri:hover { background: #DDBDFF !important; }
+.btn-pri:active { transform: translateY(1px); }
+.btn-ghost { transition: border-color .15s ease, background-color .15s ease, color .15s ease; }
+.btn-ghost:hover { border-color: #C9A3F5 !important; background: #251C2F !important; color: #EDE9F2 !important; }
+.btn-amber { transition: background-color .15s ease, transform .1s ease; }
+.btn-amber:hover { background: #2A1C07 !important; }
+.btn-amber:active { transform: translateY(1px); }
+.btn-amber-fill { transition: background-color .15s ease, transform .1s ease; }
+.btn-amber-fill:hover { background: #FFD08A !important; }
+.btn-amber-fill:active { transform: translateY(1px); }
+.url-link { transition: border-color .15s ease, color .15s ease; }
+.url-link:hover { border-color: #C9A3F5 !important; color: #DDBDFF !important; }
+.field { transition: border-color .15s ease; }
+.field:focus { border-color: #C9A3F5 !important; }
+.foot-link { transition: color .15s ease; }
+.foot-link:hover { color: #C9A3F5 !important; }
+.vote-row { transition: background-color .15s ease; }
+.vote-row:hover { background: #1B1323; }
+.bar { transition: width .5s cubic-bezier(.2, .7, .2, 1), background-size .5s cubic-bezier(.2, .7, .2, 1); }
+.cell { transition: background-color .3s ease, color .3s ease; }
+.pulse { animation: pulse 2.2s ease-out infinite; }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(201, 163, 245, .55); } 70% { box-shadow: 0 0 0 7px rgba(201, 163, 245, 0); } 100% { box-shadow: 0 0 0 0 rgba(201, 163, 245, 0); } }
+.rise { animation: rise .4s ease-out both; }
+@keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.scroller { scrollbar-color: #3A3046 transparent; }
+.rk { width: 26px; }
+.phone-only { display: flex; }
+@media (min-width: 720px) {
+  .rk { width: 48px; }
+}
+@media (min-width: 980px) {
+  .adm-top { grid-template-columns: 360px minmax(0, 1fr); }
+}
+@media (min-width: 1120px) {
+  .phone-only { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+</style>
+</helmet>
+<div style="background: #110B18; color: #EDE9F2; font-family: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 17px; line-height: 1.55;">
+
+  <header style="border-bottom: 1px solid #3A3046;">
+    <div style="max-width: 1120px; margin: 0 auto; padding: 10px clamp(16px, 4vw, 40px); min-height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+      <a href="f-home.dc.html" class="wm" aria-label="RankedVote.app home" style="display: flex; align-items: center; gap: 10px; min-height: 44px; color: #EDE9F2; text-decoration: none;">
+        <span class="wm-box" aria-hidden="true" style="width: 26px; height: 26px; display: grid; place-items: center; border: 1.5px solid #C9A3F5; border-radius: 5px; background: #4B275F; color: #C9A3F5; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 14px; font-weight: 700; line-height: 1;">1</span>
+        <span style="font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 16px; font-weight: 700; letter-spacing: -0.01em;">RankedVote<span style="color: #C9A3F5;">.app</span></span>
+      </a>
+      <a href="#" class="btn-ghost" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; border: 1px solid #716085; border-radius: 6px; color: #EDE9F2; text-decoration: none; font-size: 15px; font-weight: 600; white-space: nowrap;">Create a ballot</a>
+    </div>
+  </header>
+
+  <main style="max-width: 1120px; margin: 0 auto; padding: 28px clamp(16px, 4vw, 40px) 0;">
+    <p style="margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; line-height: 1.5; color: #B2AABE;">
+      <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="fill: none; stroke: #C9A3F5; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>
+      <span style="color: #EDE9F2;">Ballot admin</span>
+      <span>Only people with this page's address can see it</span>
+    </p>
+    <h1 style="margin: 14px 0 0; max-width: 24ch; font-size: clamp(28px, 4vw + 12px, 44px); line-height: 1.1; letter-spacing: -0.025em; font-weight: 700; text-wrap: balance;">What should the Elixir Book Club read next?</h1>
+
+    <div class="adm-top" style="margin-top: 28px; display: grid; gap: 24px; align-items: start;">
+
+      <div class="adm-rail" style="display: flex; flex-direction: column; gap: 16px; min-width: 0;">
+
+        <section aria-labelledby="st-h" style="border: 1px solid #3A3046; border-radius: 8px; background: #1B1323; overflow: hidden;">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 14px; border-bottom: 1px solid #3A3046; background: #150F1D;">
+            <h2 id="st-h" style="margin: 0; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px; font-weight: 500;">Status</h2>
+            <span style="display: flex; align-items: center; gap: 8px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; color: {{statusColor}};"><span class="{{dotClass}}" aria-hidden="true" style="width: 8px; height: 8px; border-radius: 50%; background: {{dotColor}};"></span>{{statusShort}}</span>
+          </div>
+          <dl style="margin: 0; padding: 4px 14px 8px; display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 18px; font-size: 15px; line-height: 1.45;">
+            <dt style="padding: 10px 0; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; color: #938B9E;">state</dt>
+            <dd style="margin: 0; padding: 10px 0; color: #EDE9F2;">{{statusText}}</dd>
+            <dt style="padding: 10px 0; border-top: 1px solid #3A3046; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; color: #938B9E;">published</dt>
+            <dd style="margin: 0; padding: 10px 0; border-top: 1px solid #3A3046; color: #EDE9F2;">Sep 28, 2026, 7:30 PM EDT</dd>
+            <dt style="padding: 10px 0; border-top: 1px solid #3A3046; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; color: #938B9E;">votes</dt>
+            <dd style="margin: 0; padding: 10px 0; border-top: 1px solid #3A3046; color: #EDE9F2;">{{votesText}}</dd>
+          </dl>
+        </section>
+
+        <section aria-labelledby="bm-h" style="border: 1px solid #FEBD5C; border-radius: 8px; background: #1E1508; padding: 16px;">
+          <h2 id="bm-h" style="margin: 0; display: flex; align-items: center; gap: 8px; font-size: 17px; line-height: 1.3; font-weight: 700; color: #FEBD5C;">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" style="flex: none; fill: none; stroke: #FEBD5C; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;"><path d="M6 3h12v18l-6-4-6 4z"></path></svg>
+            <span>Bookmark this page</span>
+          </h2>
+          <p style="margin: 8px 0 0; font-size: 15px; line-height: 1.5; color: #EDE9F2;">RankedVote.app has no accounts. This page's address is the only way back to manage this ballot, so save it somewhere safe.</p>
+          <p style="margin: 12px 0 0; padding: 10px 12px; background: #110B18; border: 1px solid #3A3046; border-radius: 6px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12.5px; line-height: 1.5; color: #EDE9F2; word-break: break-all;">https://rankedvote.app/ballot/ebc-next-read/9c1f4e2a-6b7d-4f3e-a8c2-5d0b1e7f3a64</p>
+          <div style="margin-top: 10px; display: flex;">
+            <button type="button" onClick="{{copyAdmin}}" class="btn-amber" style="min-height: 44px; display: inline-flex; align-items: center; gap: 8px; padding: 0 14px; background: transparent; border: 1px solid #FEBD5C; border-radius: 6px; color: #FEBD5C; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer;">
+              <sc-if value="{{adminCopied}}" hint-placeholder-val="{{false}}"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round;"><path d="M5 12.5l4.5 4.5L19 7"></path></svg></sc-if>
+              <sc-if value="{{adminNotCopied}}" hint-placeholder-val="{{true}}"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V6a2 2 0 0 1 2-2h8"></path></svg></sc-if>
+              <span>{{adminCopyLabel}}</span>
+            </button>
+          </div>
+        </section>
+
+        <section aria-labelledby="share-h" style="border: 1px solid #3A3046; border-radius: 8px; background: #1B1323; padding: 16px;">
+          <h2 id="share-h" style="margin: 0; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px; font-weight: 500; color: #C9A3F5;">Voter link</h2>
+          <p style="margin: 6px 0 0; font-size: 15px; line-height: 1.5; color: #B2AABE;">Send this link to voters. Anyone with it can vote.</p>
+          <div style="margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px;">
+            <a href="f-vote.dc.html" class="url-link" style="flex: 1 1 180px; min-width: 0; min-height: 48px; display: flex; align-items: center; padding: 8px 12px; background: #110B18; border: 1px solid #3A3046; border-radius: 6px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px; line-height: 1.45; color: #C9A3F5; text-decoration: none; word-break: break-all;">https://rankedvote.app/ballot/ebc-next-read</a>
+            <button type="button" onClick="{{copyVoter}}" class="btn-pri" style="flex: none; min-height: 48px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-width: 112px; padding: 0 16px; background: #C9A3F5; border: 0; border-radius: 6px; color: #110B18; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer;">
+              <sc-if value="{{voterCopied}}" hint-placeholder-val="{{false}}"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round;"><path d="M5 12.5l4.5 4.5L19 7"></path></svg></sc-if>
+              <sc-if value="{{voterNotCopied}}" hint-placeholder-val="{{true}}"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V6a2 2 0 0 1 2-2h8"></path></svg></sc-if>
+              <span>{{voterCopyLabel}}</span>
+            </button>
+          </div>
+          <p class="sr-only" aria-live="polite">{{copyAnnounce}}</p>
+        </section>
+
+        <section aria-labelledby="close-h" style="border: 1px solid #6B5226; border-radius: 8px; padding: 16px;">
+          <h2 id="close-h" style="margin: 0; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px; font-weight: 500; color: #FEBD5C;">Close voting</h2>
+          <sc-if value="{{isOpen}}" hint-placeholder-val="{{true}}">
+            <div>
+              <p style="margin: 6px 0 0; font-size: 16px; line-height: 1.5; color: #EDE9F2;">Close the ballot when you no longer want to accept votes.</p>
+              <p style="margin: 8px 0 0; font-size: 15px; line-height: 1.5; color: #B2AABE;"><strong style="color: #EDE9F2;">Closing is final.</strong> Voting stops for good, and the results become public at <span style="font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px; color: #EDE9F2; word-break: break-all;">https://rankedvote.app/ballot/ebc-next-read/results</span>.</p>
+              <button type="button" onClick="{{askClose}}" class="btn-amber" style="margin-top: 14px; min-height: 48px; display: inline-flex; align-items: center; gap: 8px; padding: 0 16px; background: transparent; border: 1px solid #FEBD5C; border-radius: 6px; color: #FEBD5C; font-family: inherit; font-size: 16px; font-weight: 700; cursor: pointer;">
+                <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>
+                <span>Close the ballot</span>
+              </button>
+            </div>
+          </sc-if>
+          <sc-if value="{{isConfirm}}" hint-placeholder-val="{{false}}">
+            <div class="rise" role="alert" style="margin-top: 10px; padding: 14px; border: 1px solid #FEBD5C; border-radius: 6px; background: #1E1508;">
+              <p style="margin: 0; font-size: 16px; line-height: 1.45; font-weight: 700; color: #FEBD5C;">Close the ballot now?</p>
+              <p style="margin: 6px 0 0; font-size: 15px; line-height: 1.5; color: #EDE9F2;">{{confirmText}} No one can vote after this, and you can't reopen it.</p>
+              <div style="margin-top: 14px; display: flex; flex-wrap: wrap; gap: 8px;">
+                <button type="button" onClick="{{confirmClose}}" class="btn-amber-fill" style="min-height: 48px; padding: 0 16px; background: #FEBD5C; border: 0; border-radius: 6px; color: #110B18; font-family: inherit; font-size: 16px; font-weight: 700; cursor: pointer;">Yes, close the ballot</button>
+                <button type="button" onClick="{{keepOpen}}" class="btn-ghost" style="min-height: 48px; padding: 0 16px; background: transparent; border: 1px solid #716085; border-radius: 6px; color: #EDE9F2; font-family: inherit; font-size: 16px; font-weight: 600; cursor: pointer;">Keep it open</button>
+              </div>
+            </div>
+          </sc-if>
+          <sc-if value="{{isClosed}}" hint-placeholder-val="{{false}}">
+            <div class="rise">
+              <p style="margin: 6px 0 0; font-size: 16px; line-height: 1.5; color: #EDE9F2;">The ballot is closed. Voting has stopped, and the results are public.</p>
+              <a href="f-results.dc.html" class="btn-ghost" style="margin-top: 14px; min-height: 48px; display: inline-flex; align-items: center; gap: 8px; padding: 0 16px; border: 1px solid #716085; border-radius: 6px; color: #EDE9F2; text-decoration: none; font-size: 16px; font-weight: 600;">
+                <span>View the public results</span>
+                <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+              </a>
+            </div>
+          </sc-if>
+        </section>
+      </div>
+
+      <section aria-labelledby="early-h" style="min-width: 0;">
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px;">
+          <h2 id="early-h" style="margin: 0; font-size: 22px; line-height: 1.2; font-weight: 700; letter-spacing: -0.01em;">{{resultsHeading}}</h2>
+          <span style="padding: 2px 8px; border: 1px solid {{tagColor}}; border-radius: 3px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: {{tagColor}};">{{tagText}}</span>
+        </div>
+        <p style="margin: 8px 0 0; font-size: 15px; line-height: 1.5; color: #B2AABE;">{{earlyNote}}</p>
+
+        <div style="margin-top: 14px; border: 1px solid #3A3046; border-radius: 8px; background: #150F1D; overflow: hidden;">
+          <table style="width: 100%; border-collapse: collapse; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px; line-height: 1.4;">
+            <caption class="sr-only">{{resultsHeading}}, ordered by points, with the weighted vote count at each rank from 1st to 5th</caption>
+            <thead>
+              <tr style="border-bottom: 1px solid #3A3046;">
+                <th scope="col" style="padding: 9px 8px 9px 12px; text-align: left; font-size: 11px; font-weight: 500; color: #938B9E;">Answer</th>
+                <th scope="col" style="padding: 9px 6px; text-align: right; font-size: 11px; font-weight: 500; color: #938B9E;"><abbr title="Points" style="text-decoration: none;">Pts</abbr></th>
+                <th scope="col" class="rk" style="padding: 9px 1px; text-align: center; font-size: 11px; font-weight: 500; color: #938B9E;">1st</th>
+                <th scope="col" class="rk" style="padding: 9px 1px; text-align: center; font-size: 11px; font-weight: 500; color: #938B9E;">2nd</th>
+                <th scope="col" class="rk" style="padding: 9px 1px; text-align: center; font-size: 11px; font-weight: 500; color: #938B9E;">3rd</th>
+                <th scope="col" class="rk" style="padding: 9px 1px; text-align: center; font-size: 11px; font-weight: 500; color: #938B9E;">4th</th>
+                <th scope="col" class="rk" style="padding: 9px 8px 9px 1px; text-align: center; font-size: 11px; font-weight: 500; color: #938B9E;">5th</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-top: 1px solid #3A3046; background: {{p0.rowBg}};">
+                <th scope="row" style="padding: 12px 8px 12px 12px; text-align: left; vertical-align: top; font-family: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 14px; line-height: 1.35; font-weight: 600; color: #EDE9F2;">
+                  <span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; place-items: center; width: 20px; height: 20px; margin-right: 8px; border-radius: 4px; border: 1px solid {{p0.chipBorder}}; background: {{p0.chipBg}}; color: {{p0.chipFg}}; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; vertical-align: 1px;">{{p0.place}}</span><span class="sr-only">{{p0.sr}}</span>{{p0.text}}</span>
+                  <sc-if value="{{p0.mostFirst}}" hint-placeholder-val="{{false}}"><span style="display: inline-block; margin-top: 6px; padding: 1px 6px; border: 1px solid #6B5A86; border-radius: 3px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 500; line-height: 1.5; color: #C9A3F5;">most 1st-place votes</span></sc-if>
+                  <span aria-hidden="true" style="display: block; margin-top: 8px; height: 6px; border-radius: 2px; background: #2B2136; overflow: hidden;"><span class="bar" style="display: block; height: 100%; width: {{p0.barPct}}%; background-image: linear-gradient(90deg, #C9A3F5 0 72%, transparent 72%); background-size: {{p0.barSeg}}% 100%;"></span></span>
+                </th>
+                <td style="padding: 12px 6px; text-align: right; vertical-align: top; font-size: 15px; font-weight: 700; color: {{p0.ptsColor}};">{{p0.pts}}</td>
+                <td style="padding: 10px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 26px; border-radius: 4px; background: {{p0.b1}}; color: {{p0.f1}};">{{p0.v1}}</span></td>
+                <td style="padding: 10px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 26px; border-radius: 4px; background: {{p0.b2}}; color: {{p0.f2}};">{{p0.v2}}</span></td>
+                <td style="padding: 10px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 26px; border-radius: 4px; background: {{p0.b3}}; color: {{p0.f3}};">{{p0.v3}}</span></td>
+                <td style="padding: 10px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 26px; border-radius: 4px; background: {{p0.b4}}; color: {{p0.f4}};">{{p0.v4}}</span></td>
+                <td style="padding: 10px 8px 10px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 26px; border-radius: 4px; background: {{p0.b5}}; color: {{p0.f5}};">{{p0.v5}}</span></td>
+              </tr>
+              <tr style="border-top: 1px solid #3A3046; background: {{p1.rowBg}};">
+                <th scope="row" style="padding: 12px 8px 12px 12px; text-align: left; vertical-align: top; font-family: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 14px; line-height: 1.35; font-weight: 600; color: #EDE9F2;">
+                  <span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; place-items: center; width: 20px; height: 20px; margin-right: 8px; border-radius: 4px; border: 1px solid {{p1.chipBorder}}; background: {{p1.chipBg}}; color: {{p1.chipFg}}; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; vertical-align: 1px;">{{p1.place}}</span><span class="sr-only">{{p1.sr}}</span>{{p1.text}}</span>
+                  <sc-if value="{{p1.mostFirst}}" hint-placeholder-val="{{false}}"><span style="display: inline-block; margin-top: 6px; padding: 1px 6px; border: 1px solid #6B5A86; border-radius: 3px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 500; line-height: 1.5; color: #C9A3F5;">most 1st-place votes</span></sc-if>
+                  <span aria-hidden="true" style="display: block; margin-top: 8px; height: 6px; border-radius: 2px; background: #2B2136; overflow: hidden;"><span class="bar" style="display: block; height: 100%; width: {{p1.barPct}}%; background-image: linear-gradient(90deg, #C9A3F5 0 72%, transparent 72%); background-size: {{p1.barSeg}}% 100%;"></span></span>
+                </th>
+                <td style="padding: 12px 6px; text-align: right; vertical-align: top; font-size: 15px; font-weight: 700; color: {{p1.ptsColor}};">{{p1.pts}}</td>
+                <td style="padding: 10px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 26px; border-radius: 4px; background: {{p1.b1}}; color: {{p1.f1}};">{{p1.v1}}</span></td>
+                <td style="padding: 10px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 26px; border-radius: 4px; background: {{p1.b2}}; color: {{p1.f2}};">{{p1.v2}}</span></td>
+                <td style="padding: 10px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 26px; border-radius: 4px; background: {{p1.b3}}; color: {{p1.f3}};">{{p1.v3}}</span></td>
+                <td style="padding: 10px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 26px; border-radius: 4px; background: {{p1.b4}}; color: {{p1.f4}};">{{p1.v4}}</span></td>
+                <td style="padding: 10px 8px 10px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 26px; border-radius: 4px; background: {{p1.b5}}; color: {{p1.f5}};">{{p1.v5}}</span></td>
+              </tr>
+              <tr style="border-top: 1px solid #3A3046; background: {{p2.rowBg}};">
+                <th scope="row" style="padding: 12px 8px 12px 12px; text-align: left; vertical-align: top; font-family: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 14px; line-height: 1.35; font-weight: 600; color: #EDE9F2;">
+                  <span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; place-items: center; width: 20px; height: 20px; margin-right: 8px; border-radius: 4px; border: 1px solid {{p2.chipBorder}}; background: {{p2.chipBg}}; color: {{p2.chipFg}}; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; vertical-align: 1px;">{{p2.place}}</span><span class="sr-only">{{p2.sr}}</span>{{p2.text}}</span>
+                  <sc-if value="{{p2.mostFirst}}" hint-placeholder-val="{{true}}"><span style="display: inline-block; margin-top: 6px; padding: 1px 6px; border: 1px solid #6B5A86; border-radius: 3px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 500; line-height: 1.5; color: #C9A3F5;">most 1st-place votes</span></sc-if>
+                  <span aria-hidden="true" style="display: block; margin-top: 8px; height: 6px; border-radius: 2px; background: #2B2136; overflow: hidden;"><span class="bar" style="display: block; height: 100%; width: {{p2.barPct}}%; background-image: linear-gradient(90deg, #C9A3F5 0 72%, transparent 72%); background-size: {{p2.barSeg}}% 100%;"></span></span>
+                </th>
+                <td style="padding: 12px 6px; text-align: right; vertical-align: top; font-size: 15px; font-weight: 700; color: {{p2.ptsColor}};">{{p2.pts}}</td>
+                <td style="padding: 10px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 26px; border-radius: 4px; background: {{p2.b1}}; color: {{p2.f1}};">{{p2.v1}}</span></td>
+                <td style="padding: 10px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 26px; border-radius: 4px; background: {{p2.b2}}; color: {{p2.f2}};">{{p2.v2}}</span></td>
+                <td style="padding: 10px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 26px; border-radius: 4px; background: {{p2.b3}}; color: {{p2.f3}};">{{p2.v3}}</span></td>
+                <td style="padding: 10px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 26px; border-radius: 4px; background: {{p2.b4}}; color: {{p2.f4}};">{{p2.v4}}</span></td>
+                <td style="padding: 10px 8px 10px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 26px; border-radius: 4px; background: {{p2.b5}}; color: {{p2.f5}};">{{p2.v5}}</span></td>
+              </tr>
+              <tr style="border-top: 1px solid #3A3046; background: {{p3.rowBg}};">
+                <th scope="row" style="padding: 12px 8px 12px 12px; text-align: left; vertical-align: top; font-family: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 14px; line-height: 1.35; font-weight: 600; color: #EDE9F2;">
+                  <span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; place-items: center; width: 20px; height: 20px; margin-right: 8px; border-radius: 4px; border: 1px solid {{p3.chipBorder}}; background: {{p3.chipBg}}; color: {{p3.chipFg}}; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; vertical-align: 1px;">{{p3.place}}</span><span class="sr-only">{{p3.sr}}</span>{{p3.text}}</span>
+                  <sc-if value="{{p3.mostFirst}}" hint-placeholder-val="{{false}}"><span style="display: inline-block; margin-top: 6px; padding: 1px 6px; border: 1px solid #6B5A86; border-radius: 3px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 500; line-height: 1.5; color: #C9A3F5;">most 1st-place votes</span></sc-if>
+                  <span aria-hidden="true" style="display: block; margin-top: 8px; height: 6px; border-radius: 2px; background: #2B2136; overflow: hidden;"><span class="bar" style="display: block; height: 100%; width: {{p3.barPct}}%; background-image: linear-gradient(90deg, #C9A3F5 0 72%, transparent 72%); background-size: {{p3.barSeg}}% 100%;"></span></span>
+                </th>
+                <td style="padding: 12px 6px; text-align: right; vertical-align: top; font-size: 15px; font-weight: 700; color: {{p3.ptsColor}};">{{p3.pts}}</td>
+                <td style="padding: 10px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 26px; border-radius: 4px; background: {{p3.b1}}; color: {{p3.f1}};">{{p3.v1}}</span></td>
+                <td style="padding: 10px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 26px; border-radius: 4px; background: {{p3.b2}}; color: {{p3.f2}};">{{p3.v2}}</span></td>
+                <td style="padding: 10px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 26px; border-radius: 4px; background: {{p3.b3}}; color: {{p3.f3}};">{{p3.v3}}</span></td>
+                <td style="padding: 10px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 26px; border-radius: 4px; background: {{p3.b4}}; color: {{p3.f4}};">{{p3.v4}}</span></td>
+                <td style="padding: 10px 8px 10px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 26px; border-radius: 4px; background: {{p3.b5}}; color: {{p3.f5}};">{{p3.v5}}</span></td>
+              </tr>
+              <tr style="border-top: 1px solid #3A3046; background: {{p4.rowBg}};">
+                <th scope="row" style="padding: 12px 8px 12px 12px; text-align: left; vertical-align: top; font-family: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 14px; line-height: 1.35; font-weight: 600; color: #EDE9F2;">
+                  <span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; place-items: center; width: 20px; height: 20px; margin-right: 8px; border-radius: 4px; border: 1px solid {{p4.chipBorder}}; background: {{p4.chipBg}}; color: {{p4.chipFg}}; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; vertical-align: 1px;">{{p4.place}}</span><span class="sr-only">{{p4.sr}}</span>{{p4.text}}</span>
+                  <sc-if value="{{p4.mostFirst}}" hint-placeholder-val="{{false}}"><span style="display: inline-block; margin-top: 6px; padding: 1px 6px; border: 1px solid #6B5A86; border-radius: 3px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 500; line-height: 1.5; color: #C9A3F5;">most 1st-place votes</span></sc-if>
+                  <span aria-hidden="true" style="display: block; margin-top: 8px; height: 6px; border-radius: 2px; background: #2B2136; overflow: hidden;"><span class="bar" style="display: block; height: 100%; width: {{p4.barPct}}%; background-image: linear-gradient(90deg, #C9A3F5 0 72%, transparent 72%); background-size: {{p4.barSeg}}% 100%;"></span></span>
+                </th>
+                <td style="padding: 12px 6px; text-align: right; vertical-align: top; font-size: 15px; font-weight: 700; color: {{p4.ptsColor}};">{{p4.pts}}</td>
+                <td style="padding: 10px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 26px; border-radius: 4px; background: {{p4.b1}}; color: {{p4.f1}};">{{p4.v1}}</span></td>
+                <td style="padding: 10px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 26px; border-radius: 4px; background: {{p4.b2}}; color: {{p4.f2}};">{{p4.v2}}</span></td>
+                <td style="padding: 10px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 26px; border-radius: 4px; background: {{p4.b3}}; color: {{p4.f3}};">{{p4.v3}}</span></td>
+                <td style="padding: 10px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 26px; border-radius: 4px; background: {{p4.b4}}; color: {{p4.f4}};">{{p4.v4}}</span></td>
+                <td style="padding: 10px 8px 10px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 26px; border-radius: 4px; background: {{p4.b5}}; color: {{p4.f5}};">{{p4.v5}}</span></td>
+              </tr>
+              <tr style="border-top: 1px solid #3A3046; background: {{p5.rowBg}};">
+                <th scope="row" style="padding: 12px 8px 12px 12px; text-align: left; vertical-align: top; font-family: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 14px; line-height: 1.35; font-weight: 600; color: #EDE9F2;">
+                  <span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; place-items: center; width: 20px; height: 20px; margin-right: 8px; border-radius: 4px; border: 1px solid {{p5.chipBorder}}; background: {{p5.chipBg}}; color: {{p5.chipFg}}; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; vertical-align: 1px;">{{p5.place}}</span><span class="sr-only">{{p5.sr}}</span>{{p5.text}}</span>
+                  <sc-if value="{{p5.mostFirst}}" hint-placeholder-val="{{false}}"><span style="display: inline-block; margin-top: 6px; padding: 1px 6px; border: 1px solid #6B5A86; border-radius: 3px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 500; line-height: 1.5; color: #C9A3F5;">most 1st-place votes</span></sc-if>
+                  <span aria-hidden="true" style="display: block; margin-top: 8px; height: 6px; border-radius: 2px; background: #2B2136; overflow: hidden;"><span class="bar" style="display: block; height: 100%; width: {{p5.barPct}}%; background-image: linear-gradient(90deg, #C9A3F5 0 72%, transparent 72%); background-size: {{p5.barSeg}}% 100%;"></span></span>
+                </th>
+                <td style="padding: 12px 6px; text-align: right; vertical-align: top; font-size: 15px; font-weight: 700; color: {{p5.ptsColor}};">{{p5.pts}}</td>
+                <td style="padding: 10px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 26px; border-radius: 4px; background: {{p5.b1}}; color: {{p5.f1}};">{{p5.v1}}</span></td>
+                <td style="padding: 10px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 26px; border-radius: 4px; background: {{p5.b2}}; color: {{p5.f2}};">{{p5.v2}}</span></td>
+                <td style="padding: 10px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 26px; border-radius: 4px; background: {{p5.b3}}; color: {{p5.f3}};">{{p5.v3}}</span></td>
+                <td style="padding: 10px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 26px; border-radius: 4px; background: {{p5.b4}}; color: {{p5.f4}};">{{p5.v4}}</span></td>
+                <td style="padding: 10px 8px 10px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 26px; border-radius: 4px; background: {{p5.b5}}; color: {{p5.f5}};">{{p5.v5}}</span></td>
+              </tr>
+              <tr style="border-top: 1px solid #3A3046; background: {{p6.rowBg}};">
+                <th scope="row" style="padding: 12px 8px 12px 12px; text-align: left; vertical-align: top; font-family: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 14px; line-height: 1.35; font-weight: 600; color: #EDE9F2;">
+                  <span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; place-items: center; width: 20px; height: 20px; margin-right: 8px; border-radius: 4px; border: 1px solid {{p6.chipBorder}}; background: {{p6.chipBg}}; color: {{p6.chipFg}}; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; vertical-align: 1px;">{{p6.place}}</span><span class="sr-only">{{p6.sr}}</span>{{p6.text}}</span>
+                  <sc-if value="{{p6.mostFirst}}" hint-placeholder-val="{{false}}"><span style="display: inline-block; margin-top: 6px; padding: 1px 6px; border: 1px solid #6B5A86; border-radius: 3px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 500; line-height: 1.5; color: #C9A3F5;">most 1st-place votes</span></sc-if>
+                  <span aria-hidden="true" style="display: block; margin-top: 8px; height: 6px; border-radius: 2px; background: #2B2136; overflow: hidden;"><span class="bar" style="display: block; height: 100%; width: {{p6.barPct}}%; background-image: linear-gradient(90deg, #C9A3F5 0 72%, transparent 72%); background-size: {{p6.barSeg}}% 100%;"></span></span>
+                </th>
+                <td style="padding: 12px 6px; text-align: right; vertical-align: top; font-size: 15px; font-weight: 700; color: {{p6.ptsColor}};">{{p6.pts}}</td>
+                <td style="padding: 10px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 26px; border-radius: 4px; background: {{p6.b1}}; color: {{p6.f1}};">{{p6.v1}}</span></td>
+                <td style="padding: 10px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 26px; border-radius: 4px; background: {{p6.b2}}; color: {{p6.f2}};">{{p6.v2}}</span></td>
+                <td style="padding: 10px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 26px; border-radius: 4px; background: {{p6.b3}}; color: {{p6.f3}};">{{p6.v3}}</span></td>
+                <td style="padding: 10px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 26px; border-radius: 4px; background: {{p6.b4}}; color: {{p6.f4}};">{{p6.v4}}</span></td>
+                <td style="padding: 10px 8px 10px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 26px; border-radius: 4px; background: {{p6.b5}}; color: {{p6.f5}};">{{p6.v5}}</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="margin: 10px 0 0; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; line-height: 1.55; color: #B2AABE;">Points: 5 for a 1st choice down to 1 for a 5th, times the vote's weight. The 1st to 5th columns count weighted votes. Darker cells hold more.</p>
+      </section>
+    </div>
+
+    <section aria-labelledby="votes-h" style="margin-top: 48px;">
+      <h2 id="votes-h" style="margin: 0; font-size: 22px; line-height: 1.2; font-weight: 700; letter-spacing: -0.01em;">Votes</h2>
+      <p id="weight-help" style="margin: 8px 0 0; max-width: 62ch; font-size: 15px; line-height: 1.5; color: #B2AABE;">Each row is one vote, in the order received. A vote with weight 2 counts twice. Edit a weight and the early results update.</p>
+      <p class="phone-only" style="margin: 12px 0 0; align-items: center; gap: 8px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; color: #938B9E;">
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;"><path d="M4 12h16M8 8l-4 4 4 4M16 8l4 4-4 4"></path></svg>
+        <span>Scroll sideways for all five picks. Names stay put.</span>
+      </p>
+      <div class="scroller" role="region" aria-labelledby="votes-h" tabindex="0" style="margin-top: 12px; overflow-x: auto; border: 1px solid #3A3046; border-radius: 8px; background: #150F1D;">
+        <table style="width: 100%; min-width: 1030px; border-collapse: separate; border-spacing: 0; font-size: 14px; line-height: 1.4;">
+          <caption class="sr-only">Votes received, with each vote's weight and its picks from 1st to 5th</caption>
+          <thead>
+            <tr>
+              <th scope="col" style="position: sticky; left: 0; z-index: 2; width: 100px; padding: 10px 12px; background: #150F1D; border-right: 1px solid #3A3046; text-align: left; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 500; color: #938B9E;">Name</th>
+              <th scope="col" style="width: 160px; padding: 10px 12px; text-align: left; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 500; color: #938B9E;">Weight</th>
+              <th scope="col" style="padding: 10px 12px; text-align: left; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 500; color: #938B9E;">1st</th>
+              <th scope="col" style="padding: 10px 12px; text-align: left; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 500; color: #938B9E;">2nd</th>
+              <th scope="col" style="padding: 10px 12px; text-align: left; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 500; color: #938B9E;">3rd</th>
+              <th scope="col" style="padding: 10px 12px; text-align: left; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 500; color: #938B9E;">4th</th>
+              <th scope="col" style="padding: 10px 12px; text-align: left; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 500; color: #938B9E;">5th</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <tr class="vote-row">
+              <th scope="row" style="position: sticky; left: 0; z-index: 1; padding: 12px; background: #1B1323; border-top: 1px solid #3A3046; border-right: 1px solid #3A3046; text-align: left; vertical-align: top; font-size: 15px; font-weight: 600; color: #EDE9F2;"><span aria-hidden="true" style="display: block; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 400; color: #938B9E;">#01</span>Mike</th>
+              <td style="padding: 10px 12px; border-top: 1px solid #3A3046; vertical-align: top;">
+                <sc-if value="{{w1.showEditor}}" hint-placeholder-val="{{false}}">
+                  <form onSubmit="{{w1.save}}" style="display: flex; flex-direction: column; gap: 6px;">
+                    <label for="weight-v1" class="sr-only">Weight for Mike</label>
+                    <input id="weight-v1" type="text" inputmode="decimal" autocomplete="off" value="{{draft}}" onChange="{{onDraft}}" onKeyDown="{{onDraftKey}}" aria-describedby="weight-help" aria-invalid="{{draftInvalid}}" class="field" style="width: 100%; height: 44px; padding: 0 10px; background: #251C2F; border: 1.5px solid #C9A3F5; border-radius: 6px; color: #EDE9F2; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 16px; font-weight: 700;" />
+                    <sc-if value="{{hasDraftError}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin: 0; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; line-height: 1.45; color: #FEBD5C;">{{draftError}}</p></sc-if>
+                    <div style="display: flex; gap: 6px;">
+                      <button type="submit" class="btn-pri" style="flex: 1; min-height: 44px; padding: 0 8px; background: #C9A3F5; border: 0; border-radius: 6px; color: #110B18; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer;">Save</button>
+                      <button type="button" onClick="{{cancelEdit}}" class="btn-ghost" style="flex: 1; min-height: 44px; padding: 0 8px; background: transparent; border: 1px solid #716085; border-radius: 6px; color: #EDE9F2; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer;">Cancel</button>
+                    </div>
+                    <p aria-hidden="true" style="margin: 0; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; color: #938B9E;">Enter saves · Esc cancels</p>
+                  </form>
+                </sc-if>
+                <sc-if value="{{w1.showValue}}" hint-placeholder-val="{{true}}">
+                  <div style="display: flex; align-items: center; gap: 10px; min-height: 44px;">
+                    <span style="min-width: 3ch; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 16px; font-weight: 700; color: {{w1.color}};">{{w1.text}}</span>
+                    <sc-if value="{{w1.canEdit}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{w1.edit}}" aria-label="Edit weight for Mike" class="btn-ghost" style="min-height: 44px; padding: 0 12px; background: transparent; border: 1px solid #3A3046; border-radius: 6px; color: #B2AABE; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer;">Edit</button></sc-if>
+                    <sc-if value="{{w1.justSaved}}" hint-placeholder-val="{{false}}"><span class="rise" style="font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; color: #C9A3F5;">saved</span></sc-if>
+                  </div>
+                </sc-if>
+              </td>
+              <td style="padding: 12px; border-top: 1px solid #3A3046; vertical-align: top;"><span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; width: 20px; height: 20px; margin-right: 8px; vertical-align: 1px; place-items: center; border: 1px solid #6B5A86; border-radius: 4px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; color: #C9A3F5;">B</span>Engineering Elixir Applications by Ellie Fairholm and Josep Giralt D'Lacoste</span></td>
+              <td style="padding: 12px; border-top: 1px solid #3A3046; vertical-align: top;"><span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; width: 20px; height: 20px; margin-right: 8px; vertical-align: 1px; place-items: center; border: 1px solid #6B5A86; border-radius: 4px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; color: #C9A3F5;">A</span>Elixir in Action, Third Edition by Saša Jurić</span></td>
+              <td style="padding: 12px; border-top: 1px solid #3A3046; vertical-align: top;"><span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; width: 20px; height: 20px; margin-right: 8px; vertical-align: 1px; place-items: center; border: 1px solid #6B5A86; border-radius: 4px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; color: #C9A3F5;">E</span>Elixir Patterns by Hugo Barauna and Alexander Koutmos</span></td>
+              <td style="padding: 12px; border-top: 1px solid #3A3046; vertical-align: top;"><span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; width: 20px; height: 20px; margin-right: 8px; vertical-align: 1px; place-items: center; border: 1px solid #6B5A86; border-radius: 4px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; color: #C9A3F5;">D</span>Designing Elixir Systems with OTP by James Edward Gray II and Bruce A. Tate</span></td>
+              <td style="padding: 12px; border-top: 1px solid #3A3046; vertical-align: top;"><span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; width: 20px; height: 20px; margin-right: 8px; vertical-align: 1px; place-items: center; border: 1px solid #6B5A86; border-radius: 4px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; color: #C9A3F5;">F</span>Concurrent Data Processing in Elixir by Svilen Gospodinov</span></td>
+            </tr>
+
+            <tr class="vote-row">
+              <th scope="row" style="position: sticky; left: 0; z-index: 1; padding: 12px; background: #1B1323; border-top: 1px solid #3A3046; border-right: 1px solid #3A3046; text-align: left; vertical-align: top; font-size: 15px; font-weight: 600; color: #EDE9F2;"><span aria-hidden="true" style="display: block; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 400; color: #938B9E;">#02</span>Priya</th>
+              <td style="padding: 10px 12px; border-top: 1px solid #3A3046; vertical-align: top;">
+                <sc-if value="{{w2.showEditor}}" hint-placeholder-val="{{true}}">
+                  <form onSubmit="{{w2.save}}" style="display: flex; flex-direction: column; gap: 6px;">
+                    <label for="weight-v2" class="sr-only">Weight for Priya</label>
+                    <input id="weight-v2" type="text" inputmode="decimal" autocomplete="off" value="{{draft}}" onChange="{{onDraft}}" onKeyDown="{{onDraftKey}}" aria-describedby="weight-help" aria-invalid="{{draftInvalid}}" class="field" style="width: 100%; height: 44px; padding: 0 10px; background: #251C2F; border: 1.5px solid #C9A3F5; border-radius: 6px; color: #EDE9F2; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 16px; font-weight: 700;" />
+                    <sc-if value="{{hasDraftError}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin: 0; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; line-height: 1.45; color: #FEBD5C;">{{draftError}}</p></sc-if>
+                    <div style="display: flex; gap: 6px;">
+                      <button type="submit" class="btn-pri" style="flex: 1; min-height: 44px; padding: 0 8px; background: #C9A3F5; border: 0; border-radius: 6px; color: #110B18; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer;">Save</button>
+                      <button type="button" onClick="{{cancelEdit}}" class="btn-ghost" style="flex: 1; min-height: 44px; padding: 0 8px; background: transparent; border: 1px solid #716085; border-radius: 6px; color: #EDE9F2; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer;">Cancel</button>
+                    </div>
+                    <p aria-hidden="true" style="margin: 0; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; color: #938B9E;">Enter saves · Esc cancels</p>
+                  </form>
+                </sc-if>
+                <sc-if value="{{w2.showValue}}" hint-placeholder-val="{{false}}">
+                  <div style="display: flex; align-items: center; gap: 10px; min-height: 44px;">
+                    <span style="min-width: 3ch; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 16px; font-weight: 700; color: {{w2.color}};">{{w2.text}}</span>
+                    <sc-if value="{{w2.canEdit}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{w2.edit}}" aria-label="Edit weight for Priya" class="btn-ghost" style="min-height: 44px; padding: 0 12px; background: transparent; border: 1px solid #3A3046; border-radius: 6px; color: #B2AABE; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer;">Edit</button></sc-if>
+                    <sc-if value="{{w2.justSaved}}" hint-placeholder-val="{{false}}"><span class="rise" style="font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; color: #C9A3F5;">saved</span></sc-if>
+                  </div>
+                </sc-if>
+              </td>
+              <td style="padding: 12px; border-top: 1px solid #3A3046; vertical-align: top;"><span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; width: 20px; height: 20px; margin-right: 8px; vertical-align: 1px; place-items: center; border: 1px solid #6B5A86; border-radius: 4px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; color: #C9A3F5;">C</span>Machine Learning in Elixir by Sean Moriarity</span></td>
+              <td style="padding: 12px; border-top: 1px solid #3A3046; vertical-align: top;"><span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; width: 20px; height: 20px; margin-right: 8px; vertical-align: 1px; place-items: center; border: 1px solid #6B5A86; border-radius: 4px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; color: #C9A3F5;">B</span>Engineering Elixir Applications by Ellie Fairholm and Josep Giralt D'Lacoste</span></td>
+              <td style="padding: 12px; border-top: 1px solid #3A3046; vertical-align: top;"><span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; width: 20px; height: 20px; margin-right: 8px; vertical-align: 1px; place-items: center; border: 1px solid #6B5A86; border-radius: 4px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; color: #C9A3F5;">A</span>Elixir in Action, Third Edition by Saša Jurić</span></td>
+              <td style="padding: 12px; border-top: 1px solid #3A3046; vertical-align: top;"><span aria-hidden="true" style="font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; color: #938B9E;">–</span><span class="sr-only">No pick</span></td>
+              <td style="padding: 12px; border-top: 1px solid #3A3046; vertical-align: top;"><span aria-hidden="true" style="font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; color: #938B9E;">–</span><span class="sr-only">No pick</span></td>
+            </tr>
+
+            <tr class="vote-row">
+              <th scope="row" style="position: sticky; left: 0; z-index: 1; padding: 12px; background: #1B1323; border-top: 1px solid #3A3046; border-right: 1px solid #3A3046; text-align: left; vertical-align: top; font-size: 15px; font-weight: 600; color: #EDE9F2;"><span aria-hidden="true" style="display: block; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 400; color: #938B9E;">#03</span>Tomás</th>
+              <td style="padding: 10px 12px; border-top: 1px solid #3A3046; vertical-align: top;">
+                <sc-if value="{{w3.showEditor}}" hint-placeholder-val="{{false}}">
+                  <form onSubmit="{{w3.save}}" style="display: flex; flex-direction: column; gap: 6px;">
+                    <label for="weight-v3" class="sr-only">Weight for Tomás</label>
+                    <input id="weight-v3" type="text" inputmode="decimal" autocomplete="off" value="{{draft}}" onChange="{{onDraft}}" onKeyDown="{{onDraftKey}}" aria-describedby="weight-help" aria-invalid="{{draftInvalid}}" class="field" style="width: 100%; height: 44px; padding: 0 10px; background: #251C2F; border: 1.5px solid #C9A3F5; border-radius: 6px; color: #EDE9F2; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 16px; font-weight: 700;" />
+                    <sc-if value="{{hasDraftError}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin: 0; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; line-height: 1.45; color: #FEBD5C;">{{draftError}}</p></sc-if>
+                    <div style="display: flex; gap: 6px;">
+                      <button type="submit" class="btn-pri" style="flex: 1; min-height: 44px; padding: 0 8px; background: #C9A3F5; border: 0; border-radius: 6px; color: #110B18; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer;">Save</button>
+                      <button type="button" onClick="{{cancelEdit}}" class="btn-ghost" style="flex: 1; min-height: 44px; padding: 0 8px; background: transparent; border: 1px solid #716085; border-radius: 6px; color: #EDE9F2; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer;">Cancel</button>
+                    </div>
+                    <p aria-hidden="true" style="margin: 0; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; color: #938B9E;">Enter saves · Esc cancels</p>
+                  </form>
+                </sc-if>
+                <sc-if value="{{w3.showValue}}" hint-placeholder-val="{{true}}">
+                  <div style="display: flex; align-items: center; gap: 10px; min-height: 44px;">
+                    <span style="min-width: 3ch; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 16px; font-weight: 700; color: {{w3.color}};">{{w3.text}}</span>
+                    <sc-if value="{{w3.canEdit}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{w3.edit}}" aria-label="Edit weight for Tomás" class="btn-ghost" style="min-height: 44px; padding: 0 12px; background: transparent; border: 1px solid #3A3046; border-radius: 6px; color: #B2AABE; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer;">Edit</button></sc-if>
+                    <sc-if value="{{w3.justSaved}}" hint-placeholder-val="{{false}}"><span class="rise" style="font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; color: #C9A3F5;">saved</span></sc-if>
+                  </div>
+                </sc-if>
+              </td>
+              <td style="padding: 12px; border-top: 1px solid #3A3046; vertical-align: top;"><span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; width: 20px; height: 20px; margin-right: 8px; vertical-align: 1px; place-items: center; border: 1px solid #6B5A86; border-radius: 4px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; color: #C9A3F5;">A</span>Elixir in Action, Third Edition by Saša Jurić</span></td>
+              <td style="padding: 12px; border-top: 1px solid #3A3046; vertical-align: top;"><span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; width: 20px; height: 20px; margin-right: 8px; vertical-align: 1px; place-items: center; border: 1px solid #6B5A86; border-radius: 4px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; color: #C9A3F5;">B</span>Engineering Elixir Applications by Ellie Fairholm and Josep Giralt D'Lacoste</span></td>
+              <td style="padding: 12px; border-top: 1px solid #3A3046; vertical-align: top;"><span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; width: 20px; height: 20px; margin-right: 8px; vertical-align: 1px; place-items: center; border: 1px solid #6B5A86; border-radius: 4px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; color: #C9A3F5;">D</span>Designing Elixir Systems with OTP by James Edward Gray II and Bruce A. Tate</span></td>
+              <td style="padding: 12px; border-top: 1px solid #3A3046; vertical-align: top;"><span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; width: 20px; height: 20px; margin-right: 8px; vertical-align: 1px; place-items: center; border: 1px solid #6B5A86; border-radius: 4px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; color: #C9A3F5;">E</span>Elixir Patterns by Hugo Barauna and Alexander Koutmos</span></td>
+              <td style="padding: 12px; border-top: 1px solid #3A3046; vertical-align: top;"><span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; width: 20px; height: 20px; margin-right: 8px; vertical-align: 1px; place-items: center; border: 1px solid #6B5A86; border-radius: 4px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; color: #C9A3F5;">C</span>Machine Learning in Elixir by Sean Moriarity</span></td>
+            </tr>
+
+            <tr class="vote-row">
+              <th scope="row" style="position: sticky; left: 0; z-index: 1; padding: 12px; background: #1B1323; border-top: 1px solid #3A3046; border-right: 1px solid #3A3046; text-align: left; vertical-align: top; font-size: 15px; font-weight: 600; color: #EDE9F2;"><span aria-hidden="true" style="display: block; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 400; color: #938B9E;">#04</span>Jen</th>
+              <td style="padding: 10px 12px; border-top: 1px solid #3A3046; vertical-align: top;">
+                <sc-if value="{{w4.showEditor}}" hint-placeholder-val="{{false}}">
+                  <form onSubmit="{{w4.save}}" style="display: flex; flex-direction: column; gap: 6px;">
+                    <label for="weight-v4" class="sr-only">Weight for Jen</label>
+                    <input id="weight-v4" type="text" inputmode="decimal" autocomplete="off" value="{{draft}}" onChange="{{onDraft}}" onKeyDown="{{onDraftKey}}" aria-describedby="weight-help" aria-invalid="{{draftInvalid}}" class="field" style="width: 100%; height: 44px; padding: 0 10px; background: #251C2F; border: 1.5px solid #C9A3F5; border-radius: 6px; color: #EDE9F2; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 16px; font-weight: 700;" />
+                    <sc-if value="{{hasDraftError}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin: 0; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; line-height: 1.45; color: #FEBD5C;">{{draftError}}</p></sc-if>
+                    <div style="display: flex; gap: 6px;">
+                      <button type="submit" class="btn-pri" style="flex: 1; min-height: 44px; padding: 0 8px; background: #C9A3F5; border: 0; border-radius: 6px; color: #110B18; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer;">Save</button>
+                      <button type="button" onClick="{{cancelEdit}}" class="btn-ghost" style="flex: 1; min-height: 44px; padding: 0 8px; background: transparent; border: 1px solid #716085; border-radius: 6px; color: #EDE9F2; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer;">Cancel</button>
+                    </div>
+                    <p aria-hidden="true" style="margin: 0; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; color: #938B9E;">Enter saves · Esc cancels</p>
+                  </form>
+                </sc-if>
+                <sc-if value="{{w4.showValue}}" hint-placeholder-val="{{true}}">
+                  <div style="display: flex; align-items: center; gap: 10px; min-height: 44px;">
+                    <span style="min-width: 3ch; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 16px; font-weight: 700; color: {{w4.color}};">{{w4.text}}</span>
+                    <sc-if value="{{w4.canEdit}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{w4.edit}}" aria-label="Edit weight for Jen" class="btn-ghost" style="min-height: 44px; padding: 0 12px; background: transparent; border: 1px solid #3A3046; border-radius: 6px; color: #B2AABE; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer;">Edit</button></sc-if>
+                    <sc-if value="{{w4.justSaved}}" hint-placeholder-val="{{false}}"><span class="rise" style="font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; color: #C9A3F5;">saved</span></sc-if>
+                  </div>
+                </sc-if>
+              </td>
+              <td style="padding: 12px; border-top: 1px solid #3A3046; vertical-align: top;"><span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; width: 20px; height: 20px; margin-right: 8px; vertical-align: 1px; place-items: center; border: 1px solid #6B5A86; border-radius: 4px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; color: #C9A3F5;">B</span>Engineering Elixir Applications by Ellie Fairholm and Josep Giralt D'Lacoste</span></td>
+              <td style="padding: 12px; border-top: 1px solid #3A3046; vertical-align: top;"><span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; width: 20px; height: 20px; margin-right: 8px; vertical-align: 1px; place-items: center; border: 1px solid #6B5A86; border-radius: 4px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; color: #C9A3F5;">E</span>Elixir Patterns by Hugo Barauna and Alexander Koutmos</span></td>
+              <td style="padding: 12px; border-top: 1px solid #3A3046; vertical-align: top;"><span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; width: 20px; height: 20px; margin-right: 8px; vertical-align: 1px; place-items: center; border: 1px solid #6B5A86; border-radius: 4px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; color: #C9A3F5;">A</span>Elixir in Action, Third Edition by Saša Jurić</span></td>
+              <td style="padding: 12px; border-top: 1px solid #3A3046; vertical-align: top;"><span aria-hidden="true" style="font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; color: #938B9E;">–</span><span class="sr-only">No pick</span></td>
+              <td style="padding: 12px; border-top: 1px solid #3A3046; vertical-align: top;"><span aria-hidden="true" style="font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; color: #938B9E;">–</span><span class="sr-only">No pick</span></td>
+            </tr>
+
+            <tr class="vote-row">
+              <th scope="row" style="position: sticky; left: 0; z-index: 1; padding: 12px; background: #1B1323; border-top: 1px solid #3A3046; border-right: 1px solid #3A3046; text-align: left; vertical-align: top; font-size: 15px; font-weight: 600; color: #EDE9F2;"><span aria-hidden="true" style="display: block; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 400; color: #938B9E;">#05</span>Arjun</th>
+              <td style="padding: 10px 12px; border-top: 1px solid #3A3046; vertical-align: top;">
+                <sc-if value="{{w5.showEditor}}" hint-placeholder-val="{{false}}">
+                  <form onSubmit="{{w5.save}}" style="display: flex; flex-direction: column; gap: 6px;">
+                    <label for="weight-v5" class="sr-only">Weight for Arjun</label>
+                    <input id="weight-v5" type="text" inputmode="decimal" autocomplete="off" value="{{draft}}" onChange="{{onDraft}}" onKeyDown="{{onDraftKey}}" aria-describedby="weight-help" aria-invalid="{{draftInvalid}}" class="field" style="width: 100%; height: 44px; padding: 0 10px; background: #251C2F; border: 1.5px solid #C9A3F5; border-radius: 6px; color: #EDE9F2; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 16px; font-weight: 700;" />
+                    <sc-if value="{{hasDraftError}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin: 0; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; line-height: 1.45; color: #FEBD5C;">{{draftError}}</p></sc-if>
+                    <div style="display: flex; gap: 6px;">
+                      <button type="submit" class="btn-pri" style="flex: 1; min-height: 44px; padding: 0 8px; background: #C9A3F5; border: 0; border-radius: 6px; color: #110B18; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer;">Save</button>
+                      <button type="button" onClick="{{cancelEdit}}" class="btn-ghost" style="flex: 1; min-height: 44px; padding: 0 8px; background: transparent; border: 1px solid #716085; border-radius: 6px; color: #EDE9F2; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer;">Cancel</button>
+                    </div>
+                    <p aria-hidden="true" style="margin: 0; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; color: #938B9E;">Enter saves · Esc cancels</p>
+                  </form>
+                </sc-if>
+                <sc-if value="{{w5.showValue}}" hint-placeholder-val="{{true}}">
+                  <div style="display: flex; align-items: center; gap: 10px; min-height: 44px;">
+                    <span style="min-width: 3ch; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 16px; font-weight: 700; color: {{w5.color}};">{{w5.text}}</span>
+                    <sc-if value="{{w5.canEdit}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{w5.edit}}" aria-label="Edit weight for Arjun" class="btn-ghost" style="min-height: 44px; padding: 0 12px; background: transparent; border: 1px solid #3A3046; border-radius: 6px; color: #B2AABE; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer;">Edit</button></sc-if>
+                    <sc-if value="{{w5.justSaved}}" hint-placeholder-val="{{false}}"><span class="rise" style="font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; color: #C9A3F5;">saved</span></sc-if>
+                  </div>
+                </sc-if>
+              </td>
+              <td style="padding: 12px; border-top: 1px solid #3A3046; vertical-align: top;"><span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; width: 20px; height: 20px; margin-right: 8px; vertical-align: 1px; place-items: center; border: 1px solid #6B5A86; border-radius: 4px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; color: #C9A3F5;">D</span>Designing Elixir Systems with OTP by James Edward Gray II and Bruce A. Tate</span></td>
+              <td style="padding: 12px; border-top: 1px solid #3A3046; vertical-align: top;"><span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; width: 20px; height: 20px; margin-right: 8px; vertical-align: 1px; place-items: center; border: 1px solid #6B5A86; border-radius: 4px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; color: #C9A3F5;">A</span>Elixir in Action, Third Edition by Saša Jurić</span></td>
+              <td style="padding: 12px; border-top: 1px solid #3A3046; vertical-align: top;"><span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; width: 20px; height: 20px; margin-right: 8px; vertical-align: 1px; place-items: center; border: 1px solid #6B5A86; border-radius: 4px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; color: #C9A3F5;">B</span>Engineering Elixir Applications by Ellie Fairholm and Josep Giralt D'Lacoste</span></td>
+              <td style="padding: 12px; border-top: 1px solid #3A3046; vertical-align: top;"><span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; width: 20px; height: 20px; margin-right: 8px; vertical-align: 1px; place-items: center; border: 1px solid #6B5A86; border-radius: 4px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; color: #C9A3F5;">F</span>Concurrent Data Processing in Elixir by Svilen Gospodinov</span></td>
+              <td style="padding: 12px; border-top: 1px solid #3A3046; vertical-align: top;"><span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; width: 20px; height: 20px; margin-right: 8px; vertical-align: 1px; place-items: center; border: 1px solid #6B5A86; border-radius: 4px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; color: #C9A3F5;">E</span>Elixir Patterns by Hugo Barauna and Alexander Koutmos</span></td>
+            </tr>
+
+            <tr class="vote-row">
+              <th scope="row" style="position: sticky; left: 0; z-index: 1; padding: 12px; background: #1B1323; border-top: 1px solid #3A3046; border-right: 1px solid #3A3046; text-align: left; vertical-align: top; font-size: 15px; font-weight: 500; font-style: italic; color: #B2AABE;"><span aria-hidden="true" style="display: block; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 400; font-style: normal; color: #938B9E;">#06</span>No name</th>
+              <td style="padding: 10px 12px; border-top: 1px solid #3A3046; vertical-align: top;">
+                <sc-if value="{{w6.showEditor}}" hint-placeholder-val="{{false}}">
+                  <form onSubmit="{{w6.save}}" style="display: flex; flex-direction: column; gap: 6px;">
+                    <label for="weight-v6" class="sr-only">Weight for the vote with no name</label>
+                    <input id="weight-v6" type="text" inputmode="decimal" autocomplete="off" value="{{draft}}" onChange="{{onDraft}}" onKeyDown="{{onDraftKey}}" aria-describedby="weight-help" aria-invalid="{{draftInvalid}}" class="field" style="width: 100%; height: 44px; padding: 0 10px; background: #251C2F; border: 1.5px solid #C9A3F5; border-radius: 6px; color: #EDE9F2; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 16px; font-weight: 700;" />
+                    <sc-if value="{{hasDraftError}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin: 0; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; line-height: 1.45; color: #FEBD5C;">{{draftError}}</p></sc-if>
+                    <div style="display: flex; gap: 6px;">
+                      <button type="submit" class="btn-pri" style="flex: 1; min-height: 44px; padding: 0 8px; background: #C9A3F5; border: 0; border-radius: 6px; color: #110B18; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer;">Save</button>
+                      <button type="button" onClick="{{cancelEdit}}" class="btn-ghost" style="flex: 1; min-height: 44px; padding: 0 8px; background: transparent; border: 1px solid #716085; border-radius: 6px; color: #EDE9F2; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer;">Cancel</button>
+                    </div>
+                    <p aria-hidden="true" style="margin: 0; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; color: #938B9E;">Enter saves · Esc cancels</p>
+                  </form>
+                </sc-if>
+                <sc-if value="{{w6.showValue}}" hint-placeholder-val="{{true}}">
+                  <div style="display: flex; align-items: center; gap: 10px; min-height: 44px;">
+                    <span style="min-width: 3ch; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 16px; font-weight: 700; color: {{w6.color}};">{{w6.text}}</span>
+                    <sc-if value="{{w6.canEdit}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{w6.edit}}" aria-label="Edit weight for the vote with no name" class="btn-ghost" style="min-height: 44px; padding: 0 12px; background: transparent; border: 1px solid #3A3046; border-radius: 6px; color: #B2AABE; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer;">Edit</button></sc-if>
+                    <sc-if value="{{w6.justSaved}}" hint-placeholder-val="{{false}}"><span class="rise" style="font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; color: #C9A3F5;">saved</span></sc-if>
+                  </div>
+                </sc-if>
+              </td>
+              <td style="padding: 12px; border-top: 1px solid #3A3046; vertical-align: top;"><span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; width: 20px; height: 20px; margin-right: 8px; vertical-align: 1px; place-items: center; border: 1px solid #6B5A86; border-radius: 4px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; color: #C9A3F5;">C</span>Machine Learning in Elixir by Sean Moriarity</span></td>
+              <td style="padding: 12px; border-top: 1px solid #3A3046; vertical-align: top;"><span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; width: 20px; height: 20px; margin-right: 8px; vertical-align: 1px; place-items: center; border: 1px solid #6B5A86; border-radius: 4px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; color: #C9A3F5;">F</span>Concurrent Data Processing in Elixir by Svilen Gospodinov</span></td>
+              <td style="padding: 12px; border-top: 1px solid #3A3046; vertical-align: top;"><span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; width: 20px; height: 20px; margin-right: 8px; vertical-align: 1px; place-items: center; border: 1px solid #6B5A86; border-radius: 4px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; color: #C9A3F5;">B</span>Engineering Elixir Applications by Ellie Fairholm and Josep Giralt D'Lacoste</span></td>
+              <td style="padding: 12px; border-top: 1px solid #3A3046; vertical-align: top;"><span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; width: 20px; height: 20px; margin-right: 8px; vertical-align: 1px; place-items: center; border: 1px solid #6B5A86; border-radius: 4px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; color: #C9A3F5;">A</span>Elixir in Action, Third Edition by Saša Jurić</span></td>
+              <td style="padding: 12px; border-top: 1px solid #3A3046; vertical-align: top;"><span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; width: 20px; height: 20px; margin-right: 8px; vertical-align: 1px; place-items: center; border: 1px solid #6B5A86; border-radius: 4px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; color: #C9A3F5;">G</span>A Common-Sense Guide to Data Structures and Algorithms, Second Edition by Jay Wengrow</span></td>
+            </tr>
+
+            <tr class="vote-row">
+              <th scope="row" style="position: sticky; left: 0; z-index: 1; padding: 12px; background: #1B1323; border-top: 1px solid #3A3046; border-right: 1px solid #3A3046; text-align: left; vertical-align: top; font-size: 15px; font-weight: 600; color: #EDE9F2;"><span aria-hidden="true" style="display: block; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 400; color: #938B9E;">#07</span>Kiko</th>
+              <td style="padding: 10px 12px; border-top: 1px solid #3A3046; vertical-align: top;">
+                <sc-if value="{{w7.showEditor}}" hint-placeholder-val="{{false}}">
+                  <form onSubmit="{{w7.save}}" style="display: flex; flex-direction: column; gap: 6px;">
+                    <label for="weight-v7" class="sr-only">Weight for Kiko</label>
+                    <input id="weight-v7" type="text" inputmode="decimal" autocomplete="off" value="{{draft}}" onChange="{{onDraft}}" onKeyDown="{{onDraftKey}}" aria-describedby="weight-help" aria-invalid="{{draftInvalid}}" class="field" style="width: 100%; height: 44px; padding: 0 10px; background: #251C2F; border: 1.5px solid #C9A3F5; border-radius: 6px; color: #EDE9F2; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 16px; font-weight: 700;" />
+                    <sc-if value="{{hasDraftError}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin: 0; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; line-height: 1.45; color: #FEBD5C;">{{draftError}}</p></sc-if>
+                    <div style="display: flex; gap: 6px;">
+                      <button type="submit" class="btn-pri" style="flex: 1; min-height: 44px; padding: 0 8px; background: #C9A3F5; border: 0; border-radius: 6px; color: #110B18; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer;">Save</button>
+                      <button type="button" onClick="{{cancelEdit}}" class="btn-ghost" style="flex: 1; min-height: 44px; padding: 0 8px; background: transparent; border: 1px solid #716085; border-radius: 6px; color: #EDE9F2; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer;">Cancel</button>
+                    </div>
+                    <p aria-hidden="true" style="margin: 0; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; color: #938B9E;">Enter saves · Esc cancels</p>
+                  </form>
+                </sc-if>
+                <sc-if value="{{w7.showValue}}" hint-placeholder-val="{{true}}">
+                  <div style="display: flex; align-items: center; gap: 10px; min-height: 44px;">
+                    <span style="min-width: 3ch; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 16px; font-weight: 700; color: {{w7.color}};">{{w7.text}}</span>
+                    <sc-if value="{{w7.canEdit}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{w7.edit}}" aria-label="Edit weight for Kiko" class="btn-ghost" style="min-height: 44px; padding: 0 12px; background: transparent; border: 1px solid #3A3046; border-radius: 6px; color: #B2AABE; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer;">Edit</button></sc-if>
+                    <sc-if value="{{w7.justSaved}}" hint-placeholder-val="{{false}}"><span class="rise" style="font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; color: #C9A3F5;">saved</span></sc-if>
+                  </div>
+                </sc-if>
+              </td>
+              <td style="padding: 12px; border-top: 1px solid #3A3046; vertical-align: top;"><span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; width: 20px; height: 20px; margin-right: 8px; vertical-align: 1px; place-items: center; border: 1px solid #6B5A86; border-radius: 4px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; color: #C9A3F5;">E</span>Elixir Patterns by Hugo Barauna and Alexander Koutmos</span></td>
+              <td style="padding: 12px; border-top: 1px solid #3A3046; vertical-align: top;"><span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; width: 20px; height: 20px; margin-right: 8px; vertical-align: 1px; place-items: center; border: 1px solid #6B5A86; border-radius: 4px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; color: #C9A3F5;">B</span>Engineering Elixir Applications by Ellie Fairholm and Josep Giralt D'Lacoste</span></td>
+              <td style="padding: 12px; border-top: 1px solid #3A3046; vertical-align: top;"><span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; width: 20px; height: 20px; margin-right: 8px; vertical-align: 1px; place-items: center; border: 1px solid #6B5A86; border-radius: 4px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; color: #C9A3F5;">D</span>Designing Elixir Systems with OTP by James Edward Gray II and Bruce A. Tate</span></td>
+              <td style="padding: 12px; border-top: 1px solid #3A3046; vertical-align: top;"><span aria-hidden="true" style="font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; color: #938B9E;">–</span><span class="sr-only">No pick</span></td>
+              <td style="padding: 12px; border-top: 1px solid #3A3046; vertical-align: top;"><span aria-hidden="true" style="font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; color: #938B9E;">–</span><span class="sr-only">No pick</span></td>
+            </tr>
+
+            <tr class="vote-row">
+              <th scope="row" style="position: sticky; left: 0; z-index: 1; padding: 12px; background: #1B1323; border-top: 1px solid #3A3046; border-right: 1px solid #3A3046; text-align: left; vertical-align: top; font-size: 15px; font-weight: 600; color: #EDE9F2;"><span aria-hidden="true" style="display: block; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 400; color: #938B9E;">#08</span>Dana</th>
+              <td style="padding: 10px 12px; border-top: 1px solid #3A3046; vertical-align: top;">
+                <sc-if value="{{w8.showEditor}}" hint-placeholder-val="{{false}}">
+                  <form onSubmit="{{w8.save}}" style="display: flex; flex-direction: column; gap: 6px;">
+                    <label for="weight-v8" class="sr-only">Weight for Dana</label>
+                    <input id="weight-v8" type="text" inputmode="decimal" autocomplete="off" value="{{draft}}" onChange="{{onDraft}}" onKeyDown="{{onDraftKey}}" aria-describedby="weight-help" aria-invalid="{{draftInvalid}}" class="field" style="width: 100%; height: 44px; padding: 0 10px; background: #251C2F; border: 1.5px solid #C9A3F5; border-radius: 6px; color: #EDE9F2; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 16px; font-weight: 700;" />
+                    <sc-if value="{{hasDraftError}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin: 0; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; line-height: 1.45; color: #FEBD5C;">{{draftError}}</p></sc-if>
+                    <div style="display: flex; gap: 6px;">
+                      <button type="submit" class="btn-pri" style="flex: 1; min-height: 44px; padding: 0 8px; background: #C9A3F5; border: 0; border-radius: 6px; color: #110B18; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer;">Save</button>
+                      <button type="button" onClick="{{cancelEdit}}" class="btn-ghost" style="flex: 1; min-height: 44px; padding: 0 8px; background: transparent; border: 1px solid #716085; border-radius: 6px; color: #EDE9F2; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer;">Cancel</button>
+                    </div>
+                    <p aria-hidden="true" style="margin: 0; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; color: #938B9E;">Enter saves · Esc cancels</p>
+                  </form>
+                </sc-if>
+                <sc-if value="{{w8.showValue}}" hint-placeholder-val="{{true}}">
+                  <div style="display: flex; align-items: center; gap: 10px; min-height: 44px;">
+                    <span style="min-width: 3ch; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 16px; font-weight: 700; color: {{w8.color}};">{{w8.text}}</span>
+                    <sc-if value="{{w8.canEdit}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{w8.edit}}" aria-label="Edit weight for Dana" class="btn-ghost" style="min-height: 44px; padding: 0 12px; background: transparent; border: 1px solid #3A3046; border-radius: 6px; color: #B2AABE; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer;">Edit</button></sc-if>
+                    <sc-if value="{{w8.justSaved}}" hint-placeholder-val="{{false}}"><span class="rise" style="font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; color: #C9A3F5;">saved</span></sc-if>
+                  </div>
+                </sc-if>
+              </td>
+              <td style="padding: 12px; border-top: 1px solid #3A3046; vertical-align: top;"><span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; width: 20px; height: 20px; margin-right: 8px; vertical-align: 1px; place-items: center; border: 1px solid #6B5A86; border-radius: 4px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; color: #C9A3F5;">A</span>Elixir in Action, Third Edition by Saša Jurić</span></td>
+              <td style="padding: 12px; border-top: 1px solid #3A3046; vertical-align: top;"><span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; width: 20px; height: 20px; margin-right: 8px; vertical-align: 1px; place-items: center; border: 1px solid #6B5A86; border-radius: 4px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; color: #C9A3F5;">D</span>Designing Elixir Systems with OTP by James Edward Gray II and Bruce A. Tate</span></td>
+              <td style="padding: 12px; border-top: 1px solid #3A3046; vertical-align: top;"><span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; width: 20px; height: 20px; margin-right: 8px; vertical-align: 1px; place-items: center; border: 1px solid #6B5A86; border-radius: 4px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; color: #C9A3F5;">E</span>Elixir Patterns by Hugo Barauna and Alexander Koutmos</span></td>
+              <td style="padding: 12px; border-top: 1px solid #3A3046; vertical-align: top;"><span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; width: 20px; height: 20px; margin-right: 8px; vertical-align: 1px; place-items: center; border: 1px solid #6B5A86; border-radius: 4px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; color: #C9A3F5;">B</span>Engineering Elixir Applications by Ellie Fairholm and Josep Giralt D'Lacoste</span></td>
+              <td style="padding: 12px; border-top: 1px solid #3A3046; vertical-align: top;"><span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; width: 20px; height: 20px; margin-right: 8px; vertical-align: 1px; place-items: center; border: 1px solid #6B5A86; border-radius: 4px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; color: #C9A3F5;">C</span>Machine Learning in Elixir by Sean Moriarity</span></td>
+            </tr>
+
+            <tr class="vote-row">
+              <th scope="row" style="position: sticky; left: 0; z-index: 1; padding: 12px; background: #1B1323; border-top: 1px solid #3A3046; border-right: 1px solid #3A3046; text-align: left; vertical-align: top; font-size: 15px; font-weight: 600; color: #EDE9F2;"><span aria-hidden="true" style="display: block; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 400; color: #938B9E;">#09</span>Lars</th>
+              <td style="padding: 10px 12px; border-top: 1px solid #3A3046; vertical-align: top;">
+                <sc-if value="{{w9.showEditor}}" hint-placeholder-val="{{false}}">
+                  <form onSubmit="{{w9.save}}" style="display: flex; flex-direction: column; gap: 6px;">
+                    <label for="weight-v9" class="sr-only">Weight for Lars</label>
+                    <input id="weight-v9" type="text" inputmode="decimal" autocomplete="off" value="{{draft}}" onChange="{{onDraft}}" onKeyDown="{{onDraftKey}}" aria-describedby="weight-help" aria-invalid="{{draftInvalid}}" class="field" style="width: 100%; height: 44px; padding: 0 10px; background: #251C2F; border: 1.5px solid #C9A3F5; border-radius: 6px; color: #EDE9F2; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 16px; font-weight: 700;" />
+                    <sc-if value="{{hasDraftError}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin: 0; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; line-height: 1.45; color: #FEBD5C;">{{draftError}}</p></sc-if>
+                    <div style="display: flex; gap: 6px;">
+                      <button type="submit" class="btn-pri" style="flex: 1; min-height: 44px; padding: 0 8px; background: #C9A3F5; border: 0; border-radius: 6px; color: #110B18; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer;">Save</button>
+                      <button type="button" onClick="{{cancelEdit}}" class="btn-ghost" style="flex: 1; min-height: 44px; padding: 0 8px; background: transparent; border: 1px solid #716085; border-radius: 6px; color: #EDE9F2; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer;">Cancel</button>
+                    </div>
+                    <p aria-hidden="true" style="margin: 0; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; color: #938B9E;">Enter saves · Esc cancels</p>
+                  </form>
+                </sc-if>
+                <sc-if value="{{w9.showValue}}" hint-placeholder-val="{{true}}">
+                  <div style="display: flex; align-items: center; gap: 10px; min-height: 44px;">
+                    <span style="min-width: 3ch; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 16px; font-weight: 700; color: {{w9.color}};">{{w9.text}}</span>
+                    <sc-if value="{{w9.canEdit}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{w9.edit}}" aria-label="Edit weight for Lars" class="btn-ghost" style="min-height: 44px; padding: 0 12px; background: transparent; border: 1px solid #3A3046; border-radius: 6px; color: #B2AABE; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer;">Edit</button></sc-if>
+                    <sc-if value="{{w9.justSaved}}" hint-placeholder-val="{{false}}"><span class="rise" style="font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; color: #C9A3F5;">saved</span></sc-if>
+                  </div>
+                </sc-if>
+              </td>
+              <td style="padding: 12px; border-top: 1px solid #3A3046; vertical-align: top;"><span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; width: 20px; height: 20px; margin-right: 8px; vertical-align: 1px; place-items: center; border: 1px solid #6B5A86; border-radius: 4px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; color: #C9A3F5;">G</span>A Common-Sense Guide to Data Structures and Algorithms, Second Edition by Jay Wengrow</span></td>
+              <td style="padding: 12px; border-top: 1px solid #3A3046; vertical-align: top;"><span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; width: 20px; height: 20px; margin-right: 8px; vertical-align: 1px; place-items: center; border: 1px solid #6B5A86; border-radius: 4px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; color: #C9A3F5;">C</span>Machine Learning in Elixir by Sean Moriarity</span></td>
+              <td style="padding: 12px; border-top: 1px solid #3A3046; vertical-align: top;"><span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; width: 20px; height: 20px; margin-right: 8px; vertical-align: 1px; place-items: center; border: 1px solid #6B5A86; border-radius: 4px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; color: #C9A3F5;">F</span>Concurrent Data Processing in Elixir by Svilen Gospodinov</span></td>
+              <td style="padding: 12px; border-top: 1px solid #3A3046; vertical-align: top;"><span aria-hidden="true" style="font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; color: #938B9E;">–</span><span class="sr-only">No pick</span></td>
+              <td style="padding: 12px; border-top: 1px solid #3A3046; vertical-align: top;"><span aria-hidden="true" style="font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; color: #938B9E;">–</span><span class="sr-only">No pick</span></td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer style="margin-top: 72px; border-top: 1px solid #3A3046;">
+    <div style="max-width: 1120px; margin: 0 auto; padding: 20px clamp(16px, 4vw, 40px) 36px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px;">
+      <p style="margin: 0; color: #938B9E;">RankedVote.app runs Flick</p>
+      <nav aria-label="Site">
+        <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0 20px;">
+          <li><a href="https://github.com/zorn/flick" class="foot-link" style="display: inline-flex; align-items: center; min-height: 44px; color: #B2AABE; text-decoration: none;">GitHub project</a></li>
+          <li><a href="https://updown.io/wwis" class="foot-link" style="display: inline-flex; align-items: center; min-height: 44px; color: #B2AABE; text-decoration: none;">Uptime</a></li>
+          <li><a href="mailto:mike@mikezornek.com" class="foot-link" style="display: inline-flex; align-items: center; min-height: 44px; color: #B2AABE; text-decoration: none;">Contact site admin</a></li>
+        </ul>
+      </nav>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":3900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.answers = [
+      { id: 'A', text: 'Elixir in Action, Third Edition by Saša Jurić' },
+      { id: 'B', text: 'Engineering Elixir Applications by Ellie Fairholm and Josep Giralt D\'Lacoste' },
+      { id: 'C', text: 'Machine Learning in Elixir by Sean Moriarity' },
+      { id: 'D', text: 'Designing Elixir Systems with OTP by James Edward Gray II and Bruce A. Tate' },
+      { id: 'E', text: 'Elixir Patterns by Hugo Barauna and Alexander Koutmos' },
+      { id: 'F', text: 'Concurrent Data Processing in Elixir by Svilen Gospodinov' },
+      { id: 'G', text: 'A Common-Sense Guide to Data Structures and Algorithms, Second Edition by Jay Wengrow' }
+    ];
+    // Votes in the order received; picks are listed 1st to 5th.
+    this.votes = [
+      { id: 'v1', picks: ['B', 'A', 'E', 'D', 'F'] },
+      { id: 'v2', picks: ['C', 'B', 'A'] },
+      { id: 'v3', picks: ['A', 'B', 'D', 'E', 'C'] },
+      { id: 'v4', picks: ['B', 'E', 'A'] },
+      { id: 'v5', picks: ['D', 'A', 'B', 'F', 'E'] },
+      { id: 'v6', picks: ['C', 'F', 'B', 'A', 'G'] },
+      { id: 'v7', picks: ['E', 'B', 'D'] },
+      { id: 'v8', picks: ['A', 'D', 'E', 'B', 'C'] },
+      { id: 'v9', picks: ['G', 'C', 'F'] }
+    ];
+    this.timers = {};
+    // Seeded with Priya's weight editor open so the inline editor shows on the canvas.
+    this.state = {
+      weights: { v1: 1, v2: 2, v3: 1, v4: 1, v5: 1, v6: 1, v7: 1, v8: 1, v9: 1 },
+      editing: 'v2',
+      draft: '2',
+      draftError: '',
+      copied: '',
+      savedId: '',
+      closeStep: 'open'
+    };
+  }
+
+  componentWillUnmount() {
+    Object.keys(this.timers).forEach((k) => clearTimeout(this.timers[k]));
+  }
+
+  later(key, fn, ms) {
+    clearTimeout(this.timers[key]);
+    this.timers[key] = setTimeout(fn, ms);
+  }
+
+  fmt(x) {
+    const r = Math.round(x * 10) / 10;
+    return Number.isInteger(r) ? String(r) : r.toFixed(1);
+  }
+
+  copy(which) {
+    this.setState({ copied: which });
+    this.later('copy', () => this.setState({ copied: '' }), 2000);
+  }
+
+  edit(id) {
+    this.setState({ editing: id, draft: this.fmt(this.state.weights[id]), draftError: '' });
+  }
+
+  save(id, e) {
+    if (e && e.preventDefault) e.preventDefault();
+    const t = String(this.state.draft).trim();
+    if (!/^\d+(\.\d+)?$/.test(t)) {
+      this.setState({ draftError: 'Use a number of 0 or more, like 1 or 1.5.' });
+      return;
+    }
+    const weights = Object.assign({}, this.state.weights);
+    weights[id] = parseFloat(t);
+    this.setState({ weights: weights, editing: '', draftError: '', savedId: id });
+    this.later('saved', () => this.setState({ savedId: '' }), 2000);
+  }
+
+  cancelEdit() {
+    this.setState({ editing: '', draftError: '' });
+  }
+
+  tally() {
+    const w = this.state.weights;
+    const pts = {};
+    const br = {};
+    this.answers.forEach((a) => { pts[a.id] = 0; br[a.id] = [0, 0, 0, 0, 0]; });
+    this.votes.forEach((v) => {
+      const wt = w[v.id];
+      v.picks.forEach((id, i) => { pts[id] += wt * (5 - i); br[id][i] += wt; });
+    });
+    const order = this.answers.map((a, i) => ({ id: a.id, text: a.text, idx: i, pts: pts[a.id], br: br[a.id] }));
+    order.sort((x, y) => (y.pts - x.pts) || (x.idx - y.idx));
+    return order;
+  }
+
+  renderVals() {
+    const s = this.state;
+    const closed = s.closeStep === 'closed';
+    const order = this.tally();
+    const maxPts = order[0].pts || 1;
+    let maxCell = 0;
+    order.forEach((o) => o.br.forEach((c) => { if (c > maxCell) maxCell = c; }));
+    const firstMax = Math.max.apply(null, order.map((o) => o.br[0]));
+    const firstMaxCount = order.filter((o) => o.br[0] === firstMax).length;
+    const heat = ['transparent', '#271B35', '#39254E', '#4C2F69', '#5F3B84'];
+
+    const vals = {};
+    order.forEach((o, i) => {
+      const place = 1 + order.filter((x) => x.pts > o.pts).length;
+      const top = place === 1;
+      const slot = {
+        text: o.text,
+        place: String(place),
+        sr: 'Place ' + place + (top ? ', leading' : '') + ': ',
+        pts: this.fmt(o.pts),
+        ptsColor: top ? '#C9A3F5' : '#EDE9F2',
+        chipBg: top ? '#C9A3F5' : 'transparent',
+        chipFg: top ? '#110B18' : '#B2AABE',
+        chipBorder: top ? '#C9A3F5' : '#3A3046',
+        rowBg: top ? '#1B1323' : 'transparent',
+        barPct: ((o.pts / maxPts) * 100).toFixed(3),
+        barSeg: o.pts > 0 ? (100 / o.pts).toFixed(4) : '100',
+        mostFirst: firstMax > 0 && firstMaxCount === 1 && o.br[0] === firstMax
+      };
+      o.br.forEach((c, k) => {
+        const lvl = c === 0 ? 0 : Math.min(4, Math.ceil((c / (maxCell || 1)) * 4));
+        slot['v' + (k + 1)] = this.fmt(c);
+        slot['b' + (k + 1)] = heat[lvl];
+        slot['f' + (k + 1)] = c === 0 ? '#938B9E' : '#EDE9F2';
+      });
+      vals['p' + i] = slot;
+    });
+
+    this.votes.forEach((v, i) => {
+      const id = v.id;
+      const wt = s.weights[id];
+      vals['w' + (i + 1)] = {
+        text: this.fmt(wt),
+        color: wt === 1 ? '#EDE9F2' : '#C9A3F5',
+        showEditor: !closed && s.editing === id,
+        showValue: closed || s.editing !== id,
+        canEdit: !closed,
+        justSaved: s.savedId === id,
+        edit: () => this.edit(id),
+        save: (e) => this.save(id, e)
+      };
+    });
+
+    let total = 0;
+    this.votes.forEach((v) => { total += s.weights[v.id]; });
+    const totalText = this.fmt(total);
+    const n = this.votes.length;
+
+    return Object.assign(vals, {
+      statusShort: closed ? 'closed' : 'live',
+      statusColor: closed ? '#B2AABE' : '#C9A3F5',
+      dotClass: closed ? '' : 'pulse',
+      dotColor: closed ? '#716085' : '#C9A3F5',
+      statusText: closed ? 'Closed. Voting has stopped, and the results are public.' : 'Published and accepting votes',
+      votesText: n + ' votes, total weight ' + totalText,
+      copyAdmin: () => this.copy('admin'),
+      copyVoter: () => this.copy('voter'),
+      adminCopied: s.copied === 'admin',
+      adminNotCopied: s.copied !== 'admin',
+      voterCopied: s.copied === 'voter',
+      voterNotCopied: s.copied !== 'voter',
+      adminCopyLabel: s.copied === 'admin' ? 'Copied' : 'Copy admin link',
+      voterCopyLabel: s.copied === 'voter' ? 'Copied' : 'Copy',
+      copyAnnounce: s.copied === 'voter' ? 'Voter link copied.' : (s.copied === 'admin' ? 'Admin link copied.' : ''),
+      isOpen: s.closeStep === 'open',
+      isConfirm: s.closeStep === 'confirm',
+      isClosed: closed,
+      askClose: () => this.setState({ closeStep: 'confirm' }),
+      keepOpen: () => this.setState({ closeStep: 'open' }),
+      confirmClose: () => this.setState({ closeStep: 'closed', editing: '', draftError: '' }),
+      confirmText: n + ' votes are in.',
+      resultsHeading: closed ? 'Final results' : 'Early results',
+      tagText: closed ? 'final' : 'provisional',
+      tagColor: closed ? '#C9A3F5' : '#FEBD5C',
+      earlyNote: closed
+        ? 'Based on all ' + n + ' votes, total weight ' + totalText + '. Anyone with the results link can see these now.'
+        : 'Based on ' + n + ' votes so far, total weight ' + totalText + '. Only you can see these until the ballot closes.',
+      draft: s.draft,
+      onDraft: (e) => this.setState({ draft: e.target.value, draftError: '' }),
+      onDraftKey: (e) => { if (e.key === 'Escape') { e.preventDefault(); this.cancelEdit(); } },
+      cancelEdit: () => this.cancelEdit(),
+      hasDraftError: s.draftError !== '',
+      draftInvalid: s.draftError !== '',
+      draftError: s.draftError
+    });
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,596 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Official ballot · Ballot admin</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=Public+Sans:ital,wght@0,400;0,600;0,700;0,800;1,400&amp;family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&amp;display=swap">
+<style>
+body{margin:0;background:#eff0ed}
+*,*::before,*::after{box-sizing:border-box}
+a{color:#1b3d8f;text-decoration-thickness:1px;text-underline-offset:3px}
+a:hover{text-decoration-thickness:2px}
+button{font:inherit}
+:focus-visible{outline:3px solid #1b3d8f;outline-offset:3px}
+.sr{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.btn-line{transition:background-color .15s ease,transform .08s ease}
+.btn-line:hover{background:#e8eef6!important}
+.btn-line:active{transform:translateY(1px)}
+.btn-ink{transition:background-color .15s ease,transform .08s ease}
+.btn-ink:hover{background:#2e3440!important}
+.btn-ink:active{transform:translateY(1px)}
+.btn-copy{transition:background-color .2s ease,transform .08s ease}
+.btn-copy:active{transform:translateY(1px)}
+.field-link{transition:background-color .15s ease}
+.field-link:hover{background:#e8eef6!important}
+.wordmark:hover .wm-name{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px}
+.foot-link:hover{background:#e8eef6}
+.reg-row{transition:background-color .15s ease}
+.pop-in{animation:pop-in .22s ease-out}
+@keyframes pop-in{0%{opacity:0;transform:translateY(-4px)}100%{opacity:1;transform:translateY(0)}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+@media (min-width:720px){
+  .q-title{font-size:40px!important}
+  .sheet-pad{padding-left:28px!important;padding-right:28px!important}
+  .part{margin-left:28px!important;margin-right:28px!important}
+}
+</style>
+</helmet>
+<div style="background:#eff0ed; color:#15181d; font-family:'Public Sans', 'Segoe UI', system-ui, sans-serif; font-size:16px; line-height:1.5; min-height:640px">
+
+  <header style="background:#fdfdfb; border-top:6px solid #15181d; border-bottom:2px solid #15181d">
+    <div style="max-width:860px; margin:0 auto; padding:10px 16px; display:flex; align-items:center; justify-content:space-between; gap:12px">
+      <a href="c-home.dc.html" class="wordmark" style="display:flex; align-items:center; gap:10px; min-height:44px; color:#15181d; text-decoration:none">
+        <svg aria-hidden="true" width="24" height="30" viewBox="0 0 24 30" fill="none" stroke="#15181d" stroke-width="2"><rect x="1" y="1" width="22" height="28"></rect><ellipse cx="7.5" cy="9" rx="3.2" ry="2.3" fill="#15181d"></ellipse><line x1="13" y1="9" x2="19" y2="9"></line><ellipse cx="7.5" cy="15" rx="3.2" ry="2.3"></ellipse><line x1="13" y1="15" x2="19" y2="15"></line><ellipse cx="7.5" cy="21" rx="3.2" ry="2.3"></ellipse><line x1="13" y1="21" x2="19" y2="21"></line></svg>
+        <span style="display:flex; flex-direction:column; line-height:1">
+          <span class="wm-name" style="font-family:'Source Serif 4', Georgia, serif; font-weight:700; font-size:20px; letter-spacing:-.01em">RankedVote<span style="color:#1b3d8f">.app</span></span>
+          <span style="margin-top:4px; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:#4a5160">Ranked-vote ballots</span>
+        </span>
+      </a>
+      <a href="https://rankedvote.app/ballot/new" class="btn-line" style="display:inline-flex; align-items:center; min-height:44px; padding:0 12px; border:2px solid #15181d; background:#fdfdfb; color:#15181d; font-size:15px; font-weight:700; text-decoration:none; white-space:nowrap">Create a ballot</a>
+    </div>
+  </header>
+
+  <main style="max-width:860px; margin:0 auto; padding:20px 16px 0">
+    <article aria-labelledby="admin-q" style="background:#fdfdfb; border:2px solid #15181d; padding-bottom:26px">
+
+      <div class="sheet-pad" style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:2px 12px; padding:10px 14px; border-bottom:4px double #15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:12px; letter-spacing:.1em; text-transform:uppercase">
+        <span>Ballot administration</span>
+        <span>No. <strong style="font-weight:600">EBC-NEXT-READ</strong></span>
+      </div>
+
+      <div class="sheet-pad" style="padding:22px 16px 0">
+        <p style="margin:0 0 10px; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:#4a5160">Admin page for the ballot</p>
+        <h1 id="admin-q" class="q-title" style="margin:0; font-family:'Source Serif 4', Georgia, 'Times New Roman', serif; font-weight:700; font-size:30px; line-height:1.12; letter-spacing:-.01em; text-wrap:balance">What should the Elixir Book Club read next?</h1>
+      </div>
+
+      <section aria-labelledby="bm-h" class="part" style="margin:22px 12px 0; border:2px solid #d9690f; background:#fcefe3">
+        <h2 id="bm-h" style="margin:0; display:flex; align-items:center; gap:8px; padding:8px 14px; background:#d9690f; color:#15181d; font-size:14px; font-weight:800; letter-spacing:.1em; text-transform:uppercase"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#15181d" stroke-width="2.4" stroke-linejoin="round"><path d="M6 3h12v18l-6-4-6 4z"></path></svg>Bookmark this page</h2>
+        <div style="padding:14px">
+          <p style="margin:0; font-size:16px; line-height:1.5">RankedVote.app has no accounts. This page's address is the only way back to manage this ballot. Bookmark it now, and keep it private: anyone with it can manage the ballot.</p>
+          <p style="margin:14px 0 6px; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase">Admin address</p>
+          <div style="display:flex; gap:8px; align-items:stretch">
+            <code style="flex:1; min-width:0; padding:10px 12px; border:2px solid #15181d; background:#fdfdfb; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:14px; line-height:1.45; word-break:break-all">https://rankedvote.app/ballot/ebc-next-read/9c1f4e2a-6b7d-4f3e-a8c2-5d0b1e7f3a64</code>
+            <button type="button" class="btn-copy" onClick="{{copyAdmin}}" aria-label="{{adminCopyAria}}" style="flex:none; min-width:84px; min-height:48px; padding:0 12px; border:2px solid #15181d; background:{{adminCopyBg}}; color:#fdfdfb; font-size:15px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px">
+              <sc-if value="{{adminCopied}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" class="pop-in" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fdfdfb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></sc-if>
+              {{adminCopyLabel}}
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="p1-h" class="part" style="margin:22px 12px 0; border:2px solid #15181d">
+        <div style="display:flex; align-items:baseline; gap:12px; padding:8px 14px; background:#15181d; color:#fdfdfb">
+          <span style="font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:12px; font-weight:600; letter-spacing:.14em">PART 1</span>
+          <h2 id="p1-h" style="margin:0; font-size:16px; font-weight:700">Status</h2>
+        </div>
+        <dl style="margin:0; display:grid; grid-template-columns:repeat(auto-fit, minmax(min(220px, 100%), 1fr))">
+          <div style="padding:10px 14px 12px; border-bottom:1px solid #b9c0ca; background:#e8eef6">
+            <dt style="font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:#4a5160">Status</dt>
+            <dd style="margin:4px 0 0; display:flex; flex-wrap:wrap; align-items:center; gap:4px 8px; font-size:16px; font-weight:700"><span style="display:inline-block; padding:1px 8px; background:{{statusBg}}; color:#fdfdfb; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:12px; font-weight:600; letter-spacing:.1em">{{statusChip}}</span>{{statusLine}}</dd>
+          </div>
+          <div style="padding:10px 14px 12px; border-bottom:1px solid #b9c0ca">
+            <dt style="font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:#4a5160">Published</dt>
+            <dd style="margin:4px 0 0; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:15px; font-weight:500">Sep 28, 2026, 7:30 PM EDT</dd>
+          </div>
+          <div style="padding:10px 14px 12px; border-bottom:1px solid #b9c0ca">
+            <dt style="font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:#4a5160">Votes received</dt>
+            <dd style="margin:4px 0 0; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:15px; font-weight:500">9 <span style="color:#4a5160">(total weight 10)</span></dd>
+          </div>
+        </dl>
+      </section>
+
+      <section aria-labelledby="p2-h" class="part" style="margin:22px 12px 0; border:2px solid #15181d">
+        <div style="display:flex; align-items:baseline; gap:12px; padding:8px 14px; background:#15181d; color:#fdfdfb">
+          <span style="font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:12px; font-weight:600; letter-spacing:.14em">PART 2</span>
+          <h2 id="p2-h" style="margin:0; font-size:16px; font-weight:700">Distribution</h2>
+        </div>
+        <div style="padding:14px">
+          <p style="margin:0 0 8px; font-size:16px">Send this link to your voters.</p>
+          <div style="display:flex; gap:8px; align-items:stretch">
+            <a href="c-vote.dc.html" class="field-link" style="flex:1; min-width:0; display:flex; align-items:center; gap:8px; min-height:48px; padding:8px 12px; border:2px solid #15181d; background:#fdfdfb; color:#1b3d8f; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:14px; line-height:1.4; word-break:break-all">https://rankedvote.app/ballot/ebc-next-read</a>
+            <button type="button" class="btn-copy" onClick="{{copyVoter}}" aria-label="{{voterCopyAria}}" style="flex:none; min-width:84px; min-height:48px; padding:0 12px; border:2px solid #15181d; background:{{voterCopyBg}}; color:#fdfdfb; font-size:15px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px">
+              <sc-if value="{{voterCopied}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" class="pop-in" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fdfdfb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></sc-if>
+              {{voterCopyLabel}}
+            </button>
+          </div>
+          <p style="margin:8px 0 0; font-size:14px; color:#4a5160">The link opens the vote page. Voters need no account.</p>
+          <p class="sr" aria-live="polite">{{copyStatus}}</p>
+        </div>
+      </section>
+
+      <section aria-labelledby="p3-h" class="part" style="margin:22px 12px 0; border:2px solid #15181d">
+        <div style="display:flex; align-items:baseline; gap:12px; padding:8px 14px; background:#15181d; color:#fdfdfb">
+          <span style="font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:12px; font-weight:600; letter-spacing:.14em">PART 3</span>
+          <h2 id="p3-h" style="margin:0; font-size:16px; font-weight:700">Close the ballot</h2>
+        </div>
+        <div style="padding:14px">
+          <p style="margin:0; font-size:17px; font-weight:700; line-height:1.4">Close the ballot when you no longer want to accept votes.</p>
+          <ol style="margin:10px 0 0; padding-left:22px; display:grid; gap:4px; font-size:15px; line-height:1.5">
+            <li>Voting stops at once.</li>
+            <li>The results become public at <span style="font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; word-break:break-all">https://rankedvote.app/ballot/ebc-next-read/results</span>.</li>
+            <li><strong>Closing is final.</strong> A closed ballot cannot be opened again.</li>
+          </ol>
+
+          <sc-if value="{{isOpen}}" hint-placeholder-val="{{true}}">
+            <button type="button" class="btn-line" onClick="{{askClose}}" style="margin-top:16px; min-height:48px; padding:0 18px; border:2px solid #15181d; background:#fdfdfb; color:#15181d; font-size:16px; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:8px"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#15181d" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>Close the ballot…</button>
+          </sc-if>
+
+          <sc-if value="{{isConfirming}}" hint-placeholder-val="{{false}}">
+            <div role="alertdialog" aria-labelledby="confirm-h" aria-describedby="confirm-d" class="pop-in" style="margin-top:16px; border:2px solid #d9690f; background:#fcefe3">
+              <p id="confirm-h" style="margin:0; padding:6px 12px; background:#d9690f; color:#15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:12px; font-weight:600; letter-spacing:.12em; text-transform:uppercase">Confirm: close the ballot</p>
+              <div style="padding:12px">
+                <p id="confirm-d" style="margin:0 0 12px; font-size:16px; line-height:1.45">Close the ballot now? Voting stops and the results become public. You cannot undo this.</p>
+                <div style="display:flex; flex-wrap:wrap; gap:8px">
+                  <button type="button" class="btn-ink" onClick="{{confirmClose}}" style="min-height:48px; padding:0 16px; border:2px solid #15181d; background:#15181d; color:#fdfdfb; font-size:16px; font-weight:700; cursor:pointer">Yes, close the ballot</button>
+                  <button type="button" class="btn-line" onClick="{{keepOpen}}" style="min-height:48px; padding:0 16px; border:2px solid #15181d; background:#fdfdfb; color:#15181d; font-size:16px; font-weight:700; cursor:pointer">Keep it open</button>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{isClosed}}" hint-placeholder-val="{{false}}">
+            <div role="status" class="pop-in" style="margin-top:16px; border:2px solid #15181d; background:#e8eef6; padding:12px 14px">
+              <p style="margin:0; font-size:16px; font-weight:700">Ballot closed. Voting has stopped.</p>
+              <p style="margin:4px 0 0; font-size:15px">The results are now public. <a href="c-results.dc.html">View the results page</a></p>
+            </div>
+          </sc-if>
+        </div>
+      </section>
+
+      <section aria-labelledby="key-h" class="part" style="margin:22px 12px 0; border:2px solid #15181d; background:#e8eef6">
+        <div style="padding:9px 14px; background:#fdfdfb; border-bottom:2px solid #15181d">
+          <h2 id="key-h" style="margin:0; font-size:14px; font-weight:800; letter-spacing:.1em; text-transform:uppercase">Key to answers</h2>
+        </div>
+        <p style="margin:0; padding:10px 14px 0; font-size:14px; color:#2b313b">Parts 4 and 5 use these letters. They match the order on the ballot.</p>
+        <dl style="margin:0; padding:8px 14px 14px; display:grid; grid-template-columns:repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap:0 20px">
+          <div style="display:flex; gap:10px; align-items:flex-start; padding:7px 0; border-bottom:1px solid #b9c0ca"><dt style="flex:none; width:26px; height:26px; display:flex; align-items:center; justify-content:center; border:2px solid #15181d; background:#fdfdfb; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">A</dt><dd style="margin:0; font-size:15px; line-height:1.4; padding-top:2px">Elixir in Action, Third Edition by Saša Jurić</dd></div>
+          <div style="display:flex; gap:10px; align-items:flex-start; padding:7px 0; border-bottom:1px solid #b9c0ca"><dt style="flex:none; width:26px; height:26px; display:flex; align-items:center; justify-content:center; border:2px solid #15181d; background:#fdfdfb; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">B</dt><dd style="margin:0; font-size:15px; line-height:1.4; padding-top:2px">Engineering Elixir Applications by Ellie Fairholm and Josep Giralt D'Lacoste</dd></div>
+          <div style="display:flex; gap:10px; align-items:flex-start; padding:7px 0; border-bottom:1px solid #b9c0ca"><dt style="flex:none; width:26px; height:26px; display:flex; align-items:center; justify-content:center; border:2px solid #15181d; background:#fdfdfb; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">C</dt><dd style="margin:0; font-size:15px; line-height:1.4; padding-top:2px">Machine Learning in Elixir by Sean Moriarity</dd></div>
+          <div style="display:flex; gap:10px; align-items:flex-start; padding:7px 0; border-bottom:1px solid #b9c0ca"><dt style="flex:none; width:26px; height:26px; display:flex; align-items:center; justify-content:center; border:2px solid #15181d; background:#fdfdfb; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">D</dt><dd style="margin:0; font-size:15px; line-height:1.4; padding-top:2px">Designing Elixir Systems with OTP by James Edward Gray II and Bruce A. Tate</dd></div>
+          <div style="display:flex; gap:10px; align-items:flex-start; padding:7px 0; border-bottom:1px solid #b9c0ca"><dt style="flex:none; width:26px; height:26px; display:flex; align-items:center; justify-content:center; border:2px solid #15181d; background:#fdfdfb; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">E</dt><dd style="margin:0; font-size:15px; line-height:1.4; padding-top:2px">Elixir Patterns by Hugo Barauna and Alexander Koutmos</dd></div>
+          <div style="display:flex; gap:10px; align-items:flex-start; padding:7px 0; border-bottom:1px solid #b9c0ca"><dt style="flex:none; width:26px; height:26px; display:flex; align-items:center; justify-content:center; border:2px solid #15181d; background:#fdfdfb; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">F</dt><dd style="margin:0; font-size:15px; line-height:1.4; padding-top:2px">Concurrent Data Processing in Elixir by Svilen Gospodinov</dd></div>
+          <div style="display:flex; gap:10px; align-items:flex-start; padding:7px 0; border-bottom:1px solid #b9c0ca"><dt style="flex:none; width:26px; height:26px; display:flex; align-items:center; justify-content:center; border:2px solid #15181d; background:#fdfdfb; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">G</dt><dd style="margin:0; font-size:15px; line-height:1.4; padding-top:2px">A Common-Sense Guide to Data Structures and Algorithms, Second Edition by Jay Wengrow</dd></div>
+        </dl>
+      </section>
+
+      <section aria-labelledby="p4-h" class="part" style="margin:22px 12px 0; border:2px solid #15181d">
+        <div style="display:flex; align-items:baseline; gap:12px; padding:8px 14px; background:#15181d; color:#fdfdfb">
+          <span style="font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:12px; font-weight:600; letter-spacing:.14em">PART 4</span>
+          <h2 id="p4-h" style="margin:0; font-size:16px; font-weight:700">Provisional tally</h2>
+        </div>
+        <div style="padding:14px 14px 12px; display:flex; flex-wrap:wrap; gap:10px 14px; align-items:flex-start; border-bottom:2px solid #15181d">
+          <p aria-hidden="true" style="flex:none; margin:2px 0 0; padding:3px 10px; border:2px dashed #15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600; letter-spacing:.18em; transform:rotate(-3deg)">PROVISIONAL</p>
+          <p style="flex:1; min-width:220px; margin:0; font-size:15px; line-height:1.5"><strong>Provisional: 9 votes counted</strong> (total weight 10). These results can change until you close the ballot. While voting is open, only this page shows them.</p>
+        </div>
+        <table style="width:100%; border-collapse:collapse; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-variant-numeric:tabular-nums">
+          <caption class="sr">Provisional tally by points, with the weighted number of 1st to 5th choices for each answer</caption>
+          <thead>
+            <tr style="border-bottom:2px solid #15181d; background:#e8eef6">
+              <th scope="col" style="width:30px; padding:7px 2px 7px 10px; text-align:left; font-size:11px; font-weight:600">#</th>
+              <th scope="col" style="width:40px; padding:7px 2px; text-align:left; font-size:11px; font-weight:600; letter-spacing:.06em; text-transform:uppercase">Ans.</th>
+              <th scope="col" style="padding:7px 2px; text-align:center; font-size:12px; font-weight:600">1st</th>
+              <th scope="col" style="padding:7px 2px; text-align:center; font-size:12px; font-weight:600">2nd</th>
+              <th scope="col" style="padding:7px 2px; text-align:center; font-size:12px; font-weight:600">3rd</th>
+              <th scope="col" style="padding:7px 2px; text-align:center; font-size:12px; font-weight:600">4th</th>
+              <th scope="col" style="padding:7px 2px; text-align:center; font-size:12px; font-weight:600">5th</th>
+              <th scope="col" style="width:58px; padding:7px 10px 7px 4px; text-align:right; font-size:11px; font-weight:600; letter-spacing:.06em; text-transform:uppercase">Pts</th>
+            </tr>
+          </thead>
+          <tbody style="font-size:15px">
+            <tr><td style="padding:8px 2px 8px 10px; color:#4a5160">1</td><th scope="row" style="padding:8px 2px; text-align:left"><span style="display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; border:2px solid #15181d; font-size:13px; font-weight:600">B</span></th><td style="text-align:center">2</td><td style="text-align:center; font-weight:600">4</td><td style="text-align:center">2</td><td style="text-align:center">1</td><td style="text-align:center; color:#5b6472">0</td><td style="padding:8px 10px 8px 4px; text-align:right; font-weight:600">34<span aria-hidden="true" style="display:block; margin:3px 0 0 auto; width:40px; height:4px; background:#15181d"></span></td></tr>
+            <tr style="border-top:1px solid #b9c0ca"><td style="padding:8px 2px 8px 10px; color:#4a5160">2</td><th scope="row" style="padding:8px 2px; text-align:left"><span style="display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; border:2px solid #15181d; font-size:13px; font-weight:600">A</span></th><td style="text-align:center">2</td><td style="text-align:center">2</td><td style="text-align:center; font-weight:600">3</td><td style="text-align:center">1</td><td style="text-align:center; color:#5b6472">0</td><td style="padding:8px 10px 8px 4px; text-align:right; font-weight:600">29<span aria-hidden="true" style="display:block; margin:3px 0 0 auto; width:34px; height:4px; background:#15181d"></span></td></tr>
+            <tr style="border-top:1px solid #b9c0ca"><td style="padding:8px 2px 8px 10px; color:#4a5160">3</td><th scope="row" style="padding:8px 2px; text-align:left"><span style="display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; border:2px solid #15181d; font-size:13px; font-weight:600">C</span></th><td style="text-align:center; font-weight:600">3</td><td style="text-align:center">1</td><td style="text-align:center; color:#5b6472">0</td><td style="text-align:center; color:#5b6472">0</td><td style="text-align:center; font-weight:600">2</td><td style="padding:8px 10px 8px 4px; text-align:right; font-weight:600">21<span aria-hidden="true" style="display:block; margin:3px 0 0 auto; width:25px; height:4px; background:#15181d"></span></td></tr>
+            <tr style="border-top:1px solid #b9c0ca"><td style="padding:8px 2px 8px 10px; color:#4a5160">4</td><th scope="row" style="padding:8px 2px; text-align:left"><span style="display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; border:2px solid #15181d; font-size:13px; font-weight:600">E</span></th><td style="text-align:center">1</td><td style="text-align:center">1</td><td style="text-align:center">2</td><td style="text-align:center">1</td><td style="text-align:center">1</td><td style="padding:8px 10px 8px 4px; text-align:right; font-weight:600">18<span aria-hidden="true" style="display:block; margin:3px 0 0 auto; width:21px; height:4px; background:#15181d"></span></td></tr>
+            <tr style="border-top:1px solid #b9c0ca"><td style="padding:8px 2px 8px 10px; color:#4a5160">5</td><th scope="row" style="padding:8px 2px; text-align:left"><span style="display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; border:2px solid #15181d; font-size:13px; font-weight:600">D</span></th><td style="text-align:center">1</td><td style="text-align:center">1</td><td style="text-align:center">2</td><td style="text-align:center">1</td><td style="text-align:center; color:#5b6472">0</td><td style="padding:8px 10px 8px 4px; text-align:right; font-weight:600">17<span aria-hidden="true" style="display:block; margin:3px 0 0 auto; width:20px; height:4px; background:#15181d"></span></td></tr>
+            <tr style="border-top:1px solid #b9c0ca"><td style="padding:8px 2px 8px 10px; color:#4a5160">6</td><th scope="row" style="padding:8px 2px; text-align:left"><span style="display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; border:2px solid #15181d; font-size:13px; font-weight:600">F</span></th><td style="text-align:center; color:#5b6472">0</td><td style="text-align:center">1</td><td style="text-align:center">1</td><td style="text-align:center">1</td><td style="text-align:center">1</td><td style="padding:8px 10px 8px 4px; text-align:right; font-weight:600">10<span aria-hidden="true" style="display:block; margin:3px 0 0 auto; width:12px; height:4px; background:#15181d"></span></td></tr>
+            <tr style="border-top:1px solid #b9c0ca"><td style="padding:8px 2px 8px 10px; color:#4a5160">7</td><th scope="row" style="padding:8px 2px; text-align:left"><span style="display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; border:2px solid #15181d; font-size:13px; font-weight:600">G</span></th><td style="text-align:center">1</td><td style="text-align:center; color:#5b6472">0</td><td style="text-align:center; color:#5b6472">0</td><td style="text-align:center; color:#5b6472">0</td><td style="text-align:center">1</td><td style="padding:8px 10px 8px 4px; text-align:right; font-weight:600">6<span aria-hidden="true" style="display:block; margin:3px 0 0 auto; width:7px; height:4px; background:#15181d"></span></td></tr>
+          </tbody>
+        </table>
+        <p style="margin:0; padding:10px 14px 12px; border-top:2px solid #15181d; font-family:'Public Sans', 'Segoe UI', system-ui, sans-serif; font-size:14px; line-height:1.5; color:#2b313b">Counts are weighted. Points: 5 for a 1st choice down to 1 for a 5th, times the vote's weight. Bold marks the most in each column.</p>
+      </section>
+
+      <section aria-labelledby="p5-h" class="part" style="margin:22px 12px 0; border:2px solid #15181d">
+        <div style="display:flex; align-items:baseline; gap:12px; padding:8px 14px; background:#15181d; color:#fdfdfb">
+          <span style="font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:12px; font-weight:600; letter-spacing:.14em">PART 5</span>
+          <h2 id="p5-h" style="margin:0; font-size:16px; font-weight:700">Ballot register</h2>
+        </div>
+        <div style="padding:12px 14px">
+          <p style="margin:0; font-size:15px; line-height:1.5">Every vote, in the order received. Picks use the letters in the Key. <strong>A vote with weight 2 counts twice.</strong> Use Edit to change a vote's weight.</p>
+          <p aria-live="polite" style="margin:6px 0 0; min-height:22px; font-size:14px; font-weight:600; color:#1b3d8f">{{savedText}}</p>
+        </div>
+        <div style="overflow-x:auto; border-top:2px solid #15181d">
+          <table style="width:100%; min-width:300px; border-collapse:collapse; font-variant-numeric:tabular-nums">
+            <caption class="sr">Ballot register: each vote's name, weight, and 1st to 5th picks by answer letter</caption>
+            <thead>
+              <tr style="background:#e8eef6; border-bottom:2px solid #15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace">
+                <th scope="col" style="position:sticky; left:0; z-index:1; background:#e8eef6; padding:7px 4px 7px 10px; text-align:left; font-size:11px; font-weight:600; letter-spacing:.06em; text-transform:uppercase">Voter</th>
+                <th scope="col" style="padding:7px 2px; text-align:center; font-size:11px; font-weight:600; letter-spacing:.06em; text-transform:uppercase">Wt</th>
+                <th scope="col" style="padding:7px 2px; text-align:center; font-size:12px; font-weight:600">1st</th>
+                <th scope="col" style="padding:7px 2px; text-align:center; font-size:12px; font-weight:600">2nd</th>
+                <th scope="col" style="padding:7px 2px; text-align:center; font-size:12px; font-weight:600">3rd</th>
+                <th scope="col" style="padding:7px 2px; text-align:center; font-size:12px; font-weight:600">4th</th>
+                <th scope="col" style="padding:7px 2px; text-align:center; font-size:12px; font-weight:600">5th</th>
+                <th scope="col" style="padding:7px 10px 7px 2px"><span class="sr">Edit weight</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="reg-row" style="border-top:1px solid #b9c0ca; background:{{v1.rowBg}}">
+                <th scope="row" style="position:sticky; left:0; z-index:1; background:{{v1.rowBg}}; padding:6px 4px 6px 10px; text-align:left; vertical-align:middle"><span style="display:block; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:10px; font-weight:500; letter-spacing:.08em; color:#4a5160">NO. 1</span><span style="display:block; font-size:14px; font-weight:700; line-height:1.25">Mike</span></th>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; min-width:28px; height:28px; padding:0 4px; align-items:center; justify-content:center; border:2px solid {{v1.wtBorder}}; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:15px; font-weight:600">{{v1.weight}}</span></td>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; border:1.5px solid #15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">B</span></td>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; border:1.5px solid #15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">A</span></td>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; border:1.5px solid #15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">E</span></td>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; border:1.5px solid #15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">D</span></td>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; border:1.5px solid #15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">F</span></td>
+                <td style="padding:4px 8px 4px 2px; text-align:right"><button type="button" class="btn-line" aria-label="Edit weight of vote 1, Mike" aria-expanded="{{v1.expanded}}" onClick="{{v1.edit}}" style="min-height:44px; min-width:46px; padding:0 8px; border:2px solid #15181d; background:#fdfdfb; color:#15181d; font-size:14px; font-weight:700; cursor:pointer">Edit</button></td>
+              </tr>
+              <tr style="display:{{v1.editorDisplay}}; background:#e8eef6">
+                <td colspan="8" style="padding:12px 12px 14px 10px; border-top:1px dashed #15181d">
+                  <div class="pop-in" style="display:flex; flex-wrap:wrap; align-items:flex-end; gap:10px">
+                    <div style="display:flex; flex-direction:column; gap:4px">
+                      <label for="wt-1" style="font-size:14px; font-weight:700">Weight for vote 1 (Mike)</label>
+                      <input id="wt-1" type="number" inputmode="decimal" min="0" step="0.5" value="{{draft}}" onChange="{{onDraft}}" aria-describedby="wt-help-1" style="width:110px; min-height:44px; padding:8px 10px; border:2px solid #15181d; border-radius:0; background:#fdfdfb; color:#15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:16px">
+                    </div>
+                    <button type="button" class="btn-ink" onClick="{{save}}" style="min-height:44px; padding:0 16px; border:2px solid #15181d; background:#15181d; color:#fdfdfb; font-size:15px; font-weight:700; cursor:pointer">Save</button>
+                    <button type="button" class="btn-line" onClick="{{cancel}}" style="min-height:44px; padding:0 16px; border:2px solid #15181d; background:#fdfdfb; color:#15181d; font-size:15px; font-weight:700; cursor:pointer">Cancel</button>
+                  </div>
+                  <p id="wt-help-1" style="margin:8px 0 0; font-size:13px; color:#2b313b">A vote with weight 2 counts twice.</p>
+                  <sc-if value="{{hasDraftError}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin:8px 0 0; padding:4px 8px; display:inline-block; background:#d9690f; color:#15181d; font-size:14px; font-weight:600">{{draftError}}</p></sc-if>
+                </td>
+              </tr>
+
+              <tr class="reg-row" style="border-top:1px solid #b9c0ca; background:{{v2.rowBg}}">
+                <th scope="row" style="position:sticky; left:0; z-index:1; background:{{v2.rowBg}}; padding:6px 4px 6px 10px; text-align:left; vertical-align:middle"><span style="display:block; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:10px; font-weight:500; letter-spacing:.08em; color:#4a5160">NO. 2</span><span style="display:block; font-size:14px; font-weight:700; line-height:1.25">Priya</span></th>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; min-width:28px; height:28px; padding:0 4px; align-items:center; justify-content:center; border:2px solid {{v2.wtBorder}}; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:15px; font-weight:600">{{v2.weight}}</span></td>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; border:1.5px solid #15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">C</span></td>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; border:1.5px solid #15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">B</span></td>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; border:1.5px solid #15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">A</span></td>
+                <td style="padding:6px 2px; text-align:center; color:#5b6472"><span aria-hidden="true">–</span><span class="sr">none</span></td>
+                <td style="padding:6px 2px; text-align:center; color:#5b6472"><span aria-hidden="true">–</span><span class="sr">none</span></td>
+                <td style="padding:4px 8px 4px 2px; text-align:right"><button type="button" class="btn-line" aria-label="Edit weight of vote 2, Priya" aria-expanded="{{v2.expanded}}" onClick="{{v2.edit}}" style="min-height:44px; min-width:46px; padding:0 8px; border:2px solid #15181d; background:#fdfdfb; color:#15181d; font-size:14px; font-weight:700; cursor:pointer">Edit</button></td>
+              </tr>
+              <tr style="display:{{v2.editorDisplay}}; background:#e8eef6">
+                <td colspan="8" style="padding:12px 12px 14px 10px; border-top:1px dashed #15181d">
+                  <div class="pop-in" style="display:flex; flex-wrap:wrap; align-items:flex-end; gap:10px">
+                    <div style="display:flex; flex-direction:column; gap:4px">
+                      <label for="wt-2" style="font-size:14px; font-weight:700">Weight for vote 2 (Priya)</label>
+                      <input id="wt-2" type="number" inputmode="decimal" min="0" step="0.5" value="{{draft}}" onChange="{{onDraft}}" aria-describedby="wt-help-2" style="width:110px; min-height:44px; padding:8px 10px; border:2px solid #15181d; border-radius:0; background:#fdfdfb; color:#15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:16px">
+                    </div>
+                    <button type="button" class="btn-ink" onClick="{{save}}" style="min-height:44px; padding:0 16px; border:2px solid #15181d; background:#15181d; color:#fdfdfb; font-size:15px; font-weight:700; cursor:pointer">Save</button>
+                    <button type="button" class="btn-line" onClick="{{cancel}}" style="min-height:44px; padding:0 16px; border:2px solid #15181d; background:#fdfdfb; color:#15181d; font-size:15px; font-weight:700; cursor:pointer">Cancel</button>
+                  </div>
+                  <p id="wt-help-2" style="margin:8px 0 0; font-size:13px; color:#2b313b">A vote with weight 2 counts twice.</p>
+                  <sc-if value="{{hasDraftError}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin:8px 0 0; padding:4px 8px; display:inline-block; background:#d9690f; color:#15181d; font-size:14px; font-weight:600">{{draftError}}</p></sc-if>
+                </td>
+              </tr>
+
+              <tr class="reg-row" style="border-top:1px solid #b9c0ca; background:{{v3.rowBg}}">
+                <th scope="row" style="position:sticky; left:0; z-index:1; background:{{v3.rowBg}}; padding:6px 4px 6px 10px; text-align:left; vertical-align:middle"><span style="display:block; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:10px; font-weight:500; letter-spacing:.08em; color:#4a5160">NO. 3</span><span style="display:block; font-size:14px; font-weight:700; line-height:1.25">Tomás</span></th>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; min-width:28px; height:28px; padding:0 4px; align-items:center; justify-content:center; border:2px solid {{v3.wtBorder}}; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:15px; font-weight:600">{{v3.weight}}</span></td>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; border:1.5px solid #15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">A</span></td>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; border:1.5px solid #15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">B</span></td>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; border:1.5px solid #15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">D</span></td>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; border:1.5px solid #15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">E</span></td>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; border:1.5px solid #15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">C</span></td>
+                <td style="padding:4px 8px 4px 2px; text-align:right"><button type="button" class="btn-line" aria-label="Edit weight of vote 3, Tomás" aria-expanded="{{v3.expanded}}" onClick="{{v3.edit}}" style="min-height:44px; min-width:46px; padding:0 8px; border:2px solid #15181d; background:#fdfdfb; color:#15181d; font-size:14px; font-weight:700; cursor:pointer">Edit</button></td>
+              </tr>
+              <tr style="display:{{v3.editorDisplay}}; background:#e8eef6">
+                <td colspan="8" style="padding:12px 12px 14px 10px; border-top:1px dashed #15181d">
+                  <div class="pop-in" style="display:flex; flex-wrap:wrap; align-items:flex-end; gap:10px">
+                    <div style="display:flex; flex-direction:column; gap:4px">
+                      <label for="wt-3" style="font-size:14px; font-weight:700">Weight for vote 3 (Tomás)</label>
+                      <input id="wt-3" type="number" inputmode="decimal" min="0" step="0.5" value="{{draft}}" onChange="{{onDraft}}" aria-describedby="wt-help-3" style="width:110px; min-height:44px; padding:8px 10px; border:2px solid #15181d; border-radius:0; background:#fdfdfb; color:#15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:16px">
+                    </div>
+                    <button type="button" class="btn-ink" onClick="{{save}}" style="min-height:44px; padding:0 16px; border:2px solid #15181d; background:#15181d; color:#fdfdfb; font-size:15px; font-weight:700; cursor:pointer">Save</button>
+                    <button type="button" class="btn-line" onClick="{{cancel}}" style="min-height:44px; padding:0 16px; border:2px solid #15181d; background:#fdfdfb; color:#15181d; font-size:15px; font-weight:700; cursor:pointer">Cancel</button>
+                  </div>
+                  <p id="wt-help-3" style="margin:8px 0 0; font-size:13px; color:#2b313b">A vote with weight 2 counts twice.</p>
+                  <sc-if value="{{hasDraftError}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin:8px 0 0; padding:4px 8px; display:inline-block; background:#d9690f; color:#15181d; font-size:14px; font-weight:600">{{draftError}}</p></sc-if>
+                </td>
+              </tr>
+
+              <tr class="reg-row" style="border-top:1px solid #b9c0ca; background:{{v4.rowBg}}">
+                <th scope="row" style="position:sticky; left:0; z-index:1; background:{{v4.rowBg}}; padding:6px 4px 6px 10px; text-align:left; vertical-align:middle"><span style="display:block; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:10px; font-weight:500; letter-spacing:.08em; color:#4a5160">NO. 4</span><span style="display:block; font-size:14px; font-weight:700; line-height:1.25">Jen</span></th>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; min-width:28px; height:28px; padding:0 4px; align-items:center; justify-content:center; border:2px solid {{v4.wtBorder}}; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:15px; font-weight:600">{{v4.weight}}</span></td>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; border:1.5px solid #15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">B</span></td>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; border:1.5px solid #15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">E</span></td>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; border:1.5px solid #15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">A</span></td>
+                <td style="padding:6px 2px; text-align:center; color:#5b6472"><span aria-hidden="true">–</span><span class="sr">none</span></td>
+                <td style="padding:6px 2px; text-align:center; color:#5b6472"><span aria-hidden="true">–</span><span class="sr">none</span></td>
+                <td style="padding:4px 8px 4px 2px; text-align:right"><button type="button" class="btn-line" aria-label="Edit weight of vote 4, Jen" aria-expanded="{{v4.expanded}}" onClick="{{v4.edit}}" style="min-height:44px; min-width:46px; padding:0 8px; border:2px solid #15181d; background:#fdfdfb; color:#15181d; font-size:14px; font-weight:700; cursor:pointer">Edit</button></td>
+              </tr>
+              <tr style="display:{{v4.editorDisplay}}; background:#e8eef6">
+                <td colspan="8" style="padding:12px 12px 14px 10px; border-top:1px dashed #15181d">
+                  <div class="pop-in" style="display:flex; flex-wrap:wrap; align-items:flex-end; gap:10px">
+                    <div style="display:flex; flex-direction:column; gap:4px">
+                      <label for="wt-4" style="font-size:14px; font-weight:700">Weight for vote 4 (Jen)</label>
+                      <input id="wt-4" type="number" inputmode="decimal" min="0" step="0.5" value="{{draft}}" onChange="{{onDraft}}" aria-describedby="wt-help-4" style="width:110px; min-height:44px; padding:8px 10px; border:2px solid #15181d; border-radius:0; background:#fdfdfb; color:#15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:16px">
+                    </div>
+                    <button type="button" class="btn-ink" onClick="{{save}}" style="min-height:44px; padding:0 16px; border:2px solid #15181d; background:#15181d; color:#fdfdfb; font-size:15px; font-weight:700; cursor:pointer">Save</button>
+                    <button type="button" class="btn-line" onClick="{{cancel}}" style="min-height:44px; padding:0 16px; border:2px solid #15181d; background:#fdfdfb; color:#15181d; font-size:15px; font-weight:700; cursor:pointer">Cancel</button>
+                  </div>
+                  <p id="wt-help-4" style="margin:8px 0 0; font-size:13px; color:#2b313b">A vote with weight 2 counts twice.</p>
+                  <sc-if value="{{hasDraftError}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin:8px 0 0; padding:4px 8px; display:inline-block; background:#d9690f; color:#15181d; font-size:14px; font-weight:600">{{draftError}}</p></sc-if>
+                </td>
+              </tr>
+
+              <tr class="reg-row" style="border-top:1px solid #b9c0ca; background:{{v5.rowBg}}">
+                <th scope="row" style="position:sticky; left:0; z-index:1; background:{{v5.rowBg}}; padding:6px 4px 6px 10px; text-align:left; vertical-align:middle"><span style="display:block; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:10px; font-weight:500; letter-spacing:.08em; color:#4a5160">NO. 5</span><span style="display:block; font-size:14px; font-weight:700; line-height:1.25">Arjun</span></th>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; min-width:28px; height:28px; padding:0 4px; align-items:center; justify-content:center; border:2px solid {{v5.wtBorder}}; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:15px; font-weight:600">{{v5.weight}}</span></td>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; border:1.5px solid #15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">D</span></td>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; border:1.5px solid #15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">A</span></td>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; border:1.5px solid #15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">B</span></td>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; border:1.5px solid #15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">F</span></td>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; border:1.5px solid #15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">E</span></td>
+                <td style="padding:4px 8px 4px 2px; text-align:right"><button type="button" class="btn-line" aria-label="Edit weight of vote 5, Arjun" aria-expanded="{{v5.expanded}}" onClick="{{v5.edit}}" style="min-height:44px; min-width:46px; padding:0 8px; border:2px solid #15181d; background:#fdfdfb; color:#15181d; font-size:14px; font-weight:700; cursor:pointer">Edit</button></td>
+              </tr>
+              <tr style="display:{{v5.editorDisplay}}; background:#e8eef6">
+                <td colspan="8" style="padding:12px 12px 14px 10px; border-top:1px dashed #15181d">
+                  <div class="pop-in" style="display:flex; flex-wrap:wrap; align-items:flex-end; gap:10px">
+                    <div style="display:flex; flex-direction:column; gap:4px">
+                      <label for="wt-5" style="font-size:14px; font-weight:700">Weight for vote 5 (Arjun)</label>
+                      <input id="wt-5" type="number" inputmode="decimal" min="0" step="0.5" value="{{draft}}" onChange="{{onDraft}}" aria-describedby="wt-help-5" style="width:110px; min-height:44px; padding:8px 10px; border:2px solid #15181d; border-radius:0; background:#fdfdfb; color:#15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:16px">
+                    </div>
+                    <button type="button" class="btn-ink" onClick="{{save}}" style="min-height:44px; padding:0 16px; border:2px solid #15181d; background:#15181d; color:#fdfdfb; font-size:15px; font-weight:700; cursor:pointer">Save</button>
+                    <button type="button" class="btn-line" onClick="{{cancel}}" style="min-height:44px; padding:0 16px; border:2px solid #15181d; background:#fdfdfb; color:#15181d; font-size:15px; font-weight:700; cursor:pointer">Cancel</button>
+                  </div>
+                  <p id="wt-help-5" style="margin:8px 0 0; font-size:13px; color:#2b313b">A vote with weight 2 counts twice.</p>
+                  <sc-if value="{{hasDraftError}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin:8px 0 0; padding:4px 8px; display:inline-block; background:#d9690f; color:#15181d; font-size:14px; font-weight:600">{{draftError}}</p></sc-if>
+                </td>
+              </tr>
+
+              <tr class="reg-row" style="border-top:1px solid #b9c0ca; background:{{v6.rowBg}}">
+                <th scope="row" style="position:sticky; left:0; z-index:1; background:{{v6.rowBg}}; padding:6px 4px 6px 10px; text-align:left; vertical-align:middle"><span style="display:block; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:10px; font-weight:500; letter-spacing:.08em; color:#4a5160">NO. 6</span><span style="display:block; font-size:14px; font-weight:400; font-style:italic; line-height:1.25; color:#4a5160">No name</span></th>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; min-width:28px; height:28px; padding:0 4px; align-items:center; justify-content:center; border:2px solid {{v6.wtBorder}}; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:15px; font-weight:600">{{v6.weight}}</span></td>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; border:1.5px solid #15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">C</span></td>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; border:1.5px solid #15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">F</span></td>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; border:1.5px solid #15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">B</span></td>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; border:1.5px solid #15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">A</span></td>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; border:1.5px solid #15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">G</span></td>
+                <td style="padding:4px 8px 4px 2px; text-align:right"><button type="button" class="btn-line" aria-label="Edit weight of vote 6, no name" aria-expanded="{{v6.expanded}}" onClick="{{v6.edit}}" style="min-height:44px; min-width:46px; padding:0 8px; border:2px solid #15181d; background:#fdfdfb; color:#15181d; font-size:14px; font-weight:700; cursor:pointer">Edit</button></td>
+              </tr>
+              <tr style="display:{{v6.editorDisplay}}; background:#e8eef6">
+                <td colspan="8" style="padding:12px 12px 14px 10px; border-top:1px dashed #15181d">
+                  <div class="pop-in" style="display:flex; flex-wrap:wrap; align-items:flex-end; gap:10px">
+                    <div style="display:flex; flex-direction:column; gap:4px">
+                      <label for="wt-6" style="font-size:14px; font-weight:700">Weight for vote 6 (no name)</label>
+                      <input id="wt-6" type="number" inputmode="decimal" min="0" step="0.5" value="{{draft}}" onChange="{{onDraft}}" aria-describedby="wt-help-6" style="width:110px; min-height:44px; padding:8px 10px; border:2px solid #15181d; border-radius:0; background:#fdfdfb; color:#15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:16px">
+                    </div>
+                    <button type="button" class="btn-ink" onClick="{{save}}" style="min-height:44px; padding:0 16px; border:2px solid #15181d; background:#15181d; color:#fdfdfb; font-size:15px; font-weight:700; cursor:pointer">Save</button>
+                    <button type="button" class="btn-line" onClick="{{cancel}}" style="min-height:44px; padding:0 16px; border:2px solid #15181d; background:#fdfdfb; color:#15181d; font-size:15px; font-weight:700; cursor:pointer">Cancel</button>
+                  </div>
+                  <p id="wt-help-6" style="margin:8px 0 0; font-size:13px; color:#2b313b">A vote with weight 2 counts twice.</p>
+                  <sc-if value="{{hasDraftError}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin:8px 0 0; padding:4px 8px; display:inline-block; background:#d9690f; color:#15181d; font-size:14px; font-weight:600">{{draftError}}</p></sc-if>
+                </td>
+              </tr>
+
+              <tr class="reg-row" style="border-top:1px solid #b9c0ca; background:{{v7.rowBg}}">
+                <th scope="row" style="position:sticky; left:0; z-index:1; background:{{v7.rowBg}}; padding:6px 4px 6px 10px; text-align:left; vertical-align:middle"><span style="display:block; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:10px; font-weight:500; letter-spacing:.08em; color:#4a5160">NO. 7</span><span style="display:block; font-size:14px; font-weight:700; line-height:1.25">Kiko</span></th>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; min-width:28px; height:28px; padding:0 4px; align-items:center; justify-content:center; border:2px solid {{v7.wtBorder}}; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:15px; font-weight:600">{{v7.weight}}</span></td>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; border:1.5px solid #15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">E</span></td>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; border:1.5px solid #15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">B</span></td>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; border:1.5px solid #15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">D</span></td>
+                <td style="padding:6px 2px; text-align:center; color:#5b6472"><span aria-hidden="true">–</span><span class="sr">none</span></td>
+                <td style="padding:6px 2px; text-align:center; color:#5b6472"><span aria-hidden="true">–</span><span class="sr">none</span></td>
+                <td style="padding:4px 8px 4px 2px; text-align:right"><button type="button" class="btn-line" aria-label="Edit weight of vote 7, Kiko" aria-expanded="{{v7.expanded}}" onClick="{{v7.edit}}" style="min-height:44px; min-width:46px; padding:0 8px; border:2px solid #15181d; background:#fdfdfb; color:#15181d; font-size:14px; font-weight:700; cursor:pointer">Edit</button></td>
+              </tr>
+              <tr style="display:{{v7.editorDisplay}}; background:#e8eef6">
+                <td colspan="8" style="padding:12px 12px 14px 10px; border-top:1px dashed #15181d">
+                  <div class="pop-in" style="display:flex; flex-wrap:wrap; align-items:flex-end; gap:10px">
+                    <div style="display:flex; flex-direction:column; gap:4px">
+                      <label for="wt-7" style="font-size:14px; font-weight:700">Weight for vote 7 (Kiko)</label>
+                      <input id="wt-7" type="number" inputmode="decimal" min="0" step="0.5" value="{{draft}}" onChange="{{onDraft}}" aria-describedby="wt-help-7" style="width:110px; min-height:44px; padding:8px 10px; border:2px solid #15181d; border-radius:0; background:#fdfdfb; color:#15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:16px">
+                    </div>
+                    <button type="button" class="btn-ink" onClick="{{save}}" style="min-height:44px; padding:0 16px; border:2px solid #15181d; background:#15181d; color:#fdfdfb; font-size:15px; font-weight:700; cursor:pointer">Save</button>
+                    <button type="button" class="btn-line" onClick="{{cancel}}" style="min-height:44px; padding:0 16px; border:2px solid #15181d; background:#fdfdfb; color:#15181d; font-size:15px; font-weight:700; cursor:pointer">Cancel</button>
+                  </div>
+                  <p id="wt-help-7" style="margin:8px 0 0; font-size:13px; color:#2b313b">A vote with weight 2 counts twice.</p>
+                  <sc-if value="{{hasDraftError}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin:8px 0 0; padding:4px 8px; display:inline-block; background:#d9690f; color:#15181d; font-size:14px; font-weight:600">{{draftError}}</p></sc-if>
+                </td>
+              </tr>
+
+              <tr class="reg-row" style="border-top:1px solid #b9c0ca; background:{{v8.rowBg}}">
+                <th scope="row" style="position:sticky; left:0; z-index:1; background:{{v8.rowBg}}; padding:6px 4px 6px 10px; text-align:left; vertical-align:middle"><span style="display:block; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:10px; font-weight:500; letter-spacing:.08em; color:#4a5160">NO. 8</span><span style="display:block; font-size:14px; font-weight:700; line-height:1.25">Dana</span></th>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; min-width:28px; height:28px; padding:0 4px; align-items:center; justify-content:center; border:2px solid {{v8.wtBorder}}; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:15px; font-weight:600">{{v8.weight}}</span></td>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; border:1.5px solid #15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">A</span></td>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; border:1.5px solid #15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">D</span></td>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; border:1.5px solid #15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">E</span></td>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; border:1.5px solid #15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">B</span></td>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; border:1.5px solid #15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">C</span></td>
+                <td style="padding:4px 8px 4px 2px; text-align:right"><button type="button" class="btn-line" aria-label="Edit weight of vote 8, Dana" aria-expanded="{{v8.expanded}}" onClick="{{v8.edit}}" style="min-height:44px; min-width:46px; padding:0 8px; border:2px solid #15181d; background:#fdfdfb; color:#15181d; font-size:14px; font-weight:700; cursor:pointer">Edit</button></td>
+              </tr>
+              <tr style="display:{{v8.editorDisplay}}; background:#e8eef6">
+                <td colspan="8" style="padding:12px 12px 14px 10px; border-top:1px dashed #15181d">
+                  <div class="pop-in" style="display:flex; flex-wrap:wrap; align-items:flex-end; gap:10px">
+                    <div style="display:flex; flex-direction:column; gap:4px">
+                      <label for="wt-8" style="font-size:14px; font-weight:700">Weight for vote 8 (Dana)</label>
+                      <input id="wt-8" type="number" inputmode="decimal" min="0" step="0.5" value="{{draft}}" onChange="{{onDraft}}" aria-describedby="wt-help-8" style="width:110px; min-height:44px; padding:8px 10px; border:2px solid #15181d; border-radius:0; background:#fdfdfb; color:#15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:16px">
+                    </div>
+                    <button type="button" class="btn-ink" onClick="{{save}}" style="min-height:44px; padding:0 16px; border:2px solid #15181d; background:#15181d; color:#fdfdfb; font-size:15px; font-weight:700; cursor:pointer">Save</button>
+                    <button type="button" class="btn-line" onClick="{{cancel}}" style="min-height:44px; padding:0 16px; border:2px solid #15181d; background:#fdfdfb; color:#15181d; font-size:15px; font-weight:700; cursor:pointer">Cancel</button>
+                  </div>
+                  <p id="wt-help-8" style="margin:8px 0 0; font-size:13px; color:#2b313b">A vote with weight 2 counts twice.</p>
+                  <sc-if value="{{hasDraftError}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin:8px 0 0; padding:4px 8px; display:inline-block; background:#d9690f; color:#15181d; font-size:14px; font-weight:600">{{draftError}}</p></sc-if>
+                </td>
+              </tr>
+
+              <tr class="reg-row" style="border-top:1px solid #b9c0ca; background:{{v9.rowBg}}">
+                <th scope="row" style="position:sticky; left:0; z-index:1; background:{{v9.rowBg}}; padding:6px 4px 6px 10px; text-align:left; vertical-align:middle"><span style="display:block; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:10px; font-weight:500; letter-spacing:.08em; color:#4a5160">NO. 9</span><span style="display:block; font-size:14px; font-weight:700; line-height:1.25">Lars</span></th>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; min-width:28px; height:28px; padding:0 4px; align-items:center; justify-content:center; border:2px solid {{v9.wtBorder}}; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:15px; font-weight:600">{{v9.weight}}</span></td>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; border:1.5px solid #15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">G</span></td>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; border:1.5px solid #15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">C</span></td>
+                <td style="padding:6px 2px; text-align:center"><span style="display:inline-flex; width:24px; height:24px; align-items:center; justify-content:center; border:1.5px solid #15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">F</span></td>
+                <td style="padding:6px 2px; text-align:center; color:#5b6472"><span aria-hidden="true">–</span><span class="sr">none</span></td>
+                <td style="padding:6px 2px; text-align:center; color:#5b6472"><span aria-hidden="true">–</span><span class="sr">none</span></td>
+                <td style="padding:4px 8px 4px 2px; text-align:right"><button type="button" class="btn-line" aria-label="Edit weight of vote 9, Lars" aria-expanded="{{v9.expanded}}" onClick="{{v9.edit}}" style="min-height:44px; min-width:46px; padding:0 8px; border:2px solid #15181d; background:#fdfdfb; color:#15181d; font-size:14px; font-weight:700; cursor:pointer">Edit</button></td>
+              </tr>
+              <tr style="display:{{v9.editorDisplay}}; background:#e8eef6">
+                <td colspan="8" style="padding:12px 12px 14px 10px; border-top:1px dashed #15181d">
+                  <div class="pop-in" style="display:flex; flex-wrap:wrap; align-items:flex-end; gap:10px">
+                    <div style="display:flex; flex-direction:column; gap:4px">
+                      <label for="wt-9" style="font-size:14px; font-weight:700">Weight for vote 9 (Lars)</label>
+                      <input id="wt-9" type="number" inputmode="decimal" min="0" step="0.5" value="{{draft}}" onChange="{{onDraft}}" aria-describedby="wt-help-9" style="width:110px; min-height:44px; padding:8px 10px; border:2px solid #15181d; border-radius:0; background:#fdfdfb; color:#15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:16px">
+                    </div>
+                    <button type="button" class="btn-ink" onClick="{{save}}" style="min-height:44px; padding:0 16px; border:2px solid #15181d; background:#15181d; color:#fdfdfb; font-size:15px; font-weight:700; cursor:pointer">Save</button>
+                    <button type="button" class="btn-line" onClick="{{cancel}}" style="min-height:44px; padding:0 16px; border:2px solid #15181d; background:#fdfdfb; color:#15181d; font-size:15px; font-weight:700; cursor:pointer">Cancel</button>
+                  </div>
+                  <p id="wt-help-9" style="margin:8px 0 0; font-size:13px; color:#2b313b">A vote with weight 2 counts twice.</p>
+                  <sc-if value="{{hasDraftError}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin:8px 0 0; padding:4px 8px; display:inline-block; background:#d9690f; color:#15181d; font-size:14px; font-weight:600">{{draftError}}</p></sc-if>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </article>
+  </main>
+
+  <footer style="margin-top:40px; background:#fdfdfb; border-top:2px solid #15181d">
+    <div style="max-width:860px; margin:0 auto; padding:16px 16px 28px; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px 24px">
+      <p style="margin:0; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:#4a5160">RankedVote.app · Form RV-2 · Administration</p>
+      <nav aria-label="Site" style="display:flex; flex-wrap:wrap; gap:0 6px; margin-left:-8px">
+        <a href="https://github.com/zorn/flick" class="foot-link" style="display:inline-flex; align-items:center; min-height:44px; padding:0 8px; font-size:15px">GitHub project</a>
+        <a href="https://updown.io/wwis" class="foot-link" style="display:inline-flex; align-items:center; min-height:44px; padding:0 8px; font-size:15px">Uptime</a>
+        <a href="mailto:mike@mikezornek.com" class="foot-link" style="display:inline-flex; align-items:center; min-height:44px; padding:0 8px; font-size:15px">Contact site admin</a>
+      </nav>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":3600}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      copied: "",
+      closeStep: "open",
+      editing: 0,
+      draft: "",
+      draftError: "",
+      saved: "",
+      weights: { 1: 1, 2: 2, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1, 8: 1, 9: 1 }
+    };
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this._copyTimer);
+  }
+
+  renderVals() {
+    const NAMES = { 1: "Mike", 2: "Priya", 3: "Tomás", 4: "Jen", 5: "Arjun", 6: "", 7: "Kiko", 8: "Dana", 9: "Lars" };
+    const VOTER_URL = "https://rankedvote.app/ballot/ebc-next-read";
+    const ADMIN_URL = "https://rankedvote.app/ballot/ebc-next-read/9c1f4e2a-6b7d-4f3e-a8c2-5d0b1e7f3a64";
+    const fmt = (w) => String(Math.round(w * 100) / 100);
+
+    const copy = (which, text) => () => {
+      try {
+        const clip = typeof navigator !== "undefined" ? navigator.clipboard : null;
+        if (clip && clip.writeText) {
+          const p = clip.writeText(text);
+          if (p && p.catch) p.catch(() => {});
+        }
+      } catch (err) {}
+      this.setState({ copied: which });
+      clearTimeout(this._copyTimer);
+      this._copyTimer = setTimeout(() => this.setState({ copied: "" }), 2400);
+    };
+
+    const row = (no) => {
+      const editing = this.state.editing === no;
+      const w = this.state.weights[no];
+      return {
+        weight: fmt(w),
+        wtBorder: w !== 1 ? "#15181d" : "transparent",
+        rowBg: editing ? "#e8eef6" : "#fdfdfb",
+        expanded: editing ? "true" : "false",
+        editorDisplay: editing ? "table-row" : "none",
+        edit: () => this.setState({ editing: no, draft: fmt(this.state.weights[no]), draftError: "", saved: "" })
+      };
+    };
+
+    const save = () => {
+      const no = this.state.editing;
+      if (!no) return;
+      const raw = String(this.state.draft).trim();
+      const v = Number(raw);
+      if (raw === "" || !isFinite(v) || v < 0) {
+        this.setState({ draftError: "Enter a weight of 0 or more, such as 1 or 2." });
+        return;
+      }
+      const weights = Object.assign({}, this.state.weights);
+      weights[no] = v;
+      const who = NAMES[no] || "no name";
+      this.setState({ weights: weights, editing: 0, draftError: "", saved: "Saved. Vote " + no + " (" + who + ") now has weight " + fmt(v) + "." });
+    };
+
+    const cancel = () => this.setState({ editing: 0, draftError: "" });
+    const onDraft = (e) => this.setState({ draft: e.target.value, draftError: "" });
+
+    const step = this.state.closeStep;
+    const closed = step === "closed";
+    const copied = this.state.copied;
+
+    return {
+      copyVoter: copy("voter", VOTER_URL),
+      copyAdmin: copy("admin", ADMIN_URL),
+      voterCopied: copied === "voter",
+      adminCopied: copied === "admin",
+      voterCopyLabel: copied === "voter" ? "Copied" : "Copy",
+      adminCopyLabel: copied === "admin" ? "Copied" : "Copy",
+      voterCopyAria: copied === "voter" ? "Voter link copied" : "Copy the voter link",
+      adminCopyAria: copied === "admin" ? "Admin address copied" : "Copy the admin address",
+      voterCopyBg: copied === "voter" ? "#1b3d8f" : "#15181d",
+      adminCopyBg: copied === "admin" ? "#1b3d8f" : "#15181d",
+      copyStatus: copied === "voter" ? "Voter link copied." : (copied === "admin" ? "Admin address copied." : ""),
+
+      statusChip: closed ? "CLOSED" : "PUBLISHED",
+      statusBg: closed ? "#15181d" : "#1b3d8f",
+      statusLine: closed ? "Voting has stopped" : "Accepting votes",
+      isOpen: step === "open",
+      isConfirming: step === "confirm",
+      isClosed: closed,
+      askClose: () => this.setState({ closeStep: "confirm" }),
+      keepOpen: () => this.setState({ closeStep: "open" }),
+      confirmClose: () => this.setState({ closeStep: "closed" }),
+
+      v1: row(1), v2: row(2), v3: row(3), v4: row(4), v5: row(5),
+      v6: row(6), v7: row(7), v8: row(8), v9: row(9),
+      draft: this.state.draft,
+      onDraft: onDraft,
+      save: save,
+      cancel: cancel,
+      draftError: this.state.draftError,
+      hasDraftError: !!this.state.draftError,
+      savedText: this.state.saved
+    };
+  }
+}
+</script>
+</body>
+</html>

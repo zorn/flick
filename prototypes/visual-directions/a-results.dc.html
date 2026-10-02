@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Library card · Results</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&amp;family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&amp;display=swap" />
+<style>
+body{margin:0;background:#E8DDC4;color:#1E2A47;font-family:"Libre Caslon Text","Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+*,*::before,*::after{box-sizing:border-box}
+a{color:#1E2A47;text-decoration-thickness:1px;text-underline-offset:3px;transition:color .15s ease}
+a:hover{color:#9E2852}
+:focus-visible{outline:3px solid #1E2A47;outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.ink{position:relative}
+.ink::after{content:"";position:absolute;inset:-3px;pointer-events:none;background-image:radial-gradient(circle at 30% 40%,#FBF6E9 0 .7px,transparent 1.2px),radial-gradient(circle at 70% 25%,#FBF6E9 0 1px,transparent 1.5px),radial-gradient(circle at 45% 75%,#FBF6E9 0 .6px,transparent 1.1px),radial-gradient(ellipse 9px 3px at 30% 60%,rgba(251,246,233,.55),transparent 70%);background-size:9px 11px,13px 7px,6px 9px,29px 23px;opacity:.8}
+.wordmark{transition:transform .2s ease}
+.wordmark:hover{transform:rotate(-1.5deg) scale(1.03)}
+.cta{transition:transform .15s ease,box-shadow .15s ease}
+.cta:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 #1E2A47 !important;color:#1E2A47}
+.cta:active{transform:translate(2px,2px);box-shadow:0 0 0 #1E2A47 !important}
+.stamp-in{animation:thunk .5s cubic-bezier(.2,.8,.3,1.25) .25s both}
+@keyframes thunk{0%{transform:scale(1.9);opacity:0}55%{transform:scale(.9);opacity:1}100%{transform:scale(1);opacity:1}}
+.entry{transition:background-color .15s ease}
+.entry:hover{background-color:#F6EFDD}
+.bar{transform-origin:left center;animation:grow .7s cubic-bezier(.2,.7,.2,1) both}
+@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@media (min-width:820px){
+.h1{font-size:44px !important}
+.win-title{font-size:38px !important}
+.card-pad{padding-left:32px !important;padding-right:32px !important}
+.rule{margin-left:-32px !important;margin-right:-32px !important}
+.entry-body{grid-template-columns:minmax(0,1fr) 300px !important;column-gap:32px !important;align-items:center}
+}
+@media (prefers-reduced-motion:reduce){
+.stamp-in,.bar{animation:none}
+.cta,.wordmark,.entry{transition:none}
+}
+</style>
+</helmet>
+<div style="background-color:#E8DDC4;background-image:radial-gradient(rgba(30,42,71,0.05) 0.6px,transparent 1px),radial-gradient(rgba(120,90,40,0.06) 0.8px,transparent 1.3px);background-size:5px 5px,11px 9px;padding:0 12px 28px;">
+
+  <header style="max-width:1040px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding:16px 0 18px;">
+    <a href="a-home.dc.html" class="wordmark" style="display:inline-flex;padding:4px 2px;color:#9E2852;text-decoration:none;">
+      <span class="ink" style="display:inline-flex;align-items:center;padding:9px 12px 8px;border:2px solid #9E2852;outline:1px solid #9E2852;outline-offset:-6px;border-radius:3px;transform:rotate(-2deg);mix-blend-mode:multiply;font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;font-size:15px;letter-spacing:0.05em;line-height:1;text-transform:uppercase;">RankedVote.app</span>
+    </a>
+    <a href="#" class="cta" style="display:inline-flex;align-items:center;min-height:44px;padding:0 14px;border:1.5px solid #1E2A47;border-radius:3px;background:#FBF6E9;box-shadow:3px 3px 0 #1E2A47;color:#1E2A47;text-decoration:none;font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;font-size:14px;">Create a ballot</a>
+  </header>
+
+  <main style="max-width:1040px;margin:0 auto;display:flex;flex-direction:column;gap:20px;">
+
+    <article aria-labelledby="ballot-q" class="card-pad" style="position:relative;background:#FBF6E9;border-radius:5px;box-shadow:0 1px 0 rgba(30,42,71,0.10),0 18px 30px -22px rgba(30,42,71,0.55);padding:16px 18px 48px;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;font-family:'Courier Prime','Courier New',Courier,monospace;font-size:13px;line-height:1.35;color:#4F5A72;">
+        <p style="margin:0;"><span style="display:block;text-transform:uppercase;letter-spacing:0.12em;">Ballot</span><span style="display:block;">ebc-next-read</span></p>
+        <p style="margin:0;text-align:right;"><span style="display:block;text-transform:uppercase;letter-spacing:0.12em;">Status</span><span style="display:block;">Final results</span></p>
+      </div>
+      <div aria-hidden="true" class="rule" style="border-top:1px solid #D58C9F;margin:12px -18px 0;"></div>
+
+      <h1 id="ballot-q" class="h1" style="font-size:30px;line-height:1.14;font-weight:400;letter-spacing:-0.01em;margin:16px 0 12px;max-width:24ch;text-wrap:balance;">What should the Elixir Book Club read next?</h1>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px 20px;">
+        <p style="margin:0;font-family:'Courier Prime','Courier New',Courier,monospace;font-size:15px;line-height:1.5;">
+          <span style="display:block;font-weight:700;">Final results</span>
+          <span style="display:block;">Closed Oct 4, 2026, 9:00 PM EDT</span>
+          <span style="display:block;">9 votes cast</span>
+        </p>
+        <span aria-hidden="true" class="ink" style="display:inline-flex;flex-direction:column;align-items:center;gap:5px;padding:10px 14px 9px;border:2px solid #9E2852;border-radius:50% / 38%;color:#9E2852;font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;line-height:1;text-transform:uppercase;transform:rotate(-7deg);mix-blend-mode:multiply;">
+          <span style="font-size:10px;letter-spacing:0.28em;">Closed</span>
+          <span style="font-size:19px;letter-spacing:0.08em;">Oct 04 2026</span>
+          <span style="font-size:10px;letter-spacing:0.28em;">Voting over</span>
+        </span>
+      </div>
+
+      <section aria-labelledby="winner-h" style="margin-top:24px;padding-top:18px;border-top:1.5px dashed #8E98AD;">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
+          <h2 id="winner-h" style="margin:6px 0 0;font-family:'Courier Prime','Courier New',Courier,monospace;font-size:13px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#4F5A72;">The winner</h2>
+          <span class="stamp-in" aria-hidden="true" style="display:block;position:relative;z-index:1;margin-bottom:-8px;">
+            <span class="ink" style="display:inline-flex;padding:9px 14px 8px;border:3px solid #9E2852;outline:1.5px solid #9E2852;outline-offset:-8px;border-radius:4px;color:#9E2852;font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;font-size:26px;letter-spacing:0.12em;line-height:1;text-transform:uppercase;transform:rotate(-8deg);mix-blend-mode:multiply;">Winner</span>
+          </span>
+        </div>
+        <p class="win-title" style="margin:10px 0 0;max-width:30ch;font-size:28px;line-height:1.18;text-wrap:balance;">{{winnerTitle}}</p>
+        <p style="margin:12px 0 0;font-size:16px;line-height:1.5;"><strong style="font-family:'Courier Prime','Courier New',Courier,monospace;font-size:20px;">{{winnerPoints}} points</strong>, <span>{{winnerMargin}}</span> more than the 2nd-place book.</p>
+      </section>
+      <span aria-hidden="true" style="position:absolute;left:50%;bottom:16px;width:16px;height:16px;margin-left:-8px;border-radius:50%;background:#E8DDC4;box-shadow:inset 0 1px 2px rgba(30,42,71,0.35);"></span>
+    </article>
+
+    <section aria-labelledby="tally-h" style="background:#FBF6E9;border-radius:5px;box-shadow:0 1px 0 rgba(30,42,71,0.10),0 18px 30px -22px rgba(30,42,71,0.55);padding:18px 0 4px;">
+      <div class="card-pad" style="padding:0 18px;">
+        <h2 id="tally-h" style="margin:0;font-size:24px;line-height:1.2;font-weight:400;">Final tally</h2>
+        <p style="margin:8px 0 0;max-width:62ch;font-size:16px;line-height:1.5;">Each vote gives 5 points to its 1st choice, 4 to its 2nd, 3 to its 3rd, 2 to its 4th, and 1 to its 5th, times the vote's weight. Most points wins.</p>
+        <p style="margin:10px 0 0;max-width:62ch;font-family:'Courier Prime','Courier New',Courier,monospace;font-size:14px;line-height:1.5;color:#4F5A72;">Columns 1st to 5th count the votes that put a book in that place. A vote with weight 2 counts twice. A circle marks the highest count in each column.</p>
+      </div>
+
+      <div aria-hidden="true" style="display:grid;grid-template-columns:44px minmax(0,1fr);margin-top:16px;border-top:2px solid #1E2A47;border-bottom:1px solid #1E2A47;font-family:'Courier Prime','Courier New',Courier,monospace;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:#4F5A72;">
+        <span style="padding:7px 0;text-align:center;border-right:1px solid #DCA7B5;">No.</span>
+        <span style="padding:7px 14px;">Answer · points · places</span>
+      </div>
+      <ol role="list" style="list-style:none;margin:0;padding:0;">
+        <sc-for list="{{ledger}}" as="e" hint-placeholder-count="7">
+          <li class="entry" style="display:grid;grid-template-columns:44px minmax(0,1fr);border-bottom:1px solid #B4C6DA;">
+            <span style="padding:15px 0;border-right:1px solid #DCA7B5;font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;font-size:18px;line-height:1;text-align:center;"><span class="sr">Place </span>{{e.place}}</span>
+            <div class="entry-body" style="display:grid;grid-template-columns:minmax(0,1fr);row-gap:12px;min-width:0;padding:12px 14px 14px;">
+              <div style="min-width:0;">
+                <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;">
+                  <p style="margin:0;font-size:17px;line-height:1.38;">{{e.title}}</p>
+                  <sc-if value="{{e.isWinner}}" hint-placeholder-val="{{false}}">
+                    <span class="ink" style="flex:none;display:inline-flex;margin-top:2px;padding:5px 7px 4px;border:1.5px solid #9E2852;border-radius:3px;color:#9E2852;font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;font-size:11px;letter-spacing:0.14em;line-height:1;text-transform:uppercase;transform:rotate(-4deg);mix-blend-mode:multiply;">Winner</span>
+                  </sc-if>
+                </div>
+                <div style="display:flex;align-items:center;gap:12px;margin-top:10px;">
+                  <div aria-hidden="true" style="flex:1;min-width:0;height:12px;border-bottom:1px solid #B4C6DA;">
+                    <div class="bar" style="height:12px;width:{{e.barWidth}};background:{{e.barColor}};border-radius:0 2px 2px 0;"></div>
+                  </div>
+                  <p style="flex:none;min-width:82px;margin:0;font-family:'Courier Prime','Courier New',Courier,monospace;text-align:right;line-height:1;"><span style="font-size:22px;font-weight:700;">{{e.points}}</span> <span style="font-size:13px;">{{e.unit}}</span></p>
+                </div>
+              </div>
+              <table style="width:100%;max-width:320px;border-collapse:collapse;table-layout:fixed;">
+                <caption class="sr">{{e.caption}}</caption>
+                <thead>
+                  <tr>
+                    <th scope="col" style="padding:0 0 4px;font-family:'Courier Prime','Courier New',Courier,monospace;font-size:12px;font-weight:700;letter-spacing:0.04em;color:#4F5A72;text-align:center;">1st</th>
+                    <th scope="col" style="padding:0 0 4px;font-family:'Courier Prime','Courier New',Courier,monospace;font-size:12px;font-weight:700;letter-spacing:0.04em;color:#4F5A72;text-align:center;">2nd</th>
+                    <th scope="col" style="padding:0 0 4px;font-family:'Courier Prime','Courier New',Courier,monospace;font-size:12px;font-weight:700;letter-spacing:0.04em;color:#4F5A72;text-align:center;">3rd</th>
+                    <th scope="col" style="padding:0 0 4px;font-family:'Courier Prime','Courier New',Courier,monospace;font-size:12px;font-weight:700;letter-spacing:0.04em;color:#4F5A72;text-align:center;">4th</th>
+                    <th scope="col" style="padding:0 0 4px;font-family:'Courier Prime','Courier New',Courier,monospace;font-size:12px;font-weight:700;letter-spacing:0.04em;color:#4F5A72;text-align:center;">5th</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td style="padding:0 3px;text-align:center;vertical-align:bottom;">
+                      <span aria-hidden="true" style="display:flex;align-items:flex-end;justify-content:center;height:36px;border-bottom:1px solid #1E2A47;"><span style="display:block;width:14px;height:{{e.k1.barH}};background:#1E2A47;border-radius:2px 2px 0 0;"></span></span>
+                      <span style="display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:30px;margin-top:4px;padding:0 4px;border:1.5px solid {{e.k1.ring}};border-radius:52% 46% 50% 48%;font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;font-size:15px;">{{e.k1.count}}<span class="sr">{{e.k1.lead}}</span></span>
+                    </td>
+                    <td style="padding:0 3px;text-align:center;vertical-align:bottom;">
+                      <span aria-hidden="true" style="display:flex;align-items:flex-end;justify-content:center;height:36px;border-bottom:1px solid #1E2A47;"><span style="display:block;width:14px;height:{{e.k2.barH}};background:#1E2A47;border-radius:2px 2px 0 0;"></span></span>
+                      <span style="display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:30px;margin-top:4px;padding:0 4px;border:1.5px solid {{e.k2.ring}};border-radius:52% 46% 50% 48%;font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;font-size:15px;">{{e.k2.count}}<span class="sr">{{e.k2.lead}}</span></span>
+                    </td>
+                    <td style="padding:0 3px;text-align:center;vertical-align:bottom;">
+                      <span aria-hidden="true" style="display:flex;align-items:flex-end;justify-content:center;height:36px;border-bottom:1px solid #1E2A47;"><span style="display:block;width:14px;height:{{e.k3.barH}};background:#1E2A47;border-radius:2px 2px 0 0;"></span></span>
+                      <span style="display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:30px;margin-top:4px;padding:0 4px;border:1.5px solid {{e.k3.ring}};border-radius:52% 46% 50% 48%;font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;font-size:15px;">{{e.k3.count}}<span class="sr">{{e.k3.lead}}</span></span>
+                    </td>
+                    <td style="padding:0 3px;text-align:center;vertical-align:bottom;">
+                      <span aria-hidden="true" style="display:flex;align-items:flex-end;justify-content:center;height:36px;border-bottom:1px solid #1E2A47;"><span style="display:block;width:14px;height:{{e.k4.barH}};background:#1E2A47;border-radius:2px 2px 0 0;"></span></span>
+                      <span style="display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:30px;margin-top:4px;padding:0 4px;border:1.5px solid {{e.k4.ring}};border-radius:52% 46% 50% 48%;font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;font-size:15px;">{{e.k4.count}}<span class="sr">{{e.k4.lead}}</span></span>
+                    </td>
+                    <td style="padding:0 3px;text-align:center;vertical-align:bottom;">
+                      <span aria-hidden="true" style="display:flex;align-items:flex-end;justify-content:center;height:36px;border-bottom:1px solid #1E2A47;"><span style="display:block;width:14px;height:{{e.k5.barH}};background:#1E2A47;border-radius:2px 2px 0 0;"></span></span>
+                      <span style="display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:30px;margin-top:4px;padding:0 4px;border:1.5px solid {{e.k5.ring}};border-radius:52% 46% 50% 48%;font-family:'Courier Prime','Courier New',Courier,monospace;font-weight:700;font-size:15px;">{{e.k5.count}}<span class="sr">{{e.k5.lead}}</span></span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </li>
+        </sc-for>
+      </ol>
+    </section>
+  </main>
+
+  <footer style="max-width:1040px;margin:40px auto 0;padding-top:12px;border-top:1px solid #1E2A47;display:flex;flex-wrap:wrap;gap:0 22px;font-family:'Courier Prime','Courier New',Courier,monospace;font-size:14px;">
+    <a href="https://github.com/zorn/flick" style="display:inline-flex;align-items:center;min-height:44px;">GitHub project</a>
+    <a href="https://updown.io/wwis" style="display:inline-flex;align-items:center;min-height:44px;">Uptime</a>
+    <a href="mailto:mike@mikezornek.com" style="display:inline-flex;align-items:center;min-height:44px;">Contact site admin</a>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":3000}}'>
+class Component extends DCLogic {
+  answerList() {
+    return [
+      { id: "A", title: "Elixir in Action, Third Edition by Saša Jurić" },
+      { id: "B", title: "Engineering Elixir Applications by Ellie Fairholm and Josep Giralt D'Lacoste" },
+      { id: "C", title: "Machine Learning in Elixir by Sean Moriarity" },
+      { id: "D", title: "Designing Elixir Systems with OTP by James Edward Gray II and Bruce A. Tate" },
+      { id: "E", title: "Elixir Patterns by Hugo Barauna and Alexander Koutmos" },
+      { id: "F", title: "Concurrent Data Processing in Elixir by Svilen Gospodinov" },
+      { id: "G", title: "A Common-Sense Guide to Data Structures and Algorithms, Second Edition by Jay Wengrow" }
+    ];
+  }
+
+  voteList() {
+    return [
+      { name: "Mike", weight: 1, picks: ["B", "A", "E", "D", "F"] },
+      { name: "Priya", weight: 2, picks: ["C", "B", "A"] },
+      { name: "Tomás", weight: 1, picks: ["A", "B", "D", "E", "C"] },
+      { name: "Jen", weight: 1, picks: ["B", "E", "A"] },
+      { name: "Arjun", weight: 1, picks: ["D", "A", "B", "F", "E"] },
+      { name: "", weight: 1, picks: ["C", "F", "B", "A", "G"] },
+      { name: "Kiko", weight: 1, picks: ["E", "B", "D"] },
+      { name: "Dana", weight: 1, picks: ["A", "D", "E", "B", "C"] },
+      { name: "Lars", weight: 1, picks: ["G", "C", "F"] }
+    ];
+  }
+
+  renderVals() {
+    const PTS = [5, 4, 3, 2, 1];
+    const fmt = n => {
+      const r = Math.round(n * 10) / 10;
+      return r % 1 === 0 ? String(r) : r.toFixed(1);
+    };
+    const rows = this.answerList().map((a, i) => ({ id: a.id, title: a.title, order: i, points: 0, counts: [0, 0, 0, 0, 0] }));
+    const byId = {};
+    rows.forEach(r => { byId[r.id] = r; });
+    this.voteList().forEach(v => {
+      v.picks.forEach((id, k) => {
+        byId[id].points += PTS[k] * v.weight;
+        byId[id].counts[k] += v.weight;
+      });
+    });
+    rows.sort((x, y) => (y.points - x.points) || (x.order - y.order));
+
+    const top = rows[0].points || 1;
+    const maxCount = Math.max.apply(null, rows.map(r => Math.max.apply(null, r.counts))) || 1;
+    const leaders = [0, 1, 2, 3, 4].map(k => {
+      const vals = rows.map(r => r.counts[k]);
+      const m = Math.max.apply(null, vals);
+      return vals.filter(v => v === m).length === 1 && m > 0 ? m : -1;
+    });
+    const cell = (r, k) => {
+      const c = r.counts[k];
+      const lead = leaders[k] === c;
+      return {
+        count: fmt(c),
+        barH: Math.round(c / maxCount * 34) + "px",
+        ring: lead ? "#9E2852" : "transparent",
+        lead: lead ? ", the most in this column" : ""
+      };
+    };
+
+    const ledger = rows.map((r, i) => ({
+      place: String(i + 1),
+      title: r.title,
+      points: fmt(r.points),
+      unit: r.points === 1 ? "point" : "points",
+      isWinner: i === 0,
+      barWidth: (r.points / top * 100).toFixed(1) + "%",
+      barColor: i === 0 ? "#9E2852" : "#1E2A47",
+      caption: "Votes by place for " + r.title,
+      k1: cell(r, 0),
+      k2: cell(r, 1),
+      k3: cell(r, 2),
+      k4: cell(r, 3),
+      k5: cell(r, 4)
+    }));
+
+    return {
+      ledger: ledger,
+      winnerTitle: rows[0].title,
+      winnerPoints: fmt(rows[0].points),
+      winnerMargin: fmt(rows[0].points - rows[1].points)
+    };
+  }
+}
+</script>
+</body>
+</html>

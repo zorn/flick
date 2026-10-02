@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Official ballot · Home</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=Public+Sans:ital,wght@0,400;0,600;0,700;0,800;1,400&amp;family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&amp;display=swap">
+<style>
+body{margin:0;background:#eff0ed}
+*,*::before,*::after{box-sizing:border-box}
+a{color:#1b3d8f;text-decoration-thickness:1px;text-underline-offset:3px}
+a:hover{text-decoration-thickness:2px}
+:focus-visible{outline:3px solid #1b3d8f;outline-offset:3px}
+.btn-line{transition:background-color .15s ease,transform .08s ease}
+.btn-line:hover{background:#e8eef6!important}
+.btn-line:active{transform:translateY(1px)}
+.btn-ink{transition:background-color .15s ease,transform .08s ease}
+.btn-ink:hover{background:#2e3440!important}
+.btn-ink:active{transform:translateY(1px)}
+.btn-ink .arrow,.btn-paper .arrow{transition:transform .18s ease}
+.btn-ink:hover .arrow,.btn-paper:hover .arrow{transform:translateX(3px)}
+.btn-paper{transition:background-color .15s ease,transform .08s ease}
+.btn-paper:hover{background:#e8eef6!important}
+.btn-paper:active{transform:translateY(1px)}
+.wordmark:hover .wm-name{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px}
+.foot-link:hover{background:#e8eef6}
+.sample{transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.sample:hover{transform:rotate(0deg)!important}
+.seq-fill{animation:seq-fill .32s cubic-bezier(.2,.9,.25,1) both}
+@keyframes seq-fill{0%{transform:scale(0);opacity:.2}100%{transform:scale(1);opacity:1}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+@media (min-width:760px){
+  .home-h1{font-size:52px!important}
+  .hero{padding-top:44px!important}
+}
+</style>
+</helmet>
+<div style="background:#eff0ed; color:#15181d; font-family:'Public Sans', 'Segoe UI', system-ui, sans-serif; font-size:16px; line-height:1.5; min-height:640px">
+
+  <header style="background:#fdfdfb; border-top:6px solid #15181d; border-bottom:2px solid #15181d">
+    <div style="max-width:1080px; margin:0 auto; padding:10px 16px; display:flex; align-items:center; justify-content:space-between; gap:12px">
+      <a href="c-home.dc.html" class="wordmark" style="display:flex; align-items:center; gap:10px; min-height:44px; color:#15181d; text-decoration:none">
+        <svg aria-hidden="true" width="24" height="30" viewBox="0 0 24 30" fill="none" stroke="#15181d" stroke-width="2"><rect x="1" y="1" width="22" height="28"></rect><ellipse cx="7.5" cy="9" rx="3.2" ry="2.3" fill="#15181d"></ellipse><line x1="13" y1="9" x2="19" y2="9"></line><ellipse cx="7.5" cy="15" rx="3.2" ry="2.3"></ellipse><line x1="13" y1="15" x2="19" y2="15"></line><ellipse cx="7.5" cy="21" rx="3.2" ry="2.3"></ellipse><line x1="13" y1="21" x2="19" y2="21"></line></svg>
+        <span style="display:flex; flex-direction:column; line-height:1">
+          <span class="wm-name" style="font-family:'Source Serif 4', Georgia, serif; font-weight:700; font-size:20px; letter-spacing:-.01em">RankedVote<span style="color:#1b3d8f">.app</span></span>
+          <span style="margin-top:4px; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:#4a5160">Ranked-vote ballots</span>
+        </span>
+      </a>
+      <a href="https://rankedvote.app/ballot/new" class="btn-line" style="display:inline-flex; align-items:center; min-height:44px; padding:0 12px; border:2px solid #15181d; background:#fdfdfb; color:#15181d; font-size:15px; font-weight:700; text-decoration:none; white-space:nowrap">Create a ballot</a>
+    </div>
+  </header>
+
+  <main style="max-width:1080px; margin:0 auto; padding:0 16px">
+
+    <section aria-labelledby="home-h" class="hero" style="padding-top:28px; display:grid; grid-template-columns:repeat(auto-fit, minmax(min(420px, 100%), 1fr)); gap:36px 48px; align-items:start">
+      <div>
+        <p style="margin:0 0 12px; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:12px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:#4a5160">Instructions to the public</p>
+        <h1 id="home-h" class="home-h1" style="margin:0; font-family:'Source Serif 4', Georgia, 'Times New Roman', serif; font-weight:700; font-size:38px; line-height:1.06; letter-spacing:-.015em; text-wrap:balance">Rank your choices. Find the consensus.</h1>
+        <p style="margin:18px 0 0; font-size:18px; line-height:1.55; max-width:36em; text-wrap:pretty">Most votes ask each voter for one choice. A ranked vote asks voters to rank their preferences instead, and that leads to a better consensus outcome.</p>
+        <p style="margin:12px 0 0; font-size:18px; line-height:1.55; max-width:36em; text-wrap:pretty">RankedVote.app helps you quickly create, run, and tally ranked-vote ballots.</p>
+        <div style="margin-top:22px; display:flex; flex-wrap:wrap; align-items:center; gap:10px 18px">
+          <a href="https://rankedvote.app/ballot/new" class="btn-ink" style="display:inline-flex; align-items:center; gap:10px; min-height:54px; padding:0 22px; border:2px solid #15181d; background:#15181d; color:#fdfdfb; font-size:18px; font-weight:700; text-decoration:none">Create a ballot<svg class="arrow" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fdfdfb" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a>
+          <a href="#how" style="display:inline-flex; align-items:center; min-height:44px; font-size:16px; font-weight:600">Read the instructions</a>
+        </div>
+        <dl style="margin:26px 0 0; display:grid; grid-template-columns:repeat(auto-fit, minmax(min(150px, 100%), 1fr)); border:2px solid #15181d; background:#fdfdfb; overflow:hidden">
+          <div style="padding:9px 14px 11px; box-shadow:0 0 0 1px #15181d">
+            <dt style="font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:#4a5160">Cost</dt>
+            <dd style="margin:2px 0 0; font-size:16px; font-weight:700">Free to use</dd>
+          </div>
+          <div style="padding:9px 14px 11px; box-shadow:0 0 0 1px #15181d">
+            <dt style="font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:#4a5160">Source code</dt>
+            <dd style="margin:2px 0 0; font-size:16px; font-weight:700">Open source</dd>
+          </div>
+          <div style="padding:9px 14px 11px; box-shadow:0 0 0 1px #15181d">
+            <dt style="font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:#4a5160">Accounts</dt>
+            <dd style="margin:2px 0 0; font-size:16px; font-weight:700">None needed to create or vote</dd>
+          </div>
+        </dl>
+      </div>
+
+      <figure aria-labelledby="sample-cap" style="margin:0; padding:4px 10px 0 0">
+        <div aria-hidden="true" class="sample" style="position:relative; background:#fdfdfb; border:2px solid #15181d; box-shadow:9px 9px 0 -2px #fdfdfb, 9px 9px 0 0 #15181d; transform:rotate(-1.5deg)">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; padding:9px 14px; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase">
+            <span>Sample ballot</span>
+            <span>No. EBC-NEXT-READ</span>
+          </div>
+          <div style="position:relative; height:0; border-top:2px dashed #15181d">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#15181d" stroke-width="2" stroke-linecap="round" style="position:absolute; left:12px; top:-11px; background:#fdfdfb; padding:0 3px"><circle cx="6" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><line x1="20" y1="4" x2="8.12" y2="15.88"></line><line x1="14.47" y1="14.48" x2="20" y2="20"></line><line x1="8.12" y1="8.12" x2="12" y2="12"></line></svg>
+          </div>
+          <div style="padding:16px 14px 6px">
+            <p style="margin:0; font-family:'Source Serif 4', Georgia, 'Times New Roman', serif; font-size:20px; font-weight:700; line-height:1.2">What should the Elixir Book Club read next?</p>
+            <p style="margin:8px 0 0; padding:6px 10px; background:#e8eef6; border:1px solid #b9c0ca; font-size:13px; line-height:1.4">Rank up to 5 answers. Mark only one oval in each column.</p>
+          </div>
+          <div style="padding:0 14px 6px">
+            <div style="display:grid; grid-template-columns:minmax(0, 1fr) 140px; gap:8px; align-items:end; padding:6px 0 4px; border-bottom:2px solid #15181d">
+              <span style="font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:#4a5160">Answer</span>
+              <span style="display:grid; grid-template-columns:repeat(5, minmax(0, 1fr)); text-align:center; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:10px; color:#4a5160"><span>1st</span><span>2nd</span><span>3rd</span><span>4th</span><span>5th</span></span>
+            </div>
+
+            <div style="display:grid; grid-template-columns:minmax(0, 1fr) 140px; gap:8px; align-items:center; padding:8px 0; border-bottom:1px solid #b9c0ca">
+              <span style="font-size:13px; line-height:1.3"><strong style="font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; margin-right:4px">A</strong>Elixir in Action, Third Edition by Saša Jurić</span>
+              <span style="display:grid; grid-template-columns:repeat(5, minmax(0, 1fr)); justify-items:center">
+                <span style="width:22px; height:15px; border:1.5px solid #15181d; border-radius:50%"></span>
+                <span style="position:relative; width:22px; height:15px; border:1.5px solid #15181d; border-radius:50%"><span class="seq-fill" style="position:absolute; inset:-1.5px; border-radius:50%; background:#15181d; animation-delay:1.05s"></span></span>
+                <span style="width:22px; height:15px; border:1.5px solid #15181d; border-radius:50%"></span>
+                <span style="width:22px; height:15px; border:1.5px solid #15181d; border-radius:50%"></span>
+                <span style="width:22px; height:15px; border:1.5px solid #15181d; border-radius:50%"></span>
+              </span>
+            </div>
+            <div style="display:grid; grid-template-columns:minmax(0, 1fr) 140px; gap:8px; align-items:center; padding:8px 0; border-bottom:1px solid #b9c0ca; background:#e8eef6; margin:0 -14px; padding-left:14px; padding-right:14px">
+              <span style="font-size:13px; line-height:1.3"><strong style="font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; margin-right:4px">B</strong>Engineering Elixir Applications by Ellie Fairholm and Josep Giralt D'Lacoste</span>
+              <span style="display:grid; grid-template-columns:repeat(5, minmax(0, 1fr)); justify-items:center">
+                <span style="position:relative; width:22px; height:15px; border:1.5px solid #15181d; border-radius:50%"><span class="seq-fill" style="position:absolute; inset:-1.5px; border-radius:50%; background:#15181d; animation-delay:.6s"></span></span>
+                <span style="width:22px; height:15px; border:1.5px solid #15181d; border-radius:50%; background:#fdfdfb"></span>
+                <span style="width:22px; height:15px; border:1.5px solid #15181d; border-radius:50%; background:#fdfdfb"></span>
+                <span style="width:22px; height:15px; border:1.5px solid #15181d; border-radius:50%; background:#fdfdfb"></span>
+                <span style="width:22px; height:15px; border:1.5px solid #15181d; border-radius:50%; background:#fdfdfb"></span>
+              </span>
+            </div>
+            <div style="display:grid; grid-template-columns:minmax(0, 1fr) 140px; gap:8px; align-items:center; padding:8px 0; border-bottom:1px solid #b9c0ca">
+              <span style="font-size:13px; line-height:1.3"><strong style="font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; margin-right:4px">C</strong>Machine Learning in Elixir by Sean Moriarity</span>
+              <span style="display:grid; grid-template-columns:repeat(5, minmax(0, 1fr)); justify-items:center">
+                <span style="width:22px; height:15px; border:1.5px solid #15181d; border-radius:50%"></span>
+                <span style="width:22px; height:15px; border:1.5px solid #15181d; border-radius:50%"></span>
+                <span style="width:22px; height:15px; border:1.5px solid #15181d; border-radius:50%"></span>
+                <span style="width:22px; height:15px; border:1.5px solid #15181d; border-radius:50%"></span>
+                <span style="width:22px; height:15px; border:1.5px solid #15181d; border-radius:50%"></span>
+              </span>
+            </div>
+            <div style="display:grid; grid-template-columns:minmax(0, 1fr) 140px; gap:8px; align-items:center; padding:8px 14px; border-bottom:1px solid #b9c0ca; background:#e8eef6; margin:0 -14px">
+              <span style="font-size:13px; line-height:1.3"><strong style="font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; margin-right:4px">D</strong>Designing Elixir Systems with OTP by James Edward Gray II and Bruce A. Tate</span>
+              <span style="display:grid; grid-template-columns:repeat(5, minmax(0, 1fr)); justify-items:center">
+                <span style="width:22px; height:15px; border:1.5px solid #15181d; border-radius:50%; background:#fdfdfb"></span>
+                <span style="width:22px; height:15px; border:1.5px solid #15181d; border-radius:50%; background:#fdfdfb"></span>
+                <span style="width:22px; height:15px; border:1.5px solid #15181d; border-radius:50%; background:#fdfdfb"></span>
+                <span style="position:relative; width:22px; height:15px; border:1.5px solid #15181d; border-radius:50%"><span class="seq-fill" style="position:absolute; inset:-1.5px; border-radius:50%; background:#15181d; animation-delay:1.95s"></span></span>
+                <span style="width:22px; height:15px; border:1.5px solid #15181d; border-radius:50%; background:#fdfdfb"></span>
+              </span>
+            </div>
+            <div style="display:grid; grid-template-columns:minmax(0, 1fr) 140px; gap:8px; align-items:center; padding:8px 0; border-bottom:1px solid #b9c0ca">
+              <span style="font-size:13px; line-height:1.3"><strong style="font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; margin-right:4px">E</strong>Elixir Patterns by Hugo Barauna and Alexander Koutmos</span>
+              <span style="display:grid; grid-template-columns:repeat(5, minmax(0, 1fr)); justify-items:center">
+                <span style="width:22px; height:15px; border:1.5px solid #15181d; border-radius:50%"></span>
+                <span style="width:22px; height:15px; border:1.5px solid #15181d; border-radius:50%"></span>
+                <span style="position:relative; width:22px; height:15px; border:1.5px solid #15181d; border-radius:50%"><span class="seq-fill" style="position:absolute; inset:-1.5px; border-radius:50%; background:#15181d; animation-delay:1.5s"></span></span>
+                <span style="width:22px; height:15px; border:1.5px solid #15181d; border-radius:50%"></span>
+                <span style="width:22px; height:15px; border:1.5px solid #15181d; border-radius:50%"></span>
+              </span>
+            </div>
+            <p style="margin:0; padding:9px 0 12px; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:11px; letter-spacing:.06em; color:#4a5160">Continues: answers F and G</p>
+          </div>
+          <span style="position:absolute; left:50%; top:52%; transform:translate(-50%, -50%) rotate(-16deg); font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:64px; font-weight:600; letter-spacing:.18em; color:transparent; -webkit-text-stroke:2px rgba(27, 61, 143, .45); pointer-events:none; white-space:nowrap">SAMPLE</span>
+        </div>
+        <figcaption id="sample-cap" style="margin-top:20px; font-size:14px; line-height:1.5; color:#2b313b; max-width:34em">A sample ballot. Each answer is a row and each rank is a column. A voter fills one oval per answer and one per column, and the voter's 1st choice earns the most points.</figcaption>
+      </figure>
+    </section>
+
+    <section id="how" aria-labelledby="how-h" style="margin-top:44px; border:2px solid #15181d; background:#fdfdfb">
+      <div style="display:flex; align-items:baseline; gap:12px; padding:9px 16px; background:#15181d; color:#fdfdfb">
+        <span style="font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:12px; font-weight:600; letter-spacing:.14em">INSTRUCTIONS</span>
+        <h2 id="how-h" style="margin:0; font-size:17px; font-weight:700">How it works</h2>
+      </div>
+      <ol style="list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(auto-fit, minmax(min(280px, 100%), 1fr)); overflow:hidden">
+        <li style="display:grid; grid-template-columns:52px minmax(0, 1fr); gap:14px; align-items:start; padding:20px 16px 22px; box-shadow:0 0 0 1px #15181d">
+          <span aria-hidden="true" style="width:52px; height:52px; display:flex; align-items:center; justify-content:center; border:2px solid #15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:26px; font-weight:600">1</span>
+          <div>
+            <h3 style="margin:2px 0 0; font-size:19px; font-weight:800; line-height:1.25">Create a ballot</h3>
+            <p style="margin:6px 0 0; font-size:16px; line-height:1.5; color:#2b313b">Write a question and its possible answers.</p>
+          </div>
+        </li>
+        <li style="display:grid; grid-template-columns:52px minmax(0, 1fr); gap:14px; align-items:start; padding:20px 16px 22px; box-shadow:0 0 0 1px #15181d">
+          <span aria-hidden="true" style="width:52px; height:52px; display:flex; align-items:center; justify-content:center; border:2px solid #15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:26px; font-weight:600">2</span>
+          <div>
+            <h3 style="margin:2px 0 0; font-size:19px; font-weight:800; line-height:1.25">Publish it</h3>
+            <p style="margin:6px 0 0; font-size:16px; line-height:1.5; color:#2b313b">Publishing gives you a link. Share the link with your voters.</p>
+          </div>
+        </li>
+        <li style="display:grid; grid-template-columns:52px minmax(0, 1fr); gap:14px; align-items:start; padding:20px 16px 22px; box-shadow:0 0 0 1px #15181d">
+          <span aria-hidden="true" style="width:52px; height:52px; display:flex; align-items:center; justify-content:center; border:2px solid #15181d; background:#15181d; color:#fdfdfb; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:26px; font-weight:600">3</span>
+          <div>
+            <h3 style="margin:2px 0 0; font-size:19px; font-weight:800; line-height:1.25">Tally the votes</h3>
+            <p style="margin:6px 0 0; font-size:16px; line-height:1.5; color:#2b313b">A point-based count finds the winner.</p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <section aria-labelledby="uses-h" style="margin-top:28px; border:2px solid #15181d; background:#e8eef6">
+      <div style="padding:10px 16px; background:#fdfdfb; border-bottom:2px solid #15181d">
+        <h2 id="uses-h" style="margin:0; font-size:15px; font-weight:800; letter-spacing:.1em; text-transform:uppercase">Suitable for</h2>
+      </div>
+      <p style="margin:0; padding:14px 16px 4px; font-size:16px">Use a ranked vote whenever a group has to choose together. For example:</p>
+      <ul style="list-style:none; margin:0; padding:4px 16px 16px; display:grid; grid-template-columns:repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap:0 28px">
+        <li style="display:flex; gap:12px; align-items:flex-start; padding:11px 0; border-bottom:1px solid #b9c0ca; font-size:16px; line-height:1.4"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 22 22" fill="none" style="flex:none"><rect x="1" y="1" width="20" height="20" fill="#fdfdfb" stroke="#15181d" stroke-width="2"></rect><polyline points="5 11.5 9 15.5 17 6.5" stroke="#15181d" stroke-width="2.4" stroke-linecap="square"></polyline></svg>Picking a book for a book club</li>
+        <li style="display:flex; gap:12px; align-items:flex-start; padding:11px 0; border-bottom:1px solid #b9c0ca; font-size:16px; line-height:1.4"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 22 22" fill="none" style="flex:none"><rect x="1" y="1" width="20" height="20" fill="#fdfdfb" stroke="#15181d" stroke-width="2"></rect><polyline points="5 11.5 9 15.5 17 6.5" stroke="#15181d" stroke-width="2.4" stroke-linecap="square"></polyline></svg>Choosing a movie for family night</li>
+        <li style="display:flex; gap:12px; align-items:flex-start; padding:11px 0; border-bottom:1px solid #b9c0ca; font-size:16px; line-height:1.4"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 22 22" fill="none" style="flex:none"><rect x="1" y="1" width="20" height="20" fill="#fdfdfb" stroke="#15181d" stroke-width="2"></rect><polyline points="5 11.5 9 15.5 17 6.5" stroke="#15181d" stroke-width="2.4" stroke-linecap="square"></polyline></svg>Picking a vacation destination for a large group</li>
+        <li style="display:flex; gap:12px; align-items:flex-start; padding:11px 0; border-bottom:1px solid #b9c0ca; font-size:16px; line-height:1.4"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 22 22" fill="none" style="flex:none"><rect x="1" y="1" width="20" height="20" fill="#fdfdfb" stroke="#15181d" stroke-width="2"></rect><polyline points="5 11.5 9 15.5 17 6.5" stroke="#15181d" stroke-width="2.4" stroke-linecap="square"></polyline></svg>Choosing a new logo for a company</li>
+        <li style="display:flex; gap:12px; align-items:flex-start; padding:11px 0; border-bottom:1px solid #b9c0ca; font-size:16px; line-height:1.4"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 22 22" fill="none" style="flex:none"><rect x="1" y="1" width="20" height="20" fill="#fdfdfb" stroke="#15181d" stroke-width="2"></rect><polyline points="5 11.5 9 15.5 17 6.5" stroke="#15181d" stroke-width="2.4" stroke-linecap="square"></polyline></svg>Prioritizing technical-debt projects</li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="oss-h" style="margin-top:28px; border:2px solid #15181d; background:#fdfdfb">
+      <div style="display:flex; align-items:baseline; gap:12px; padding:9px 16px; background:#15181d; color:#fdfdfb">
+        <span style="font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:12px; font-weight:600; letter-spacing:.14em">ABOUT</span>
+        <h2 id="oss-h" style="margin:0; font-size:17px; font-weight:700">Free and open source</h2>
+      </div>
+      <div style="padding:16px 16px 20px; display:grid; grid-template-columns:repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap:14px 32px; align-items:start">
+        <div style="display:grid; gap:12px; font-size:16px; line-height:1.55">
+          <p style="margin:0">The project behind this site is called <strong>Flick</strong>. It is written in Elixir and Phoenix LiveView.</p>
+          <p style="margin:0">Flick was built for the <a href="https://elixirbookclub.github.io/website/">Elixir Book Club</a> to pick its books. It is shared for anyone to use and learn from.</p>
+        </div>
+        <dl style="margin:0; border:2px solid #15181d">
+          <div style="padding:8px 12px; border-bottom:1px solid #b9c0ca">
+            <dt style="font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:#4a5160">Project</dt>
+            <dd style="margin:0; font-size:16px; font-weight:700">Flick</dd>
+          </div>
+          <div style="padding:8px 12px; border-bottom:1px solid #b9c0ca">
+            <dt style="font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:#4a5160">Written in</dt>
+            <dd style="margin:0; font-size:16px; font-weight:700">Elixir and Phoenix LiveView</dd>
+          </div>
+          <div style="padding:8px 12px 12px">
+            <dt style="font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:#4a5160">Source</dt>
+            <dd style="margin:2px 0 0"><a href="https://github.com/zorn/flick" class="btn-line" style="display:inline-flex; align-items:center; gap:8px; min-height:44px; padding:0 14px; border:2px solid #15181d; background:#fdfdfb; color:#15181d; font-size:15px; font-weight:700; text-decoration:none">github.com/zorn/flick</a></dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    <section aria-labelledby="cta-h" style="margin-top:28px; padding:24px 18px; border:2px solid #15181d; background:#15181d; color:#fdfdfb; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:16px 24px">
+      <div>
+        <p style="margin:0 0 6px; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:#c9d3e3">Free · No account needed</p>
+        <h2 id="cta-h" style="margin:0; font-family:'Source Serif 4', Georgia, 'Times New Roman', serif; font-size:28px; font-weight:700; line-height:1.15">Have a choice to make together?</h2>
+      </div>
+      <a href="https://rankedvote.app/ballot/new" class="btn-paper" style="display:inline-flex; align-items:center; gap:10px; min-height:54px; padding:0 22px; border:2px solid #fdfdfb; background:#fdfdfb; color:#15181d; font-size:18px; font-weight:700; text-decoration:none">Create a ballot<svg class="arrow" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#15181d" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a>
+    </section>
+  </main>
+
+  <footer style="margin-top:40px; background:#fdfdfb; border-top:2px solid #15181d">
+    <div style="max-width:1080px; margin:0 auto; padding:16px 16px 28px; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px 24px">
+      <p style="margin:0; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:#4a5160">RankedVote.app · Form RV-0 · Instructions</p>
+      <nav aria-label="Site" style="display:flex; flex-wrap:wrap; gap:0 6px; margin-left:-8px">
+        <a href="https://github.com/zorn/flick" class="foot-link" style="display:inline-flex; align-items:center; min-height:44px; padding:0 8px; font-size:15px">GitHub project</a>
+        <a href="https://updown.io/wwis" class="foot-link" style="display:inline-flex; align-items:center; min-height:44px; padding:0 8px; font-size:15px">Uptime</a>
+        <a href="mailto:mike@mikezornek.com" class="foot-link" style="display:inline-flex; align-items:center; min-height:44px; padding:0 8px; font-size:15px">Contact site admin</a>
+      </nav>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":3100}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Soft and tactile · Home</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&amp;family=Figtree:wght@400..800&amp;display=swap">
+<style>
+body{margin:0;background:#F7EFE3}
+.e-root{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+.e-root *{box-sizing:border-box}
+.e-root a{color:#462F80;text-decoration-thickness:2px;text-underline-offset:3px}
+.e-root a:hover{color:#A13B85}
+.e-root :focus-visible{outline:3px solid #462F80;outline-offset:3px}
+.e-band :focus-visible{outline-color:#EFE39D}
+
+.e-press{cursor:pointer;transition:transform .16s cubic-bezier(.34,1.56,.64,1),box-shadow .16s ease}
+.e-press:hover{transform:translateY(-2px)!important}
+.e-press:active{transform:translateY(3px)!important;transition-duration:.05s}
+.e-tang:hover{box-shadow:0 6px 0 #C96736,0 16px 24px -12px rgba(201,103,54,.65)!important}
+.e-tang:active{box-shadow:0 1px 0 #C96736,0 3px 6px -3px rgba(201,103,54,.5)!important}
+.e-plain:hover{box-shadow:0 5px 0 #D0C6B6,0 12px 18px -12px rgba(64,44,30,.45)!important}
+.e-plain:active{box-shadow:0 1px 0 #D0C6B6,0 2px 4px -2px rgba(64,44,30,.3)!important}
+.e-butter:hover{box-shadow:0 6px 0 #B8A645,0 16px 24px -12px rgba(0,0,0,.4)!important}
+.e-butter:active{box-shadow:0 1px 0 #B8A645!important}
+.e-cloud:hover{box-shadow:0 6px 0 #B9AEE8,0 16px 24px -12px rgba(0,0,0,.4)!important}
+.e-cloud:active{box-shadow:0 1px 0 #B9AEE8!important}
+.e-onTang:hover{box-shadow:0 5px 0 #C96736,0 12px 18px -12px rgba(120,50,20,.5)!important}
+.e-onTang:active{box-shadow:0 1px 0 #C96736!important}
+
+/* Hero illustration: cards drop into the tray, the next one hovers */
+@keyframes e-in{0%{transform:translateY(-34px) scale(.92) rotate(-4deg);opacity:0}55%{transform:translateY(5px) scale(1.02) rotate(.6deg);opacity:1}78%{transform:translateY(-2px)}100%{transform:none;opacity:1}}
+.e-in{animation:e-in .6s cubic-bezier(.2,.8,.25,1) both}
+.e-tray .e-in:nth-child(1){animation-delay:.2s}
+.e-tray .e-in:nth-child(2){animation-delay:.42s}
+.e-tray .e-in:nth-child(3){animation-delay:.64s}
+@keyframes e-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+.e-bob{animation:e-bob 2.6s ease-in-out 1.2s infinite}
+@keyframes e-breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+.e-breathe{animation:e-breathe 2.6s ease-in-out 1.2s infinite}
+
+@media (min-width:900px){
+  .e-hero{grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);align-items:center;column-gap:48px!important}
+  .e-h1{font-size:68px!important}
+  .e-h2{font-size:38px!important}
+}
+@media (prefers-reduced-motion:reduce){
+  .e-root *{animation:none!important;transition:none!important}
+}
+</style>
+</helmet>
+<div class="e-root" style="background-color:#F7EFE3; background-image:radial-gradient(#E6DBCA 1.2px, transparent 1.6px); background-size:22px 22px; color:#251C34; font-family:Figtree, 'Avenir Next', 'Segoe UI', system-ui, sans-serif; font-size:17px; line-height:1.5">
+  <div style="max-width:1120px; margin:0 auto; padding:0 16px">
+
+    <header style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px; padding:14px 0 6px">
+      <a href="e-home.dc.html" style="display:inline-flex; align-items:center; gap:8px; min-height:44px; color:#251C34; text-decoration:none">
+        <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true">
+          <rect x="1" y="17" width="20" height="9" rx="4.5" fill="#F1B464"></rect>
+          <rect x="4" y="9.5" width="20" height="9" rx="4.5" fill="#E57255"></rect>
+          <rect x="7" y="2" width="20" height="9" rx="4.5" fill="#462F80"></rect>
+        </svg>
+        <span style="font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:19px; letter-spacing:-0.02em; line-height:1">RankedVote<span style="color:#A13B85">.app</span></span>
+      </a>
+      <a href="https://rankedvote.app/ballot/new" class="e-press e-tang" style="display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:0 16px; border-radius:999px; background:#FF9F61; color:#251C34; text-decoration:none; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:700; font-size:15px; box-shadow:0 4px 0 #C96736, 0 10px 18px -12px rgba(201,103,54,.6)">Create a ballot</a>
+    </header>
+
+    <main>
+      <section class="e-hero" aria-labelledby="e-hero-h" style="display:grid; gap:32px; padding:22px 0 8px">
+        <div>
+          <div style="display:flex; flex-wrap:wrap; gap:8px">
+            <span style="display:inline-flex; align-items:center; padding:5px 12px; border-radius:999px; background:#FFFDF8; font-size:14px; font-weight:700; box-shadow:inset 0 0 0 1px #DED6C9">Free</span>
+            <span style="display:inline-flex; align-items:center; padding:5px 12px; border-radius:999px; background:#FFFDF8; font-size:14px; font-weight:700; box-shadow:inset 0 0 0 1px #DED6C9">Open source</span>
+            <span style="display:inline-flex; align-items:center; padding:5px 12px; border-radius:999px; background:#FFFDF8; font-size:14px; font-weight:700; box-shadow:inset 0 0 0 1px #DED6C9">No accounts</span>
+          </div>
+          <h1 id="e-hero-h" class="e-h1" style="margin:18px 0 16px; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:44px; line-height:1; letter-spacing:-0.035em; text-wrap:balance">Rank your favorites. <span style="color:#A13B85">Decide together.</span></h1>
+          <p style="margin:0; font-size:18px; line-height:1.5; max-width:34em">Most votes ask everyone for a single choice. A ranked vote asks for their favorites in order, so the result is one more of the group can agree on.</p>
+          <p style="margin:12px 0 0; font-size:18px; line-height:1.5; color:#585166; max-width:34em">RankedVote.app helps you quickly create, run, and tally a ranked vote. It's free and open source, and nobody needs an account to make a ballot or to vote on one.</p>
+          <div style="display:flex; flex-wrap:wrap; align-items:center; gap:14px 18px; margin-top:26px">
+            <a href="https://rankedvote.app/ballot/new" class="e-press e-tang" style="display:inline-flex; align-items:center; gap:10px; min-height:58px; padding:0 26px; border-radius:20px; background:#FF9F61; color:#251C34; text-decoration:none; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:20px; letter-spacing:-0.01em; box-shadow:0 5px 0 #C96736, 0 14px 22px -12px rgba(201,103,54,.6)">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
+              Create a ballot
+            </a>
+            <span style="font-size:15px; font-weight:600; color:#585166">Free, and no sign-up</span>
+          </div>
+        </div>
+
+        <div aria-hidden="true" style="position:relative; height:330px; width:100%; max-width:430px; margin:0 auto">
+          <div style="position:absolute; left:4%; right:4%; top:74px; bottom:6px; transform:rotate(-2.5deg)">
+            <div class="e-tray" style="height:100%; border-radius:30px; padding:14px; background:#FFFDF8; display:flex; flex-direction:column; gap:8px; box-shadow:0 1px 1px rgba(64,44,30,.05), 0 6px 0 #E6DBCB, 0 30px 46px -24px rgba(64,44,30,.45)">
+              <div class="e-in" style="flex:none; height:50px; border-radius:16px; padding:0 12px; display:flex; align-items:center; gap:10px; background:#E8E4FE; box-shadow:0 3px 0 #C9C0F5">
+                <span style="flex:none; width:30px; height:30px; border-radius:999px; display:grid; place-items:center; background:#462F80; color:#FFFDF8; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:15px; box-shadow:inset 0 -3px 0 rgba(37,28,52,.25)">1</span>
+                <span style="flex:1; display:flex; flex-direction:column; gap:6px"><span style="display:block; height:8px; width:82%; border-radius:99px; background:rgba(37,28,52,.22)"></span><span style="display:block; height:8px; width:52%; border-radius:99px; background:rgba(37,28,52,.12)"></span></span>
+              </div>
+              <div class="e-in" style="flex:none; height:50px; border-radius:16px; padding:0 12px; display:flex; align-items:center; gap:10px; background:#FBDEF0; box-shadow:0 3px 0 #EDBBDA">
+                <span style="flex:none; width:30px; height:30px; border-radius:999px; display:grid; place-items:center; background:#A13B85; color:#FFFDF8; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:15px; box-shadow:inset 0 -3px 0 rgba(37,28,52,.25)">2</span>
+                <span style="flex:1; display:flex; flex-direction:column; gap:6px"><span style="display:block; height:8px; width:66%; border-radius:99px; background:rgba(37,28,52,.22)"></span><span style="display:block; height:8px; width:40%; border-radius:99px; background:rgba(37,28,52,.12)"></span></span>
+              </div>
+              <div class="e-in" style="flex:none; height:50px; border-radius:16px; padding:0 12px; display:flex; align-items:center; gap:10px; background:#FFE0D4; box-shadow:0 3px 0 #F5BFAA">
+                <span style="flex:none; width:30px; height:30px; border-radius:999px; display:grid; place-items:center; background:#E57255; color:#251C34; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:15px; box-shadow:inset 0 -3px 0 rgba(37,28,52,.2)">3</span>
+                <span style="flex:1; display:flex; flex-direction:column; gap:6px"><span style="display:block; height:8px; width:74%; border-radius:99px; background:rgba(37,28,52,.22)"></span><span style="display:block; height:8px; width:58%; border-radius:99px; background:rgba(37,28,52,.12)"></span></span>
+              </div>
+              <div style="flex:none; height:50px; border-radius:16px; padding:0 12px; display:flex; align-items:center; gap:10px; background:#F1E9DC; box-shadow:inset 0 3px 7px rgba(64,44,30,.13)">
+                <span class="e-breathe" style="flex:none; width:30px; height:30px; border-radius:999px; display:grid; place-items:center; border:2px dashed #462F80; color:#585166; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:14px">4</span>
+              </div>
+            </div>
+          </div>
+          <div style="position:absolute; right:0; top:2px; width:60%; transform:rotate(7deg)">
+            <div class="e-bob" style="height:52px; border-radius:16px; padding:0 12px; display:flex; align-items:center; gap:10px; background:#FFFDF8; box-shadow:0 1px 1px rgba(64,44,30,.05), 0 5px 0 #E2D7C6, 0 26px 30px -14px rgba(64,44,30,.45)">
+              <span style="flex:none; width:30px; height:30px; border-radius:999px; display:grid; place-items:center; border:2px dashed #CFC4B2; color:#585166">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
+              </span>
+              <span style="flex:1; display:flex; flex-direction:column; gap:6px"><span style="display:block; height:8px; width:78%; border-radius:99px; background:rgba(37,28,52,.22)"></span><span style="display:block; height:8px; width:46%; border-radius:99px; background:rgba(37,28,52,.12)"></span></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="e-how-h" style="padding-top:64px">
+        <h2 id="e-how-h" class="e-h2" style="margin:0; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:30px; line-height:1.1; letter-spacing:-0.025em">How it works</h2>
+        <ol style="list-style:none; margin:20px 0 0; padding:0; display:grid; grid-template-columns:repeat(auto-fit, minmax(min(240px, 100%), 1fr)); gap:14px">
+          <li style="border-radius:26px; padding:20px; background:#FFFDF8; box-shadow:0 1px 1px rgba(64,44,30,.05), 0 4px 0 #E6DBCB, 0 18px 28px -18px rgba(64,44,30,.45)">
+            <span aria-hidden="true" style="width:52px; height:52px; border-radius:16px; display:grid; place-items:center; background:#FF9F61; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:24px; box-shadow:0 4px 0 #C96736">1</span>
+            <h3 style="margin:16px 0 4px; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:21px; line-height:1.15">Create a ballot</h3>
+            <p style="margin:0; color:#585166">Write your question and list the possible answers.</p>
+          </li>
+          <li style="border-radius:26px; padding:20px; background:#FFFDF8; box-shadow:0 1px 1px rgba(64,44,30,.05), 0 4px 0 #E6DBCB, 0 18px 28px -18px rgba(64,44,30,.45)">
+            <span aria-hidden="true" style="width:52px; height:52px; border-radius:16px; display:grid; place-items:center; background:#FFE1C7; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:24px; box-shadow:0 4px 0 #F0BE97">2</span>
+            <h3 style="margin:16px 0 4px; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:21px; line-height:1.15">Publish and share</h3>
+            <p style="margin:0; color:#585166">Publishing gives you a link. Send it to your voters.</p>
+          </li>
+          <li style="border-radius:26px; padding:20px; background:#FFFDF8; box-shadow:0 1px 1px rgba(64,44,30,.05), 0 4px 0 #E6DBCB, 0 18px 28px -18px rgba(64,44,30,.45)">
+            <span aria-hidden="true" style="width:52px; height:52px; border-radius:16px; display:grid; place-items:center; background:#FFE1C7; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:24px; box-shadow:0 4px 0 #F0BE97">3</span>
+            <h3 style="margin:16px 0 4px; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:21px; line-height:1.15">Tally the votes</h3>
+            <p style="margin:0; color:#585166">A point-based count adds up every ranking and finds the winner.</p>
+          </li>
+        </ol>
+      </section>
+
+      <section aria-labelledby="e-for-h" style="padding-top:64px">
+        <h2 id="e-for-h" class="e-h2" style="margin:0; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:30px; line-height:1.1; letter-spacing:-0.025em">Good for picking…</h2>
+        <ul style="list-style:none; margin:22px 0 0; padding:0; display:grid; grid-template-columns:repeat(auto-fit, minmax(min(160px, 100%), 1fr)); gap:14px 12px">
+          <li style="min-height:150px; display:flex; flex-direction:column; justify-content:space-between; gap:14px; border-radius:24px; padding:16px; background:#E8E4FE; transform:rotate(-1.2deg); box-shadow:0 4px 0 #C9C0F5, 0 16px 24px -18px rgba(64,44,30,.5)">
+            <span aria-hidden="true" style="width:44px; height:44px; border-radius:14px; display:grid; place-items:center; background:#FFFDF8; color:#462F80; box-shadow:0 3px 0 #C9C0F5">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.5C10.2 5.2 7.6 4.6 4 4.6v13.2c3.6 0 6.2.6 8 1.9 1.8-1.3 4.4-1.9 8-1.9V4.6c-3.6 0-6.2.6-8 1.9z"></path><path d="M12 6.5v13.2"></path></svg>
+            </span>
+            <p style="margin:0; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:750; font-size:19px; line-height:1.15">A book for your book club</p>
+          </li>
+          <li style="min-height:150px; display:flex; flex-direction:column; justify-content:space-between; gap:14px; border-radius:24px; padding:16px; background:#FBDEF0; transform:rotate(1deg); box-shadow:0 4px 0 #EDBBDA, 0 16px 24px -18px rgba(64,44,30,.5)">
+            <span aria-hidden="true" style="width:44px; height:44px; border-radius:14px; display:grid; place-items:center; background:#FFFDF8; color:#A13B85; box-shadow:0 3px 0 #EDBBDA">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="9" width="17" height="11" rx="2.5"></rect><path d="M3.8 9 19 4.6l.9 3.1"></path><path d="M8.5 7.6l2.3 2.9"></path><path d="M13.4 6.2l2.3 2.9"></path></svg>
+            </span>
+            <p style="margin:0; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:750; font-size:19px; line-height:1.15">A movie for family night</p>
+          </li>
+          <li style="min-height:150px; display:flex; flex-direction:column; justify-content:space-between; gap:14px; border-radius:24px; padding:16px; background:#FFE0D4; transform:rotate(.8deg); box-shadow:0 4px 0 #F5BFAA, 0 16px 24px -18px rgba(64,44,30,.5)">
+            <span aria-hidden="true" style="width:44px; height:44px; border-radius:14px; display:grid; place-items:center; background:#FFFDF8; color:#B64E10; box-shadow:0 3px 0 #F5BFAA">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7.5" width="16" height="12" rx="2.5"></rect><path d="M9 7.5V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5v2"></path><path d="M8.5 7.5v12"></path><path d="M15.5 7.5v12"></path></svg>
+            </span>
+            <p style="margin:0; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:750; font-size:19px; line-height:1.15">A vacation spot for a big group</p>
+          </li>
+          <li style="min-height:150px; display:flex; flex-direction:column; justify-content:space-between; gap:14px; border-radius:24px; padding:16px; background:#FFE9CC; transform:rotate(-.9deg); box-shadow:0 4px 0 #F0CC97, 0 16px 24px -18px rgba(64,44,30,.5)">
+            <span aria-hidden="true" style="width:44px; height:44px; border-radius:14px; display:grid; place-items:center; background:#FFFDF8; color:#251C34; box-shadow:0 3px 0 #F0CC97">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="8.5" r="4"></circle><rect x="13" y="13" width="7" height="7" rx="1.8"></rect><path d="M16.5 3.5l3.5 6h-7z"></path><path d="M4.5 15.5l4.5 4.5"></path><path d="M9 15.5 4.5 20"></path></svg>
+            </span>
+            <p style="margin:0; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:750; font-size:19px; line-height:1.15">A new logo for your company</p>
+          </li>
+          <li style="min-height:150px; display:flex; flex-direction:column; justify-content:space-between; gap:14px; border-radius:24px; padding:16px; background:#F9F3CD; transform:rotate(1.1deg); box-shadow:0 4px 0 #E3D68A, 0 16px 24px -18px rgba(64,44,30,.5)">
+            <span aria-hidden="true" style="width:44px; height:44px; border-radius:14px; display:grid; place-items:center; background:#FFFDF8; color:#251C34; box-shadow:0 3px 0 #E3D68A">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 6h10"></path><path d="M10 12h10"></path><path d="M10 18h10"></path><path d="M3.5 6l1.3 1.3L7 5"></path><path d="M3.5 12l1.3 1.3L7 11"></path><path d="M3.5 18l1.3 1.3L7 17"></path></svg>
+            </span>
+            <p style="margin:0; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:750; font-size:19px; line-height:1.15">Which tech-debt projects come first</p>
+          </li>
+          <li style="min-height:150px; display:flex; flex-direction:column; justify-content:space-between; gap:14px; border-radius:24px; padding:16px; background:#FF9F61; transform:rotate(-.6deg); box-shadow:0 4px 0 #C96736, 0 16px 24px -18px rgba(201,103,54,.6)">
+            <p style="margin:0; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:750; font-size:19px; line-height:1.15">Your group's next big decision</p>
+            <a href="https://rankedvote.app/ballot/new" class="e-press e-onTang" style="align-self:flex-start; display:inline-flex; align-items:center; gap:6px; min-height:44px; padding:0 14px; border-radius:14px; background:#FFFDF8; color:#251C34; text-decoration:none; font-weight:800; font-size:15px; box-shadow:0 3px 0 #C96736">
+              Create a ballot
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="M13 5.5 19.5 12 13 18.5"></path></svg>
+            </a>
+          </li>
+        </ul>
+      </section>
+
+      <section class="e-band" aria-labelledby="e-oss-h" style="margin-top:64px; position:relative; overflow:hidden; border-radius:32px; padding:28px 20px 26px; background-color:#462F80; background-image:radial-gradient(rgba(255,253,248,.09) 1.2px, transparent 1.6px); background-size:18px 18px; color:#FFFDF8; box-shadow:0 6px 0 #291852, 0 30px 50px -30px rgba(41,24,82,.7)">
+        <div style="max-width:640px">
+          <span style="display:inline-flex; align-items:center; gap:6px; padding:5px 12px 5px 9px; border-radius:999px; background:#EFE39D; color:#251C34; font-size:14px; font-weight:800">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 8 4.5 12l4 4"></path><path d="M15.5 8l4 4-4 4"></path></svg>
+            Free and open source
+          </span>
+          <h2 id="e-oss-h" class="e-h2" style="margin:16px 0 10px; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:30px; line-height:1.08; letter-spacing:-0.025em">Built for a book club. Shared with everyone.</h2>
+          <p style="margin:0; font-size:17px; line-height:1.55; color:#E8E4FE">The project behind RankedVote.app is called Flick. It's written in Elixir and Phoenix LiveView, and it was built for the Elixir Book Club to pick its books. Now it's shared for anyone to use and learn from.</p>
+          <div style="display:flex; flex-wrap:wrap; gap:12px; margin-top:22px">
+            <a href="https://github.com/zorn/flick" class="e-press e-butter" style="display:inline-flex; align-items:center; gap:8px; min-height:48px; padding:0 18px; border-radius:16px; background:#EFE39D; color:#251C34; text-decoration:none; font-weight:800; font-size:16px; box-shadow:0 4px 0 #B8A645">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 8 4.5 12l4 4"></path><path d="M15.5 8l4 4-4 4"></path></svg>
+              Flick on GitHub
+            </a>
+            <a href="https://elixirbookclub.github.io/website/" class="e-press e-cloud" style="display:inline-flex; align-items:center; gap:8px; min-height:48px; padding:0 18px; border-radius:16px; background:#E8E4FE; color:#251C34; text-decoration:none; font-weight:800; font-size:16px; box-shadow:0 4px 0 #B9AEE8">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6.5C10.2 5.2 7.6 4.6 4 4.6v13.2c3.6 0 6.2.6 8 1.9 1.8-1.3 4.4-1.9 8-1.9V4.6c-3.6 0-6.2.6-8 1.9z"></path><path d="M12 6.5v13.2"></path></svg>
+              The Elixir Book Club
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="e-cta-h" style="padding:64px 0 8px; text-align:center">
+        <h2 id="e-cta-h" class="e-h2" style="margin:0 auto; max-width:16em; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:30px; line-height:1.1; letter-spacing:-0.025em; text-wrap:balance">Got a decision your group can't settle?</h2>
+        <p style="margin:10px auto 0; max-width:30em; color:#585166">Make a ballot, share the link, and let the rankings decide.</p>
+        <a href="https://rankedvote.app/ballot/new" class="e-press e-tang" style="margin-top:22px; display:inline-flex; align-items:center; gap:10px; min-height:58px; padding:0 26px; border-radius:20px; background:#FF9F61; color:#251C34; text-decoration:none; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:20px; letter-spacing:-0.01em; box-shadow:0 5px 0 #C96736, 0 14px 22px -12px rgba(201,103,54,.6)">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
+          Create a ballot
+        </a>
+      </section>
+    </main>
+
+    <footer style="margin-top:56px; padding:20px 0 36px; border-top:1px solid #DED6C9; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:14px 20px">
+      <p style="margin:0; font-family:'Bricolage Grotesque', 'Avenir Next', 'Trebuchet MS', system-ui, sans-serif; font-weight:800; font-size:16px; color:#585166">RankedVote.app</p>
+      <nav aria-label="Site links" style="display:flex; flex-wrap:wrap; gap:8px">
+        <a href="https://github.com/zorn/flick" class="e-press e-plain" style="display:inline-flex; align-items:center; min-height:44px; padding:0 14px; border-radius:999px; background:#FFFDF8; color:#251C34; text-decoration:none; font-size:14.5px; font-weight:650; box-shadow:0 3px 0 #D0C6B6, 0 8px 14px -10px rgba(64,44,30,.4)">GitHub project</a>
+        <a href="https://updown.io/wwis" class="e-press e-plain" style="display:inline-flex; align-items:center; min-height:44px; padding:0 14px; border-radius:999px; background:#FFFDF8; color:#251C34; text-decoration:none; font-size:14.5px; font-weight:650; box-shadow:0 3px 0 #D0C6B6, 0 8px 14px -10px rgba(64,44,30,.4)">Uptime</a>
+        <a href="mailto:mike@mikezornek.com" class="e-press e-plain" style="display:inline-flex; align-items:center; min-height:44px; padding:0 14px; border-radius:999px; background:#FFFDF8; color:#251C34; text-decoration:none; font-size:14.5px; font-weight:650; box-shadow:0 3px 0 #D0C6B6, 0 8px 14px -10px rgba(64,44,30,.4)">Contact site admin</a>
+      </nav>
+    </footer>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":3750}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

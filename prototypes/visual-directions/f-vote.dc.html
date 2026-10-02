@@ -1,0 +1,517 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Elixir after dark · Vote</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap">
+<style>
+body { margin: 0; background: #110B18; }
+* { box-sizing: border-box; }
+::selection { background: #4B275F; color: #EDE9F2; }
+a { color: #C9A3F5; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+a:hover { color: #DDBDFF; }
+a:focus-visible, button:focus-visible, input:focus-visible, [tabindex]:focus-visible { outline: 2px solid #C9A3F5; outline-offset: 2px; }
+input::placeholder { color: #938B9E; opacity: 1; }
+input[type=search] { -webkit-appearance: none; appearance: none; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+.wm .wm-box { transition: background-color .2s ease, color .2s ease; }
+.wm:hover .wm-box { background: #C9A3F5 !important; color: #110B18 !important; }
+.btn-pri { transition: background-color .15s ease, transform .1s ease; }
+.btn-pri:hover { background: #DDBDFF !important; }
+.btn-pri:active { transform: translateY(1px); }
+.btn-ghost { transition: border-color .15s ease, background-color .15s ease; }
+.btn-ghost:hover { border-color: #C9A3F5 !important; background: #1B1323 !important; color: #EDE9F2 !important; }
+.icon-btn { transition: background-color .15s ease, color .15s ease; }
+.icon-btn:hover { background: #251C2F !important; color: #EDE9F2 !important; }
+.field { transition: border-color .15s ease; }
+.field:hover { border-color: #9C8BB3 !important; }
+.field:focus { border-color: #C9A3F5 !important; }
+.rank-in { transition: background-color .2s ease, border-color .2s ease, color .2s ease, transform .12s ease; }
+.rank-in:focus { outline: 2px solid #C9A3F5; outline-offset: 2px; }
+.rank-in:active { transform: scale(.97); }
+.pip { transition: background-color .2s ease, color .2s ease, border-color .2s ease; }
+.foot-link { transition: color .15s ease; }
+.foot-link:hover { color: #C9A3F5 !important; }
+.flash-a { animation: flashA 1.1s ease-out; }
+.flash-b { animation: flashB 1.1s ease-out; }
+@keyframes flashA { from { background-color: rgba(201, 163, 245, .32); } to { background-color: rgba(201, 163, 245, 0); } }
+@keyframes flashB { from { background-color: rgba(201, 163, 245, .32); } to { background-color: rgba(201, 163, 245, 0); } }
+.pulse { animation: pulse 2.2s ease-out infinite; }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(201, 163, 245, .55); } 70% { box-shadow: 0 0 0 7px rgba(201, 163, 245, 0); } 100% { box-shadow: 0 0 0 0 rgba(201, 163, 245, 0); } }
+.rise { animation: rise .45s ease-out both; }
+@keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.desk-only { display: none; }
+@media (min-width: 900px) {
+  .vote-grid { grid-template-columns: minmax(0, 1fr) 380px; }
+  .vote-aside { position: sticky; top: 24px; }
+  .desk-only { display: flex; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+</style>
+</helmet>
+<div style="background: #110B18; color: #EDE9F2; font-family: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 17px; line-height: 1.55;">
+
+  <header style="border-bottom: 1px solid #3A3046;">
+    <div style="max-width: 1120px; margin: 0 auto; padding: 10px clamp(16px, 4vw, 40px); min-height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+      <a href="f-home.dc.html" class="wm" aria-label="RankedVote.app home" style="display: flex; align-items: center; gap: 10px; min-height: 44px; color: #EDE9F2; text-decoration: none;">
+        <span class="wm-box" aria-hidden="true" style="width: 26px; height: 26px; display: grid; place-items: center; border: 1.5px solid #C9A3F5; border-radius: 5px; background: #4B275F; color: #C9A3F5; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 14px; font-weight: 700; line-height: 1;">1</span>
+        <span style="font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 16px; font-weight: 700; letter-spacing: -0.01em;">RankedVote<span style="color: #C9A3F5;">.app</span></span>
+      </a>
+      <a href="#" class="btn-ghost" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; border: 1px solid #716085; border-radius: 6px; color: #EDE9F2; text-decoration: none; font-size: 15px; font-weight: 600; white-space: nowrap;">Create a ballot</a>
+    </div>
+  </header>
+
+  <main style="max-width: 1120px; margin: 0 auto; padding: 28px clamp(16px, 4vw, 40px) 0;">
+    <p style="margin: 0; display: flex; align-items: center; gap: 10px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; line-height: 1.4; color: #B2AABE;">
+      <span class="pulse" aria-hidden="true" style="width: 8px; height: 8px; border-radius: 50%; background: #C9A3F5;"></span>
+      <span>Open for votes</span>
+    </p>
+    <h1 style="margin: 14px 0 0; max-width: 22ch; font-size: clamp(30px, 5vw + 12px, 52px); line-height: 1.08; letter-spacing: -0.025em; font-weight: 700; text-wrap: balance;">What should the Elixir Book Club read next?</h1>
+
+    <sc-if value="{{notDone}}" hint-placeholder-val="{{true}}">
+      <div>
+      <div style="margin-top: 16px; max-width: 62ch; color: #B2AABE; font-size: 17px; line-height: 1.55;">
+        <p style="margin: 0;">Rank up to five books you'd like to read next. Your first choice earns the most points. We'll start the winner at our next meeting.</p>
+      </div>
+
+      <form onSubmit="{{onSubmit}}" style="margin-top: 32px;">
+        <div class="vote-grid" style="display: grid; gap: 32px; align-items: start;">
+
+          <div style="min-width: 0;">
+            <div style="display: flex; flex-direction: column; gap: 8px; max-width: 420px;">
+              <label for="voter-name" style="font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px; color: #B2AABE;">Name <span style="color: #938B9E;">(optional)</span></label>
+              <input id="voter-name" type="text" autocomplete="name" value="{{name}}" onChange="{{onName}}" placeholder="Leave blank to vote without a name" class="field" style="width: 100%; height: 48px; padding: 0 14px; background: #251C2F; border: 1px solid #716085; border-radius: 6px; color: #EDE9F2; font-family: inherit; font-size: 16px;" />
+            </div>
+
+            <section aria-labelledby="rank-h" style="margin-top: 36px;">
+              <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px;">
+                <h2 id="rank-h" style="margin: 0; font-size: 22px; line-height: 1.2; font-weight: 700; letter-spacing: -0.01em;">Rank your choices</h2>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <div aria-hidden="true" style="display: flex; gap: 4px;">
+                    <sc-for list="{{pips}}" as="pip" hint-placeholder-count="5">
+                      <span class="pip" style="width: 22px; height: 22px; display: grid; place-items: center; border-radius: 4px; border: 1px solid {{pip.border}}; background: {{pip.bg}}; color: {{pip.color}}; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; line-height: 1;">{{pip.n}}</span>
+                    </sc-for>
+                  </div>
+                  <span aria-live="polite" style="font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; color: #B2AABE;">{{countText}}</span>
+                </div>
+              </div>
+              <p style="margin: 10px 0 0; max-width: 60ch; color: #B2AABE; font-size: 16px; line-height: 1.5;">Type a rank from 1 to 5 in the box beside an answer. 1 is your first choice and earns the most points. Only a first choice is required.</p>
+              <p class="desk-only" style="margin: 12px 0 0; flex-wrap: wrap; align-items: center; gap: 6px 8px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; color: #938B9E;">
+                <kbd style="font-family: inherit; font-size: 11px; padding: 2px 6px; border: 1px solid #3A3046; border-bottom-width: 2px; border-radius: 4px; background: #1B1323; color: #EDE9F2;">1</kbd><span>to</span><kbd style="font-family: inherit; font-size: 11px; padding: 2px 6px; border: 1px solid #3A3046; border-bottom-width: 2px; border-radius: 4px; background: #1B1323; color: #EDE9F2;">5</kbd><span>rank ·</span>
+                <kbd style="font-family: inherit; font-size: 11px; padding: 2px 6px; border: 1px solid #3A3046; border-bottom-width: 2px; border-radius: 4px; background: #1B1323; color: #EDE9F2;">Tab</kbd><span>next answer ·</span>
+                <kbd style="font-family: inherit; font-size: 11px; padding: 2px 6px; border: 1px solid #3A3046; border-bottom-width: 2px; border-radius: 4px; background: #1B1323; color: #EDE9F2;">Backspace</kbd><span>clear ·</span>
+                <kbd style="font-family: inherit; font-size: 11px; padding: 2px 6px; border: 1px solid #3A3046; border-bottom-width: 2px; border-radius: 4px; background: #1B1323; color: #EDE9F2;">Enter</kbd><span>submit</span>
+              </p>
+
+              <sc-if value="{{alertNoFirst}}" hint-placeholder-val="{{false}}">
+                <div role="alert" style="margin-top: 16px; display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; border: 1px solid #FEBD5C; border-radius: 6px; background: #1E1508;">
+                  <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" style="flex: none; margin-top: 3px; fill: none; stroke: #FEBD5C; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;"><path d="M12 3l10 18H2z"></path><path d="M12 10v5M12 18v.01"></path></svg>
+                  <p style="margin: 0; font-size: 15px; line-height: 1.45; color: #EDE9F2;"><strong style="color: #FEBD5C;">No first choice yet.</strong> Type 1 beside the answer you want most.</p>
+                </div>
+              </sc-if>
+              <sc-if value="{{alertProblems}}" hint-placeholder-val="{{false}}">
+                <div role="alert" style="margin-top: 16px; display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; border: 1px solid #FEBD5C; border-radius: 6px; background: #1E1508;">
+                  <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" style="flex: none; margin-top: 3px; fill: none; stroke: #FEBD5C; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;"><path d="M12 3l10 18H2z"></path><path d="M12 10v5M12 18v.01"></path></svg>
+                  <p style="margin: 0; font-size: 15px; line-height: 1.45; color: #EDE9F2;"><strong style="color: #FEBD5C;">{{alertTitle}}</strong> <a href="#problems" style="color: #FEBD5C;">See what to fix</a></p>
+                </div>
+              </sc-if>
+
+              <div style="margin-top: 22px; display: flex; flex-direction: column; gap: 8px;">
+                <label for="answer-filter" style="font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px; color: #B2AABE;">Filter answers</label>
+                <div style="position: relative;">
+                  <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" style="position: absolute; left: 14px; top: 15px; fill: none; stroke: #938B9E; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+                  <input id="answer-filter" type="search" autocomplete="off" value="{{filter}}" onChange="{{onFilter}}" onKeyDown="{{onFilterKey}}" placeholder="Part of a title or author" class="field" style="width: 100%; height: 48px; padding: 0 14px 0 42px; background: #251C2F; border: 1px solid #716085; border-radius: 6px; color: #EDE9F2; font-family: inherit; font-size: 16px;" />
+                </div>
+                <p aria-live="polite" style="margin: 0; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; line-height: 1.5; color: #938B9E;">{{filterNote}}</p>
+              </div>
+
+              <ul aria-label="Answers in ballot order" style="list-style: none; margin: 14px 0 0; padding: 0; border-bottom: 1px solid #3A3046;">
+                <sc-for list="{{rows}}" as="item" hint-placeholder-count="7">
+                  <li style="display: grid; grid-template-columns: 56px minmax(0, 1fr) 44px; gap: 14px; align-items: start; padding: 14px 0; border-top: 1px solid #3A3046;">
+                    <input id="{{item.inputId}}" type="text" inputmode="numeric" autocomplete="off" value="{{item.value}}" onChange="{{item.onRank}}" onFocus="{{item.selectAll}}" aria-describedby="{{item.noteId}}" aria-invalid="{{item.invalid}}" class="rank-in" style="width: 56px; height: 52px; padding: 0; border-radius: 6px; border: 1.5px solid {{item.inBorder}}; background: {{item.inBg}}; color: {{item.inColor}}; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 24px; font-weight: 700; text-align: center;" />
+                    <div style="min-width: 0; padding-top: 12px;">
+                      <label for="{{item.inputId}}" style="display: block; font-size: 17px; line-height: 1.4; font-weight: 500; color: #EDE9F2; cursor: pointer; text-wrap: pretty;"><span class="sr-only">Rank for </span>{{item.text}}</label>
+                      <p id="{{item.noteId}}" style="margin: 4px 0 0; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; line-height: 1.45; color: {{item.noteColor}};">{{item.note}}</p>
+                    </div>
+                    <sc-if value="{{item.hasValue}}" hint-placeholder-val="{{false}}">
+                      <button type="button" onClick="{{item.clear}}" aria-label="Clear rank for {{item.text}}" class="icon-btn" style="width: 44px; height: 44px; margin-top: 4px; display: grid; place-items: center; padding: 0; background: transparent; border: 0; border-radius: 6px; color: #B2AABE; cursor: pointer;">
+                        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" style="fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round;"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+                      </button>
+                    </sc-if>
+                  </li>
+                </sc-for>
+              </ul>
+              <sc-if value="{{noMatches}}" hint-placeholder-val="{{false}}">
+                <div style="padding: 18px 0; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; color: #B2AABE; font-size: 16px;">
+                  <span>No answers match that filter.</span>
+                  <button type="button" onClick="{{clearFilter}}" class="btn-ghost" style="min-height: 44px; padding: 0 14px; background: transparent; border: 1px solid #716085; border-radius: 6px; color: #EDE9F2; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer;">Clear the filter</button>
+                </div>
+              </sc-if>
+            </section>
+          </div>
+
+          <div class="vote-aside" style="display: flex; flex-direction: column; gap: 16px; min-width: 0;">
+            <section aria-labelledby="pv-h" style="background: #1B1323; border: 1px solid #3A3046; border-radius: 8px; overflow: hidden;">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 14px; border-bottom: 1px solid #3A3046; background: #150F1D;">
+                <h2 id="pv-h" style="margin: 0; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px; font-weight: 500; color: #EDE9F2;">Your ballot, in order</h2>
+                <span style="font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; color: #938B9E;">{{countShort}}</span>
+              </div>
+              <div style="padding: 14px 14px 16px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px; line-height: 1.6; color: #EDE9F2;">
+                <p aria-hidden="true" style="margin: 0; color: #938B9E;"><span style="color: #C9A3F5;">iex&gt;</span> <span style="color: #EDE9F2;">my_ballot</span></p>
+                <p aria-hidden="true" style="margin: 0; color: #938B9E;">%{</p>
+                <ol aria-label="Your ballot in rank order" style="list-style: none; margin: 0; padding: 0 0 0 2ch;">
+                  <sc-for list="{{preview}}" as="row" hint-placeholder-count="5">
+                    <li class="{{row.flash}}" style="display: grid; grid-template-columns: 5ch minmax(0, 1fr); margin: 0 -6px; padding: 2px 6px; border-radius: 4px;">
+                      <span aria-hidden="true" style="color: #C9A3F5;">{{row.n}} =&gt;</span>
+                      <span style="min-width: 0;"><span class="sr-only">{{row.sr}}</span><sc-if value="{{row.empty}}" hint-placeholder-val="{{true}}"><span aria-hidden="true" style="color: #938B9E;">nil</span></sc-if><span aria-hidden="true" style="color: #938B9E;">{{row.open}}</span><sc-for list="{{row.titles}}" as="t" hint-placeholder-count="1"><span style="color: {{t.color}};"><span aria-hidden="true" style="color: #938B9E;">"</span>{{t.text}}<span aria-hidden="true" style="color: #938B9E;">"{{t.sep}}</span></span></sc-for><span aria-hidden="true" style="color: #938B9E;">{{row.tail}}</span><span aria-hidden="true" style="color: {{row.commentColor}};">{{row.comment}}</span></span>
+                    </li>
+                  </sc-for>
+                </ol>
+                <p aria-hidden="true" style="margin: 0; color: #938B9E;">}</p>
+              </div>
+            </section>
+
+            <div id="problems" style="scroll-margin-top: 16px;">
+              <sc-if value="{{hasProblems}}" hint-placeholder-val="{{true}}">
+                <section aria-labelledby="pr-h" style="border: 1px solid {{probBorder}}; background: #1E1508; border-radius: 8px; padding: 14px 14px 16px;">
+                  <h2 id="pr-h" style="margin: 0; display: flex; align-items: center; gap: 8px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px; font-weight: 500; color: #FEBD5C;">
+                    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="flex: none; fill: none; stroke: #FEBD5C; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;"><path d="M12 3l10 18H2z"></path><path d="M12 10v5M12 18v.01"></path></svg>
+                    <span>{{problemsHeading}}</span>
+                  </h2>
+                  <ul style="list-style: none; margin: 12px 0 0; padding: 0; display: flex; flex-direction: column; gap: 16px;">
+                    <sc-for list="{{problems}}" as="pb" hint-placeholder-count="1">
+                      <li>
+                        <p style="margin: 0; font-size: 16px; line-height: 1.4; font-weight: 600; color: #EDE9F2;"><span style="display: inline-block; margin-right: 8px; padding: 1px 6px; border-radius: 3px; background: #FEBD5C; color: #110B18; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; line-height: 1.5; vertical-align: 2px;">error</span>{{pb.title}}</p>
+                        <ul aria-label="Answers involved" style="list-style: none; margin: 6px 0 0; padding: 0; font-size: 14px; line-height: 1.45; color: #B2AABE;">
+                          <sc-for list="{{pb.refs}}" as="ref" hint-placeholder-count="2">
+                            <li style="display: grid; grid-template-columns: 3ch minmax(0, 1fr);"><span aria-hidden="true" style="font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; color: #938B9E;">├─</span><span>{{ref.text}}</span></li>
+                          </sc-for>
+                        </ul>
+                        <p style="margin: 0; display: grid; grid-template-columns: 3ch minmax(0, 1fr); font-size: 14px; line-height: 1.45; color: #EDE9F2;"><span aria-hidden="true" style="font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; color: #938B9E;">└─</span><span><span style="font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; color: #FEBD5C;">hint: </span>{{pb.hint}}</span></p>
+                      </li>
+                    </sc-for>
+                  </ul>
+                </section>
+              </sc-if>
+              <sc-if value="{{showClean}}" hint-placeholder-val="{{false}}">
+                <p style="margin: 0; display: flex; align-items: center; gap: 8px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; color: #B2AABE;">
+                  <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="flex: none; fill: none; stroke: #C9A3F5; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round;"><path d="M5 12.5l4.5 4.5L19 7"></path></svg>
+                  <span>No problems found. Ready to submit.</span>
+                </p>
+              </sc-if>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <button type="submit" class="btn-pri" style="width: 100%; height: 54px; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 0 20px; background: #C9A3F5; color: #110B18; border: 0; border-radius: 6px; font-family: inherit; font-size: 17px; font-weight: 700; cursor: pointer;">
+                <span>Submit vote</span>
+                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" style="fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round;"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+              </button>
+              <p style="margin: 0; text-align: center; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; line-height: 1.5; color: #938B9E;">{{submitNote}}</p>
+            </div>
+          </div>
+
+        </div>
+      </form>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{done}}" hint-placeholder-val="{{false}}">
+      <section class="rise" aria-labelledby="ok-h" style="margin-top: 28px; max-width: 720px;">
+        <div aria-hidden="true" style="font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px; line-height: 1.6; color: #938B9E;">
+          <p style="margin: 0;"><span style="color: #C9A3F5;">iex&gt;</span> <span style="color: #EDE9F2;">submit(my_ballot)</span></p>
+          <p style="margin: 0; color: #C9A3F5;">{:ok, vote}</p>
+        </div>
+        <h2 id="ok-h" style="margin: 18px 0 0; font-size: 30px; line-height: 1.15; font-weight: 700; letter-spacing: -0.02em; text-wrap: balance;">Your vote is in. {{thanks}}</h2>
+        <p style="margin: 10px 0 0; color: #B2AABE; font-size: 16px;">Here is the ranking you sent:</p>
+        <ol style="list-style: none; margin: 16px 0 0; padding: 0; border-top: 1px solid #3A3046;">
+          <sc-for list="{{echo}}" as="ec" hint-placeholder-count="3">
+            <li style="display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; gap: 12px; align-items: baseline; padding: 14px 0; border-bottom: 1px solid #3A3046;">
+              <span style="font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px; font-weight: 700; color: #C9A3F5;">{{ec.ord}}</span>
+              <span style="font-size: 17px; line-height: 1.4; text-wrap: pretty;"><span class="sr-only">choice: </span>{{ec.text}}</span>
+              <span style="font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; color: #938B9E; white-space: nowrap;">{{ec.pts}}</span>
+            </li>
+          </sc-for>
+        </ol>
+        <p style="margin: 20px 0 0; color: #B2AABE; font-size: 16px; max-width: 56ch;">The ballot stays open until its creator closes it. Then the results become public.</p>
+        <div style="margin-top: 24px; display: flex;">
+          <a href="f-home.dc.html" class="btn-ghost" style="display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 18px; border: 1px solid #716085; border-radius: 6px; color: #EDE9F2; text-decoration: none; font-size: 16px; font-weight: 600;">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" style="fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;"><path d="M19 12H5M11 6l-6 6 6 6"></path></svg>
+            <span>Back to RankedVote.app</span>
+          </a>
+        </div>
+      </section>
+    </sc-if>
+  </main>
+
+  <footer style="margin-top: 72px; border-top: 1px solid #3A3046;">
+    <div style="max-width: 1120px; margin: 0 auto; padding: 20px clamp(16px, 4vw, 40px) 36px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px;">
+      <p style="margin: 0; color: #938B9E;">RankedVote.app runs Flick</p>
+      <nav aria-label="Site">
+        <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0 20px;">
+          <li><a href="https://github.com/zorn/flick" class="foot-link" style="display: inline-flex; align-items: center; min-height: 44px; color: #B2AABE; text-decoration: none;">GitHub project</a></li>
+          <li><a href="https://updown.io/wwis" class="foot-link" style="display: inline-flex; align-items: center; min-height: 44px; color: #B2AABE; text-decoration: none;">Uptime</a></li>
+          <li><a href="mailto:mike@mikezornek.com" class="foot-link" style="display: inline-flex; align-items: center; min-height: 44px; color: #B2AABE; text-decoration: none;">Contact site admin</a></li>
+        </ul>
+      </nav>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":2700}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.answers = [
+      { id: 'A', text: 'Elixir in Action, Third Edition by Saša Jurić' },
+      { id: 'B', text: 'Engineering Elixir Applications by Ellie Fairholm and Josep Giralt D\'Lacoste' },
+      { id: 'C', text: 'Machine Learning in Elixir by Sean Moriarity' },
+      { id: 'D', text: 'Designing Elixir Systems with OTP by James Edward Gray II and Bruce A. Tate' },
+      { id: 'E', text: 'Elixir Patterns by Hugo Barauna and Alexander Koutmos' },
+      { id: 'F', text: 'Concurrent Data Processing in Elixir by Svilen Gospodinov' },
+      { id: 'G', text: 'A Common-Sense Guide to Data Structures and Algorithms, Second Edition by Jay Wengrow' }
+    ];
+    // Seeded mid-ballot with a duplicate rank so the validation shows on the canvas.
+    this.state = {
+      name: '',
+      filter: '',
+      ranks: { A: '2', B: '1', C: '', D: '', E: '2', F: '', G: '' },
+      attempted: false,
+      done: false,
+      lastRank: 0,
+      tick: 0
+    };
+  }
+
+  setRank(id, value) {
+    const v = String(value == null ? '' : value).replace(/\s+/g, '').slice(0, 3);
+    const ranks = Object.assign({}, this.state.ranks);
+    ranks[id] = v;
+    const n = /^[1-5]$/.test(v) ? Number(v) : 0;
+    this.setState({ ranks: ranks, lastRank: n, tick: this.state.tick + 1 });
+  }
+
+  norm(t) {
+    return String(t).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  }
+
+  ordinal(n) {
+    return ['', '1st', '2nd', '3rd', '4th', '5th'][n];
+  }
+
+  joinOr(xs) {
+    if (xs.length <= 1) return xs.join('');
+    return xs.slice(0, -1).join(', ') + ' or ' + xs[xs.length - 1];
+  }
+
+  joinAnd(xs) {
+    if (xs.length <= 1) return xs.join('');
+    return xs.slice(0, -1).join(', ') + ' and ' + xs[xs.length - 1];
+  }
+
+  analyze() {
+    const s = this.state;
+    const parsed = this.answers.map((a) => {
+      const raw = String(s.ranks[a.id] || '').trim();
+      let rank = 0;
+      let bad = '';
+      if (raw !== '') {
+        if (/^[1-5]$/.test(raw)) rank = Number(raw);
+        else if (/^\d+$/.test(raw)) bad = 'range';
+        else bad = 'nan';
+      }
+      return { id: a.id, text: a.text, raw: raw, rank: rank, bad: bad };
+    });
+    const byRank = { 1: [], 2: [], 3: [], 4: [], 5: [] };
+    parsed.forEach((p) => { if (p.rank) byRank[p.rank].push(p); });
+    const all = [1, 2, 3, 4, 5];
+    const used = all.filter((r) => byRank[r].length > 0);
+    const open = all.filter((r) => byRank[r].length === 0);
+    const problems = [];
+    const rowDiag = {};
+
+    parsed.forEach((p) => {
+      if (!p.bad) return;
+      const title = p.bad === 'range'
+        ? 'Rank ' + p.raw + ' is out of range'
+        : '"' + p.raw + '" is not a rank';
+      problems.push({ key: 'bad-' + p.id, title: title, refs: [{ text: p.text }], hint: 'Use a whole number from 1 to 5.' });
+      rowDiag[p.id] = title + '. Use 1 to 5.';
+    });
+
+    all.forEach((r) => {
+      const list = byRank[r];
+      if (list.length < 2) return;
+      const times = list.length === 2 ? 'twice' : list.length + ' times';
+      const others = list.length === 2 ? 'the other' : 'the others';
+      const title = 'Rank ' + r + ' is used ' + times;
+      const hint = open.length
+        ? 'Keep rank ' + r + ' on one answer. Give ' + others + ' an open rank: ' + this.joinOr(open) + '.'
+        : 'Keep rank ' + r + ' on one answer and clear ' + others + '.';
+      problems.push({ key: 'dup-' + r, title: title, refs: list.map((p) => ({ text: p.text })), hint: hint });
+      list.forEach((p) => { rowDiag[p.id] = title; });
+    });
+
+    const maxUsed = used.length ? used[used.length - 1] : 0;
+    let r = 1;
+    while (r < maxUsed) {
+      if (byRank[r].length) { r += 1; continue; }
+      let end = r;
+      while (end + 1 < maxUsed && !byRank[end + 1].length) end += 1;
+      const next = end + 1;
+      const missing = [];
+      for (let m = r; m <= end; m += 1) missing.push(m);
+      const title = missing.length === 1
+        ? 'Rank ' + next + ' is set but rank ' + r + ' is empty'
+        : 'Rank ' + next + ' is set but ranks ' + this.joinAnd(missing) + ' are empty';
+      const hint = r === 1
+        ? 'Your first choice is required. Type 1 beside the answer you want most, or change rank ' + next + ' to 1.'
+        : 'Ranks run 1, 2, 3 with no gaps. Give an answer rank ' + r + ', or change rank ' + next + ' to ' + r + '.';
+      problems.push({ key: 'gap-' + r, title: title, refs: byRank[next].map((p) => ({ text: p.text })), hint: hint });
+      byRank[next].forEach((p) => { if (!rowDiag[p.id]) rowDiag[p.id] = title; });
+      r = end + 1;
+    }
+
+    if (used.length === 0 && s.attempted) {
+      problems.push({ key: 'first', title: 'No first choice yet', refs: [], hint: 'Type 1 beside the answer you want most. It is the only rank you must set.' });
+    }
+    return { parsed: parsed, byRank: byRank, used: used, problems: problems, rowDiag: rowDiag };
+  }
+
+  onSubmit(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    const a = this.analyze();
+    const ok = a.problems.length === 0 && a.used.length > 0 && a.byRank[1].length === 1;
+    if (ok) this.setState({ done: true, attempted: false });
+    else this.setState({ attempted: true });
+  }
+
+  renderVals() {
+    const s = this.state;
+    const a = this.analyze();
+    const q = this.norm(s.filter.trim());
+    const visible = a.parsed.filter((p) => !q || this.norm(p.text).indexOf(q) !== -1);
+    const hiddenRanked = a.parsed.filter((p) => p.raw !== '' && visible.indexOf(p) === -1).length;
+
+    const rows = visible.map((p) => {
+      const diag = a.rowDiag[p.id] || '';
+      const hasError = diag !== '';
+      const isRanked = p.rank > 0 && !hasError;
+      return {
+        id: p.id,
+        text: p.text,
+        value: s.ranks[p.id],
+        inputId: 'rank-' + p.id,
+        noteId: 'rank-note-' + p.id,
+        invalid: hasError,
+        hasValue: p.raw !== '',
+        inBg: hasError ? '#2A1C07' : (isRanked ? '#4B275F' : '#251C2F'),
+        inBorder: hasError ? '#FEBD5C' : (isRanked ? '#C9A3F5' : '#716085'),
+        inColor: hasError ? '#FEBD5C' : '#EDE9F2',
+        note: hasError ? 'error: ' + diag : (isRanked ? this.ordinal(p.rank) + ' choice · ' + (6 - p.rank) + ' points' : ''),
+        noteColor: hasError ? '#FEBD5C' : '#C9A3F5',
+        onRank: (e) => this.setRank(p.id, e.target.value),
+        clear: () => this.setRank(p.id, ''),
+        selectAll: (e) => { if (e && e.target && e.target.select) e.target.select(); }
+      };
+    });
+
+    const pips = [1, 2, 3, 4, 5].map((n) => {
+      const c = a.byRank[n].length;
+      if (c > 1) return { n: n, bg: '#2A1C07', border: '#FEBD5C', color: '#FEBD5C' };
+      if (c === 1) return { n: n, bg: '#C9A3F5', border: '#C9A3F5', color: '#110B18' };
+      return { n: n, bg: 'transparent', border: '#3A3046', color: '#938B9E' };
+    });
+
+    const preview = [1, 2, 3, 4, 5].map((n) => {
+      const list = a.byRank[n];
+      const pts = 6 - n;
+      const ptsText = ' # ' + pts + (pts === 1 ? ' pt' : ' pts');
+      const tail = n === 5 ? '' : ',';
+      const flash = s.lastRank === n ? (s.tick % 2 ? 'flash-a' : 'flash-b') : '';
+      if (list.length === 0) {
+        return { n: n, empty: true, titles: [], open: '', tail: tail, comment: ptsText, commentColor: '#938B9E', sr: 'Rank ' + n + ': empty.', flash: flash };
+      }
+      const conflict = list.length > 1;
+      const times = list.length === 2 ? 'twice' : list.length + ' times';
+      return {
+        n: n,
+        empty: false,
+        titles: list.map((p, i) => ({ text: p.text, sep: i < list.length - 1 ? ', ' : '', color: conflict ? '#FEBD5C' : '#EDE9F2' })),
+        open: conflict ? '[' : '',
+        tail: (conflict ? ']' : '') + tail,
+        comment: conflict ? ' # used ' + times : ptsText,
+        commentColor: conflict ? '#FEBD5C' : '#938B9E',
+        sr: conflict ? 'Rank ' + n + ', used ' + times + ':' : 'Rank ' + n + ', ' + pts + (pts === 1 ? ' point:' : ' points:'),
+        flash: flash
+      };
+    });
+
+    const usedN = a.used.length;
+    const left = 5 - usedN;
+    const nProblems = a.problems.length;
+    const hasProblems = nProblems > 0;
+    const plural = nProblems === 1 ? 'problem' : 'problems';
+
+    let submitNote = 'Only a first choice is required.';
+    if (hasProblems) submitNote = 'Fix the ' + plural + ' above, then submit.';
+    else if (usedN > 0 && left > 0) submitNote = 'You can rank ' + left + ' more, or submit now.';
+    else if (usedN === 5) submitNote = 'All five ranks used.';
+
+    let filterNote = 'Showing all ' + this.answers.length + ' answers, in ballot order.';
+    if (q) {
+      filterNote = 'Showing ' + visible.length + ' of ' + this.answers.length + ' answers.';
+      if (hiddenRanked > 0) filterNote += ' ' + hiddenRanked + (hiddenRanked === 1 ? ' ranked answer is' : ' ranked answers are') + ' hidden by the filter and still counted.';
+    }
+
+    const echo = a.used.map((n) => ({
+      ord: this.ordinal(n),
+      text: a.byRank[n][0].text,
+      pts: (6 - n) + (n === 5 ? ' pt' : ' pts')
+    }));
+    const name = s.name.trim();
+
+    const alertNoFirst = s.attempted && usedN === 0;
+
+    return {
+      done: s.done,
+      notDone: !s.done,
+      name: s.name,
+      filter: s.filter,
+      onName: (e) => this.setState({ name: e.target.value }),
+      onFilter: (e) => this.setState({ filter: e.target.value }),
+      onFilterKey: (e) => { if (e.key === 'Enter') e.preventDefault(); },
+      clearFilter: () => this.setState({ filter: '' }),
+      onSubmit: (e) => this.onSubmit(e),
+      rows: rows,
+      noMatches: q !== '' && visible.length === 0,
+      filterNote: filterNote,
+      pips: pips,
+      countText: usedN + ' of 5 ranks used',
+      countShort: usedN + ' of 5 ranked',
+      preview: preview,
+      hasProblems: hasProblems,
+      showClean: !hasProblems && usedN > 0,
+      problems: a.problems,
+      problemsHeading: s.attempted
+        ? 'Can\'t submit yet: ' + nProblems + ' ' + plural
+        : nProblems + ' ' + plural + ' to fix before you submit',
+      probBorder: s.attempted ? '#FEBD5C' : '#6B5226',
+      alertNoFirst: alertNoFirst,
+      alertProblems: s.attempted && hasProblems && !alertNoFirst,
+      alertTitle: 'Can\'t submit yet: ' + nProblems + ' ' + plural + '.',
+      submitNote: submitNote,
+      echo: echo,
+      thanks: name ? 'Thanks, ' + name + '.' : 'Thanks.'
+    };
+  }
+}
+</script>
+</body>
+</html>

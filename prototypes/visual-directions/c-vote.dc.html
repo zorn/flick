@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Official ballot · Vote</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=Public+Sans:ital,wght@0,400;0,600;0,700;0,800;1,400&amp;family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&amp;display=swap">
+<style>
+body{margin:0;background:#eff0ed}
+*,*::before,*::after{box-sizing:border-box}
+a{color:#1b3d8f;text-decoration-thickness:1px;text-underline-offset:3px}
+a:hover{text-decoration-thickness:2px}
+button{font:inherit}
+:focus-visible{outline:3px solid #1b3d8f;outline-offset:3px}
+.sr{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.btn-line{transition:background-color .15s ease,transform .08s ease}
+.btn-line:hover{background:#e8eef6!important}
+.btn-line:active{transform:translateY(1px)}
+.btn-ink{transition:background-color .15s ease,transform .08s ease}
+.btn-ink:not(:disabled):hover{background:#2e3440!important}
+.btn-ink:not(:disabled):active{transform:translateY(1px)}
+.oval-btn{transition:background-color .15s ease}
+.oval-btn:hover{background:rgba(27,61,143,.08)!important}
+.oval-btn:hover .oval-empty{border-color:#1b3d8f!important;color:#1b3d8f!important}
+.oval{transition:transform .1s ease}
+.oval-btn:active .oval{transform:scale(.92)}
+.ink-in{animation:ink-in .26s cubic-bezier(.2,.9,.25,1)}
+@keyframes ink-in{0%{transform:scale(.35);opacity:.25}100%{transform:scale(1);opacity:1}}
+.stamp-in{animation:stamp-in .45s cubic-bezier(.2,1.4,.4,1) .15s both}
+@keyframes stamp-in{0%{transform:rotate(-7deg) scale(1.8);opacity:0}100%{transform:rotate(-7deg) scale(1);opacity:1}}
+.wordmark:hover .wm-name{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px}
+.foot-link:hover{background:#e8eef6}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+@media (min-width:720px){
+  .ballot-row{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:24px;align-items:center}
+  .oval-group{margin-top:0!important}
+  .q-title{font-size:42px!important}
+  .sheet-pad{padding-left:28px!important;padding-right:28px!important}
+  .part{margin-left:28px!important;margin-right:28px!important}
+}
+</style>
+</helmet>
+<div style="background:#eff0ed; color:#15181d; font-family:'Public Sans', 'Segoe UI', system-ui, sans-serif; font-size:16px; line-height:1.5; min-height:640px">
+
+  <header style="background:#fdfdfb; border-top:6px solid #15181d; border-bottom:2px solid #15181d">
+    <div style="max-width:760px; margin:0 auto; padding:10px 16px; display:flex; align-items:center; justify-content:space-between; gap:12px">
+      <a href="c-home.dc.html" class="wordmark" style="display:flex; align-items:center; gap:10px; min-height:44px; color:#15181d; text-decoration:none">
+        <svg aria-hidden="true" width="24" height="30" viewBox="0 0 24 30" fill="none" stroke="#15181d" stroke-width="2"><rect x="1" y="1" width="22" height="28"></rect><ellipse cx="7.5" cy="9" rx="3.2" ry="2.3" fill="#15181d"></ellipse><line x1="13" y1="9" x2="19" y2="9"></line><ellipse cx="7.5" cy="15" rx="3.2" ry="2.3"></ellipse><line x1="13" y1="15" x2="19" y2="15"></line><ellipse cx="7.5" cy="21" rx="3.2" ry="2.3"></ellipse><line x1="13" y1="21" x2="19" y2="21"></line></svg>
+        <span style="display:flex; flex-direction:column; line-height:1">
+          <span class="wm-name" style="font-family:'Source Serif 4', Georgia, serif; font-weight:700; font-size:20px; letter-spacing:-.01em">RankedVote<span style="color:#1b3d8f">.app</span></span>
+          <span style="margin-top:4px; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:#4a5160">Ranked-vote ballots</span>
+        </span>
+      </a>
+      <a href="https://rankedvote.app/ballot/new" class="btn-line" style="display:inline-flex; align-items:center; min-height:44px; padding:0 12px; border:2px solid #15181d; background:#fdfdfb; color:#15181d; font-size:15px; font-weight:700; text-decoration:none; white-space:nowrap">Create a ballot</a>
+    </div>
+  </header>
+
+  <main style="max-width:760px; margin:0 auto; padding:20px 16px 0">
+
+    <sc-if value="{{voting}}" hint-placeholder-val="{{true}}">
+      <article aria-labelledby="ballot-q" style="background:#fdfdfb; border:2px solid #15181d; padding-bottom:24px">
+
+        <div class="sheet-pad" style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:2px 12px; padding:10px 14px; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:12px; letter-spacing:.1em; text-transform:uppercase">
+          <span>Ranked ballot</span>
+          <span>No. <strong style="font-weight:600">EBC-NEXT-READ</strong></span>
+        </div>
+        <div aria-hidden="true" style="position:relative; height:0; border-top:2px dashed #15181d">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#15181d" stroke-width="2" stroke-linecap="round" style="position:absolute; left:12px; top:-12px; background:#fdfdfb; padding:0 3px"><circle cx="6" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><line x1="20" y1="4" x2="8.12" y2="15.88"></line><line x1="14.47" y1="14.48" x2="20" y2="20"></line><line x1="8.12" y1="8.12" x2="12" y2="12"></line></svg>
+        </div>
+
+        <div class="sheet-pad" style="padding:22px 16px 4px">
+          <p style="margin:0 0 10px; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:#4a5160">Open for votes · Published Sep 28, 2026, 7:30 PM EDT</p>
+          <h1 id="ballot-q" class="q-title" style="margin:0; font-family:'Source Serif 4', Georgia, 'Times New Roman', serif; font-weight:700; font-size:31px; line-height:1.12; letter-spacing:-.01em; text-wrap:balance">What should the Elixir Book Club read next?</h1>
+          <p style="margin:14px 0 0; font-size:17px; line-height:1.55; max-width:60ch; text-wrap:pretty">Rank up to five books you'd like to read next. Your first choice earns the most points. We'll start the winner at our next meeting.</p>
+        </div>
+
+        <section aria-labelledby="instr-h" class="part" style="margin:22px 12px 0; border:2px solid #15181d; background:#e8eef6">
+          <div style="display:flex; align-items:center; gap:10px; padding:9px 14px; background:#fdfdfb; border-bottom:2px solid #15181d">
+            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#15181d" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="11" x2="12" y2="17"></line><line x1="12" y1="7" x2="12.01" y2="7"></line></svg>
+            <h2 id="instr-h" style="margin:0; font-size:14px; font-weight:800; letter-spacing:.1em; text-transform:uppercase">Instructions to voters</h2>
+          </div>
+          <ol style="margin:0; padding:14px 16px 14px 38px; display:grid; gap:8px; font-size:16px; line-height:1.45">
+            <li><strong>Rank up to 5 answers.</strong> Mark only one oval in each column, and only one oval for each answer.</li>
+            <li>Tap an oval to fill it. Tap a filled oval again to clear it.</li>
+            <li>If another answer already holds that rank, the rank moves to the answer you just marked.</li>
+            <li>Your 1st choice is required. 2nd to 5th are optional, but do not skip a rank.</li>
+          </ol>
+          <div style="display:flex; flex-wrap:wrap; align-items:center; gap:10px 18px; padding:10px 14px 12px; border-top:1px solid #b9c0ca; font-size:14px">
+            <span style="display:flex; align-items:center; gap:8px">Filled oval <span aria-hidden="true" style="width:38px; height:24px; border-radius:50%; border:2px solid #15181d; background:#15181d; color:#fdfdfb; display:inline-flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:12px; font-weight:600">1</span></span>
+            <span style="display:flex; align-items:center; gap:8px">Empty oval <span aria-hidden="true" style="width:38px; height:24px; border-radius:50%; border:2px solid #15181d; background:#fdfdfb; color:#5b6472; display:inline-flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:12px">2</span></span>
+          </div>
+        </section>
+
+        <section aria-labelledby="p1-h" class="part" style="margin:22px 12px 0; border:2px solid #15181d">
+          <div style="display:flex; align-items:baseline; gap:12px; padding:8px 14px; background:#15181d; color:#fdfdfb">
+            <span style="font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:12px; font-weight:600; letter-spacing:.14em">PART 1</span>
+            <h2 id="p1-h" style="margin:0; font-size:16px; font-weight:700">Voter</h2>
+          </div>
+          <div style="padding:14px">
+            <label for="voter-name" style="display:block; font-size:16px; font-weight:700">Name <span style="font-weight:400; color:#4a5160">(optional)</span></label>
+            <p id="name-hint" style="margin:2px 0 8px; font-size:14px; color:#4a5160">The ballot's creator sees this name beside your vote.</p>
+            <input id="voter-name" type="text" autocomplete="name" aria-describedby="name-hint" value="{{name}}" onChange="{{onName}}" style="display:block; width:100%; min-height:48px; padding:10px 12px; border:2px solid #15181d; border-radius:0; background:#fdfdfb; color:#15181d; font-family:'Public Sans', 'Segoe UI', system-ui, sans-serif; font-size:17px">
+          </div>
+        </section>
+
+        <section aria-labelledby="p2-h" class="part" style="margin:22px 12px 0; border:2px solid #15181d">
+          <div style="display:flex; align-items:baseline; gap:12px; padding:8px 14px; background:#15181d; color:#fdfdfb">
+            <span style="font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:12px; font-weight:600; letter-spacing:.14em">PART 2</span>
+            <h2 id="p2-h" style="margin:0; font-size:16px; font-weight:700">Rank your choices</h2>
+          </div>
+
+          <div style="position:sticky; top:0; z-index:3; background:#fdfdfb; border-bottom:2px solid #15181d; padding:10px 12px 12px">
+            <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:baseline; gap:2px 10px; margin-bottom:8px">
+              <p style="margin:0; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:12px; font-weight:600; letter-spacing:.1em; text-transform:uppercase">{{usedText}}</p>
+              <p style="margin:0; font-size:14px; color:#4a5160">{{leftText}}</p>
+            </div>
+            <ol aria-label="Ranks by column" style="list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(5, minmax(0, 1fr)); gap:6px">
+              <sc-for list="{{slots}}" as="s" hint-placeholder-count="5">
+                <li style="border:2px solid #15181d; background:{{s.bg}}; color:{{s.fg}}; text-align:center; padding:3px 0 5px; transition:background-color .2s ease, color .2s ease">
+                  <span aria-hidden="true" style="display:block; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:11px; letter-spacing:.04em">{{s.label}}</span>
+                  <span aria-hidden="true" style="display:block; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:16px; font-weight:600; line-height:1.25">{{s.value}}</span>
+                  <span class="sr">{{s.sr}}</span>
+                </li>
+              </sc-for>
+            </ol>
+          </div>
+
+          <p aria-live="polite" style="margin:0; padding:8px 12px; min-height:38px; background:#e8eef6; border-bottom:1px solid #b9c0ca; font-size:14px; line-height:1.4">{{noticeText}}</p>
+
+          <sc-if value="{{hasGap}}" hint-placeholder-val="{{false}}">
+            <div role="alert" style="margin:12px; border:2px solid #d9690f; background:#fcefe3">
+              <p style="margin:0; display:flex; align-items:center; gap:8px; padding:6px 12px; background:#d9690f; color:#15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:12px; font-weight:600; letter-spacing:.12em; text-transform:uppercase"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#15181d" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 21h20L12 3z"></path><line x1="12" y1="10" x2="12" y2="14"></line><line x1="12" y1="17.5" x2="12.01" y2="17.5"></line></svg>Rank skipped</p>
+              <div style="padding:10px 12px 12px">
+                <p style="margin:0 0 10px; font-size:15px; line-height:1.45">{{gapText}}</p>
+                <button type="button" class="btn-line" onClick="{{compact}}" style="min-height:44px; padding:0 14px; border:2px solid #15181d; background:#fdfdfb; color:#15181d; font-size:15px; font-weight:700; cursor:pointer">Move my choices up</button>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{showFirstError}}" hint-placeholder-val="{{false}}">
+            <div role="alert" style="margin:12px; border:2px solid #d9690f; background:#fcefe3">
+              <p style="margin:0; display:flex; align-items:center; gap:8px; padding:6px 12px; background:#d9690f; color:#15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:12px; font-weight:600; letter-spacing:.12em; text-transform:uppercase"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#15181d" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 21h20L12 3z"></path><line x1="12" y1="10" x2="12" y2="14"></line><line x1="12" y1="17.5" x2="12.01" y2="17.5"></line></svg>1st choice required</p>
+              <p style="margin:0; padding:10px 12px 12px; font-size:15px; line-height:1.45">Fill in a 1st-choice oval before you submit. A vote needs at least a 1st choice.</p>
+            </div>
+          </sc-if>
+
+          <div role="group" aria-labelledby="p2-h">
+            <sc-for list="{{answers}}" as="a" hint-placeholder-count="7">
+              <div class="ballot-row" style="background:{{a.band}}; padding:14px 12px 10px; border-top:1px solid #b9c0ca">
+                <div style="display:flex; gap:12px; align-items:flex-start">
+                  <span aria-hidden="true" style="flex:none; width:30px; height:30px; display:flex; align-items:center; justify-content:center; border:2px solid #15181d; background:#fdfdfb; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:15px; font-weight:600">{{a.id}}</span>
+                  <div style="flex:1; min-width:0">
+                    <p style="margin:0; font-size:17px; font-weight:600; line-height:1.35; text-wrap:pretty">{{a.title}}</p>
+                    <sc-if value="{{a.ranked}}" hint-placeholder-val="{{false}}">
+                      <p style="margin:6px 0 0"><span style="display:inline-block; padding:2px 8px; background:#15181d; color:#fdfdfb; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:12px; font-weight:600; letter-spacing:.08em; text-transform:uppercase">{{a.rankText}}</span></p>
+                    </sc-if>
+                    <sc-if value="{{a.unranked}}" hint-placeholder-val="{{true}}">
+                      <p style="margin:6px 0 0; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:#4a5160">Not ranked</p>
+                    </sc-if>
+                  </div>
+                </div>
+                <div class="oval-group" style="display:grid; grid-template-columns:repeat(5, minmax(0, 1fr)); gap:4px; margin-top:8px">
+                  <sc-for list="{{a.ovals}}" as="o" hint-placeholder-count="5">
+                    <button type="button" class="oval-btn" aria-pressed="{{o.pressed}}" aria-label="{{o.aria}}" onClick="{{o.fill}}" style="appearance:none; margin:0; padding:6px 0 5px; min-height:64px; border:0; border-radius:4px; background:transparent; color:#15181d; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; cursor:pointer">
+                      <sc-if value="{{o.filled}}" hint-placeholder-val="{{false}}">
+                        <span class="oval ink-in" style="width:46px; height:30px; border-radius:50%; border:2px solid #15181d; background:#15181d; color:#fdfdfb; display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:14px; font-weight:600">{{o.num}}</span>
+                      </sc-if>
+                      <sc-if value="{{o.empty}}" hint-placeholder-val="{{true}}">
+                        <span class="oval oval-empty" style="width:46px; height:30px; border-radius:50%; border:2px solid #15181d; background:#fdfdfb; color:#5b6472; display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px">{{o.num}}</span>
+                      </sc-if>
+                      <span style="font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:12px; line-height:1; color:#4a5160">{{o.label}}</span>
+                    </button>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="display:flex; justify-content:flex-end; padding:10px 12px; border-top:2px solid #15181d">
+            <button type="button" class="btn-line" onClick="{{clearAll}}" style="min-height:44px; padding:0 14px; border:2px solid #15181d; background:#fdfdfb; color:#15181d; font-size:15px; font-weight:600; cursor:pointer">Clear all marks</button>
+          </div>
+        </section>
+
+        <section aria-labelledby="p3-h" class="part" style="margin:22px 12px 0; border:2px solid #15181d">
+          <div style="display:flex; align-items:baseline; gap:12px; padding:8px 14px; background:#15181d; color:#fdfdfb">
+            <span style="font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:12px; font-weight:600; letter-spacing:.14em">PART 3</span>
+            <h2 id="p3-h" style="margin:0; font-size:16px; font-weight:700">Check and submit</h2>
+          </div>
+          <div style="padding:14px">
+            <p style="margin:0 0 10px; font-size:15px; color:#4a5160">Your ranking, in order. To change it, mark a different oval in Part 2.</p>
+            <ol style="list-style:none; margin:0; padding:0; border-top:2px solid #15181d">
+              <sc-for list="{{review}}" as="r" hint-placeholder-count="5">
+                <li style="display:grid; grid-template-columns:44px 30px minmax(0, 1fr); gap:10px; align-items:start; padding:10px 0; border-bottom:1px solid #b9c0ca">
+                  <span style="padding-top:3px; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">{{r.label}}</span>
+                  <span aria-hidden="true" style="display:block; width:28px; height:28px">
+                    <sc-if value="{{r.hasId}}" hint-placeholder-val="{{false}}">
+                      <span style="width:28px; height:28px; display:flex; align-items:center; justify-content:center; border:2px solid #15181d; background:#15181d; color:#fdfdfb; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:14px; font-weight:600">{{r.id}}</span>
+                    </sc-if>
+                    <sc-if value="{{r.noId}}" hint-placeholder-val="{{true}}">
+                      <span style="display:block; width:28px; height:28px; border:2px dashed #8a929f"></span>
+                    </sc-if>
+                  </span>
+                  <span style="font-size:15px; line-height:1.4">
+                    <sc-if value="{{r.skipped}}" hint-placeholder-val="{{false}}"><span style="display:inline-block; margin-right:6px; padding:0 6px; background:#d9690f; color:#15181d; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:11px; font-weight:600; letter-spacing:.1em; text-transform:uppercase">Skipped</span></sc-if>
+                    <span style="color:{{r.color}}">{{r.text}}</span>
+                  </span>
+                </li>
+              </sc-for>
+            </ol>
+            <div style="margin-top:18px; display:flex; flex-direction:column; gap:8px">
+              <button type="button" class="btn-ink" disabled="{{hasGap}}" onClick="{{submit}}" style="width:100%; min-height:56px; padding:0 18px; border:2px solid {{submitBorder}}; background:{{submitBg}}; color:{{submitFg}}; font-size:18px; font-weight:700; letter-spacing:.01em; cursor:{{submitCursor}}">Submit vote</button>
+              <p style="margin:0; font-size:14px; color:#4a5160; text-align:center">{{submitNote}}</p>
+            </div>
+          </div>
+        </section>
+      </article>
+    </sc-if>
+
+    <sc-if value="{{submitted}}" hint-placeholder-val="{{false}}">
+      <article aria-labelledby="receipt-h" style="background:#fdfdfb; border:2px solid #15181d">
+        <div class="sheet-pad" style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:2px 12px; padding:10px 14px; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:12px; letter-spacing:.1em; text-transform:uppercase">
+          <span>Voter receipt</span>
+          <span>No. <strong style="font-weight:600">EBC-NEXT-READ</strong></span>
+        </div>
+        <div aria-hidden="true" style="position:relative; height:0; border-top:2px dashed #15181d">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#15181d" stroke-width="2" stroke-linecap="round" style="position:absolute; left:12px; top:-12px; background:#fdfdfb; padding:0 3px"><circle cx="6" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><line x1="20" y1="4" x2="8.12" y2="15.88"></line><line x1="14.47" y1="14.48" x2="20" y2="20"></line><line x1="8.12" y1="8.12" x2="12" y2="12"></line></svg>
+        </div>
+        <div class="sheet-pad" style="padding:24px 16px 26px">
+          <p aria-hidden="true" class="stamp-in" style="display:inline-block; margin:0 0 18px; padding:5px 12px; border:4px double #1b3d8f; color:#1b3d8f; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:16px; font-weight:600; letter-spacing:.22em; transform:rotate(-7deg)">RECEIVED</p>
+          <h1 id="receipt-h" style="margin:0; font-family:'Source Serif 4', Georgia, 'Times New Roman', serif; font-weight:700; font-size:32px; line-height:1.12; letter-spacing:-.01em">Your vote is in.</h1>
+          <p style="margin:12px 0 0; font-size:17px; line-height:1.5">{{thanks}} Your ranked vote on “What should the Elixir Book Club read next?” has been recorded.</p>
+
+          <dl style="margin:20px 0 0; border:2px solid #15181d">
+            <div style="display:grid; grid-template-columns:minmax(0, 1fr); padding:8px 12px; border-bottom:2px solid #15181d; background:#e8eef6">
+              <dt style="font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:#4a5160">Name on vote</dt>
+              <dd style="margin:0; font-size:16px; font-weight:600">{{castBy}}</dd>
+            </div>
+            <div style="padding:8px 12px 4px">
+              <dt style="font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:#4a5160">Your ranking</dt>
+              <dd style="margin:0">
+                <ol style="list-style:none; margin:0; padding:0">
+                  <sc-for list="{{receipt}}" as="x" hint-placeholder-count="3">
+                    <li style="display:grid; grid-template-columns:44px 30px minmax(0, 1fr); gap:10px; align-items:start; padding:9px 0; border-top:1px solid #b9c0ca">
+                      <span style="padding-top:3px; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:13px; font-weight:600">{{x.label}}</span>
+                      <span aria-hidden="true" style="width:28px; height:28px; display:flex; align-items:center; justify-content:center; border:2px solid #15181d; background:#15181d; color:#fdfdfb; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:14px; font-weight:600">{{x.id}}</span>
+                      <span style="font-size:15px; line-height:1.4">{{x.title}}</span>
+                    </li>
+                  </sc-for>
+                </ol>
+              </dd>
+            </div>
+          </dl>
+
+          <p style="margin:18px 0 0; font-size:15px; line-height:1.5; color:#4a5160">Results become public when the ballot's creator closes voting.</p>
+          <a href="c-home.dc.html" class="btn-line" style="margin-top:18px; display:inline-flex; align-items:center; gap:8px; min-height:48px; padding:0 16px; border:2px solid #15181d; background:#fdfdfb; color:#15181d; font-size:16px; font-weight:700; text-decoration:none">
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#15181d" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Back to RankedVote.app home
+          </a>
+        </div>
+      </article>
+    </sc-if>
+
+  </main>
+
+  <footer style="margin-top:40px; background:#fdfdfb; border-top:2px solid #15181d">
+    <div style="max-width:760px; margin:0 auto; padding:16px 16px 28px; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px 24px">
+      <p style="margin:0; font-family:'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:#4a5160">RankedVote.app · Form RV-1 · Ballot</p>
+      <nav aria-label="Site" style="display:flex; flex-wrap:wrap; gap:0 6px; margin-left:-8px">
+        <a href="https://github.com/zorn/flick" class="foot-link" style="display:inline-flex; align-items:center; min-height:44px; padding:0 8px; font-size:15px">GitHub project</a>
+        <a href="https://updown.io/wwis" class="foot-link" style="display:inline-flex; align-items:center; min-height:44px; padding:0 8px; font-size:15px">Uptime</a>
+        <a href="mailto:mike@mikezornek.com" class="foot-link" style="display:inline-flex; align-items:center; min-height:44px; padding:0 8px; font-size:15px">Contact site admin</a>
+      </nav>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":3400}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { ranks: {}, name: "", attempted: false, submitted: false, notice: "" };
+  }
+
+  renderVals() {
+    const ANSWERS = [
+      { id: "A", title: "Elixir in Action, Third Edition by Saša Jurić" },
+      { id: "B", title: "Engineering Elixir Applications by Ellie Fairholm and Josep Giralt D'Lacoste" },
+      { id: "C", title: "Machine Learning in Elixir by Sean Moriarity" },
+      { id: "D", title: "Designing Elixir Systems with OTP by James Edward Gray II and Bruce A. Tate" },
+      { id: "E", title: "Elixir Patterns by Hugo Barauna and Alexander Koutmos" },
+      { id: "F", title: "Concurrent Data Processing in Elixir by Svilen Gospodinov" },
+      { id: "G", title: "A Common-Sense Guide to Data Structures and Algorithms, Second Edition by Jay Wengrow" }
+    ];
+    const ORD = ["1st", "2nd", "3rd", "4th", "5th"];
+    const byId = {};
+    ANSWERS.forEach((a) => { byId[a.id] = a; });
+
+    const ranks = this.state.ranks;
+    const holder = {};
+    Object.keys(ranks).forEach((id) => { holder[ranks[id]] = id; });
+    const used = Object.keys(ranks).length;
+    const left = 5 - used;
+    let maxRank = 0;
+    Object.keys(ranks).forEach((id) => { if (ranks[id] > maxRank) maxRank = ranks[id]; });
+    const missing = [];
+    for (let r = 1; r <= maxRank; r++) { if (!holder[r]) missing.push(r); }
+    const hasGap = missing.length > 0;
+
+    const fill = (id, r) => {
+      const next = Object.assign({}, this.state.ranks);
+      const label = ORD[r - 1];
+      let notice;
+      if (next[id] === r) {
+        delete next[id];
+        notice = id + " cleared. It has no rank now.";
+      } else {
+        const prev = Object.keys(next).find((k) => next[k] === r && k !== id);
+        const had = next[id];
+        if (prev) delete next[prev];
+        next[id] = r;
+        notice = had ? id + " moved from " + ORD[had - 1] + " to " + label + "." : id + " marked " + label + ".";
+        if (prev) notice += " " + prev + " lost its " + label + " mark and has no rank now.";
+      }
+      this.setState({ ranks: next, notice: notice });
+    };
+
+    const compact = () => {
+      const cur = this.state.ranks;
+      const ids = Object.keys(cur).sort((x, y) => cur[x] - cur[y]);
+      const next = {};
+      ids.forEach((id, i) => { next[id] = i + 1; });
+      this.setState({ ranks: next, notice: "Your later choices moved up. No rank is skipped now." });
+    };
+
+    const clearAll = () => this.setState({ ranks: {}, notice: "All marks cleared.", attempted: false });
+
+    const submit = () => {
+      if (hasGap) return;
+      if (!holder[1]) { this.setState({ attempted: true }); return; }
+      this.setState({ submitted: true });
+    };
+
+    const onName = (e) => this.setState({ name: e.target.value });
+
+    const answers = ANSWERS.map((a, idx) => {
+      const r = ranks[a.id];
+      return {
+        id: a.id,
+        title: a.title,
+        band: idx % 2 === 0 ? "#fdfdfb" : "#e8eef6",
+        ranked: !!r,
+        unranked: !r,
+        rankText: r ? "Ranked " + ORD[r - 1] : "",
+        ovals: ORD.map((label, i) => {
+          const rr = i + 1;
+          const filled = r === rr;
+          return {
+            label: label,
+            num: String(rr),
+            filled: filled,
+            empty: !filled,
+            pressed: filled ? "true" : "false",
+            aria: "Rank " + a.title + " " + label,
+            fill: () => fill(a.id, rr)
+          };
+        })
+      };
+    });
+
+    const slots = ORD.map((label, i) => {
+      const r = i + 1;
+      const id = holder[r];
+      const skipped = !id && r < maxRank;
+      return {
+        label: label,
+        value: id ? id : (skipped ? "SKIP" : "—"),
+        bg: id ? "#15181d" : (skipped ? "#d9690f" : "#fdfdfb"),
+        fg: id ? "#fdfdfb" : "#15181d",
+        sr: label + ": " + (id ? id + ", " + byId[id].title : (skipped ? "skipped" : "empty")) + "."
+      };
+    });
+
+    const review = ORD.map((label, i) => {
+      const r = i + 1;
+      const id = holder[r];
+      let text;
+      let color = "#15181d";
+      let skipped = false;
+      if (id) {
+        text = byId[id].title;
+      } else if (r < maxRank) {
+        skipped = true;
+        text = r === 1 ? "No 1st choice. Fill a 1st oval, or move your choices up." : "Fill a " + label + " oval, or move your choices up.";
+      } else if (r === 1) {
+        text = "Required. Not marked yet.";
+        color = "#4a5160";
+      } else {
+        text = "Not used. Optional.";
+        color = "#4a5160";
+      }
+      return { label: label, id: id || "", hasId: !!id, noId: !id, skipped: skipped, text: text, color: color };
+    });
+
+    const missingText = missing.map((r) => ORD[r - 1]).join(" and ");
+    const gapText = holder[1]
+      ? "You marked a later rank but skipped " + missingText + ". Fill the empty rank, or move your choices up to close the gap."
+      : "You have no 1st choice" + (missing.length > 1 ? ", and you skipped " + missing.slice(1).map((r) => ORD[r - 1]).join(" and ") : "") + ". Fill a 1st oval, or move your choices up to close the gap.";
+
+    let submitNote;
+    if (hasGap) submitNote = "Fix the skipped rank in Part 2 to submit.";
+    else if (used === 0) submitNote = "Mark at least a 1st choice in Part 2.";
+    else submitNote = "You ranked " + used + " of 5. Ready to submit.";
+
+    const receipt = ORD.map((label, i) => ({ label: label, id: holder[i + 1] }))
+      .filter((x) => !!x.id)
+      .map((x) => ({ label: x.label, id: x.id, title: byId[x.id].title }));
+    const voterName = this.state.name.trim();
+
+    return {
+      voting: !this.state.submitted,
+      submitted: this.state.submitted,
+      name: this.state.name,
+      onName: onName,
+      usedText: used + " of 5 ranks used",
+      leftText: left > 0 ? "You may rank " + left + " more answer" + (left === 1 ? "." : "s.") : "All 5 ranks used.",
+      slots: slots,
+      noticeText: this.state.notice || "Tap an oval to mark a rank.",
+      hasGap: hasGap,
+      gapText: gapText,
+      showFirstError: this.state.attempted && used === 0,
+      compact: compact,
+      clearAll: clearAll,
+      answers: answers,
+      review: review,
+      submit: submit,
+      submitBg: hasGap ? "#d3d8df" : "#15181d",
+      submitFg: hasGap ? "#3a414d" : "#fdfdfb",
+      submitBorder: hasGap ? "#8a929f" : "#15181d",
+      submitCursor: hasGap ? "not-allowed" : "pointer",
+      submitNote: submitNote,
+      receipt: receipt,
+      thanks: voterName ? "Thank you, " + voterName + "." : "Thank you.",
+      castBy: voterName ? voterName : "No name given"
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,444 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Swiss minimal · Vote</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400..600&amp;family=Schibsted+Grotesk:wght@400..900&amp;display=swap">
+<style>
+body{margin:0;background:#fcfcf9;color:#12120f;font-family:'Schibsted Grotesk',ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+*,*::before,*::after{box-sizing:border-box}
+a,button,input{-webkit-tap-highlight-color:transparent}
+:focus-visible{outline:2px solid #db3008;outline-offset:3px}
+.d-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.d-wrap{padding-left:20px;padding-right:20px}
+@media (min-width:768px){.d-wrap{padding-left:40px;padding-right:40px}}
+.d-mark{transition:color .15s}
+.d-mark:hover{color:#db3008 !important}
+.d-cta-sm{transition:background-color .15s,color .15s}
+.d-cta-sm:hover{background-color:#12120f !important;color:#fcfcf9 !important}
+.d-foot a{transition:color .15s}
+.d-foot a:hover{color:#db3008 !important}
+.d-h1{font-size:40px}
+@media (min-width:960px){.d-h1{font-size:60px}}
+.d-num{font-size:104px;font-weight:800;line-height:.8;letter-spacing:-.06em;font-variant-numeric:tabular-nums;display:block}
+.d-slot{grid-template-columns:76px minmax(0,1fr)}
+@media (min-width:960px){.d-num{font-size:128px}.d-slot{grid-template-columns:100px minmax(0,1fr)}}
+.d-split{grid-template-columns:minmax(0,1fr)}
+@media (min-width:960px){.d-split{grid-template-columns:minmax(0,5fr) minmax(0,7fr)}.d-stick{position:sticky;top:32px;align-self:start}}
+.d-field{transition:border-color .15s}
+.d-field:focus{border-bottom-color:#db3008 !important}
+.d-field:focus-visible{outline:none}
+.d-open{transition:background-color .2s}
+.d-open:hover{background-color:#f3f2ee !important}
+.d-arrow{transition:transform .25s cubic-bezier(.2,.7,0,1)}
+.d-open:hover .d-arrow,.d-submit:hover .d-arrow,.d-line:hover .d-arrow{transform:translateX(5px)}
+.d-ctl{transition:background-color .15s,color .15s}
+.d-ctl:hover:not(:disabled){background-color:#12120f !important;color:#fcfcf9 !important}
+.d-ctl:active:not(:disabled){background-color:#db3008 !important;color:#fcfcf9 !important}
+.d-ctl:disabled{color:#a6a5a0 !important;cursor:default !important}
+.d-submit{transition:background-color .2s}
+.d-submit:hover{background-color:#db3008 !important}
+.d-submit:active{transform:translateY(1px)}
+.d-txt{transition:background-color .15s,color .15s}
+.d-txt:hover{background-color:#12120f !important;color:#fcfcf9 !important}
+.d-pick{transition:background-color .15s}
+.d-pick:hover:not(:disabled){background-color:#f3f2ee !important}
+.d-box{transition:background-color .15s,border-color .15s,color .15s}
+.d-pick:hover:not(:disabled) .d-box,.d-pick:focus-visible .d-box{background-color:#db3008 !important;border-color:#db3008 !important;color:#fcfcf9 !important}
+.d-pick:disabled{cursor:default}
+.d-line{transition:background-color .15s,color .15s}
+.d-line:hover{background-color:#12120f !important;color:#fcfcf9 !important}
+@keyframes d-draw{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes d-rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes d-settle{from{color:#db3008;transform:translateY(-4px)}to{color:#12120f;transform:none}}
+@keyframes d-wake{from{opacity:.2}to{opacity:1}}
+.d-draw{transform-origin:left center;animation:d-draw .7s cubic-bezier(.2,.7,0,1) both}
+.d-rise{animation:d-rise .45s cubic-bezier(.2,.7,0,1) both}
+.d-settle{animation:d-settle .6s cubic-bezier(.2,.7,0,1) both}
+.d-wake{animation:d-wake .5s ease-out .15s both}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none !important;transition:none !important}}
+</style>
+</helmet>
+<div style="background: #fcfcf9; color: #12120f; font-family: 'Schibsted Grotesk', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;">
+
+  <sc-if value="{{showChrome}}" hint-placeholder-val="{{true}}">
+    <header class="d-wrap" style="border-top: 6px solid #12120f;">
+      <div style="max-width: 1160px; margin: 0 auto; min-height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 16px; border-bottom: 1px solid #12120f;">
+        <a href="d-home.dc.html" class="d-mark" style="display: inline-flex; align-items: center; gap: 10px; min-height: 44px; color: #12120f; text-decoration: none; font-size: 19px; font-weight: 760; letter-spacing: -0.025em;">
+          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" style="display: block; flex: none;"><rect x="0" y="0" width="20" height="2.5" fill="#db3008"></rect><rect x="0" y="4.4" width="16" height="2.5" fill="#12120f"></rect><rect x="0" y="8.8" width="12" height="2.5" fill="#12120f"></rect><rect x="0" y="13.1" width="8" height="2.5" fill="#12120f"></rect><rect x="0" y="17.5" width="4" height="2.5" fill="#12120f"></rect></svg>
+          <span>RankedVote<span style="font-weight: 420; color: #5c5b57;">.app</span></span>
+        </a>
+        <a href="#" class="d-cta-sm" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; border: 1px solid #12120f; color: #12120f; text-decoration: none; font-size: 15px; font-weight: 650;">Create a ballot</a>
+      </div>
+    </header>
+  </sc-if>
+
+  <sc-if value="{{showBallot}}" hint-placeholder-val="{{true}}">
+    <main class="d-wrap">
+      <div style="max-width: 1160px; margin: 0 auto; padding-top: 32px;">
+        <div class="d-split" style="display: grid; column-gap: 72px; row-gap: 48px;">
+
+          <div class="d-stick" style="display: flex; flex-direction: column; gap: 20px; min-width: 0;">
+            <p style="margin: 0; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: #5c5b57;">Ranked ballot</p>
+            <h1 class="d-h1" style="margin: 0; font-weight: 760; line-height: 1; letter-spacing: -0.035em; text-wrap: balance;">What should the Elixir Book Club read next?</h1>
+            <div style="max-width: 34em; font-size: 17px; line-height: 1.5;">
+              <p style="margin: 0;">Rank up to five books you'd like to read next. Your first choice earns the most points. We'll start the winner at our next meeting.</p>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px; max-width: 420px; margin-top: 12px;">
+              <label for="d-name" style="font-size: 14px; font-weight: 650;">Name (optional)</label>
+              <input id="d-name" class="d-field" type="text" autocomplete="name" value="{{name}}" onChange="{{onName}}" style="height: 48px; padding: 0; border: 0; border-bottom: 2px solid #12120f; border-radius: 0; background: transparent; font: inherit; font-size: 18px; color: #12120f;">
+              <p style="margin: 0; font-size: 13px; line-height: 1.4; color: #5c5b57;">The ballot's creator sees this name next to your vote.</p>
+            </div>
+          </div>
+
+          <section aria-labelledby="d-rank-h" style="min-width: 0;">
+            <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px 16px; flex-wrap: wrap; padding-bottom: 10px;">
+              <h2 id="d-rank-h" style="margin: 0; font-size: 15px; font-weight: 780; letter-spacing: 0.03em; text-transform: uppercase;">Your ranking</h2>
+              <p style="margin: 0; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 13px; color: #12120f;">{{countText}} <span style="color: #5c5b57;">· {{leftText}}</span></p>
+            </div>
+            <p style="margin: 0 0 20px; max-width: 34em; font-size: 15px; line-height: 1.45; color: #5c5b57;">Choose answers in order, starting with your first choice. Only the first choice is required.</p>
+
+            <sc-if value="{{error}}" hint-placeholder-val="{{false}}">
+              <p role="alert" style="margin: 0 0 16px; display: flex; align-items: flex-start; gap: 10px; color: #db3008; font-size: 16px; font-weight: 680; line-height: 1.35;">
+                <svg aria-hidden="true" width="12" height="12" viewBox="0 0 12 12" style="flex: none; margin-top: 5px;"><rect width="12" height="12" fill="#db3008"></rect></svg>
+                <span>Choose your first choice before you submit.</span>
+              </p>
+            </sc-if>
+
+            <ol style="list-style: none; margin: 0; padding: 0; border-top: 2px solid #12120f;">
+              <sc-for list="{{slots}}" as="slot" hint-placeholder-count="5">
+                <li style="position: relative; border-bottom: 1px solid #d2d1ce;">
+
+                  <sc-if value="{{slot.filled}}" hint-placeholder-val="{{false}}">
+                    <div style="padding-top: 20px;">
+                      <div class="d-slot" style="display: grid; column-gap: 12px; align-items: start;">
+                        <span aria-hidden="true" class="d-num {{slot.settleClass}}" style="color: #12120f;">{{slot.n}}</span>
+                        <div class="{{slot.riseClass}}" style="display: flex; flex-direction: column; gap: 6px; min-width: 0; padding-top: 2px;">
+                          <span style="font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; color: #5c5b57;">{{slot.ordinalCap}} choice · {{slot.points}}</span>
+                          <span style="font-size: 19px; font-weight: 620; line-height: 1.28; letter-spacing: -0.01em; text-wrap: pretty;"><span class="d-sr">Rank {{slot.n}}: </span>{{slot.title}}</span>
+                        </div>
+                      </div>
+                      <div role="group" aria-label="{{slot.groupLabel}}" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 18px; border-top: 1px solid #d2d1ce;">
+                        <button type="button" class="d-ctl" onClick="{{slot.onChange}}" aria-label="{{slot.changeLabel}}" style="min-height: 48px; padding: 0 4px; border: 0; border-radius: 0; background: transparent; font: inherit; font-size: 13px; font-weight: 650; color: #12120f; cursor: pointer;">Change</button>
+                        <button type="button" class="d-ctl" onClick="{{slot.onUp}}" disabled="{{slot.upDisabled}}" aria-label="{{slot.upLabel}}" style="min-height: 48px; padding: 0 4px; border: 0; border-left: 1px solid #d2d1ce; border-radius: 0; background: transparent; font: inherit; font-size: 13px; font-weight: 650; color: #12120f; cursor: pointer;">Move up</button>
+                        <button type="button" class="d-ctl" onClick="{{slot.onDown}}" disabled="{{slot.downDisabled}}" aria-label="{{slot.downLabel}}" style="min-height: 48px; padding: 0 4px; border: 0; border-left: 1px solid #d2d1ce; border-radius: 0; background: transparent; font: inherit; font-size: 13px; font-weight: 650; color: #12120f; cursor: pointer;">Move down</button>
+                        <button type="button" class="d-ctl" onClick="{{slot.onRemove}}" aria-label="{{slot.removeLabel}}" style="min-height: 48px; padding: 0 4px; border: 0; border-left: 1px solid #d2d1ce; border-radius: 0; background: transparent; font: inherit; font-size: 13px; font-weight: 650; color: #12120f; cursor: pointer;">Remove</button>
+                      </div>
+                    </div>
+                    <span aria-hidden="true" class="{{slot.drawClass}}" style="position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; background: #12120f;"></span>
+                  </sc-if>
+
+                  <sc-if value="{{slot.open}}" hint-placeholder-val="{{true}}">
+                    <button type="button" class="d-open d-slot" onClick="{{slot.onOpen}}" style="width: 100%; display: grid; column-gap: 12px; align-items: end; padding: 20px 0; border: 0; border-radius: 0; background: transparent; font: inherit; color: #12120f; text-align: left; cursor: pointer;">
+                      <span aria-hidden="true" class="d-num d-wake" style="color: #db3008;">{{slot.n}}</span>
+                      <span style="display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; min-width: 0;">
+                        <span style="display: flex; flex-direction: column; gap: 6px; min-width: 0;">
+                          <span style="font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; color: #db3008;">{{slot.ordinalCap}} choice · {{slot.points}} · {{slot.openNote}}</span>
+                          <span style="font-size: 20px; font-weight: 720; line-height: 1.2; letter-spacing: -0.015em;"><span class="d-sr">Rank {{slot.n}}: </span>{{slot.openText}}</span>
+                        </span>
+                        <svg class="d-arrow" aria-hidden="true" width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="#12120f" stroke-width="1.75" style="flex: none; margin-bottom: 1px;"><path d="M2 11h16M12 5l6 6-6 6"></path></svg>
+                      </span>
+                    </button>
+                  </sc-if>
+
+                  <sc-if value="{{slot.inactive}}" hint-placeholder-val="{{false}}">
+                    <div class="d-slot" style="display: grid; column-gap: 12px; align-items: end; padding: 20px 0;">
+                      <span aria-hidden="true" class="d-num" style="color: #d6d5d0;">{{slot.n}}</span>
+                      <span style="display: flex; flex-direction: column; gap: 6px; min-width: 0;">
+                        <span style="font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; color: #5c5b57;">{{slot.ordinalCap}} choice · {{slot.points}}</span>
+                        <span style="font-size: 15px; line-height: 1.35; color: #5c5b57;"><span class="d-sr">Rank {{slot.n}}: </span>{{slot.inactiveText}}</span>
+                      </span>
+                    </div>
+                  </sc-if>
+
+                </li>
+              </sc-for>
+            </ol>
+
+            <p class="d-sr" aria-live="polite">{{announce}}</p>
+
+            <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 32px;">
+              <button type="button" class="d-submit" onClick="{{onSubmit}}" style="width: 100%; min-height: 60px; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 0 20px; border: 0; border-radius: 0; background: #12120f; color: #fcfcf9; font: inherit; font-size: 18px; font-weight: 720; letter-spacing: -0.01em; cursor: pointer;">
+                <span>Submit vote</span>
+                <svg class="d-arrow" aria-hidden="true" width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="#fcfcf9" stroke-width="1.75" style="flex: none;"><path d="M2 11h16M12 5l6 6-6 6"></path></svg>
+              </button>
+              <p style="margin: 0; font-size: 14px; line-height: 1.4; color: #5c5b57;">Rank one answer or up to five, then submit.</p>
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </main>
+  </sc-if>
+
+  <sc-if value="{{showPicker}}" hint-placeholder-val="{{false}}">
+    <div class="d-wrap" style="border-top: 6px solid #db3008;">
+      <section aria-labelledby="d-pick-h" style="max-width: 760px; margin: 0 auto; padding-bottom: 64px;">
+        <div style="min-height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 16px; border-bottom: 1px solid #12120f;">
+          <span style="font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: #5c5b57;">{{pickerKicker}}</span>
+          <button type="button" class="d-txt" onClick="{{onCancel}}" style="min-height: 44px; display: inline-flex; align-items: center; gap: 8px; padding: 0 12px; margin-right: -12px; border: 0; border-radius: 0; background: transparent; font: inherit; font-size: 15px; font-weight: 650; color: #12120f; cursor: pointer;">
+            <svg aria-hidden="true" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M2 2l10 10M12 2L2 12"></path></svg>
+            <span>Cancel</span>
+          </button>
+        </div>
+
+        <div class="d-slot" style="display: grid; column-gap: 12px; align-items: end; padding: 28px 0 28px;">
+          <span aria-hidden="true" class="d-num" style="color: #db3008;">{{pickerN}}</span>
+          <h1 id="d-pick-h" style="margin: 0; font-size: 30px; font-weight: 760; line-height: 1.05; letter-spacing: -0.03em; text-wrap: balance;">{{pickerHeading}}</h1>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <label for="d-filter" style="font-size: 14px; font-weight: 650;">Filter answers</label>
+          <input id="d-filter" class="d-field" type="search" autocomplete="off" placeholder="Part of a title or an author" value="{{filter}}" onChange="{{onFilter}}" style="height: 52px; padding: 0; border: 0; border-bottom: 2px solid #12120f; border-radius: 0; background: transparent; font: inherit; font-size: 20px; color: #12120f;">
+          <p aria-live="polite" style="margin: 6px 0 0; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12px; letter-spacing: 0.04em; color: #5c5b57;">{{matchText}}</p>
+        </div>
+
+        <ul aria-labelledby="d-pick-h" style="list-style: none; margin: 20px 0 0; padding: 0; border-top: 2px solid #12120f;">
+          <sc-for list="{{answers}}" as="a" hint-placeholder-count="7">
+            <li style="border-bottom: 1px solid #d2d1ce;">
+              <button type="button" class="d-pick" onClick="{{a.pick}}" disabled="{{a.disabled}}" style="width: 100%; min-height: 64px; display: grid; grid-template-columns: 32px minmax(0, 1fr); column-gap: 16px; align-items: start; padding: 16px 0; border: 0; border-radius: 0; background: transparent; font: inherit; text-align: left; color: {{a.textColor}}; cursor: pointer;">
+                <span aria-hidden="true" class="d-box" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: 1px solid {{a.boxBorder}}; background: {{a.boxBg}}; color: {{a.boxText}}; font-size: 17px; font-weight: 800; letter-spacing: -0.04em;">{{a.boxNum}}</span>
+                <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0; padding-top: 4px;">
+                  <span style="font-size: 17px; font-weight: 560; line-height: 1.32; text-wrap: pretty;"><sc-for list="{{a.parts}}" as="p" hint-placeholder-count="1"><span style="text-decoration-line: {{p.deco}}; text-decoration-color: #db3008; text-decoration-thickness: 2px; text-underline-offset: 3px;">{{p.text}}</span></sc-for></span>
+                  <sc-if value="{{a.ranked}}" hint-placeholder-val="{{false}}">
+                    <span style="font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; color: {{a.noteColor}};">{{a.note}}</span>
+                  </sc-if>
+                </span>
+              </button>
+            </li>
+          </sc-for>
+        </ul>
+
+        <sc-if value="{{noMatches}}" hint-placeholder-val="{{false}}">
+          <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 12px; padding: 28px 0;">
+            <p style="margin: 0; font-size: 17px; line-height: 1.4;">No answers match “{{filter}}”.</p>
+            <button type="button" class="d-line" onClick="{{onClearFilter}}" style="min-height: 44px; padding: 0 16px; border: 1px solid #12120f; border-radius: 0; background: transparent; font: inherit; font-size: 15px; font-weight: 650; color: #12120f; cursor: pointer;">Clear the filter</button>
+          </div>
+        </sc-if>
+      </section>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{showDone}}" hint-placeholder-val="{{false}}">
+    <main class="d-wrap">
+      <div style="max-width: 1160px; margin: 0 auto; padding-top: 32px;">
+        <div class="d-split" style="display: grid; column-gap: 72px; row-gap: 40px;">
+          <div class="d-stick" style="display: flex; flex-direction: column; gap: 20px; min-width: 0;">
+            <p style="margin: 0; display: flex; align-items: center; gap: 10px; font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: #db3008;"><svg aria-hidden="true" width="10" height="10" viewBox="0 0 10 10"><rect width="10" height="10" fill="#db3008"></rect></svg><span>Vote recorded</span></p>
+            <h1 class="d-h1" style="margin: 0; font-weight: 760; line-height: 1; letter-spacing: -0.035em; text-wrap: balance;">{{doneHeading}}</h1>
+            <p style="margin: 0; max-width: 34em; font-size: 17px; line-height: 1.5;">What should the Elixir Book Club read next?</p>
+          </div>
+          <section aria-labelledby="d-done-h" style="min-width: 0;">
+            <h2 id="d-done-h" style="margin: 0 0 10px; font-size: 15px; font-weight: 780; letter-spacing: 0.03em; text-transform: uppercase;">Your ranking</h2>
+            <ol style="list-style: none; margin: 0; padding: 0; border-top: 2px solid #12120f;">
+              <sc-for list="{{doneRanking}}" as="d" hint-placeholder-count="3">
+                <li class="d-slot" style="display: grid; column-gap: 12px; align-items: start; padding: 20px 0; border-bottom: 1px solid #d2d1ce;">
+                  <span aria-hidden="true" class="d-num" style="color: #12120f;">{{d.n}}</span>
+                  <span style="display: flex; flex-direction: column; gap: 6px; min-width: 0; padding-top: 2px;">
+                    <span style="font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; color: #5c5b57;">{{d.label}}</span>
+                    <span style="font-size: 19px; font-weight: 620; line-height: 1.28; letter-spacing: -0.01em; text-wrap: pretty;"><span class="d-sr">Rank {{d.n}}: </span>{{d.title}}</span>
+                  </span>
+                </li>
+              </sc-for>
+            </ol>
+            <p style="margin: 24px 0 0; max-width: 34em; font-size: 16px; line-height: 1.5;">The results become public when the ballot's creator closes it.</p>
+            <a href="d-home.dc.html" class="d-line" style="margin-top: 24px; min-height: 52px; display: inline-flex; align-items: center; gap: 12px; padding: 0 18px; border: 1px solid #12120f; color: #12120f; text-decoration: none; font-size: 16px; font-weight: 680;">
+              <span>Go to the RankedVote.app home page</span>
+              <svg class="d-arrow" aria-hidden="true" width="18" height="18" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.75" style="flex: none;"><path d="M2 11h16M12 5l6 6-6 6"></path></svg>
+            </a>
+          </section>
+        </div>
+      </div>
+    </main>
+  </sc-if>
+
+  <sc-if value="{{showChrome}}" hint-placeholder-val="{{true}}">
+    <footer class="d-wrap d-foot" style="margin-top: 96px;">
+      <div style="max-width: 1160px; margin: 0 auto; padding: 12px 0 40px; border-top: 1px solid #12120f; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(160px, 100%), 1fr)); gap: 0 24px;">
+        <a href="https://github.com/zorn/flick" style="min-height: 44px; display: flex; align-items: center; color: #12120f; text-decoration: none; font-size: 15px; font-weight: 560;">GitHub project</a>
+        <a href="https://updown.io/wwis" style="min-height: 44px; display: flex; align-items: center; color: #12120f; text-decoration: none; font-size: 15px; font-weight: 560;">Uptime</a>
+        <a href="mailto:mike@mikezornek.com" style="min-height: 44px; display: flex; align-items: center; color: #12120f; text-decoration: none; font-size: 15px; font-weight: 560;">Contact site admin</a>
+      </div>
+    </footer>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":2050}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { ranking: [], picker: null, filter: '', name: '', submitted: false, error: false, announce: '', justFilled: null };
+  }
+
+  renderVals() {
+    const ANSWERS = [
+      { id: 'A', title: 'Elixir in Action, Third Edition by Saša Jurić' },
+      { id: 'B', title: "Engineering Elixir Applications by Ellie Fairholm and Josep Giralt D'Lacoste" },
+      { id: 'C', title: 'Machine Learning in Elixir by Sean Moriarity' },
+      { id: 'D', title: 'Designing Elixir Systems with OTP by James Edward Gray II and Bruce A. Tate' },
+      { id: 'E', title: 'Elixir Patterns by Hugo Barauna and Alexander Koutmos' },
+      { id: 'F', title: 'Concurrent Data Processing in Elixir by Svilen Gospodinov' },
+      { id: 'G', title: 'A Common-Sense Guide to Data Structures and Algorithms, Second Edition by Jay Wengrow' }
+    ];
+    const ORD = ['first', 'second', 'third', 'fourth', 'fifth'];
+    const ORD_CAP = ['First', 'Second', 'Third', 'Fourth', 'Fifth'];
+    const SHORT = ['1st', '2nd', '3rd', '4th', '5th'];
+    const POINTS = ['5 points', '4 points', '3 points', '2 points', '1 point'];
+
+    const s = this.state;
+    const ranking = s.ranking;
+    const n = ranking.length;
+    const byId = {};
+    ANSWERS.forEach((a) => { byId[a.id] = a; });
+
+    const openPicker = (i) => () => this.setState({ picker: i, filter: '', justFilled: null });
+    const move = (i, d) => () => {
+      const j = i + d;
+      if (j < 0 || j >= ranking.length) return;
+      const r = ranking.slice();
+      const t = r[i]; r[i] = r[j]; r[j] = t;
+      this.setState({ ranking: r, justFilled: null, announce: byId[r[j]].title + ' moved to rank ' + (j + 1) + '.' });
+    };
+    const remove = (i) => () => {
+      const r = ranking.slice();
+      const gone = r.splice(i, 1)[0];
+      this.setState({ ranking: r, justFilled: null, announce: byId[gone].title + ' removed. Later ranks moved up.' });
+    };
+
+    const slots = [0, 1, 2, 3, 4].map((i) => {
+      const filled = i < n;
+      const open = i === n;
+      const title = filled ? byId[ranking[i]].title : '';
+      const fresh = filled && s.justFilled === i;
+      return {
+        n: String(i + 1),
+        ordinalCap: ORD_CAP[i],
+        points: POINTS[i],
+        filled: filled,
+        open: open,
+        inactive: !filled && !open,
+        title: title,
+        settleClass: fresh ? 'd-settle' : '',
+        riseClass: fresh ? 'd-rise' : '',
+        drawClass: fresh ? 'd-draw' : '',
+        openText: 'Choose your ' + ORD[i] + ' choice',
+        openNote: i === 0 ? 'Required' : 'Optional',
+        inactiveText: i > 0 ? 'Opens after your ' + ORD[i - 1] + ' choice' : '',
+        onOpen: openPicker(i),
+        onChange: openPicker(i),
+        onUp: move(i, -1),
+        onDown: move(i, 1),
+        onRemove: remove(i),
+        upDisabled: i === 0,
+        downDisabled: i >= n - 1,
+        groupLabel: 'Rank ' + (i + 1) + ' controls',
+        changeLabel: 'Change rank ' + (i + 1) + ': ' + title,
+        upLabel: 'Move up: ' + title,
+        downLabel: 'Move down: ' + title,
+        removeLabel: 'Remove: ' + title
+      };
+    });
+
+    const pk = s.picker;
+    const picking = pk !== null && !s.submitted;
+    const changing = picking && pk < n;
+
+    const norm = (t) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+    const q = norm(s.filter.trim());
+    const parts = (title) => {
+      if (!q) return [{ text: title, deco: 'none' }];
+      let flat = '';
+      const map = [];
+      for (let k = 0; k < title.length; k++) {
+        const c = norm(title[k]);
+        for (let m = 0; m < c.length; m++) { flat += c[m]; map.push(k); }
+      }
+      const at = flat.indexOf(q);
+      if (at < 0) return [{ text: title, deco: 'none' }];
+      const a0 = map[at];
+      const a1 = map[at + q.length - 1] + 1;
+      return [
+        { text: title.slice(0, a0), deco: 'none' },
+        { text: title.slice(a0, a1), deco: 'underline' },
+        { text: title.slice(a1), deco: 'none' }
+      ].filter((p) => p.text.length > 0);
+    };
+
+    const pickAnswer = (id) => () => {
+      if (pk === null) return;
+      const r = ranking.slice();
+      if (r.indexOf(id) >= 0) return;
+      if (pk < r.length) r[pk] = id; else if (r.length < 5) r.push(id);
+      this.setState({ ranking: r, picker: null, filter: '', error: false, justFilled: pk, announce: byId[id].title + ' is your ' + ORD[pk] + ' choice.' });
+    };
+
+    const visible = ANSWERS.filter((a) => !q || norm(a.title).indexOf(q) >= 0);
+    const answers = visible.map((a) => {
+      const r = ranking.indexOf(a.id);
+      const ranked = r >= 0;
+      const current = changing && r === pk;
+      return {
+        parts: parts(a.title),
+        ranked: ranked,
+        disabled: ranked,
+        note: current ? 'Your ' + ORD[pk] + ' choice now' : (ranked ? 'Ranked ' + SHORT[r] : ''),
+        noteColor: current ? '#db3008' : '#5c5b57',
+        boxNum: ranked ? String(r + 1) : String((pk === null ? 0 : pk) + 1),
+        boxBg: current ? '#db3008' : (ranked ? '#12120f' : 'transparent'),
+        boxBorder: current ? '#db3008' : '#12120f',
+        boxText: ranked ? '#fcfcf9' : 'transparent',
+        textColor: ranked ? '#5c5b57' : '#12120f',
+        pick: pickAnswer(a.id)
+      };
+    });
+
+    const total = ANSWERS.length;
+    const matchText = q
+      ? visible.length + ' of ' + total + ' answers match'
+      : total + ' answers in ballot order. Ranked answers are marked.';
+
+    const doneName = s.name.trim();
+
+    return {
+      showChrome: !picking,
+      showBallot: !picking && !s.submitted,
+      showPicker: picking,
+      showDone: s.submitted,
+
+      name: s.name,
+      onName: (e) => this.setState({ name: e.target.value }),
+      countText: n + ' of 5 ranked',
+      leftText: n === 5 ? 'all ranks used' : (5 - n) + (5 - n === 1 ? ' rank left' : ' ranks left'),
+      error: s.error,
+      slots: slots,
+      announce: s.announce,
+      onSubmit: () => {
+        if (ranking.length === 0) this.setState({ error: true });
+        else this.setState({ submitted: true, error: false });
+      },
+
+      pickerN: String((pk === null ? 0 : pk) + 1),
+      pickerKicker: picking ? 'Rank ' + (pk + 1) + ' of 5 · ' + POINTS[pk] : '',
+      pickerHeading: picking ? (changing ? 'Change your ' + ORD[pk] + ' choice' : 'Choose your ' + ORD[pk] + ' choice') : '',
+      onCancel: () => this.setState({ picker: null, filter: '' }),
+      filter: s.filter,
+      onFilter: (e) => this.setState({ filter: e.target.value }),
+      onClearFilter: () => this.setState({ filter: '' }),
+      matchText: matchText,
+      answers: answers,
+      noMatches: visible.length === 0,
+
+      doneHeading: doneName ? 'Thanks, ' + doneName + '. Your vote is in.' : 'Your vote is in.',
+      doneRanking: ranking.map((id, i) => ({ n: String(i + 1), title: byId[id].title, label: ORD_CAP[i] + ' choice · ' + POINTS[i] }))
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Elixir after dark · Results</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap">
+<style>
+body { margin: 0; background: #110B18; }
+* { box-sizing: border-box; }
+::selection { background: #4B275F; color: #EDE9F2; }
+a { color: #C9A3F5; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+a:hover { color: #DDBDFF; }
+a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px solid #C9A3F5; outline-offset: 2px; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+.wm .wm-box { transition: background-color .2s ease, color .2s ease; }
+.wm:hover .wm-box { background: #C9A3F5 !important; color: #110B18 !important; }
+.btn-ghost { transition: border-color .15s ease, background-color .15s ease; }
+.btn-ghost:hover { border-color: #C9A3F5 !important; background: #1B1323 !important; }
+.seg { transition: background-color .15s ease, color .15s ease; }
+.seg:hover { color: #EDE9F2 !important; }
+.cell { transition: background-color .25s ease, color .25s ease; }
+.foot-link { transition: color .15s ease; }
+.foot-link:hover { color: #C9A3F5 !important; }
+.res-row { transition: background-color .15s ease; }
+.res-row:hover { background: #1B1323; }
+.grow { transform-origin: left center; animation: grow .9s cubic-bezier(.2, .7, .2, 1) both; }
+@keyframes grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.rk { width: 26px; }
+@media (min-width: 720px) {
+  .rk { width: 54px; }
+  .pts-col { width: 64px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+</style>
+</helmet>
+<div style="background: #110B18; color: #EDE9F2; font-family: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 17px; line-height: 1.55;">
+
+  <header style="border-bottom: 1px solid #3A3046;">
+    <div style="max-width: 1120px; margin: 0 auto; padding: 10px clamp(16px, 4vw, 40px); min-height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+      <a href="f-home.dc.html" class="wm" aria-label="RankedVote.app home" style="display: flex; align-items: center; gap: 10px; min-height: 44px; color: #EDE9F2; text-decoration: none;">
+        <span class="wm-box" aria-hidden="true" style="width: 26px; height: 26px; display: grid; place-items: center; border: 1.5px solid #C9A3F5; border-radius: 5px; background: #4B275F; color: #C9A3F5; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 14px; font-weight: 700; line-height: 1;">1</span>
+        <span style="font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 16px; font-weight: 700; letter-spacing: -0.01em;">RankedVote<span style="color: #C9A3F5;">.app</span></span>
+      </a>
+      <a href="#" class="btn-ghost" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; border: 1px solid #716085; border-radius: 6px; color: #EDE9F2; text-decoration: none; font-size: 15px; font-weight: 600; white-space: nowrap;">Create a ballot</a>
+    </div>
+  </header>
+
+  <main style="max-width: 1120px; margin: 0 auto; padding: 28px clamp(16px, 4vw, 40px) 0;">
+    <p style="margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; line-height: 1.5; color: #B2AABE;">
+      <span aria-hidden="true" style="width: 8px; height: 8px; border: 1.5px solid #C9A3F5; border-radius: 2px;"></span>
+      <span style="color: #EDE9F2;">Final results</span>
+      <span>Closed Oct 4, 2026, 9:00 PM EDT</span>
+    </p>
+    <h1 style="margin: 14px 0 0; max-width: 22ch; font-size: clamp(30px, 5vw + 12px, 52px); line-height: 1.08; letter-spacing: -0.025em; font-weight: 700; text-wrap: balance;">What should the Elixir Book Club read next?</h1>
+    <p style="margin: 14px 0 0; max-width: 62ch; color: #B2AABE; font-size: 16px; line-height: 1.55;">Rank up to five books you'd like to read next. Your first choice earns the most points. We'll start the winner at our next meeting.</p>
+    <p style="margin: 16px 0 0; display: flex; flex-wrap: wrap; gap: 6px 18px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px; color: #B2AABE;">
+      <span><span style="color: #EDE9F2; font-weight: 700;">9</span> votes cast</span>
+      <span>total weight <span style="color: #EDE9F2; font-weight: 700;">10</span></span>
+      <span><span style="color: #EDE9F2; font-weight: 700;">7</span> answers</span>
+    </p>
+
+    <section aria-labelledby="win-h" style="margin-top: 28px; border: 1px solid #6B5A86; border-radius: 10px; background: #1B1323; overflow: hidden;">
+      <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 12px; padding: 10px 16px; border-bottom: 1px solid #3A3046; background: #150F1D;">
+        <h2 id="win-h" style="margin: 0; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #C9A3F5;">Winner</h2>
+        <span aria-hidden="true" style="font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; color: #938B9E;">results |&gt; Enum.max_by(&amp; &amp;1.points)</span>
+      </div>
+      <div style="padding: 20px 16px 22px; display: flex; flex-direction: column; gap: 18px;">
+        <p style="margin: 0; font-size: clamp(24px, 2.4vw + 15px, 38px); line-height: 1.15; font-weight: 700; letter-spacing: -0.02em; text-wrap: balance;">Engineering Elixir Applications by Ellie Fairholm and Josep Giralt D'Lacoste</p>
+        <div style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 20px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace;">
+          <p style="margin: 0; display: flex; align-items: baseline; gap: 8px;"><span style="font-size: 48px; line-height: 1; font-weight: 700; color: #C9A3F5; letter-spacing: -0.03em;">34</span><span style="font-size: 14px; color: #B2AABE;">points</span></p>
+          <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #B2AABE;">5 ahead of Elixir in Action, Third Edition</p>
+        </div>
+        <div aria-hidden="true" style="height: 14px; background: #2B2136; border-radius: 2px; overflow: hidden;">
+          <div class="grow" style="height: 100%; width: 100%; background-image: linear-gradient(90deg, #C9A3F5 0 74%, transparent 74%); background-size: 2.9412% 100%;"></div>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="all-h" style="margin-top: 48px;">
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 14px 24px;">
+        <div>
+          <h2 id="all-h" style="margin: 0; font-size: 22px; line-height: 1.2; font-weight: 700; letter-spacing: -0.01em;">All answers, by points</h2>
+          <p style="margin: 6px 0 0; font-size: 15px; color: #B2AABE;">More points is better. Each bar block is one point.</p>
+        </div>
+        <div role="group" aria-label="Breakdown columns show" style="display: flex; gap: 2px; padding: 2px; border: 1px solid #3A3046; border-radius: 8px; background: #150F1D;">
+          <button type="button" aria-pressed="{{isVotes}}" onClick="{{showVotes}}" class="seg" style="min-height: 44px; padding: 0 14px; border: 0; border-radius: 6px; background: {{votesBg}}; color: {{votesFg}}; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px; font-weight: 500; cursor: pointer;">Votes per rank</button>
+          <button type="button" aria-pressed="{{isPoints}}" onClick="{{showPoints}}" class="seg" style="min-height: 44px; padding: 0 14px; border: 0; border-radius: 6px; background: {{pointsBg}}; color: {{pointsFg}}; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px; font-weight: 500; cursor: pointer;">Points per rank</button>
+        </div>
+      </div>
+
+      <div style="margin-top: 16px; border: 1px solid #3A3046; border-radius: 8px; background: #150F1D; overflow: hidden;">
+        <table style="width: 100%; border-collapse: collapse; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px; line-height: 1.4;">
+          <caption class="sr-only">All seven answers ordered by points. The last five columns show {{captionShort}} at each rank, 1st to 5th.</caption>
+          <thead>
+            <tr style="border-bottom: 1px solid #3A3046;">
+              <th scope="col" style="padding: 10px 8px 10px 12px; text-align: left; font-size: 11px; font-weight: 500; color: #938B9E;">Answer</th>
+              <th scope="col" class="pts-col" style="padding: 10px 6px; text-align: right; font-size: 11px; font-weight: 500; color: #938B9E;"><abbr title="Points" style="text-decoration: none;">Pts</abbr></th>
+              <th scope="col" class="rk" style="padding: 10px 1px; text-align: center; font-size: 11px; font-weight: 500; color: #938B9E;">1st</th>
+              <th scope="col" class="rk" style="padding: 10px 1px; text-align: center; font-size: 11px; font-weight: 500; color: #938B9E;">2nd</th>
+              <th scope="col" class="rk" style="padding: 10px 1px; text-align: center; font-size: 11px; font-weight: 500; color: #938B9E;">3rd</th>
+              <th scope="col" class="rk" style="padding: 10px 1px; text-align: center; font-size: 11px; font-weight: 500; color: #938B9E;">4th</th>
+              <th scope="col" class="rk" style="padding: 10px 8px 10px 1px; text-align: center; font-size: 11px; font-weight: 500; color: #938B9E;">5th</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="res-row" style="border-top: 1px solid #3A3046; background: #1B1323;">
+              <th scope="row" style="padding: 14px 8px 14px 12px; text-align: left; vertical-align: top; font-family: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 15px; line-height: 1.35; font-weight: 600; color: #EDE9F2;">
+                <span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; place-items: center; width: 20px; height: 20px; margin-right: 8px; border-radius: 4px; background: #C9A3F5; color: #110B18; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; vertical-align: 1px;">1</span><span class="sr-only">Place 1, winner: </span>Engineering Elixir Applications by Ellie Fairholm and Josep Giralt D'Lacoste</span>
+                <span aria-hidden="true" style="display: block; margin-top: 10px; height: 8px; border-radius: 2px; background: #2B2136; overflow: hidden;"><span class="grow" style="display: block; height: 100%; width: 100%; background-image: linear-gradient(90deg, #C9A3F5 0 72%, transparent 72%); background-size: 2.9412% 100%;"></span></span>
+              </th>
+              <td class="pts-col" style="padding: 14px 6px; text-align: right; vertical-align: top; font-size: 16px; font-weight: 700; color: #C9A3F5;">34</td>
+              <td style="padding: 12px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 28px; border-radius: 4px; background: {{r0.b1}}; color: {{r0.f1}};">{{r0.v1}}</span></td>
+              <td style="padding: 12px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 28px; border-radius: 4px; background: {{r0.b2}}; color: {{r0.f2}};">{{r0.v2}}</span></td>
+              <td style="padding: 12px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 28px; border-radius: 4px; background: {{r0.b3}}; color: {{r0.f3}};">{{r0.v3}}</span></td>
+              <td style="padding: 12px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 28px; border-radius: 4px; background: {{r0.b4}}; color: {{r0.f4}};">{{r0.v4}}</span></td>
+              <td style="padding: 12px 8px 12px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 28px; border-radius: 4px; background: {{r0.b5}}; color: {{r0.f5}};">{{r0.v5}}</span></td>
+            </tr>
+            <tr class="res-row" style="border-top: 1px solid #3A3046;">
+              <th scope="row" style="padding: 14px 8px 14px 12px; text-align: left; vertical-align: top; font-family: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 15px; line-height: 1.35; font-weight: 600; color: #EDE9F2;">
+                <span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; place-items: center; width: 20px; height: 20px; margin-right: 8px; border-radius: 4px; border: 1px solid #3A3046; color: #B2AABE; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; vertical-align: 1px;">2</span><span class="sr-only">Place 2: </span>Elixir in Action, Third Edition by Saša Jurić</span>
+                <span aria-hidden="true" style="display: block; margin-top: 10px; height: 8px; border-radius: 2px; background: #2B2136; overflow: hidden;"><span class="grow" style="display: block; height: 100%; width: 85.294%; background-image: linear-gradient(90deg, #C9A3F5 0 72%, transparent 72%); background-size: 3.4483% 100%;"></span></span>
+              </th>
+              <td class="pts-col" style="padding: 14px 6px; text-align: right; vertical-align: top; font-size: 16px; font-weight: 700; color: #EDE9F2;">29</td>
+              <td style="padding: 12px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 28px; border-radius: 4px; background: {{r1.b1}}; color: {{r1.f1}};">{{r1.v1}}</span></td>
+              <td style="padding: 12px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 28px; border-radius: 4px; background: {{r1.b2}}; color: {{r1.f2}};">{{r1.v2}}</span></td>
+              <td style="padding: 12px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 28px; border-radius: 4px; background: {{r1.b3}}; color: {{r1.f3}};">{{r1.v3}}</span></td>
+              <td style="padding: 12px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 28px; border-radius: 4px; background: {{r1.b4}}; color: {{r1.f4}};">{{r1.v4}}</span></td>
+              <td style="padding: 12px 8px 12px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 28px; border-radius: 4px; background: {{r1.b5}}; color: {{r1.f5}};">{{r1.v5}}</span></td>
+            </tr>
+            <tr class="res-row" style="border-top: 1px solid #3A3046;">
+              <th scope="row" style="padding: 14px 8px 14px 12px; text-align: left; vertical-align: top; font-family: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 15px; line-height: 1.35; font-weight: 600; color: #EDE9F2;">
+                <span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; place-items: center; width: 20px; height: 20px; margin-right: 8px; border-radius: 4px; border: 1px solid #3A3046; color: #B2AABE; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; vertical-align: 1px;">3</span><span class="sr-only">Place 3: </span>Machine Learning in Elixir by Sean Moriarity</span>
+                <span style="display: inline-block; margin-top: 8px; padding: 1px 6px; border: 1px solid #6B5A86; border-radius: 3px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 500; line-height: 1.5; color: #C9A3F5;">most 1st-place votes</span>
+                <span aria-hidden="true" style="display: block; margin-top: 10px; height: 8px; border-radius: 2px; background: #2B2136; overflow: hidden;"><span class="grow" style="display: block; height: 100%; width: 61.765%; background-image: linear-gradient(90deg, #C9A3F5 0 72%, transparent 72%); background-size: 4.7619% 100%;"></span></span>
+              </th>
+              <td class="pts-col" style="padding: 14px 6px; text-align: right; vertical-align: top; font-size: 16px; font-weight: 700; color: #EDE9F2;">21</td>
+              <td style="padding: 12px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 28px; border-radius: 4px; background: {{r2.b1}}; color: {{r2.f1}};">{{r2.v1}}</span></td>
+              <td style="padding: 12px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 28px; border-radius: 4px; background: {{r2.b2}}; color: {{r2.f2}};">{{r2.v2}}</span></td>
+              <td style="padding: 12px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 28px; border-radius: 4px; background: {{r2.b3}}; color: {{r2.f3}};">{{r2.v3}}</span></td>
+              <td style="padding: 12px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 28px; border-radius: 4px; background: {{r2.b4}}; color: {{r2.f4}};">{{r2.v4}}</span></td>
+              <td style="padding: 12px 8px 12px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 28px; border-radius: 4px; background: {{r2.b5}}; color: {{r2.f5}};">{{r2.v5}}</span></td>
+            </tr>
+            <tr class="res-row" style="border-top: 1px solid #3A3046;">
+              <th scope="row" style="padding: 14px 8px 14px 12px; text-align: left; vertical-align: top; font-family: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 15px; line-height: 1.35; font-weight: 600; color: #EDE9F2;">
+                <span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; place-items: center; width: 20px; height: 20px; margin-right: 8px; border-radius: 4px; border: 1px solid #3A3046; color: #B2AABE; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; vertical-align: 1px;">4</span><span class="sr-only">Place 4: </span>Elixir Patterns by Hugo Barauna and Alexander Koutmos</span>
+                <span aria-hidden="true" style="display: block; margin-top: 10px; height: 8px; border-radius: 2px; background: #2B2136; overflow: hidden;"><span class="grow" style="display: block; height: 100%; width: 52.941%; background-image: linear-gradient(90deg, #C9A3F5 0 72%, transparent 72%); background-size: 5.5556% 100%;"></span></span>
+              </th>
+              <td class="pts-col" style="padding: 14px 6px; text-align: right; vertical-align: top; font-size: 16px; font-weight: 700; color: #EDE9F2;">18</td>
+              <td style="padding: 12px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 28px; border-radius: 4px; background: {{r3.b1}}; color: {{r3.f1}};">{{r3.v1}}</span></td>
+              <td style="padding: 12px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 28px; border-radius: 4px; background: {{r3.b2}}; color: {{r3.f2}};">{{r3.v2}}</span></td>
+              <td style="padding: 12px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 28px; border-radius: 4px; background: {{r3.b3}}; color: {{r3.f3}};">{{r3.v3}}</span></td>
+              <td style="padding: 12px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 28px; border-radius: 4px; background: {{r3.b4}}; color: {{r3.f4}};">{{r3.v4}}</span></td>
+              <td style="padding: 12px 8px 12px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 28px; border-radius: 4px; background: {{r3.b5}}; color: {{r3.f5}};">{{r3.v5}}</span></td>
+            </tr>
+            <tr class="res-row" style="border-top: 1px solid #3A3046;">
+              <th scope="row" style="padding: 14px 8px 14px 12px; text-align: left; vertical-align: top; font-family: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 15px; line-height: 1.35; font-weight: 600; color: #EDE9F2;">
+                <span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; place-items: center; width: 20px; height: 20px; margin-right: 8px; border-radius: 4px; border: 1px solid #3A3046; color: #B2AABE; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; vertical-align: 1px;">5</span><span class="sr-only">Place 5: </span>Designing Elixir Systems with OTP by James Edward Gray II and Bruce A. Tate</span>
+                <span aria-hidden="true" style="display: block; margin-top: 10px; height: 8px; border-radius: 2px; background: #2B2136; overflow: hidden;"><span class="grow" style="display: block; height: 100%; width: 50%; background-image: linear-gradient(90deg, #C9A3F5 0 72%, transparent 72%); background-size: 5.8824% 100%;"></span></span>
+              </th>
+              <td class="pts-col" style="padding: 14px 6px; text-align: right; vertical-align: top; font-size: 16px; font-weight: 700; color: #EDE9F2;">17</td>
+              <td style="padding: 12px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 28px; border-radius: 4px; background: {{r4.b1}}; color: {{r4.f1}};">{{r4.v1}}</span></td>
+              <td style="padding: 12px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 28px; border-radius: 4px; background: {{r4.b2}}; color: {{r4.f2}};">{{r4.v2}}</span></td>
+              <td style="padding: 12px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 28px; border-radius: 4px; background: {{r4.b3}}; color: {{r4.f3}};">{{r4.v3}}</span></td>
+              <td style="padding: 12px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 28px; border-radius: 4px; background: {{r4.b4}}; color: {{r4.f4}};">{{r4.v4}}</span></td>
+              <td style="padding: 12px 8px 12px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 28px; border-radius: 4px; background: {{r4.b5}}; color: {{r4.f5}};">{{r4.v5}}</span></td>
+            </tr>
+            <tr class="res-row" style="border-top: 1px solid #3A3046;">
+              <th scope="row" style="padding: 14px 8px 14px 12px; text-align: left; vertical-align: top; font-family: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 15px; line-height: 1.35; font-weight: 600; color: #EDE9F2;">
+                <span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; place-items: center; width: 20px; height: 20px; margin-right: 8px; border-radius: 4px; border: 1px solid #3A3046; color: #B2AABE; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; vertical-align: 1px;">6</span><span class="sr-only">Place 6: </span>Concurrent Data Processing in Elixir by Svilen Gospodinov</span>
+                <span aria-hidden="true" style="display: block; margin-top: 10px; height: 8px; border-radius: 2px; background: #2B2136; overflow: hidden;"><span class="grow" style="display: block; height: 100%; width: 29.412%; background-image: linear-gradient(90deg, #C9A3F5 0 72%, transparent 72%); background-size: 10% 100%;"></span></span>
+              </th>
+              <td class="pts-col" style="padding: 14px 6px; text-align: right; vertical-align: top; font-size: 16px; font-weight: 700; color: #EDE9F2;">10</td>
+              <td style="padding: 12px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 28px; border-radius: 4px; background: {{r5.b1}}; color: {{r5.f1}};">{{r5.v1}}</span></td>
+              <td style="padding: 12px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 28px; border-radius: 4px; background: {{r5.b2}}; color: {{r5.f2}};">{{r5.v2}}</span></td>
+              <td style="padding: 12px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 28px; border-radius: 4px; background: {{r5.b3}}; color: {{r5.f3}};">{{r5.v3}}</span></td>
+              <td style="padding: 12px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 28px; border-radius: 4px; background: {{r5.b4}}; color: {{r5.f4}};">{{r5.v4}}</span></td>
+              <td style="padding: 12px 8px 12px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 28px; border-radius: 4px; background: {{r5.b5}}; color: {{r5.f5}};">{{r5.v5}}</span></td>
+            </tr>
+            <tr class="res-row" style="border-top: 1px solid #3A3046;">
+              <th scope="row" style="padding: 14px 8px 14px 12px; text-align: left; vertical-align: top; font-family: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 15px; line-height: 1.35; font-weight: 600; color: #EDE9F2;">
+                <span style="display: block; text-wrap: pretty;"><span aria-hidden="true" style="display: inline-grid; place-items: center; width: 20px; height: 20px; margin-right: 8px; border-radius: 4px; border: 1px solid #3A3046; color: #B2AABE; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 11px; font-weight: 700; vertical-align: 1px;">7</span><span class="sr-only">Place 7: </span>A Common-Sense Guide to Data Structures and Algorithms, Second Edition by Jay Wengrow</span>
+                <span aria-hidden="true" style="display: block; margin-top: 10px; height: 8px; border-radius: 2px; background: #2B2136; overflow: hidden;"><span class="grow" style="display: block; height: 100%; width: 17.647%; background-image: linear-gradient(90deg, #C9A3F5 0 72%, transparent 72%); background-size: 16.667% 100%;"></span></span>
+              </th>
+              <td class="pts-col" style="padding: 14px 6px; text-align: right; vertical-align: top; font-size: 16px; font-weight: 700; color: #EDE9F2;">6</td>
+              <td style="padding: 12px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 28px; border-radius: 4px; background: {{r6.b1}}; color: {{r6.f1}};">{{r6.v1}}</span></td>
+              <td style="padding: 12px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 28px; border-radius: 4px; background: {{r6.b2}}; color: {{r6.f2}};">{{r6.v2}}</span></td>
+              <td style="padding: 12px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 28px; border-radius: 4px; background: {{r6.b3}}; color: {{r6.f3}};">{{r6.v3}}</span></td>
+              <td style="padding: 12px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 28px; border-radius: 4px; background: {{r6.b4}}; color: {{r6.f4}};">{{r6.v4}}</span></td>
+              <td style="padding: 12px 8px 12px 1px; vertical-align: top;"><span class="cell" style="display: grid; place-items: center; height: 28px; border-radius: 4px; background: {{r6.b5}}; color: {{r6.f5}};">{{r6.v5}}</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="margin-top: 12px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 20px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; line-height: 1.5; color: #B2AABE;">
+        <p aria-live="polite" style="margin: 0; max-width: 64ch;">{{caption}}</p>
+        <div aria-hidden="true" style="display: flex; align-items: center; gap: 4px;">
+          <span style="margin-right: 4px;">fewer</span>
+          <span style="width: 16px; height: 16px; border-radius: 3px; background: #271B35;"></span>
+          <span style="width: 16px; height: 16px; border-radius: 3px; background: #39254E;"></span>
+          <span style="width: 16px; height: 16px; border-radius: 3px; background: #4C2F69;"></span>
+          <span style="width: 16px; height: 16px; border-radius: 3px; background: #5F3B84;"></span>
+          <span style="margin-left: 4px;">more</span>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="how-h" style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #3A3046; display: flex; flex-direction: column; gap: 8px;">
+      <h2 id="how-h" style="margin: 0; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px; font-weight: 500; color: #C9A3F5;">How points work</h2>
+      <p style="margin: 0; max-width: 62ch; font-size: 16px; line-height: 1.55; color: #B2AABE;">A first choice earns 5 points, a second 4, a third 3, a fourth 2, and a fifth 1. Each vote's points are multiplied by its weight, so a vote with weight 2 counts twice.</p>
+    </section>
+  </main>
+
+  <footer style="margin-top: 72px; border-top: 1px solid #3A3046;">
+    <div style="max-width: 1120px; margin: 0 auto; padding: 20px clamp(16px, 4vw, 40px) 36px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px;">
+      <p style="margin: 0; color: #938B9E;">RankedVote.app runs Flick</p>
+      <nav aria-label="Site">
+        <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0 20px;">
+          <li><a href="https://github.com/zorn/flick" class="foot-link" style="display: inline-flex; align-items: center; min-height: 44px; color: #B2AABE; text-decoration: none;">GitHub project</a></li>
+          <li><a href="https://updown.io/wwis" class="foot-link" style="display: inline-flex; align-items: center; min-height: 44px; color: #B2AABE; text-decoration: none;">Uptime</a></li>
+          <li><a href="mailto:mike@mikezornek.com" class="foot-link" style="display: inline-flex; align-items: center; min-height: 44px; color: #B2AABE; text-decoration: none;">Contact site admin</a></li>
+        </ul>
+      </nav>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":2400}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    // Weighted count of 1st to 5th placements, in results order (B, A, C, E, D, F, G).
+    this.breakdown = [
+      [2, 4, 2, 1, 0],
+      [2, 2, 3, 1, 0],
+      [3, 1, 0, 0, 2],
+      [1, 1, 2, 1, 1],
+      [1, 1, 2, 1, 0],
+      [0, 1, 1, 1, 1],
+      [1, 0, 0, 0, 1]
+    ];
+    this.state = { view: 'votes' };
+  }
+
+  fmt(x) {
+    const r = Math.round(x * 10) / 10;
+    return Number.isInteger(r) ? String(r) : r.toFixed(1);
+  }
+
+  renderVals() {
+    const isPoints = this.state.view === 'points';
+    const heat = ['transparent', '#271B35', '#39254E', '#4C2F69', '#5F3B84'];
+    const values = this.breakdown.map((row) => row.map((c, i) => (isPoints ? c * (5 - i) : c)));
+    let max = 0;
+    values.forEach((row) => row.forEach((v) => { if (v > max) max = v; }));
+    const rows = values.map((row) => {
+      const out = {};
+      row.forEach((v, i) => {
+        const level = v === 0 ? 0 : Math.min(4, Math.ceil((v / max) * 4));
+        out['v' + (i + 1)] = this.fmt(v);
+        out['b' + (i + 1)] = heat[level];
+        out['f' + (i + 1)] = v === 0 ? '#938B9E' : '#EDE9F2';
+      });
+      return out;
+    });
+    return {
+      r0: rows[0], r1: rows[1], r2: rows[2], r3: rows[3], r4: rows[4], r5: rows[5], r6: rows[6],
+      isVotes: !isPoints,
+      isPoints: isPoints,
+      showVotes: () => this.setState({ view: 'votes' }),
+      showPoints: () => this.setState({ view: 'points' }),
+      votesBg: isPoints ? 'transparent' : '#4B275F',
+      votesFg: isPoints ? '#B2AABE' : '#EDE9F2',
+      pointsBg: isPoints ? '#4B275F' : 'transparent',
+      pointsFg: isPoints ? '#EDE9F2' : '#B2AABE',
+      captionShort: isPoints ? 'the points earned' : 'the weighted vote count',
+      caption: isPoints
+        ? 'Points earned at each rank: votes times 5, 4, 3, 2 or 1. Each row adds up to its total.'
+        : 'Votes that put the answer at each rank, counting weight. Darker cells hold more votes.'
+    };
+  }
+}
+</script>
+</body>
+</html>
