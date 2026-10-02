@@ -1,0 +1,706 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Round 2 · Vote c · One choice at a time</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&amp;family=Figtree:wght@400..800&amp;display=swap">
+<style>
+body{margin:0;background:#F7EFE3}
+body:has(.r2-dark){background:#17131F}
+
+/* Shared round-2 tokens. Light first; .r2-dark swaps them. */
+:root,.r2v{
+  --ground:#F7EFE3;--texture:#E6DBCA;--surface:#FFFDF8;--well:#F1E9DC;--line:#E3D7C4;
+  --ink:#1E1730;--ink-2:#4A4358;--action:#FF9F61;--action-edge:#C96736;--on-action:#1E1730;
+  --link:#462F80;--danger:#A92227;
+  /* Additions for this board, each checked for contrast */
+  --edge:#D9CCB7;--idle:#B9AA93;--danger-bg:#FCE4E0;--ok-bg:#D7F2E2;--ok-ink:#0B6040;--note-bg:#ECE6FA;
+  --brand:#A13B85;--mark-1:#462F80;--mark-2:#E57255;--mark-3:#F1B464;
+  --r1:#3B2A78;--r2:#8A2E6E;--r3:#A8432A;--r4:#7A5300;--r5:#2C6A5C;
+  --ring1:transparent;--ring2:transparent;--ring3:transparent;--ring4:transparent;--ring5:transparent;
+  --display:'Bricolage Grotesque','Avenir Next','Trebuchet MS',system-ui,sans-serif;
+  --body:Figtree,'Avenir Next','Segoe UI',system-ui,sans-serif;
+  --sh-card:0 1px 1px rgba(64,44,30,.04),0 2px 4px rgba(64,44,30,.05),0 10px 22px -8px rgba(64,44,30,.14),0 26px 44px -26px rgba(64,44,30,.28);
+  --sh-key:0 1px 1px rgba(64,44,30,.05),0 4px 0 var(--edge),0 12px 20px -14px rgba(64,44,30,.4);
+  --sh-key-up:0 1px 1px rgba(64,44,30,.05),0 7px 0 var(--edge),0 18px 26px -14px rgba(64,44,30,.45);
+  --sh-key-down:0 1px 0 var(--edge),0 2px 4px rgba(64,44,30,.1);
+  --sh-sunk:inset 0 2px 6px rgba(64,44,30,.16),inset 0 0 0 1px rgba(64,44,30,.06);
+  --sh-btn:0 4px 0 var(--action-edge),0 10px 18px -12px rgba(201,103,54,.6);
+  --sh-btn-up:0 6px 0 var(--action-edge),0 16px 24px -12px rgba(201,103,54,.65);
+  --sh-btn-down:0 1px 0 var(--action-edge),0 3px 6px -3px rgba(201,103,54,.5);
+  --sh-sec:inset 0 0 0 1.5px var(--line),0 3px 0 var(--edge),0 8px 14px -10px rgba(64,44,30,.4);
+  --sh-sec-up:inset 0 0 0 1.5px var(--line),0 5px 0 var(--edge),0 12px 18px -12px rgba(64,44,30,.45);
+  --sh-sec-down:inset 0 0 0 1.5px var(--line),0 1px 0 var(--edge);
+  --sh-dock:0 2px 4px rgba(30,23,48,.1),0 16px 30px -12px rgba(30,23,48,.4);
+  --sh-input:inset 0 3px 6px rgba(64,44,30,.12);
+  --sh-chip:inset 0 -3px 0 rgba(0,0,0,.24);
+}
+.r2v.r2-dark{
+  --ground:#17131F;--texture:#2A2337;--surface:#221C2D;--well:#1D1827;--line:#3A3148;
+  --ink:#F3EDE4;--ink-2:#C8BFD3;--action-edge:#B85A2C;--link:#C4B2FF;--danger:#FF8A8A;
+  --edge:#0E0B14;--idle:#6E6282;--danger-bg:#3A1D25;--ok-bg:#16352A;--ok-ink:#8FE0B5;--note-bg:#2B2340;
+  --brand:#F29BCF;--mark-1:#9D88F0;
+  --ring1:#B5A4F7;--ring2:#F2A2D4;--ring3:#F7A98E;--ring4:#E8C47A;--ring5:#8DD5C0;
+  --sh-card:inset 0 0 0 1px #2E2640,0 1px 2px rgba(0,0,0,.5),0 12px 24px -12px rgba(0,0,0,.8);
+  --sh-key:inset 0 0 0 1px #2E2640,0 4px 0 var(--edge),0 10px 16px -10px rgba(0,0,0,.85);
+  --sh-key-up:inset 0 0 0 1px #3A3148,0 6px 0 var(--edge),0 14px 20px -10px rgba(0,0,0,.9);
+  --sh-key-down:inset 0 0 0 1px #2E2640,0 1px 0 var(--edge);
+  --sh-sunk:inset 0 2px 6px rgba(0,0,0,.6),inset 0 0 0 1.5px #3A3148;
+  --sh-btn:0 4px 0 var(--action-edge),0 8px 14px -8px rgba(0,0,0,.75);
+  --sh-btn-up:0 6px 0 var(--action-edge),0 12px 18px -8px rgba(0,0,0,.8);
+  --sh-btn-down:0 1px 0 var(--action-edge);
+  --sh-sec:inset 0 0 0 1.5px var(--line),0 3px 0 var(--edge),0 6px 10px -6px rgba(0,0,0,.8);
+  --sh-sec-up:inset 0 0 0 1.5px #4A3F5C,0 5px 0 var(--edge),0 10px 14px -8px rgba(0,0,0,.85);
+  --sh-sec-down:inset 0 0 0 1.5px var(--line),0 1px 0 var(--edge);
+  --sh-dock:inset 0 0 0 1px #4A3F5C,0 2px 4px rgba(0,0,0,.5),0 14px 26px -10px rgba(0,0,0,.85);
+  --sh-input:inset 0 3px 6px rgba(0,0,0,.45);
+  --sh-chip:inset 0 -3px 0 rgba(0,0,0,.3);
+}
+
+.r2v{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+.r2v *{box-sizing:border-box}
+.r2v button,.r2v input{font-family:inherit}
+.r2v a{color:var(--link);text-decoration-thickness:2px;text-underline-offset:3px}
+.r2v a:hover{text-decoration-thickness:3px}
+.r2v :focus-visible{outline:3px solid var(--link);outline-offset:3px}
+.r2-sr{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* A calm clearing in the dot texture behind reading text */
+.r2-calm{background:var(--ground);box-shadow:0 0 12px 10px var(--ground);border-radius:16px}
+
+/* Tactile press: lift on hover, sink on press */
+.r2-press{cursor:pointer;transition:transform .16s cubic-bezier(.34,1.56,.64,1),box-shadow .16s ease,background-color .2s ease}
+.r2-press:hover{transform:translateY(-2px)!important}
+.r2-press:active{transform:translateY(3px)!important;transition-duration:.05s}
+.r2-btn:hover{box-shadow:var(--sh-btn-up)!important}
+.r2-btn:active{box-shadow:var(--sh-btn-down)!important}
+.r2-sec:hover{box-shadow:var(--sh-sec-up)!important}
+.r2-sec:active{box-shadow:var(--sh-sec-down)!important}
+.r2-press:disabled{opacity:.35;cursor:not-allowed;transform:none!important;box-shadow:inset 0 0 0 1.5px var(--line)!important}
+
+/* Text-styled buttons: Back to choices */
+.r2-textbtn{cursor:pointer;text-decoration:none;text-underline-offset:3px;text-decoration-thickness:2px}
+.r2-textbtn:hover{text-decoration:underline}
+.r2-textbtn:hover .r2-nudge-l{transform:translateX(-3px)}
+.r2-nudge-l{transition:transform .2s cubic-bezier(.34,1.56,.64,1)}
+
+/* Answer keys: raised while open, pressed into the page once taken */
+.r2-key,.r2-key-taken{transition:transform .22s cubic-bezier(.34,1.56,.64,1),box-shadow .22s ease,background-color .25s ease}
+.r2-key{cursor:pointer}
+.r2-key-taken{cursor:default}
+.r2-key:hover{transform:translateY(-2px)!important;box-shadow:var(--sh-key-up)!important}
+.r2-key:active{transform:translateY(3px)!important;box-shadow:var(--sh-key-down)!important;transition-duration:.05s}
+
+.r2-input{transition:border-color .2s ease,background-color .2s ease}
+.r2-input:focus{border-color:var(--link)!important;background:var(--surface)!important}
+.r2-foot{display:inline-flex;align-items:center;min-height:44px;padding:0 4px;color:var(--ink-2)!important;text-decoration:none}
+.r2-foot:hover{text-decoration:underline}
+
+/* Motion */
+@keyframes r2-pop{0%{transform:scale(.2) rotate(-25deg);opacity:0}60%{transform:scale(1.18) rotate(5deg);opacity:1}100%{transform:none;opacity:1}}
+.r2-pop{animation:r2-pop .42s cubic-bezier(.2,.8,.25,1) both}
+@keyframes r2-rise{0%{transform:translateY(16px);opacity:0}100%{transform:none;opacity:1}}
+.r2-rise{animation:r2-rise .45s cubic-bezier(.2,.8,.25,1) both}
+@keyframes r2-slide-in{0%{transform:translateX(28px);opacity:0}100%{transform:none;opacity:1}}
+@keyframes r2-slide-back{0%{transform:translateX(-28px);opacity:0}100%{transform:none;opacity:1}}
+.r2-slide-in{animation:r2-slide-in .4s cubic-bezier(.2,.8,.25,1) both}
+.r2-slide-back{animation:r2-slide-back .4s cubic-bezier(.2,.8,.25,1) both}
+/* The waiting rank chip: swaps in when the rank changes, then breathes */
+@keyframes r2-swap-a{0%{transform:scale(.4) rotate(-20deg);opacity:0}60%{transform:scale(1.14) rotate(4deg);opacity:1}100%{transform:none;opacity:1}}
+@keyframes r2-swap-b{0%{transform:scale(.4) rotate(-20deg);opacity:0}60%{transform:scale(1.14) rotate(4deg);opacity:1}100%{transform:none;opacity:1}}
+@keyframes r2-breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+.r2-swap-a{animation:r2-swap-a .42s cubic-bezier(.2,.8,.25,1),r2-breathe 2.4s ease-in-out .7s infinite}
+.r2-swap-b{animation:r2-swap-b .42s cubic-bezier(.2,.8,.25,1),r2-breathe 2.4s ease-in-out .7s infinite}
+@keyframes r2-from-below-a{0%{transform:translateY(36px)}60%{transform:translateY(-4px)}100%{transform:none}}
+@keyframes r2-from-below-b{0%{transform:translateY(36px)}60%{transform:translateY(-4px)}100%{transform:none}}
+@keyframes r2-from-above-a{0%{transform:translateY(-36px)}60%{transform:translateY(4px)}100%{transform:none}}
+@keyframes r2-from-above-b{0%{transform:translateY(-36px)}60%{transform:translateY(4px)}100%{transform:none}}
+.r2-from-below-a{animation:r2-from-below-a .38s cubic-bezier(.2,.8,.25,1)}
+.r2-from-below-b{animation:r2-from-below-b .38s cubic-bezier(.2,.8,.25,1)}
+.r2-from-above-a{animation:r2-from-above-a .38s cubic-bezier(.2,.8,.25,1)}
+.r2-from-above-b{animation:r2-from-above-b .38s cubic-bezier(.2,.8,.25,1)}
+@keyframes r2-shake-a{0%,100%{transform:none}20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(2px)}}
+@keyframes r2-shake-b{0%,100%{transform:none}20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(2px)}}
+.r2-shake-a{animation:r2-shake-a .42s ease}
+.r2-shake-b{animation:r2-shake-b .42s ease}
+.r2-echo li{animation:r2-rise .45s cubic-bezier(.2,.8,.25,1) both}
+.r2-echo li:nth-child(1){animation-delay:.18s}
+.r2-echo li:nth-child(2){animation-delay:.26s}
+.r2-echo li:nth-child(3){animation-delay:.34s}
+.r2-echo li:nth-child(4){animation-delay:.42s}
+.r2-echo li:nth-child(5){animation-delay:.5s}
+
+@media (min-width:720px){
+  .r2-h1{font-size:48px!important}
+  .r2-tray{padding:28px 32px 30px!important}
+  .r2-intro{padding-top:28px!important}
+  .r2-prompt{padding:18px 20px!important}
+}
+@media (prefers-reduced-motion:reduce){
+  .r2v *{animation:none!important;transition:none!important}
+}
+</style>
+</helmet>
+<div class="r2v {{darkClass}}" style="background-color:var(--ground); background-image:radial-gradient(var(--texture) 1.2px, transparent 1.6px); background-size:22px 22px; color:var(--ink); font-family:var(--body); font-size:17px; line-height:1.5">
+  <div style="max-width:720px; margin:0 auto; padding:0 16px">
+
+    <header style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 0 6px">
+      <a href="r2-home.dc.html" style="display:inline-flex; align-items:center; gap:8px; min-height:44px; color:var(--ink); text-decoration:none">
+        <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true">
+          <rect x="1" y="17" width="20" height="9" rx="4.5" style="fill:var(--mark-3)"></rect>
+          <rect x="4" y="9.5" width="20" height="9" rx="4.5" style="fill:var(--mark-2)"></rect>
+          <rect x="7" y="2" width="20" height="9" rx="4.5" style="fill:var(--mark-1)"></rect>
+        </svg>
+        <span style="font-family:var(--display); font-weight:800; font-size:19px; letter-spacing:-0.02em; line-height:1">RankedVote<span style="color:var(--brand)">.app</span></span>
+      </a>
+      <a href="https://rankedvote.app/ballot/new" class="r2-press r2-sec" style="display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:0 16px; border-radius:14px; background:var(--surface); color:var(--ink); text-decoration:none; font-family:var(--display); font-weight:700; font-size:15px; box-shadow:var(--sh-sec)">Create a ballot</a>
+    </header>
+
+    <main>
+      <div class="r2-calm r2-intro" style="margin-top:14px; padding-top:8px">
+        <span style="display:inline-flex; align-items:center; gap:7px; padding:4px 12px 4px 10px; border-radius:999px; background:var(--ok-bg); color:var(--ok-ink); font-size:14px; font-weight:700">
+          <span aria-hidden="true" style="width:8px; height:8px; border-radius:999px; background:currentColor"></span>Open for votes
+        </span>
+        <h1 class="r2-h1" style="margin:14px 0 10px; font-family:var(--display); font-weight:800; font-size:35px; line-height:1.04; letter-spacing:-0.03em; text-wrap:balance">What should the Elixir Book Club read next?</h1>
+        <p style="margin:0; color:var(--ink-2); max-width:58ch">Rank up to five books you'd like to read next. Your first choice earns the most points. We'll start the winner at our next meeting.</p>
+      </div>
+
+      <p class="r2-sr" aria-live="polite">{{announce}}</p>
+
+      <sc-if value="{{notSubmitted}}" hint-placeholder-val="{{true}}">
+        <ol aria-label="Steps" class="r2-calm" style="list-style:none; margin:30px 0 0; padding:0; display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:10px">
+          <li aria-current="{{s1Current}}">
+            <span aria-hidden="true" style="display:block; height:6px; border-radius:999px; background:{{s1Bar}}; transition:background-color .3s ease"></span>
+            <span style="display:block; margin-top:8px; font-size:15px; font-weight:{{s1Weight}}; color:{{s1Ink}}">Step 1 · Choose</span>
+          </li>
+          <li aria-current="{{s2Current}}">
+            <span aria-hidden="true" style="display:block; height:6px; border-radius:999px; background:{{s2Bar}}; transition:background-color .3s ease"></span>
+            <span style="display:block; margin-top:8px; font-size:15px; font-weight:{{s2Weight}}; color:{{s2Ink}}">Step 2 · Review</span>
+          </li>
+        </ol>
+      </sc-if>
+
+      <sc-if value="{{onChoose}}" hint-placeholder-val="{{true}}">
+        <section aria-labelledby="r2c-prompt-h" class="{{stepAnim}}" style="margin-top:22px">
+          <div style="position:sticky; top:8px; z-index:5">
+            <div class="r2-prompt" style="padding:14px; border-radius:20px; background:var(--surface); box-shadow:var(--sh-dock)">
+              <div style="display:flex; align-items:center; gap:14px">
+                <sc-if value="{{canPick}}" hint-placeholder-val="{{true}}">
+                  <span class="{{promptChipCls}}" aria-hidden="true" style="flex:none; width:48px; height:48px; border-radius:999px; display:grid; place-items:center; background:{{promptChipBg}}; color:#FFFFFF; font-family:var(--display); font-weight:800; font-size:22px; line-height:1; box-shadow:{{promptChipShadow}}">{{nextNum}}</span>
+                </sc-if>
+                <sc-if value="{{allSet}}" hint-placeholder-val="{{false}}">
+                  <span class="r2-pop" aria-hidden="true" style="flex:none; width:48px; height:48px; border-radius:999px; display:grid; place-items:center; background:var(--ok-bg); color:var(--ok-ink)">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+                  </span>
+                </sc-if>
+                <div style="flex:1; min-width:0">
+                  <h2 id="r2c-prompt-h" ref="{{promptRef}}" tabindex="-1" style="margin:0; font-family:var(--display); font-weight:800; font-size:24px; line-height:1.15; letter-spacing:-0.02em">{{promptText}}</h2>
+                  <p style="margin:2px 0 0; font-size:15px; line-height:1.4; color:var(--ink-2)">{{promptSub}}</p>
+                </div>
+              </div>
+              <sc-if value="{{hasPicks}}" hint-placeholder-val="{{true}}">
+                <div style="display:flex; align-items:center; gap:10px; margin-top:14px">
+                  <button type="button" class="r2-press r2-sec" ref="{{undoRef}}" onClick="{{undo}}" aria-label="{{undoLabel}}" style="flex:none; min-height:44px; display:inline-flex; align-items:center; gap:6px; padding:0 14px 0 12px; border:0; border-radius:14px; background:var(--surface); color:var(--ink); font-family:var(--display); font-weight:700; font-size:15px; box-shadow:var(--sh-sec)">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg>
+                    Undo
+                  </button>
+                  <span style="flex:1"></span>
+                  <button type="button" class="r2-press r2-btn" onClick="{{done}}" style="flex:none; min-height:44px; display:inline-flex; align-items:center; gap:8px; padding:0 16px; border:0; border-radius:14px; background:var(--action); color:var(--on-action); font-family:var(--display); font-weight:800; font-size:16px; box-shadow:var(--sh-btn)">
+                    Done ranking
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="M13 5.5 19.5 12 13 18.5"></path></svg>
+                  </button>
+                </div>
+              </sc-if>
+              <sc-if value="{{showNotice}}" hint-placeholder-val="{{false}}">
+                <p class="r2-rise" style="margin:12px 0 0; padding:10px 12px; border-radius:14px; background:var(--note-bg); color:var(--link); font-size:15px; font-weight:650; line-height:1.4">{{notice}}</p>
+              </sc-if>
+            </div>
+          </div>
+
+          <ul aria-label="Answers" style="list-style:none; margin:18px 0 0; padding:0; display:flex; flex-direction:column; gap:10px">
+            <sc-for list="{{items}}" as="item" hint-placeholder-count="7">
+              <li class="{{item.liCls}}">
+                <button type="button" class="{{item.cls}}" onClick="{{item.pick}}" aria-disabled="{{item.taken}}" style="position:relative; width:100%; display:flex; align-items:flex-start; gap:14px; min-height:64px; padding:14px 16px 14px 14px; border:0; border-radius:14px; text-align:left; color:var(--ink); font-size:17px; background:{{item.bg}}; box-shadow:{{item.shadow}}; transform:{{item.shift}}">
+                  <span aria-hidden="true" style="flex:none; width:36px; height:36px; display:grid; place-items:center">
+                    <sc-if value="{{item.taken}}" hint-placeholder-val="{{false}}">
+                      <span class="r2-pop" style="width:36px; height:36px; border-radius:999px; display:grid; place-items:center; background:{{item.chipBg}}; color:#FFFFFF; font-family:var(--display); font-weight:800; font-size:17px; line-height:1; box-shadow:{{item.chipShadow}}">{{item.num}}</span>
+                    </sc-if>
+                    <sc-if value="{{item.open}}" hint-placeholder-val="{{true}}">
+                      <span style="width:36px; height:36px; border-radius:999px; display:grid; place-items:center; border:2px dashed var(--idle); color:{{item.plusColor}}">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
+                      </span>
+                    </sc-if>
+                  </span>
+                  <span style="flex:1; min-width:0; padding-top:6px; font-weight:600; font-size:17px; line-height:1.35; text-wrap:pretty">{{item.title}}<span class="r2-sr">{{item.srState}}</span></span>
+                </button>
+              </li>
+            </sc-for>
+          </ul>
+        </section>
+      </sc-if>
+
+      <sc-if value="{{onReview}}" hint-placeholder-val="{{false}}">
+        <section aria-labelledby="r2c-review-h" class="r2-slide-in" style="margin-top:18px">
+          <button type="button" class="r2-textbtn" onClick="{{toChoose}}" style="display:inline-flex; align-items:center; gap:6px; min-height:44px; padding:0 4px 0 0; border:0; background:none; color:var(--link); font-size:16px; font-weight:700">
+            <svg class="r2-nudge-l" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"></path><path d="M11 5.5 4.5 12 11 18.5"></path></svg>
+            Back to choices
+          </button>
+
+          <div class="r2-tray {{trayClass}}" style="position:relative; margin-top:8px; background:var(--surface); border-radius:20px; padding:22px 16px 22px; box-shadow:var(--sh-card)">
+            <div style="display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:4px 16px">
+              <h2 id="r2c-review-h" ref="{{reviewRef}}" tabindex="-1" style="margin:0; font-family:var(--display); font-weight:800; font-size:28px; line-height:1.1; letter-spacing:-0.02em">Review</h2>
+              <p style="margin:0; font-size:15px; font-weight:700">{{countText}}</p>
+            </div>
+            <p style="margin:8px 0 0; font-size:16px; color:var(--ink-2)">Your last look before you vote. Change the order or remove a pick.</p>
+
+            <sc-if value="{{showReviewError}}" hint-placeholder-val="{{false}}">
+              <div role="alert" style="display:flex; gap:10px; align-items:flex-start; margin-top:16px; padding:12px 14px; border-radius:14px; background:var(--danger-bg); color:var(--danger); font-size:16px; font-weight:650; line-height:1.4">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none; margin-top:1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 7.5v5.5"></path><path d="M12 16.5v.01"></path></svg>
+                <span>Pick your 1st choice before you vote. It's the only one required.</span>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{isEmpty}}" hint-placeholder-val="{{false}}">
+              <div style="margin-top:16px; padding:16px; border-radius:14px; background:var(--well); box-shadow:var(--sh-input); border:2px dashed {{emptyBorder}}; color:var(--ink-2); font-size:16px">
+                <p style="margin:0">Nothing ranked yet.</p>
+                <button type="button" class="r2-textbtn" onClick="{{toChoose}}" style="display:inline-flex; align-items:center; min-height:44px; padding:0; border:0; background:none; color:var(--link); font-size:16px; font-weight:700">Pick your 1st choice</button>
+              </div>
+            </sc-if>
+
+            <ol aria-label="Your ranking, 1st to 5th" style="list-style:none; margin:16px 0 0; padding:0">
+              <sc-for list="{{rows}}" as="row" hint-placeholder-count="3">
+                <li class="{{row.cls}}" style="padding:14px 0; border-top:1px solid var(--line)">
+                  <div style="display:flex; gap:12px; align-items:flex-start">
+                    <span aria-hidden="true" style="flex:none; width:40px; height:40px; border-radius:999px; display:grid; place-items:center; background:{{row.chipBg}}; color:#FFFFFF; font-family:var(--display); font-weight:800; font-size:18px; line-height:1; box-shadow:{{row.chipShadow}}">{{row.num}}</span>
+                    <p style="margin:0; flex:1; min-width:0; padding-top:8px; font-weight:600; font-size:17px; line-height:1.35; text-wrap:pretty"><span class="r2-sr">{{row.ord}} choice: </span>{{row.title}}</p>
+                  </div>
+                  <div style="display:flex; align-items:center; gap:8px; margin-top:10px; padding-left:52px">
+                    <button type="button" class="r2-press r2-sec" ref="{{row.upRef}}" onClick="{{row.moveUp}}" disabled="{{row.upDisabled}}" aria-label="Move {{row.ord}} choice up" style="flex:none; width:44px; height:44px; display:grid; place-items:center; padding:0; border:0; border-radius:14px; background:var(--surface); color:var(--ink); box-shadow:var(--sh-sec)">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"></path><path d="M5.5 11.5 12 5l6.5 6.5"></path></svg>
+                    </button>
+                    <button type="button" class="r2-press r2-sec" ref="{{row.downRef}}" onClick="{{row.moveDown}}" disabled="{{row.downDisabled}}" aria-label="Move {{row.ord}} choice down" style="flex:none; width:44px; height:44px; display:grid; place-items:center; padding:0; border:0; border-radius:14px; background:var(--surface); color:var(--ink); box-shadow:var(--sh-sec)">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M5.5 12.5 12 19l6.5-6.5"></path></svg>
+                    </button>
+                    <span style="flex:1"></span>
+                    <button type="button" class="r2-press r2-sec" ref="{{row.removeRef}}" onClick="{{row.remove}}" aria-label="Remove {{row.ord}} choice" style="flex:none; width:44px; height:44px; display:grid; place-items:center; padding:0; border:0; border-radius:14px; background:var(--surface); color:var(--danger); box-shadow:var(--sh-sec)">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12"></path><path d="M18 6 6 18"></path></svg>
+                    </button>
+                  </div>
+                </li>
+              </sc-for>
+            </ol>
+
+            <sc-if value="{{showOpen}}" hint-placeholder-val="{{true}}">
+              <p style="margin:0; padding-top:6px; border-top:1px solid var(--line); display:flex; flex-wrap:wrap; align-items:center; column-gap:8px; font-size:15.5px; color:var(--ink-2)">
+                <span>{{openText}}</span>
+                <button type="button" class="r2-textbtn" onClick="{{toChoose}}" style="display:inline-flex; align-items:center; min-height:44px; padding:0; border:0; background:none; color:var(--link); font-size:15.5px; font-weight:700">Pick more</button>
+              </p>
+            </sc-if>
+
+            <div style="margin-top:16px; padding-top:20px; border-top:1px solid var(--line)">
+              <label for="r2c-name" style="display:block; font-size:17px; font-weight:750">Your name <span style="font-weight:500; color:var(--ink-2)">(optional)</span></label>
+              <input id="r2c-name" class="r2-input" type="text" autocomplete="name" value="{{name}}" onChange="{{onName}}" style="display:block; width:100%; min-height:52px; margin-top:8px; padding:12px 16px; border-radius:14px; border:2px solid transparent; background:var(--well); box-shadow:var(--sh-input); color:var(--ink); font-size:17px">
+            </div>
+
+            <button type="button" class="r2-press r2-btn" onClick="{{onSubmit}}" style="margin-top:22px; width:100%; min-height:56px; display:flex; align-items:center; justify-content:center; gap:10px; border:0; border-radius:14px; background:var(--action); color:var(--on-action); font-family:var(--display); font-weight:800; font-size:19px; letter-spacing:-0.01em; box-shadow:var(--sh-btn)">
+              Submit my vote
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="M13 5.5 19.5 12 13 18.5"></path></svg>
+            </button>
+            <sc-if value="{{showReviewError}}" hint-placeholder-val="{{false}}">
+              <p style="margin:12px 0 0; text-align:center; color:var(--danger); font-size:15.5px; font-weight:650">Your ranking is empty. Go back to choices to pick one.</p>
+            </sc-if>
+          </div>
+        </section>
+      </sc-if>
+
+      <sc-if value="{{submitted}}" hint-placeholder-val="{{false}}">
+        <section class="r2-rise r2-tray" aria-labelledby="r2c-done-h" style="position:relative; margin-top:32px; background:var(--surface); border-radius:20px; padding:28px 18px 26px; box-shadow:var(--sh-card)">
+          <span class="r2-pop" aria-hidden="true" style="width:60px; height:60px; border-radius:999px; display:grid; place-items:center; background:var(--ok-bg); color:var(--ok-ink)">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+          </span>
+          <h2 id="r2c-done-h" ref="{{doneRef}}" tabindex="-1" style="margin:18px 0 4px; font-family:var(--display); font-weight:800; font-size:30px; line-height:1.1; letter-spacing:-0.02em">{{greeting}}</h2>
+          <p style="margin:0; color:var(--ink-2)">Here is the ranking you sent.</p>
+          <ol class="r2-echo" aria-label="Your ranking" style="list-style:none; margin:18px 0 0; padding:0; display:flex; flex-direction:column; gap:8px">
+            <sc-for list="{{echo}}" as="c" hint-placeholder-count="3">
+              <li style="display:flex; align-items:flex-start; gap:12px; padding:10px 12px; border-radius:14px; background:var(--well)">
+                <span aria-hidden="true" style="flex:none; width:34px; height:34px; border-radius:999px; display:grid; place-items:center; background:{{c.chipBg}}; color:#FFFFFF; font-family:var(--display); font-weight:800; font-size:16px; line-height:1; box-shadow:{{c.chipShadow}}">{{c.num}}</span>
+                <span style="padding-top:5px; font-weight:600; font-size:16.5px; line-height:1.35"><span class="r2-sr">{{c.ord}} choice: </span>{{c.title}}</span>
+              </li>
+            </sc-for>
+          </ol>
+          <p style="margin:20px 0 0; color:var(--ink-2); font-size:16px">The results go public when the ballot's creator closes it.</p>
+          <a href="r2-home.dc.html" class="r2-press r2-sec" style="margin-top:18px; display:inline-flex; align-items:center; gap:8px; min-height:48px; padding:0 18px; border-radius:14px; background:var(--surface); color:var(--ink); text-decoration:none; font-family:var(--display); font-weight:700; font-size:16px; box-shadow:var(--sh-sec)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"></path><path d="M11 5.5 4.5 12 11 18.5"></path></svg>
+            Back to RankedVote.app
+          </a>
+        </section>
+      </sc-if>
+    </main>
+
+    <footer class="r2-calm" style="margin-top:56px; padding:4px 0 28px">
+      <nav aria-label="Site links" style="display:flex; flex-wrap:wrap; align-items:center; justify-content:center; column-gap:6px; font-size:14.5px; color:var(--ink-2)">
+        <a href="https://github.com/zorn/flick" class="r2-foot">GitHub project</a>
+        <span aria-hidden="true">·</span>
+        <a href="https://updown.io/wwis" class="r2-foot">Uptime</a>
+        <span aria-hidden="true">·</span>
+        <a href="mailto:mike@mikezornek.com" class="r2-foot">Contact site admin</a>
+      </nav>
+    </footer>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1650},"dark":{"editor":"boolean","default":false},"start":{"editor":"enum","options":["1st choice","3rd choice","Review"],"default":"3rd choice"}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.answers = [
+      { id: 'A', title: 'Elixir in Action, Third Edition by Saša Jurić' },
+      { id: 'B', title: "Engineering Elixir Applications by Ellie Fairholm and Josep Giralt D'Lacoste" },
+      { id: 'C', title: 'Machine Learning in Elixir by Sean Moriarity' },
+      { id: 'D', title: 'Designing Elixir Systems with OTP by James Edward Gray II and Bruce A. Tate' },
+      { id: 'E', title: 'Elixir Patterns by Hugo Barauna and Alexander Koutmos' },
+      { id: 'F', title: 'Concurrent Data Processing in Elixir by Svilen Gospodinov' },
+      { id: 'G', title: 'A Common-Sense Guide to Data Structures and Algorithms, Second Edition by Jay Wengrow' }
+    ];
+    this.ords = ['1st', '2nd', '3rd', '4th', '5th'];
+    this.upEls = [];
+    this.downEls = [];
+    this.removeEls = [];
+    this.promptEl = null;
+    this.undoEl = null;
+    this.reviewEl = null;
+    this.doneEl = null;
+    this.pendingFocus = null;
+    this.timer = null;
+    this.state = Object.assign(this.seed(), {
+      name: '',
+      error: null,
+      errorTick: 0,
+      nudge: null,
+      nudgeTick: 0,
+      notice: '',
+      announce: '',
+      submitted: false,
+      tick: 0,
+      promptTick: 0,
+      motion: null,
+      cameBack: false
+    });
+  }
+
+  seed() {
+    // Lever: which moment the canvas opens on.
+    const p = this.props || {};
+    const start = p.start ?? '3rd choice';
+    if (start === '1st choice') return { step: 1, ranking: [] };
+    if (start === 'Review') return { step: 2, ranking: ['B', 'A', 'E'] };
+    return { step: 1, ranking: ['B', 'A'] };
+  }
+
+  titleOf(id) {
+    for (let i = 0; i < this.answers.length; i++) {
+      if (this.answers[i].id === id) return this.answers[i].title;
+    }
+    return '';
+  }
+
+  leftText(n) {
+    const left = 5 - n;
+    if (left === 0) return 'All five ranks are used.';
+    return left === 1 ? '1 rank left.' : left + ' ranks left.';
+  }
+
+  chip(i) {
+    return {
+      chipBg: 'var(--r' + (i + 1) + ')',
+      chipShadow: 'var(--sh-chip), 0 0 0 2px var(--ring' + (i + 1) + ')'
+    };
+  }
+
+  clearTimer() {
+    if (this.timer) {
+      clearTimeout(this.timer);
+      this.timer = null;
+    }
+  }
+
+  pick(id) {
+    const r = this.state.ranking;
+    const at = r.indexOf(id);
+    if (at >= 0) {
+      const msg = 'Already your ' + this.ords[at] + ' choice. Undo steps back one pick at a time.';
+      this.setState({ nudge: id, nudgeTick: this.state.nudgeTick + 1, notice: msg, announce: msg });
+      return;
+    }
+    if (r.length >= 5) {
+      const msg = 'All five ranks are used. Undo to change the last pick.';
+      this.setState({ nudge: id, nudgeTick: this.state.nudgeTick + 1, notice: msg, announce: msg });
+      return;
+    }
+    const next = r.concat([id]);
+    const n = next.length;
+    if (n === 5) {
+      this.setState({
+        ranking: next,
+        nudge: null,
+        notice: '',
+        promptTick: this.state.promptTick + 1,
+        announce: this.titleOf(id) + ' is your 5th choice. All five are ranked. Opening the review.'
+      });
+      // A short beat so the voter sees the 5th chip land before the review opens.
+      this.clearTimer();
+      this.timer = setTimeout(() => {
+        this.timer = null;
+        this.pendingFocus = { kind: 'review' };
+        this.setState({ step: 2, motion: null });
+      }, 650);
+      return;
+    }
+    this.setState({
+      ranking: next,
+      error: null,
+      nudge: null,
+      notice: '',
+      promptTick: this.state.promptTick + 1,
+      announce: this.titleOf(id) + ' is your ' + this.ords[n - 1] + ' choice. Now pick your ' + this.ords[n] + ' choice, or choose Done ranking.'
+    });
+  }
+
+  undo() {
+    this.clearTimer();
+    const r = this.state.ranking.slice();
+    if (r.length === 0) return;
+    const id = r.pop();
+    if (r.length === 0) this.pendingFocus = { kind: 'prompt' };
+    this.setState({
+      ranking: r,
+      nudge: null,
+      notice: '',
+      promptTick: this.state.promptTick + 1,
+      announce: 'Undid your ' + this.ords[r.length] + ' choice, ' + this.titleOf(id) + '. Pick your ' + this.ords[r.length] + ' choice.'
+    });
+  }
+
+  done() {
+    if (this.state.ranking.length === 0) return;
+    this.clearTimer();
+    this.pendingFocus = { kind: 'review' };
+    this.setState({ step: 2, notice: '', nudge: null, motion: null, announce: 'Step 2 of 2, Review.' });
+  }
+
+  toChoose() {
+    const n = this.state.ranking.length;
+    this.pendingFocus = { kind: 'prompt' };
+    this.setState({
+      step: 1,
+      error: null,
+      motion: null,
+      notice: '',
+      cameBack: true,
+      announce: n >= 5 ? 'Back to choices. All five are ranked.' : 'Back to choices. Pick your ' + this.ords[n] + ' choice, or choose Done ranking.'
+    });
+  }
+
+  move(i, dir) {
+    const j = i + dir;
+    const r = this.state.ranking.slice();
+    if (j < 0 || j >= r.length) return;
+    const id = r[i];
+    r[i] = r[j];
+    r[j] = id;
+    this.pendingFocus = { kind: dir < 0 ? 'up' : 'down', index: j };
+    this.setState({
+      ranking: r,
+      tick: this.state.tick + 1,
+      motion: { landed: j, other: i, dir: dir },
+      announce: this.titleOf(id) + ' moved to ' + this.ords[j] + '.'
+    });
+  }
+
+  removeAt(i) {
+    const r = this.state.ranking.slice();
+    const id = r.splice(i, 1)[0];
+    this.pendingFocus = r.length === 0 ? { kind: 'review' } : { kind: 'remove', index: Math.min(i, r.length - 1) };
+    this.setState({
+      ranking: r,
+      motion: null,
+      announce: 'Removed ' + this.titleOf(id) + '. ' + this.leftText(r.length)
+    });
+  }
+
+  submit() {
+    if (this.state.ranking.length === 0) {
+      this.setState({
+        error: 'review',
+        errorTick: this.state.errorTick + 1,
+        announce: 'Pick your 1st choice before you vote.'
+      });
+      return;
+    }
+    this.pendingFocus = { kind: 'done' };
+    this.setState({ submitted: true, error: null, announce: 'Your vote is in.' });
+  }
+
+  componentWillUnmount() {
+    this.clearTimer();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps && prevProps.start !== this.props.start) {
+      this.clearTimer();
+      this.setState(Object.assign(this.seed(), { submitted: false, error: null, nudge: null, notice: '', motion: null, cameBack: false }));
+      return;
+    }
+    const p = this.pendingFocus;
+    if (!p) return;
+    this.pendingFocus = null;
+    let el = null;
+    if (p.kind === 'prompt') el = this.promptEl;
+    else if (p.kind === 'review') el = this.reviewEl;
+    else if (p.kind === 'done') el = this.doneEl;
+    else {
+      const bank = p.kind === 'up' ? this.upEls : (p.kind === 'down' ? this.downEls : this.removeEls);
+      el = bank[p.index];
+      if (el && el.disabled) {
+        const alt = p.kind === 'up' ? this.downEls : this.upEls;
+        el = alt[p.index];
+      }
+    }
+    if (el && typeof el.focus === 'function') el.focus();
+  }
+
+  renderVals() {
+    const s = this.state;
+    const r = s.ranking;
+    const n = r.length;
+    const full = n >= 5;
+    const dark = !!(this.props.dark ?? false);
+    const parity = s.tick % 2 === 0 ? 'a' : 'b';
+    const m = s.motion;
+    const step2 = s.step === 2;
+    const showReviewError = s.error === 'review' && n === 0;
+
+    const items = this.answers.map((a) => {
+      const at = r.indexOf(a.id);
+      const taken = at >= 0;
+      const c = taken ? this.chip(at) : { chipBg: 'transparent', chipShadow: 'none' };
+      return {
+        title: a.title,
+        taken: taken,
+        open: !taken,
+        num: at + 1,
+        chipBg: c.chipBg,
+        chipShadow: c.chipShadow,
+        srState: taken ? ', already your ' + this.ords[at] + ' choice' : '',
+        cls: taken ? 'r2-key-taken' : 'r2-key',
+        liCls: s.nudge === a.id ? 'r2-shake-' + (s.nudgeTick % 2 === 0 ? 'a' : 'b') : '',
+        bg: taken ? 'var(--well)' : 'var(--surface)',
+        shadow: taken ? 'var(--sh-sunk)' : 'var(--sh-key)',
+        shift: taken ? 'translateY(3px)' : 'none',
+        plusColor: full ? 'var(--idle)' : 'var(--ink-2)',
+        pick: () => this.pick(a.id)
+      };
+    });
+
+    const rows = r.map((id, i) => {
+      let cls = '';
+      if (m && m.landed === i) cls = (m.dir < 0 ? 'r2-from-below-' : 'r2-from-above-') + parity;
+      if (m && m.other === i) cls = (m.dir < 0 ? 'r2-from-above-' : 'r2-from-below-') + parity;
+      const c = this.chip(i);
+      return {
+        num: i + 1,
+        ord: this.ords[i],
+        title: this.titleOf(id),
+        cls: cls,
+        chipBg: c.chipBg,
+        chipShadow: c.chipShadow,
+        upDisabled: i === 0,
+        downDisabled: i === n - 1,
+        moveUp: () => this.move(i, -1),
+        moveDown: () => this.move(i, 1),
+        remove: () => this.removeAt(i),
+        upRef: (el) => { this.upEls[i] = el; },
+        downRef: (el) => { this.downEls[i] = el; },
+        removeRef: (el) => { this.removeEls[i] = el; }
+      };
+    });
+
+    let promptText = 'Pick your 1st choice';
+    let promptSub = 'Required. Tap the answer you like most.';
+    if (full) {
+      promptText = 'All five ranked';
+      promptSub = 'Undo to change the last pick, or finish now.';
+    } else if (n > 0) {
+      promptText = 'Pick your ' + this.ords[n] + ' choice';
+      promptSub = 'Optional. ' + n + ' of 5 ranked. Stop any time with Done ranking.';
+    }
+    const nextChip = full ? { chipBg: 'transparent', chipShadow: 'none' } : this.chip(n);
+
+    const left = 5 - n;
+    const nm = (s.name || '').trim();
+    const echo = r.map((id, i) => {
+      const c = this.chip(i);
+      return { num: i + 1, ord: this.ords[i], title: this.titleOf(id), chipBg: c.chipBg, chipShadow: c.chipShadow };
+    });
+
+    return {
+      darkClass: dark ? 'r2-dark' : '',
+      announce: s.announce,
+      notSubmitted: !s.submitted,
+      submitted: s.submitted,
+      onChoose: !s.submitted && !step2,
+      onReview: !s.submitted && step2,
+      stepAnim: s.cameBack ? 'r2-slide-back' : '',
+      s1Current: step2 ? 'false' : 'step',
+      s2Current: step2 ? 'step' : 'false',
+      s1Bar: 'var(--link)',
+      s2Bar: step2 ? 'var(--link)' : 'var(--line)',
+      s1Weight: step2 ? 600 : 800,
+      s2Weight: step2 ? 800 : 600,
+      s1Ink: step2 ? 'var(--ink-2)' : 'var(--ink)',
+      s2Ink: step2 ? 'var(--ink)' : 'var(--ink-2)',
+      canPick: !full,
+      allSet: full,
+      nextNum: n + 1,
+      promptChipCls: 'r2-swap-' + (s.promptTick % 2 === 0 ? 'a' : 'b'),
+      promptChipBg: nextChip.chipBg,
+      promptChipShadow: nextChip.chipShadow,
+      promptText: promptText,
+      promptSub: promptSub,
+      promptRef: (el) => { this.promptEl = el; },
+      hasPicks: n > 0,
+      undo: () => this.undo(),
+      undoRef: (el) => { this.undoEl = el; },
+      undoLabel: n > 0 ? 'Undo your ' + this.ords[n - 1] + ' choice' : 'Undo',
+      done: () => this.done(),
+      showNotice: !!s.notice,
+      notice: s.notice,
+      items: items,
+      toChoose: () => this.toChoose(),
+      countText: n === 0 ? 'None ranked yet' : n + ' of 5 ranked',
+      trayClass: showReviewError ? 'r2-shake-' + (s.errorTick % 2 === 0 ? 'a' : 'b') : '',
+      showReviewError: showReviewError,
+      isEmpty: n === 0,
+      emptyBorder: showReviewError ? 'var(--danger)' : 'var(--idle)',
+      rows: rows,
+      showOpen: n > 0 && n < 5,
+      openText: left === 1 ? '1 rank left.' : left + ' ranks left.',
+      name: s.name,
+      onName: (e) => this.setState({ name: e.target.value }),
+      onSubmit: () => this.submit(),
+      reviewRef: (el) => { this.reviewEl = el; },
+      doneRef: (el) => { this.doneEl = el; },
+      greeting: nm ? 'Thanks, ' + nm + '. Your vote is in.' : 'Thanks! Your vote is in.',
+      echo: echo
+    };
+  }
+}
+</script>
+</body>
+</html>

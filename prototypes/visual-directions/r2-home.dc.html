@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Soft and tactile · Home</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&amp;family=Figtree:wght@400..800&amp;display=swap">
+<style>
+body{margin:0;background:#F7EFE3}
+body:has(.r2-dark){background:#17131F}
+
+/* Shared round-2 tokens on this board's root. Light first; .r2-dark swaps them. */
+.r2-root{
+  --ground:#F7EFE3;--texture:#E6DBCA;--surface:#FFFDF8;--well:#F1E9DC;--line:#E3D7C4;
+  --ink:#1E1730;--ink-2:#4A4358;--action:#FF9F61;--action-edge:#C96736;--on-action:#1E1730;
+  --link:#462F80;--danger:#A92227;
+  /* Additions, each checked for contrast. Names shared with the other round-2 boards keep their values. */
+  --edge:#D9CCB7;
+  --brand:#A13B85;--mark-1:#462F80;--mark-2:#E57255;--mark-3:#F1B464;
+  --r1:#3B2A78;--r2:#8A2E6E;--r3:#A8432A;--r4:#7A5300;--r5:#2C6A5C;
+  --ring1:transparent;--ring2:transparent;--ring3:transparent;--ring4:transparent;--ring5:transparent;
+  --peach:#FFE1C7;
+  --band:#462F80;--band-edge:#291852;--band-sub:#E8E4FE;--band-kicker:#EFE39D;
+  --t1:#E8E4FE;--t2:#FBDEF0;--t3:#FFE0D4;--t4:#FFE9CC;--t5:#F9F3CD;
+  --display:'Bricolage Grotesque','Avenir Next','Trebuchet MS',system-ui,sans-serif;
+  --body:Figtree,'Avenir Next','Segoe UI',system-ui,sans-serif;
+  --sh-card:0 1px 1px rgba(64,44,30,.04),0 2px 4px rgba(64,44,30,.05),0 10px 22px -8px rgba(64,44,30,.14),0 26px 44px -26px rgba(64,44,30,.28);
+  --sh-tile:0 1px 1px rgba(64,44,30,.04),0 2px 4px rgba(64,44,30,.05),0 12px 20px -12px rgba(64,44,30,.24);
+  --sh-band:0 10px 22px -8px rgba(41,24,82,.25),0 30px 50px -30px rgba(41,24,82,.6);
+  --sh-btn:0 4px 0 var(--action-edge),0 10px 18px -12px rgba(201,103,54,.6);
+  --sh-btn-up:0 6px 0 var(--action-edge),0 16px 24px -12px rgba(201,103,54,.65);
+  --sh-btn-down:0 1px 0 var(--action-edge),0 3px 6px -3px rgba(201,103,54,.5);
+  --sh-sec:inset 0 0 0 1.5px var(--line),0 3px 0 var(--edge),0 8px 14px -10px rgba(64,44,30,.4);
+  --sh-sec-up:inset 0 0 0 1.5px var(--line),0 5px 0 var(--edge),0 12px 18px -12px rgba(64,44,30,.45);
+  --sh-sec-down:inset 0 0 0 1.5px var(--line),0 1px 0 var(--edge);
+  --sh-float:inset 0 0 0 1.5px var(--line),0 5px 0 var(--edge),0 24px 30px -14px rgba(64,44,30,.42);
+  --sh-sunk:inset 0 3px 7px rgba(64,44,30,.13);
+  --sh-chip:inset 0 -3px 0 rgba(0,0,0,.24);
+  color-scheme:light;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+.r2-root.r2-dark{
+  --ground:#17131F;--texture:#2A2337;--surface:#221C2D;--well:#1D1827;--line:#3A3148;
+  --ink:#F3EDE4;--ink-2:#C8BFD3;--action:#FF9F61;--action-edge:#B85A2C;--on-action:#1E1730;
+  --link:#C4B2FF;--danger:#FF8A8A;
+  --edge:#0E0B14;
+  --brand:#F29BCF;--mark-1:#9D88F0;
+  --ring1:#B5A4F7;--ring2:#F2A2D4;--ring3:#F7A98E;--ring4:#E8C47A;--ring5:#8DD5C0;
+  --peach:#34232B;
+  --band:#382A63;--band-edge:#0E0B14;--band-sub:#DCD3F7;--band-kicker:#EFE39D;
+  --t1:#29233F;--t2:#36213A;--t3:#3A2723;--t4:#372C1F;--t5:#312E1D;
+  --sh-card:inset 0 0 0 1px #2E2640,0 1px 2px rgba(0,0,0,.5),0 12px 24px -12px rgba(0,0,0,.8);
+  --sh-tile:0 1px 2px rgba(0,0,0,.5),0 10px 18px -10px rgba(0,0,0,.75);
+  --sh-band:0 1px 2px rgba(0,0,0,.5),0 14px 26px -12px rgba(0,0,0,.85);
+  --sh-btn:0 4px 0 var(--action-edge),0 8px 14px -8px rgba(0,0,0,.75);
+  --sh-btn-up:0 6px 0 var(--action-edge),0 12px 18px -8px rgba(0,0,0,.8);
+  --sh-btn-down:0 1px 0 var(--action-edge);
+  --sh-sec:inset 0 0 0 1.5px var(--line),0 3px 0 var(--edge),0 6px 10px -6px rgba(0,0,0,.8);
+  --sh-sec-up:inset 0 0 0 1.5px #4A3F5C,0 5px 0 var(--edge),0 10px 14px -8px rgba(0,0,0,.85);
+  --sh-sec-down:inset 0 0 0 1.5px var(--line),0 1px 0 var(--edge);
+  --sh-float:inset 0 0 0 1.5px var(--line),0 5px 0 var(--edge),0 14px 20px -8px rgba(0,0,0,.85);
+  --sh-sunk:inset 0 3px 7px rgba(0,0,0,.45);
+  --sh-chip:inset 0 -3px 0 rgba(0,0,0,.3);
+  color-scheme:dark}
+
+.r2-root *{box-sizing:border-box}
+.r2-root a{color:var(--link);text-decoration-thickness:2px;text-underline-offset:3px}
+.r2-root a:hover{text-decoration-thickness:3px}
+.r2-root :focus-visible{outline:3px solid var(--link);outline-offset:3px}
+.r2-band :focus-visible{outline-color:var(--band-kicker)}
+
+/* One button shape: 14px corners, the tactile press */
+.r2-press{cursor:pointer;transition:transform .16s cubic-bezier(.34,1.56,.64,1),box-shadow .16s ease}
+.r2-press:hover{transform:translateY(-2px)}
+.r2-press:active{transform:translateY(3px);transition-duration:.05s}
+.r2-pri:hover{box-shadow:var(--sh-btn-up)!important}
+.r2-pri:active{box-shadow:var(--sh-btn-down)!important}
+.r2-sec:hover{box-shadow:var(--sh-sec-up)!important}
+.r2-sec:active{box-shadow:var(--sh-sec-down)!important}
+.r2-tile:hover{box-shadow:0 6px 0 var(--band-edge)!important}
+.r2-tile:active{box-shadow:0 1px 0 var(--band-edge)!important}
+
+/* Footer: quiet text links */
+.r2-foot{display:inline-flex;align-items:center;min-height:44px;padding:0 4px;color:var(--ink-2)!important;text-decoration:none}
+.r2-foot:hover{text-decoration:underline}
+
+/* Hero illustration: picked answers drop into the tray, the next one hovers */
+@keyframes r2-in{0%{transform:translateY(-34px) scale(.92) rotate(-4deg);opacity:0}55%{transform:translateY(5px) scale(1.02) rotate(.6deg);opacity:1}78%{transform:translateY(-2px)}100%{transform:none;opacity:1}}
+.r2-in{animation:r2-in .6s cubic-bezier(.2,.8,.25,1) both}
+.r2-tray .r2-in:nth-child(1){animation-delay:.2s}
+.r2-tray .r2-in:nth-child(2){animation-delay:.42s}
+.r2-tray .r2-in:nth-child(3){animation-delay:.64s}
+@keyframes r2-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+.r2-bob{animation:r2-bob 2.6s ease-in-out 1.2s infinite}
+@keyframes r2-breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+.r2-breathe{animation:r2-breathe 2.6s ease-in-out 1.2s infinite}
+
+@media (min-width:900px){
+  .r2-hero{grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr)!important;align-items:center;column-gap:48px!important;padding-top:40px!important}
+  .r2-h2{font-size:38px!important}
+  .r2-band{padding:44px 48px!important}
+  .r2-uses{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:14px!important}
+  .r2-use{flex-direction:column!important;align-items:flex-start!important;justify-content:space-between!important;min-height:158px;padding:16px!important}
+  .r2-use:nth-child(1){transform:rotate(-1.2deg)}
+  .r2-use:nth-child(2){transform:rotate(1deg)}
+  .r2-use:nth-child(3){transform:rotate(-.6deg)}
+  .r2-use:nth-child(4){transform:rotate(.9deg)}
+  .r2-use:nth-child(5){transform:rotate(-1deg)}
+}
+@media (prefers-reduced-motion:reduce){
+  .r2-root *{animation:none!important;transition:none!important}
+}
+</style>
+</helmet>
+<div class="{{rootClass}}" style="background-color:var(--ground); background-image:radial-gradient(var(--texture) 1.2px, transparent 1.6px); background-size:22px 22px; color:var(--ink); font-family:var(--body); font-size:17px; line-height:1.5">
+
+  <div style="background-color:var(--ground)">
+    <div style="max-width:1120px; margin:0 auto; padding:0 16px">
+      <header style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px; padding:14px 0 6px">
+        <a href="r2-home.dc.html" style="display:inline-flex; align-items:center; gap:8px; min-height:44px; color:var(--ink); text-decoration:none">
+          <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true">
+            <rect x="1" y="17" width="20" height="9" rx="4.5" style="fill:var(--mark-3)"></rect>
+            <rect x="4" y="9.5" width="20" height="9" rx="4.5" style="fill:var(--mark-2)"></rect>
+            <rect x="7" y="2" width="20" height="9" rx="4.5" style="fill:var(--mark-1)"></rect>
+          </svg>
+          <span style="font-family:var(--display); font-weight:800; font-size:19px; letter-spacing:-0.02em; line-height:1">RankedVote<span style="color:var(--brand)">.app</span></span>
+        </a>
+        <a href="https://rankedvote.app/ballot/new" class="r2-press r2-sec" style="display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:0 16px; border-radius:14px; background:var(--surface); color:var(--ink); text-decoration:none; font-family:var(--display); font-weight:700; font-size:15px; box-shadow:var(--sh-sec)">Create a ballot</a>
+      </header>
+    </div>
+  </div>
+
+  <main>
+    <div style="background-image:linear-gradient(to bottom, var(--ground) calc(100% - 48px), transparent); padding-bottom:48px">
+      <div style="max-width:1120px; margin:0 auto; padding:0 16px">
+        <section class="r2-hero" aria-labelledby="r2h-hero-h" style="display:grid; grid-template-columns:minmax(0, 1fr); gap:28px; padding:20px 0 0">
+          <div style="container-type:inline-size; min-width:0">
+            <ul role="list" style="list-style:none; margin:0; padding:0; display:flex; flex-wrap:wrap; gap:4px 18px; font-size:15px; font-weight:700; color:var(--ink-2)">
+              <li style="display:inline-flex; align-items:center; gap:6px">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>Free
+              </li>
+              <li style="display:inline-flex; align-items:center; gap:6px">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>Open source
+              </li>
+              <li style="display:inline-flex; align-items:center; gap:6px">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>No accounts
+              </li>
+            </ul>
+            <h1 id="r2h-hero-h" style="margin:16px 0 18px; font-family:var(--display); font-weight:800; font-size:clamp(30px, 9.6cqi, 64px); line-height:1.02; letter-spacing:-0.035em">
+              <span style="display:block; white-space:nowrap">Rank your favorites.</span>
+              <span style="display:block; color:var(--brand)">Decide together.</span>
+            </h1>
+            <p style="margin:0; font-size:18px; line-height:1.5; max-width:34em; text-wrap:pretty">Most votes ask everyone for a single choice. A ranked vote asks for their favorites in order, so the result is one more of the group can agree on.</p>
+            <p style="margin:12px 0 0; font-size:17px; line-height:1.5; color:var(--ink-2); max-width:34em; text-wrap:pretty">RankedVote.app helps you quickly create, run, and tally a ranked vote. It's free and open source, and nobody needs an account to make a ballot or to vote on one.</p>
+            <div style="display:flex; margin-top:26px">
+              <a href="https://rankedvote.app/ballot/new" class="r2-press r2-pri" style="display:inline-flex; align-items:center; gap:10px; min-height:56px; padding:0 24px; border-radius:14px; background:var(--action); color:var(--on-action); text-decoration:none; font-family:var(--display); font-weight:800; font-size:19px; letter-spacing:-0.01em; box-shadow:var(--sh-btn)">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
+                Create a ballot
+              </a>
+            </div>
+          </div>
+
+          <div aria-hidden="true" style="position:relative; height:330px; width:100%; max-width:430px; margin:0 auto">
+            <div style="position:absolute; left:4%; right:4%; top:74px; bottom:6px; transform:rotate(-2.5deg)">
+              <div class="r2-tray" style="height:100%; border-radius:28px; padding:14px; background:var(--surface); display:flex; flex-direction:column; gap:8px; box-shadow:var(--sh-card)">
+                <div class="r2-in" style="flex:none; height:50px; border-radius:14px; padding:0 12px; display:flex; align-items:center; gap:10px; background:var(--surface); box-shadow:var(--sh-sec)">
+                  <span style="flex:none; width:30px; height:30px; border-radius:999px; display:grid; place-items:center; background:var(--r1); color:#FFFFFF; font-family:var(--display); font-weight:800; font-size:15px; box-shadow:var(--sh-chip), 0 0 0 2px var(--ring1)">1</span>
+                  <span style="flex:1; display:flex; flex-direction:column; gap:6px"><span style="display:block; height:8px; width:82%; border-radius:99px; background:var(--ink); opacity:.22"></span><span style="display:block; height:8px; width:52%; border-radius:99px; background:var(--ink); opacity:.11"></span></span>
+                </div>
+                <div class="r2-in" style="flex:none; height:50px; border-radius:14px; padding:0 12px; display:flex; align-items:center; gap:10px; background:var(--surface); box-shadow:var(--sh-sec)">
+                  <span style="flex:none; width:30px; height:30px; border-radius:999px; display:grid; place-items:center; background:var(--r2); color:#FFFFFF; font-family:var(--display); font-weight:800; font-size:15px; box-shadow:var(--sh-chip), 0 0 0 2px var(--ring2)">2</span>
+                  <span style="flex:1; display:flex; flex-direction:column; gap:6px"><span style="display:block; height:8px; width:66%; border-radius:99px; background:var(--ink); opacity:.22"></span><span style="display:block; height:8px; width:40%; border-radius:99px; background:var(--ink); opacity:.11"></span></span>
+                </div>
+                <div class="r2-in" style="flex:none; height:50px; border-radius:14px; padding:0 12px; display:flex; align-items:center; gap:10px; background:var(--surface); box-shadow:var(--sh-sec)">
+                  <span style="flex:none; width:30px; height:30px; border-radius:999px; display:grid; place-items:center; background:var(--r3); color:#FFFFFF; font-family:var(--display); font-weight:800; font-size:15px; box-shadow:var(--sh-chip), 0 0 0 2px var(--ring3)">3</span>
+                  <span style="flex:1; display:flex; flex-direction:column; gap:6px"><span style="display:block; height:8px; width:74%; border-radius:99px; background:var(--ink); opacity:.22"></span><span style="display:block; height:8px; width:58%; border-radius:99px; background:var(--ink); opacity:.11"></span></span>
+                </div>
+                <div style="flex:none; height:50px; border-radius:14px; padding:0 12px; display:flex; align-items:center; gap:10px; background:var(--well); box-shadow:var(--sh-sunk)">
+                  <span class="r2-breathe" style="flex:none; width:30px; height:30px; border-radius:999px; display:grid; place-items:center; border:2px dashed var(--ink-2); color:var(--ink-2); font-family:var(--display); font-weight:800; font-size:14px">4</span>
+                </div>
+              </div>
+            </div>
+            <div style="position:absolute; right:0; top:2px; width:60%; transform:rotate(7deg)">
+              <div class="r2-bob" style="height:52px; border-radius:14px; padding:0 12px; display:flex; align-items:center; gap:10px; background:var(--surface); box-shadow:var(--sh-float)">
+                <span style="flex:none; width:30px; height:30px; border-radius:999px; display:grid; place-items:center; border:2px dashed var(--ink-2); color:var(--ink-2)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
+                </span>
+                <span style="flex:1; display:flex; flex-direction:column; gap:6px"><span style="display:block; height:8px; width:78%; border-radius:99px; background:var(--ink); opacity:.22"></span><span style="display:block; height:8px; width:46%; border-radius:99px; background:var(--ink); opacity:.11"></span></span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <div style="max-width:1120px; margin:0 auto; padding:0 16px">
+
+      <section aria-labelledby="r2h-how-h" style="padding-top:8px">
+        <h2 id="r2h-how-h" class="r2-h2" style="margin:0; font-family:var(--display); font-weight:800; font-size:30px; line-height:1.1; letter-spacing:-0.025em">How it works</h2>
+        <ol role="list" style="list-style:none; margin:20px 0 0; padding:0; display:grid; grid-template-columns:repeat(auto-fit, minmax(min(240px, 100%), 1fr)); gap:14px">
+          <li style="border-radius:24px; padding:20px; background:var(--surface); box-shadow:var(--sh-card)">
+            <span aria-hidden="true" style="width:48px; height:48px; border-radius:14px; display:grid; place-items:center; background:var(--peach); color:var(--ink); font-family:var(--display); font-weight:800; font-size:23px">1</span>
+            <h3 style="margin:16px 0 4px; font-family:var(--display); font-weight:800; font-size:21px; line-height:1.15">Create a ballot</h3>
+            <p style="margin:0; color:var(--ink-2)">Write your question and list the possible answers.</p>
+          </li>
+          <li style="border-radius:24px; padding:20px; background:var(--surface); box-shadow:var(--sh-card)">
+            <span aria-hidden="true" style="width:48px; height:48px; border-radius:14px; display:grid; place-items:center; background:var(--peach); color:var(--ink); font-family:var(--display); font-weight:800; font-size:23px">2</span>
+            <h3 style="margin:16px 0 4px; font-family:var(--display); font-weight:800; font-size:21px; line-height:1.15">Publish and share</h3>
+            <p style="margin:0; color:var(--ink-2)">Publishing gives you a link. Send it to your voters.</p>
+          </li>
+          <li style="border-radius:24px; padding:20px; background:var(--surface); box-shadow:var(--sh-card)">
+            <span aria-hidden="true" style="width:48px; height:48px; border-radius:14px; display:grid; place-items:center; background:var(--peach); color:var(--ink); font-family:var(--display); font-weight:800; font-size:23px">3</span>
+            <h3 style="margin:16px 0 4px; font-family:var(--display); font-weight:800; font-size:21px; line-height:1.15">Tally the votes</h3>
+            <p style="margin:0; color:var(--ink-2)">A point-based count adds up every ranking and finds the winner.</p>
+          </li>
+        </ol>
+      </section>
+
+      <section class="r2-band" aria-labelledby="r2h-oss-h" style="margin-top:56px; border-radius:28px; padding:28px 20px; background:var(--band); color:#FFFDF8; box-shadow:var(--sh-band)">
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap:24px 48px; align-items:center">
+          <div>
+            <p style="margin:0; display:flex; align-items:center; gap:8px; color:var(--band-kicker); font-size:13.5px; font-weight:800; letter-spacing:.12em; text-transform:uppercase">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 8 4.5 12l4 4"></path><path d="M15.5 8l4 4-4 4"></path></svg>
+              Free and open source
+            </p>
+            <h2 id="r2h-oss-h" class="r2-h2" style="margin:12px 0 12px; font-family:var(--display); font-weight:800; font-size:30px; line-height:1.08; letter-spacing:-0.025em; text-wrap:balance">Built for a book club. Shared with everyone.</h2>
+            <p style="margin:0; font-size:17px; line-height:1.55; color:var(--band-sub); text-wrap:pretty">The project behind RankedVote.app is called Flick. It's written in Elixir and Phoenix LiveView, and it was built for the Elixir Book Club to pick its books. Now it's shared for anyone to use and learn from.</p>
+          </div>
+          <ul role="list" style="list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:14px">
+            <li>
+              <a href="https://github.com/zorn/flick" class="r2-press r2-tile" style="display:flex; align-items:center; gap:14px; min-height:76px; padding:12px 16px; border-radius:14px; background:var(--surface); color:var(--ink); text-decoration:none; box-shadow:0 4px 0 var(--band-edge)">
+                <span aria-hidden="true" style="flex:none; width:44px; height:44px; border-radius:12px; display:grid; place-items:center; background:var(--t1); color:var(--link)">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 8 4.5 12l4 4"></path><path d="M15.5 8l4 4-4 4"></path></svg>
+                </span>
+                <span style="flex:1; min-width:0; line-height:1.3">
+                  <span style="display:block; font-weight:800; font-size:17px">Flick on GitHub</span>
+                  <span style="display:block; margin-top:2px; font-size:14.5px; color:var(--ink-2); overflow-wrap:anywhere">github.com/zorn/flick</span>
+                </span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none; color:var(--ink-2)"><path d="M5 12h14"></path><path d="M13 5.5 19.5 12 13 18.5"></path></svg>
+              </a>
+            </li>
+            <li>
+              <a href="https://elixirbookclub.github.io/website/" class="r2-press r2-tile" style="display:flex; align-items:center; gap:14px; min-height:76px; padding:12px 16px; border-radius:14px; background:var(--surface); color:var(--ink); text-decoration:none; box-shadow:0 4px 0 var(--band-edge)">
+                <span aria-hidden="true" style="flex:none; width:44px; height:44px; border-radius:12px; display:grid; place-items:center; background:var(--t1); color:var(--link)">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.5C10.2 5.2 7.6 4.6 4 4.6v13.2c3.6 0 6.2.6 8 1.9 1.8-1.3 4.4-1.9 8-1.9V4.6c-3.6 0-6.2.6-8 1.9z"></path><path d="M12 6.5v13.2"></path></svg>
+                </span>
+                <span style="flex:1; min-width:0; line-height:1.3">
+                  <span style="display:block; font-weight:800; font-size:17px">The Elixir Book Club</span>
+                  <span style="display:block; margin-top:2px; font-size:14.5px; color:var(--ink-2); overflow-wrap:anywhere">elixirbookclub.github.io</span>
+                </span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none; color:var(--ink-2)"><path d="M5 12h14"></path><path d="M13 5.5 19.5 12 13 18.5"></path></svg>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section aria-labelledby="r2h-for-h" style="padding-top:56px">
+        <h2 id="r2h-for-h" class="r2-h2" style="margin:0; font-family:var(--display); font-weight:800; font-size:30px; line-height:1.1; letter-spacing:-0.025em">Good for picking…</h2>
+        <ul role="list" class="r2-uses" style="list-style:none; margin:20px 0 0; padding:0; display:grid; grid-template-columns:minmax(0, 1fr); gap:12px">
+          <li class="r2-use" style="display:flex; align-items:center; gap:14px; border-radius:20px; padding:12px 16px 12px 12px; background:var(--t1); box-shadow:var(--sh-tile)">
+            <span aria-hidden="true" style="flex:none; width:44px; height:44px; border-radius:12px; display:grid; place-items:center; background:var(--surface); color:var(--link)">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.5C10.2 5.2 7.6 4.6 4 4.6v13.2c3.6 0 6.2.6 8 1.9 1.8-1.3 4.4-1.9 8-1.9V4.6c-3.6 0-6.2.6-8 1.9z"></path><path d="M12 6.5v13.2"></path></svg>
+            </span>
+            <p style="margin:0; font-family:var(--display); font-weight:750; font-size:19px; line-height:1.15">A book for your book club</p>
+          </li>
+          <li class="r2-use" style="display:flex; align-items:center; gap:14px; border-radius:20px; padding:12px 16px 12px 12px; background:var(--t2); box-shadow:var(--sh-tile)">
+            <span aria-hidden="true" style="flex:none; width:44px; height:44px; border-radius:12px; display:grid; place-items:center; background:var(--surface); color:var(--brand)">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="9" width="17" height="11" rx="2.5"></rect><path d="M3.8 9 19 4.6l.9 3.1"></path><path d="M8.5 7.6l2.3 2.9"></path><path d="M13.4 6.2l2.3 2.9"></path></svg>
+            </span>
+            <p style="margin:0; font-family:var(--display); font-weight:750; font-size:19px; line-height:1.15">A movie for family night</p>
+          </li>
+          <li class="r2-use" style="display:flex; align-items:center; gap:14px; border-radius:20px; padding:12px 16px 12px 12px; background:var(--t3); box-shadow:var(--sh-tile)">
+            <span aria-hidden="true" style="flex:none; width:44px; height:44px; border-radius:12px; display:grid; place-items:center; background:var(--surface); color:var(--ink)">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7.5" width="16" height="12" rx="2.5"></rect><path d="M9 7.5V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5v2"></path><path d="M8.5 7.5v12"></path><path d="M15.5 7.5v12"></path></svg>
+            </span>
+            <p style="margin:0; font-family:var(--display); font-weight:750; font-size:19px; line-height:1.15">A vacation spot for a big group</p>
+          </li>
+          <li class="r2-use" style="display:flex; align-items:center; gap:14px; border-radius:20px; padding:12px 16px 12px 12px; background:var(--t4); box-shadow:var(--sh-tile)">
+            <span aria-hidden="true" style="flex:none; width:44px; height:44px; border-radius:12px; display:grid; place-items:center; background:var(--surface); color:var(--ink)">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3v4a3 3 0 0 0 6 0V3"></path><path d="M8 3v5"></path><path d="M8 10v11"></path><path d="M18 21V3c-1.9 1.2-3.2 3.6-3.2 7v3.5H18"></path></svg>
+            </span>
+            <p style="margin:0; font-family:var(--display); font-weight:750; font-size:19px; line-height:1.15">Where to eat for the team dinner</p>
+          </li>
+          <li class="r2-use" style="display:flex; align-items:center; gap:14px; border-radius:20px; padding:12px 16px 12px 12px; background:var(--t5); box-shadow:var(--sh-tile)">
+            <span aria-hidden="true" style="flex:none; width:44px; height:44px; border-radius:12px; display:grid; place-items:center; background:var(--surface); color:var(--ink)">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 6h10"></path><path d="M10 12h10"></path><path d="M10 18h10"></path><path d="M3.5 6l1.3 1.3L7 5"></path><path d="M3.5 12l1.3 1.3L7 11"></path><path d="M3.5 18l1.3 1.3L7 17"></path></svg>
+            </span>
+            <p style="margin:0; font-family:var(--display); font-weight:750; font-size:19px; line-height:1.15">Which tech-debt projects come first</p>
+          </li>
+        </ul>
+        <div style="display:flex; margin-top:30px">
+          <a href="https://rankedvote.app/ballot/new" class="r2-press r2-pri" style="display:inline-flex; align-items:center; gap:10px; min-height:56px; padding:0 24px; border-radius:14px; background:var(--action); color:var(--on-action); text-decoration:none; font-family:var(--display); font-weight:800; font-size:19px; letter-spacing:-0.01em; box-shadow:var(--sh-btn)">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
+            Create a ballot
+          </a>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <footer style="margin-top:36px; padding:56px 16px 28px; background-image:linear-gradient(to bottom, transparent, var(--ground) 52px)">
+    <nav aria-label="Site links" style="display:flex; flex-wrap:wrap; justify-content:center; align-items:center; column-gap:6px; font-size:14.5px; color:var(--ink-2)">
+      <a href="https://github.com/zorn/flick" class="r2-foot">GitHub project</a>
+      <span aria-hidden="true">·</span>
+      <a href="https://updown.io/wwis" class="r2-foot">Uptime</a>
+      <span aria-hidden="true">·</span>
+      <a href="mailto:mike@mikezornek.com" class="r2-foot">Contact site admin</a>
+    </nav>
+  </footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":3150},"dark":{"editor":"boolean","default":false}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const dark = this.props.dark ?? false;
+    return { rootClass: dark ? 'r2-root r2-dark' : 'r2-root' };
+  }
+}
+</script>
+</body>
+</html>

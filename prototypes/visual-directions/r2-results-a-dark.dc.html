@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Soft and tactile · Results A, simplified · Dark</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&amp;family=Figtree:wght@400..800&amp;display=swap">
+<style>
+body{margin:0;background:#F7EFE3}
+body:has(.r2-dark){background:#17131F}
+
+/* Shared round-2 tokens on this board's root. Light first; .r2-dark swaps them. */
+.r2-root{
+  --ground:#F7EFE3;--texture:#E6DBCA;--surface:#FFFDF8;--well:#F1E9DC;--line:#E3D7C4;
+  --ink:#1E1730;--ink-2:#4A4358;--action:#FF9F61;--action-edge:#C96736;--on-action:#1E1730;
+  --link:#462F80;--danger:#A92227;
+  /* Additions, each checked for contrast. Names shared with the other round-2 boards keep their values. */
+  --edge:#D9CCB7;--bar:#5B45A8;--closed-bg:#E9E4FB;--closed-ink:#3F2C7A;
+  --brand:#A13B85;--mark-1:#462F80;--mark-2:#E57255;--mark-3:#F1B464;
+  --win:#FFE1C7;--rosette:#EFE39D;--bar-lip:rgba(30,23,48,.22);
+  --display:'Bricolage Grotesque','Avenir Next','Trebuchet MS',system-ui,sans-serif;
+  --body:Figtree,'Avenir Next','Segoe UI',system-ui,sans-serif;
+  --sh-card:0 1px 1px rgba(64,44,30,.04),0 2px 4px rgba(64,44,30,.05),0 10px 22px -8px rgba(64,44,30,.14),0 26px 44px -26px rgba(64,44,30,.28);
+  --sh-win:0 1px 1px rgba(64,44,30,.04),0 2px 4px rgba(64,44,30,.05),0 10px 22px -8px rgba(201,103,54,.2),0 26px 44px -26px rgba(201,103,54,.42);
+  --sh-sec:inset 0 0 0 1.5px var(--line),0 3px 0 var(--edge),0 8px 14px -10px rgba(64,44,30,.4);
+  --sh-sec-up:inset 0 0 0 1.5px var(--line),0 5px 0 var(--edge),0 12px 18px -12px rgba(64,44,30,.45);
+  --sh-sec-down:inset 0 0 0 1.5px var(--line),0 1px 0 var(--edge);
+  --sh-sunk:inset 0 2px 5px rgba(64,44,30,.12);
+  color-scheme:light;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+.r2-root.r2-dark{
+  --ground:#17131F;--texture:#2A2337;--surface:#221C2D;--well:#1D1827;--line:#3A3148;
+  --ink:#F3EDE4;--ink-2:#C8BFD3;--action:#FF9F61;--action-edge:#B85A2C;--on-action:#1E1730;
+  --link:#C4B2FF;--danger:#FF8A8A;
+  --edge:#0E0B14;--bar:#A996F0;--closed-bg:#2E2550;--closed-ink:#CDBEFF;
+  --brand:#F29BCF;--mark-1:#9D88F0;
+  --win:#34232B;--rosette:#6B5626;--bar-lip:rgba(0,0,0,.32);
+  --sh-card:inset 0 0 0 1px #2E2640,0 1px 2px rgba(0,0,0,.5),0 12px 24px -12px rgba(0,0,0,.8);
+  --sh-win:inset 0 0 0 1px #4A3440,0 1px 2px rgba(0,0,0,.5),0 12px 24px -12px rgba(0,0,0,.8);
+  --sh-sec:inset 0 0 0 1.5px var(--line),0 3px 0 var(--edge),0 6px 10px -6px rgba(0,0,0,.8);
+  --sh-sec-up:inset 0 0 0 1.5px #4A3F5C,0 5px 0 var(--edge),0 10px 14px -8px rgba(0,0,0,.85);
+  --sh-sec-down:inset 0 0 0 1.5px var(--line),0 1px 0 var(--edge);
+  --sh-sunk:inset 0 2px 5px rgba(0,0,0,.45);
+  color-scheme:dark}
+
+.r2-root *{box-sizing:border-box}
+.r2-root button{font-family:inherit}
+.r2-root a{color:var(--link);text-decoration-thickness:2px;text-underline-offset:3px}
+.r2-root a:hover{text-decoration-thickness:3px}
+.r2-root :focus-visible{outline:3px solid var(--link);outline-offset:3px}
+.r2-sr{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* One button shape: 14px corners, the tactile press */
+.r2-press{cursor:pointer;transition:transform .16s cubic-bezier(.34,1.56,.64,1),box-shadow .16s ease}
+.r2-press:hover{transform:translateY(-2px)}
+.r2-press:active{transform:translateY(3px);transition-duration:.05s}
+.r2-sec:hover{box-shadow:var(--sh-sec-up)!important}
+.r2-sec:active{box-shadow:var(--sh-sec-down)!important}
+
+/* Footer: quiet text links */
+.r2-foot{display:inline-flex;align-items:center;min-height:44px;padding:0 4px;color:var(--ink-2)!important;text-decoration:none}
+.r2-foot:hover{text-decoration:underline}
+
+/* The winner moment, once: medal pops, rosette settles, confetti bursts */
+@keyframes r2-pop{0%{transform:scale(.3) rotate(-25deg);opacity:0}60%{transform:scale(1.14) rotate(5deg);opacity:1}100%{transform:none;opacity:1}}
+.r2-medal{animation:r2-pop .7s cubic-bezier(.2,.8,.25,1) .1s both}
+@keyframes r2-settle{0%{transform:rotate(-60deg)}100%{transform:none}}
+.r2-rosette{animation:r2-settle 1.3s cubic-bezier(.2,.8,.25,1) .1s both}
+@keyframes r2-rise{0%{transform:translateY(12px);opacity:0}100%{transform:none;opacity:1}}
+.r2-rise{animation:r2-rise .55s cubic-bezier(.2,.8,.25,1) .3s both}
+@keyframes r2-grow{0%{transform:scaleX(0)}100%{transform:none}}
+.r2-grow{transform-origin:left center;animation:r2-grow .8s cubic-bezier(.2,.8,.25,1) .5s both}
+
+.r2-confetti{position:absolute;left:50%;top:70px;width:0;height:0;pointer-events:none}
+.r2-confetti span{position:absolute;left:0;top:0;width:9px;height:13px;border-radius:3px;opacity:0;animation:r2-burst 1.7s cubic-bezier(.12,.7,.3,1) .35s both}
+@keyframes r2-burst{
+  0%{opacity:0;transform:translate(-50%,-50%) rotate(0deg) scale(.4)}
+  8%{opacity:1}
+  55%{opacity:1;transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) rotate(var(--r)) scale(1)}
+  100%{opacity:0;transform:translate(calc(-50% + var(--x) * 1.15),calc(-50% + var(--y) + 80px)) rotate(calc(var(--r) * 1.7)) scale(.9)}
+}
+.r2-confetti span:nth-child(1){--x:-150px;--y:-40px;--r:-220deg;background:var(--mark-1)}
+.r2-confetti span:nth-child(2){--x:-118px;--y:-92px;--r:160deg;background:var(--mark-2);border-radius:99px;width:10px;height:10px;animation-delay:.38s}
+.r2-confetti span:nth-child(3){--x:-70px;--y:-120px;--r:-300deg;background:var(--mark-3)}
+.r2-confetti span:nth-child(4){--x:-22px;--y:-138px;--r:200deg;background:var(--brand);animation-delay:.4s}
+.r2-confetti span:nth-child(5){--x:30px;--y:-130px;--r:-180deg;background:#EFE39D;border-radius:99px;width:10px;height:10px}
+.r2-confetti span:nth-child(6){--x:78px;--y:-112px;--r:280deg;background:var(--mark-1);animation-delay:.42s}
+.r2-confetti span:nth-child(7){--x:124px;--y:-80px;--r:-240deg;background:var(--action)}
+.r2-confetti span:nth-child(8){--x:156px;--y:-30px;--r:190deg;background:var(--brand);border-radius:99px;width:10px;height:10px;animation-delay:.37s}
+.r2-confetti span:nth-child(9){--x:168px;--y:24px;--r:-160deg;background:var(--mark-3);animation-delay:.44s}
+.r2-confetti span:nth-child(10){--x:-168px;--y:20px;--r:230deg;background:var(--mark-2);animation-delay:.41s}
+.r2-confetti span:nth-child(11){--x:-96px;--y:-58px;--r:-120deg;background:#EFE39D;width:7px;height:11px}
+.r2-confetti span:nth-child(12){--x:-40px;--y:-84px;--r:140deg;background:var(--mark-1);border-radius:99px;width:8px;height:8px;animation-delay:.45s}
+.r2-confetti span:nth-child(13){--x:46px;--y:-88px;--r:-150deg;background:var(--mark-2);width:7px;height:11px;animation-delay:.39s}
+.r2-confetti span:nth-child(14){--x:100px;--y:-52px;--r:260deg;background:var(--action);border-radius:99px;width:8px;height:8px}
+.r2-confetti span:nth-child(15){--x:-136px;--y:-128px;--r:-210deg;background:var(--brand);width:7px;height:11px;animation-delay:.46s}
+.r2-confetti span:nth-child(16){--x:138px;--y:-134px;--r:170deg;background:var(--mark-1);width:7px;height:11px;animation-delay:.43s}
+.r2-confetti span:nth-child(17){--x:-8px;--y:-96px;--r:320deg;background:var(--action);width:7px;height:11px;animation-delay:.48s}
+.r2-confetti span:nth-child(18){--x:196px;--y:-70px;--r:-260deg;background:#EFE39D;width:8px;height:8px;border-radius:99px;animation-delay:.4s}
+
+@media (min-width:720px){
+  .r2-h1{font-size:46px!important}
+  .r2-win-title{font-size:34px!important}
+  .r2-card{padding:26px 28px 12px!important}
+  .r2-win{padding:36px 32px 32px!important}
+}
+@media (prefers-reduced-motion:reduce){
+  .r2-root *{animation:none!important;transition:none!important}
+  .r2-confetti{display:none}
+}
+</style>
+</helmet>
+<div class="{{rootClass}}" style="background-color:var(--ground); background-image:radial-gradient(var(--texture) 1.2px, transparent 1.6px); background-size:22px 22px; color:var(--ink); font-family:var(--body); font-size:17px; line-height:1.5">
+
+  <div style="background-color:var(--ground)">
+    <div style="max-width:720px; margin:0 auto; padding:0 16px">
+      <header style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px; padding:14px 0 6px">
+        <a href="r2-home.dc.html" style="display:inline-flex; align-items:center; gap:8px; min-height:44px; color:var(--ink); text-decoration:none">
+          <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true">
+            <rect x="1" y="17" width="20" height="9" rx="4.5" style="fill:var(--mark-3)"></rect>
+            <rect x="4" y="9.5" width="20" height="9" rx="4.5" style="fill:var(--mark-2)"></rect>
+            <rect x="7" y="2" width="20" height="9" rx="4.5" style="fill:var(--mark-1)"></rect>
+          </svg>
+          <span style="font-family:var(--display); font-weight:800; font-size:19px; letter-spacing:-0.02em; line-height:1">RankedVote<span style="color:var(--brand)">.app</span></span>
+        </a>
+        <a href="https://rankedvote.app/ballot/new" class="r2-press r2-sec" style="display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:0 16px; border-radius:14px; background:var(--surface); color:var(--ink); text-decoration:none; font-family:var(--display); font-weight:700; font-size:15px; box-shadow:var(--sh-sec)">Create a ballot</a>
+      </header>
+    </div>
+  </div>
+
+  <main>
+    <div style="background-image:linear-gradient(to bottom, var(--ground) calc(100% - 44px), transparent); padding-bottom:44px">
+      <div style="max-width:720px; margin:0 auto; padding:18px 16px 0">
+        <span style="display:inline-flex; align-items:center; gap:6px; padding:5px 12px 5px 9px; border-radius:999px; background:var(--closed-bg); color:var(--closed-ink); font-size:14px; font-weight:750">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>Final results
+        </span>
+        <h1 class="r2-h1" style="margin:14px 0 10px; font-family:var(--display); font-weight:800; font-size:34px; line-height:1.06; letter-spacing:-0.03em; text-wrap:balance">What should the Elixir Book Club read next?</h1>
+        <p style="margin:0; display:flex; flex-wrap:wrap; column-gap:8px; color:var(--ink-2); font-size:15.5px; font-weight:600">
+          <span>Closed Oct 4, 2026, 9:00 PM EDT</span>
+          <span aria-hidden="true">·</span>
+          <span>9 votes cast</span>
+        </p>
+      </div>
+    </div>
+
+    <div style="max-width:720px; margin:0 auto; padding:0 16px; display:flex; flex-direction:column; gap:22px">
+
+      <section aria-labelledby="r2a-win-h" class="r2-win" style="position:relative; overflow:hidden; border-radius:28px; padding:30px 20px 26px; background:var(--win); text-align:center; box-shadow:var(--sh-win)">
+        <div class="r2-confetti" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <div class="r2-medal" aria-hidden="true" style="position:relative; width:84px; height:84px; margin:0 auto">
+          <div class="r2-rosette" style="position:absolute; left:0; top:0; width:84px; height:84px">
+            <span style="position:absolute; left:8px; top:8px; width:68px; height:68px; border-radius:17px; background:var(--rosette)"></span>
+            <span style="position:absolute; left:8px; top:8px; width:68px; height:68px; border-radius:17px; background:var(--rosette); transform:rotate(45deg)"></span>
+          </div>
+          <span style="position:absolute; left:12px; top:10px; width:60px; height:60px; border-radius:999px; display:grid; place-items:center; background:var(--action); color:var(--on-action); font-family:var(--display); font-weight:800; font-size:30px; box-shadow:0 4px 0 var(--action-edge), inset 0 -4px 0 rgba(30,23,48,.12)">1</span>
+        </div>
+        <p style="margin:16px 0 0; font-size:13px; font-weight:800; letter-spacing:.14em; text-transform:uppercase">The winner</p>
+        <h2 id="r2a-win-h" class="r2-win-title" style="margin:6px auto 0; max-width:22ch; font-family:var(--display); font-weight:800; font-size:28px; line-height:1.1; letter-spacing:-0.02em; text-wrap:balance">{{winner.title}}</h2>
+        <p class="r2-rise" style="margin:16px 0 0; font-weight:650; line-height:1.2">
+          <strong style="font-family:var(--display); font-weight:800; font-size:30px; font-variant-numeric:tabular-nums">{{winner.pts}}</strong> points
+        </p>
+        <p style="margin:6px 0 0; color:var(--ink-2); font-size:15.5px; font-weight:600">{{winner.lead}}</p>
+      </section>
+
+      <section aria-labelledby="r2a-all-h" class="r2-card" style="border-radius:24px; padding:20px 16px 8px; background:var(--surface); box-shadow:var(--sh-card)">
+        <h2 id="r2a-all-h" style="margin:0; font-family:var(--display); font-weight:800; font-size:24px; line-height:1.15; letter-spacing:-0.02em">Every answer, by points</h2>
+        <p style="margin:6px 0 4px; color:var(--ink-2); font-size:15px; line-height:1.45; text-wrap:pretty">A 1st choice earns 5 points, down to 1 point for a 5th. A vote with weight 2 counts twice.</p>
+
+        <ol role="list" style="list-style:none; margin:0; padding:0">
+          <sc-for list="{{rows}}" as="row" hint-placeholder-count="7">
+            <li style="display:grid; grid-template-columns:22px minmax(0, 1fr) auto; column-gap:12px; padding:16px 0; border-top:{{row.sep}}">
+              <span aria-hidden="true" style="font-family:var(--display); font-weight:800; font-size:17px; line-height:1.4; color:var(--ink-2); font-variant-numeric:tabular-nums">{{row.place}}</span>
+              <h3 style="margin:0; font-size:16px; font-weight:{{row.titleWeight}}; line-height:1.35; text-wrap:pretty"><span class="r2-sr">{{row.placeText}}: </span>{{row.title}}</h3>
+              <p style="margin:0; text-align:right; line-height:1">
+                <span style="display:block; font-family:var(--display); font-weight:800; font-size:22px; font-variant-numeric:tabular-nums">{{row.pts}}</span>
+                <span style="display:block; margin-top:3px; font-size:12.5px; font-weight:650; color:var(--ink-2)">points</span>
+              </p>
+              <div aria-hidden="true" style="grid-column:2 / 4; margin-top:10px; height:10px; border-radius:999px; background:var(--well); box-shadow:var(--sh-sunk)">
+                <div class="r2-grow" style="height:10px; width:{{row.barPct}}%; border-radius:999px; background:{{row.barBg}}; box-shadow:inset 0 -2px 0 {{row.barLip}}"></div>
+              </div>
+              <p style="grid-column:2 / 4; margin:8px 0 0; display:flex; flex-wrap:wrap; font-size:14px; line-height:1.4; color:var(--ink-2)">
+                <sc-for list="{{row.parts}}" as="pt" hint-placeholder-count="4">
+                  <span style="white-space:nowrap"><strong style="font-weight:750; color:var(--ink); font-variant-numeric:tabular-nums">{{pt.n}}</strong> {{pt.word}}<sc-if value="{{pt.sep}}" hint-placeholder-val="{{true}}"><span class="r2-sr">,</span><span aria-hidden="true" style="padding:0 7px">·</span></sc-if></span>
+                </sc-for>
+              </p>
+            </li>
+          </sc-for>
+        </ol>
+      </section>
+
+    </div>
+  </main>
+
+  <footer style="margin-top:28px; padding:56px 16px 28px; background-image:linear-gradient(to bottom, transparent, var(--ground) 52px)">
+    <nav aria-label="Site links" style="display:flex; flex-wrap:wrap; justify-content:center; align-items:center; column-gap:6px; font-size:14.5px; color:var(--ink-2)">
+      <a href="https://github.com/zorn/flick" class="r2-foot">GitHub project</a>
+      <span aria-hidden="true">·</span>
+      <a href="https://updown.io/wwis" class="r2-foot">Uptime</a>
+      <span aria-hidden="true">·</span>
+      <a href="mailto:mike@mikezornek.com" class="r2-foot">Contact site admin</a>
+    </nav>
+  </footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":2200},"dark":{"editor":"boolean","default":true}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.titles = {
+      A: 'Elixir in Action, Third Edition by Saša Jurić',
+      B: "Engineering Elixir Applications by Ellie Fairholm and Josep Giralt D'Lacoste",
+      C: 'Machine Learning in Elixir by Sean Moriarity',
+      D: 'Designing Elixir Systems with OTP by James Edward Gray II and Bruce A. Tate',
+      E: 'Elixir Patterns by Hugo Barauna and Alexander Koutmos',
+      F: 'Concurrent Data Processing in Elixir by Svilen Gospodinov',
+      G: 'A Common-Sense Guide to Data Structures and Algorithms, Second Edition by Jay Wengrow'
+    };
+    // Weighted placements, 1st to 5th, from the closed ballot's 9 votes (total weight 10).
+    this.tallies = [
+      { id: 'A', counts: [2, 2, 3, 1, 0] },
+      { id: 'B', counts: [2, 4, 2, 1, 0] },
+      { id: 'C', counts: [3, 1, 0, 0, 2] },
+      { id: 'D', counts: [1, 1, 2, 1, 0] },
+      { id: 'E', counts: [1, 1, 2, 1, 1] },
+      { id: 'F', counts: [0, 1, 1, 1, 1] },
+      { id: 'G', counts: [1, 0, 0, 0, 1] }
+    ];
+    this.words = [['first', 'firsts'], ['second', 'seconds'], ['third', 'thirds'], ['fourth', 'fourths'], ['fifth', 'fifths']];
+    this.placeNames = ['1st place', '2nd place', '3rd place', '4th place', '5th place', '6th place', '7th place'];
+  }
+
+  fmt(x) {
+    return Number.isInteger(x) ? String(x) : x.toFixed(1);
+  }
+
+  renderVals() {
+    const dark = this.props.dark ?? true;
+
+    const sorted = this.tallies.map((t) => {
+      let pts = 0;
+      t.counts.forEach((c, k) => { pts += c * (5 - k); });
+      return { id: t.id, counts: t.counts, pts: pts };
+    }).sort((a, b) => b.pts - a.pts);
+
+    const max = Math.max(1, sorted[0].pts);
+
+    const rows = sorted.map((r, i) => {
+      const nonzero = [];
+      r.counts.forEach((c, k) => { if (c > 0) nonzero.push({ c: c, k: k }); });
+      const parts = nonzero.map((x, j) => ({
+        n: this.fmt(x.c),
+        word: x.c === 1 ? this.words[x.k][0] : this.words[x.k][1],
+        sep: j < nonzero.length - 1
+      }));
+      const won = i === 0;
+      return {
+        place: i + 1,
+        placeText: this.placeNames[i],
+        title: this.titles[r.id],
+        titleWeight: won ? 750 : 650,
+        pts: this.fmt(r.pts),
+        rawPts: r.pts,
+        barPct: Math.round((r.pts / max) * 1000) / 10,
+        barBg: won ? 'var(--action)' : 'var(--bar)',
+        barLip: won ? 'var(--action-edge)' : 'var(--bar-lip)',
+        parts: parts,
+        sep: i === 0 ? 'none' : '1px solid var(--line)'
+      };
+    });
+
+    const lead = rows[0].rawPts - rows[1].rawPts;
+    const winner = {
+      title: rows[0].title,
+      pts: rows[0].pts,
+      lead: lead > 0 ? this.fmt(lead) + ' points ahead of 2nd place' : 'Tied with 2nd place'
+    };
+
+    return {
+      rootClass: dark ? 'r2-root r2-dark' : 'r2-root',
+      winner: winner,
+      rows: rows
+    };
+  }
+}
+</script>
+</body>
+</html>
