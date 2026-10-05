@@ -669,6 +669,7 @@ defmodule FlickWeb.CoreComponents do
   """
   attr :content, :string, default: nil, doc: "the raw Markdown string to render"
 
+  # sobelow_skip ["XSS.Raw"]
   def markdown(assigns) do
     ~H"""
     <%!-- credo:allow-raw Flick.Markdown.render_to_html sanitizes via HtmlSanitizeEx --%>
