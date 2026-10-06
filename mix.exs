@@ -129,7 +129,7 @@ defmodule Flick.MixProject do
       {:ex_doc, "~> 0.40.4", only: :dev, runtime: false, warn_if_outdated: true},
 
       # For security scans.
-      {:sobelow, "~> 0.14", only: [:dev, :test], runtime: false},
+      {:sobelow, "~> 0.16", only: [:dev, :test], runtime: false},
 
       # To check locked dependencies against known security advisories.
       {:mix_audit, "~> 2.1", only: [:dev, :test], runtime: false},
