@@ -50,12 +50,6 @@ defmodule Flick.RankedVoting.Vote do
   @max_full_name_length 255
 
   @doc """
-  Returns the most code points a vote's `full_name` may contain.
-  """
-  @spec max_full_name_length() :: pos_integer()
-  def max_full_name_length, do: @max_full_name_length
-
-  @doc """
   Returns an `Ecto.Changeset` value appropriate for creating a
   `Flick.RankedVoting.Vote` entity.
 

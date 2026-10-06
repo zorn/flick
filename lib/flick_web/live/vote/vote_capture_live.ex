@@ -84,11 +84,7 @@ defmodule FlickWeb.Vote.VoteCaptureLive do
         <.simple_form for={@form} id="vote-form" phx-change="validate" phx-submit="save">
           <%!-- I wonder if we should drop this hidden and just inject the id manually? --%>
           <.input type="hidden" field={@form[:ballot_id]} value={@ballot.id} />
-          <.input
-            field={@form[:full_name]}
-            label="Name (Optional)"
-            maxlength={Vote.max_full_name_length()}
-          />
+          <.input field={@form[:full_name]} label="Name (Optional)" />
 
           <div id="question-title" class="prose">
             <h2>{@ballot.question_title}</h2>
