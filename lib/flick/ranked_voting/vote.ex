@@ -46,6 +46,9 @@ defmodule Flick.RankedVoting.Vote do
   @spec max_ranked_answers() :: pos_integer()
   def max_ranked_answers, do: @max_ranked_answers
 
+  # Matches the `varchar(255)` column.
+  @max_full_name_length 255
+
   @doc """
   Returns an `Ecto.Changeset` value appropriate for creating a
   `Flick.RankedVoting.Vote` entity.
@@ -59,6 +62,8 @@ defmodule Flick.RankedVoting.Vote do
     vote
     |> cast(attrs, [:ballot_id, :full_name])
     |> validate_required([:ballot_id])
+    # Postgres measures `varchar(255)` in code points, not graphemes.
+    |> validate_length(:full_name, max: @max_full_name_length, count: :codepoints)
     |> cast_embed(:ranked_answers,
       with: &RankedAnswer.changeset/2,
       required: true
