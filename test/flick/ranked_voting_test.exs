@@ -621,6 +621,19 @@ defmodule Flick.RankedVotingTest do
                })
     end
 
+    test "success: a vote's `full_name` can be exactly 255 code points of multibyte text",
+         ~M{published_ballot} do
+      # A precomposed "é" is one code point but two bytes, so a byte count would
+      # reject this name.
+      full_name = String.duplicate("\u00e9", 255)
+
+      assert {:ok, %Vote{full_name: ^full_name}} =
+               RankedVoting.create_vote(published_ballot, %{
+                 "ranked_answers" => [%{"value" => "Sushi"}],
+                 "full_name" => full_name
+               })
+    end
+
     test "failure: a vote's `full_name` can't be longer than 255 characters",
          ~M{published_ballot} do
       attrs = %{
