@@ -621,6 +621,34 @@ defmodule Flick.RankedVotingTest do
                })
     end
 
+    test "failure: a vote's `full_name` can't be longer than 255 characters",
+         ~M{published_ballot} do
+      attrs = %{
+        "ranked_answers" => [%{"value" => "Sushi"}],
+        "full_name" => String.duplicate("a", 256)
+      }
+
+      assert {:error, changeset} = RankedVoting.create_vote(published_ballot, attrs)
+
+      assert {"should be at most %{count} character(s)", opts} = changeset.errors[:full_name]
+      assert opts[:count] == 255
+    end
+
+    test "failure: a vote's `full_name` length is measured in code points, like the column",
+         ~M{published_ballot} do
+      # Each "e" plus a combining acute accent is one grapheme but two code
+      # points, so this name is 255 graphemes and 510 code points.
+      attrs = %{
+        "ranked_answers" => [%{"value" => "Sushi"}],
+        "full_name" => String.duplicate("é", 255)
+      }
+
+      assert {:error, changeset} = RankedVoting.create_vote(published_ballot, attrs)
+
+      assert {"should be at most %{count} character(s)", opts} = changeset.errors[:full_name]
+      assert opts[:count] == 255
+    end
+
     test "failure: a vote can't rank more answers than the ballot allows", ~M{published_ballot} do
       attrs = %{
         "ranked_answers" => [
