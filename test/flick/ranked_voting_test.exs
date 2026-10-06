@@ -640,7 +640,7 @@ defmodule Flick.RankedVotingTest do
       # points, so this name is 255 graphemes and 510 code points.
       attrs = %{
         "ranked_answers" => [%{"value" => "Sushi"}],
-        "full_name" => String.duplicate("é", 255)
+        "full_name" => String.duplicate("e\u0301", 255)
       }
 
       assert {:error, changeset} = RankedVoting.create_vote(published_ballot, attrs)
