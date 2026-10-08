@@ -158,6 +158,23 @@ if config_env() == :prod do
     username: basic_auth_username,
     password: basic_auth_password
 
+  # Basic auth for `/metrics`, which Prometheus scrapes.
+  metrics_auth_username =
+    System.get_env("METRICS_AUTH_USERNAME") ||
+      raise """
+      Environment variable METRICS_AUTH_USERNAME is missing.
+      """
+
+  metrics_auth_password =
+    System.get_env("METRICS_AUTH_PASSWORD") ||
+      raise """
+      Environment variable METRICS_AUTH_PASSWORD is missing.
+      """
+
+  config :flick, :metrics_auth,
+    username: metrics_auth_username,
+    password: metrics_auth_password
+
   # ## SSL Support
   #
   # To get SSL working, you will need to add the `https` key

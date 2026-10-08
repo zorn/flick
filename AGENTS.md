@@ -12,6 +12,42 @@ Flick runs on Render, in workspace `tea-cr5894tumphs73e1ml0g` as the web service
 
 These IDs are identifiers, not credentials. Never commit a Render API key or the service's deploy hook URL, since the hook URL embeds a key that triggers deploys.
 
+## Observability
+
+Flick exposes Prometheus metrics at `/metrics` through PromEx (`FlickWeb.PromEx`), behind basic auth. In development, the credentials are `flick-metrics` / `unsafe-metrics-password`. Flick's own metrics come from `FlickWeb.PromEx.RankedVotingPlugin`.
+
+`instrumentation/` holds a Prometheus and Grafana stack that runs the same images locally and on Render. Use it to check how a change affects latency or query counts before you deploy. Start it from the project root while Flick runs on port 4000:
+
+```sh
+docker compose -f instrumentation/compose.yml up -d --build
+```
+
+Query Prometheus at `http://localhost:9091` through its HTTP API. Prometheus scrapes every 15 seconds, so wait at least that long after a change, and use a rate window of at least `[1m]`:
+
+```sh
+# Is Prometheus scraping Flick? 1 means yes.
+curl -s localhost:9091/api/v1/query --data-urlencode 'query=up{job="flick"}' | jq '.data.result'
+
+# Requests per second by route over the last 5 minutes.
+curl -s localhost:9091/api/v1/query --data-urlencode 'query=sum by (path) (rate(flick_prom_ex_phoenix_http_requests_total[5m]))' | jq '.data.result'
+
+# p95 time to cast a vote, in milliseconds, by result.
+curl -s localhost:9091/api/v1/query --data-urlencode 'query=histogram_quantile(0.95, sum by (le, result) (rate(flick_ranked_voting_create_vote_duration_milliseconds_bucket[5m])))' | jq '.data.result'
+
+# Database queries per second by table.
+curl -s localhost:9091/api/v1/query --data-urlencode 'query=sum by (source) (rate(flick_prom_ex_ecto_repo_query_total_time_milliseconds_count[5m]))' | jq '.data.result'
+```
+
+To list every metric name, run `curl -s localhost:9091/api/v1/label/__name__/values | jq`. An empty result means no event happened in the window, not that the value is zero. In development, every request also shows `schema_migrations` queries from Phoenix's pending-migration check, so subtract that noise when you count a page's queries.
+
+Grafana runs at `http://localhost:3001` with no login. Its data source and dashboards are provisioned from `instrumentation/grafana/`, and Grafana keeps no state between restarts. A dashboard created or edited only in the UI is lost when the container is recreated. To keep one, save its JSON model and rebuild:
+
+```sh
+curl -s localhost:3001/api/dashboards/uid/UID | jq '.dashboard | del(.id)' > instrumentation/grafana/dashboards/NAME.json
+```
+
+The uid is the part of the dashboard's URL after `/d/`. Keep `uid`, so the dashboard's URL stays the same across rebuilds and machines. Remove `id`, because it belongs to one Grafana database. To add a panel without the UI, edit the JSON file and rebuild. Point panels at the data source uid `prometheus`, and use `[$__rate_interval]` as the rate window instead of a fixed one.
+
 ## Flick domain knowledge
 
 ### Ballot state machine

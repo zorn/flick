@@ -55,6 +55,7 @@ services:
     - ux-discovery/**
     - .credo.exs
     - compose.yml
+    - instrumentation/**
     - "*.md"
   startCommand: _build/prod/rel/flick/bin/flick eval "Flick.Release.migrate" && _build/prod/rel/flick/bin/flick
     start

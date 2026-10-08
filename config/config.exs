@@ -34,6 +34,12 @@ config :flick, :basic_auth,
   username: System.get_env("BASIC_AUTH_ADMIN_USERNAME", "flick-admin"),
   password: System.get_env("BASIC_AUTH_ADMIN_PASSWORD", "unsafe-password")
 
+# Basic auth for `/metrics`. Production requires these environment variables
+# in `config/runtime.exs`. Elsewhere, we put in some defaults.
+config :flick, :metrics_auth,
+  username: System.get_env("METRICS_AUTH_USERNAME", "flick-metrics"),
+  password: System.get_env("METRICS_AUTH_PASSWORD", "unsafe-metrics-password")
+
 # Configures the mailer
 #
 # By default it uses the "Local" adapter which stores the emails

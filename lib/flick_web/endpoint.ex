@@ -67,7 +67,17 @@ defmodule FlickWeb.Endpoint do
   # A function plug, so the endpoint refers to `FlickWeb.PromEx` only at
   # runtime. As an option to `plug PromEx.Plug`, the alias would become a
   # compile-time dependency, which `mix precommit`'s xref check rejects.
-  defp prom_ex_metrics(conn, _opts) do
-    PromEx.Plug.call(conn, PromEx.Plug.init(prom_ex_module: FlickWeb.PromEx))
+  #
+  # Basic auth guards the page, because Flick's public hosts serve it too.
+  defp prom_ex_metrics(%Plug.Conn{request_path: "/metrics"} = conn, _opts) do
+    conn = Plug.BasicAuth.basic_auth(conn, Application.fetch_env!(:flick, :metrics_auth))
+
+    if conn.halted do
+      conn
+    else
+      PromEx.Plug.call(conn, PromEx.Plug.init(prom_ex_module: FlickWeb.PromEx))
+    end
   end
+
+  defp prom_ex_metrics(conn, _opts), do: conn
 end
