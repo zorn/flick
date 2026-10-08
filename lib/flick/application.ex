@@ -11,6 +11,7 @@ defmodule Flick.Application do
   @impl Application
   def start(_type, _args) do
     children = [
+      FlickWeb.PromEx,
       FlickWeb.Telemetry,
       Flick.Repo,
       {DNSCluster, query: Application.get_env(:flick, :dns_cluster_query) || :ignore},

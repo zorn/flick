@@ -43,6 +43,13 @@ config :flick, :basic_auth,
 # at the `config/runtime.exs`.
 config :flick, Flick.Mailer, adapter: Swoosh.Adapters.Local
 
+config :flick, FlickWeb.PromEx,
+  disabled: false,
+  manual_metrics_start_delay: :no_delay,
+  drop_metrics_groups: [],
+  grafana: :disabled,
+  metrics_server: :disabled
+
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.25.4",
