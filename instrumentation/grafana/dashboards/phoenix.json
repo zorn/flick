@@ -969,7 +969,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(irate(flick_prom_ex_phoenix_http_request_duration_milliseconds_sum{job=\"$job\", instance=\"$instance\"}[$interval])) by(path, status) / sum(irate(flick_prom_ex_phoenix_http_request_duration_milliseconds_count{job=\"$job\", instance=\"$instance\"}[$interval])) by(path, status)",
+          "expr": "sum(irate(flick_prom_ex_phoenix_http_request_duration_milliseconds_sum{job=\"$job\", instance=\"$instance\"}[$interval])) by(method, path, status) / sum(irate(flick_prom_ex_phoenix_http_request_duration_milliseconds_count{job=\"$job\", instance=\"$instance\"}[$interval])) by(method, path, status)",
           "interval": "",
           "legendFormat": "{{ method }} {{ path }} :: {{ status }}",
           "refId": "A"
@@ -1066,7 +1066,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(irate(flick_prom_ex_phoenix_http_response_size_bytes_sum{job=\"$job\", instance=\"$instance\"}[$interval])) by(path, status) / sum(irate(flick_prom_ex_phoenix_http_response_size_bytes_count{job=\"$job\", instance=\"$instance\"}[$interval])) by(path, status)",
+          "expr": "sum(irate(flick_prom_ex_phoenix_http_response_size_bytes_sum{job=\"$job\", instance=\"$instance\"}[$interval])) by(method, path, status) / sum(irate(flick_prom_ex_phoenix_http_response_size_bytes_count{job=\"$job\", instance=\"$instance\"}[$interval])) by(method, path, status)",
           "interval": "",
           "legendFormat": "{{ method }} {{ path }} :: {{ status }}",
           "refId": "A"
