@@ -24,6 +24,7 @@ services:
     ports:
       - "3001:3000"
     environment:
+      PROMETHEUS_HOST: prometheus
       # Local only: every visitor is an admin, with no login.
       GF_AUTH_ANONYMOUS_ENABLED: "true"
       GF_AUTH_ANONYMOUS_ORG_ROLE: Admin

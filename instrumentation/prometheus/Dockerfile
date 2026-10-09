@@ -1,7 +1,10 @@
 FROM prom/prometheus:v3.15.0
 
-COPY local.yml /etc/prometheus/local.yml
+# Render's docs don't say who owns a mounted disk, so the entrypoint starts as
+# root to take it over, then runs Prometheus as nobody.
+USER root
 
-CMD ["--config.file=/etc/prometheus/local.yml", \
-     "--storage.tsdb.path=/prometheus", \
-     "--storage.tsdb.retention.size=800MB"]
+COPY local.yml render.yml /etc/prometheus/
+COPY entrypoint.sh /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
