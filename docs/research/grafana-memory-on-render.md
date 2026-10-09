@@ -4,24 +4,18 @@ Researched 2026-10-09 for issue #269. The versions checked were Grafana 13.2.3 (
 
 ## Answer
 
-1. **Set `GF_PLUGINS_PREINSTALL_DISABLED=true` first. It stops Grafana from filling the container with 450 MB of plugin downloads on every boot.** Grafana 13.2.3 has a hard-coded list of 18 "preinstall" plugins, and by default it downloads and auto-updates them at startup. With no disk, it repeats this on every boot. The downloads landed as 452 MB in `/var/lib/grafana/plugins`, and the page cache they created held the container at its 512 MiB limit (`memory.current` 511.5 MiB). Under load, the kernel hit the limit 3,562 times. With the setting on, the container sat at 291 MiB with 0 install lines and 0 limit hits. The env name is correct. In a local test it removed all install lines, so the earlier test that still showed installs most likely did not pass the variable into the container (unverified).
+1. **Set `GF_PLUGINS_PREINSTALL_DISABLED=true` first. It stops Grafana from downloading 452 MB of plugins on every boot.** Grafana 13.2.3 has a hard-coded list of 18 "preinstall" plugins, and by default it downloads and auto-updates them at startup. With no disk, it repeats this on every boot. The downloads landed as 452 MB of files in `/var/lib/grafana/plugins`, and the page cache they created held the container at its 512 MiB limit (`memory.current` 511.5 MiB). Under load, the kernel hit the limit 3,562 times. With the setting on, the container sat at 291 MiB with 0 install lines and 0 limit hits. An earlier quick test during the #269 investigation still showed installs with this variable set. That test most likely never passed the variable into the container, but this is unverified.
 2. **Also set `GF_PLUGINS_DISABLE_PLUGINS` to the 17 plugins Flick never uses. It saves about 110 MiB of real (anonymous) memory.** Each bundled data source runs as its own Go process, at 22 to 38 MB RSS each, even with no data source configured. Disabling everything except `prometheus` left one plugin process and cut anonymous memory from 269 MiB to 169 MiB. Grafana stayed healthy and served all six dashboards. Do this in the same change as item 1, since both are one env var each.
 3. **Set `GF_DASHBOARDS_MIN_REFRESH_INTERVAL=30s`, so the PromEx dashboards stop refreshing every 5 seconds.** Grafana rewrites a provisioned dashboard's refresh to the minimum when it is lower, and logs a warning. A local test confirmed that all five PromEx dashboards loaded at `30s`. This cuts query load six-fold and lowered peak memory under load from 293 MiB to 258 MiB. Do not edit `refresh` in the dashboard JSON, because the next `mix prom_ex.dashboard.export` overwrites it.
 4. **Do not set `GOMEMLIMIT` for now.** Grafana does not set it on its own, unlike Prometheus. A 150 MiB limit lowered peak memory from 293 MiB to 238 MiB, but it trades memory for garbage-collection CPU on a 0.5 CPU instance. After items 1 to 3, Grafana peaks near 260 to 300 MiB, which leaves over 200 MiB of headroom. Revisit it if production peaks climb past about 400 MiB.
 5. **Leave alerting, Live, the news feed, usage reporting, and public dashboards at their defaults.** Turning all five off saved about 10 to 20 MiB, which is within run-to-run noise. It also removes Grafana alerting, which Flick may want later.
 6. **Take no action on Prometheus.** Render reports `flick-prometheus` at 28 to 34 MiB of its 512 MiB. Prometheus 3.15 sets `GOMEMLIMIT` from the container limit by default. Flick's PromEx plugins produce about 530 series locally, so `drop_metrics_groups` and relabeling would save almost nothing.
-7. **Keep self-hosting, but treat Grafana Cloud's free tier as the fallback if items 1 to 3 do not hold.** Grafana Cloud can scrape Flick's public, basic-auth `/metrics` over HTTPS directly. That would remove both Render services, at $7 a month each per [Render's own comparison](https://render.com/articles/render-vs-railway) (the compute plans page omits prices), plus Prometheus's disk. The cost is 14-day retention instead of the current 800 MB, metrics data leaving Render, and a free-tier data-points-per-minute allowance that Grafana's pages do not state.
-8. **Reject the other alternatives.** Render's metrics streaming needs a Pro workspace and sends only platform metrics, not PromEx metrics. Render's free instance has the same 512 MB, 0.1 CPU, and spins down after 15 idle minutes. Running Grafana locally against production Prometheus would mean exposing Prometheus publicly. A persistent disk for Grafana would only cache the downloads that item 1 removes.
+7. **Keep self-hosting, but treat Grafana Cloud's free tier as the fallback if items 1 to 3 do not hold.** Grafana Cloud can scrape Flick's public, basic-auth `/metrics` over HTTPS directly. That would remove both Render services, at $7 a month each per [Render's own comparison](https://render.com/articles/render-vs-railway) (the compute plans page omits prices), plus Prometheus's disk. The cost is 14-day retention instead of the current 800 MB size cap, metrics data leaving Render, and a free-tier data-points-per-minute allowance that Grafana's pages do not state.
+8. **Reject the other alternatives.** Render's metrics streaming needs a Pro workspace and sends only platform metrics, not PromEx metrics. Render's free instance has 512 MB like Starter, but only 0.1 CPU, and it spins down after 15 idle minutes. Running Grafana locally against production Prometheus would mean exposing Prometheus publicly. A persistent disk for Grafana would only cache the downloads that item 1 removes.
 
 Anything not called out above stands as recommended.
 
-Items 1 to 3 went into `instrumentation/grafana/Dockerfile` as `ENV` lines, so the local stack and Render run the same settings from one place:
-
-```dockerfile
-ENV GF_PLUGINS_PREINSTALL_DISABLED=true
-ENV GF_PLUGINS_DISABLE_PLUGINS=elasticsearch,grafana-postgresql-datasource,grafana-pyroscope-datasource,influxdb,jaeger,loki,mssql,mysql,opentsdb,stackdriver,tempo,zipkin,grafana-advisor-app,grafana-exploretraces-app,grafana-lokiexplore-app,grafana-metricsdrilldown-app,grafana-pyroscope-app
-ENV GF_DASHBOARDS_MIN_REFRESH_INTERVAL=30s
-```
+Items 1 to 3 went into [`instrumentation/grafana/Dockerfile`](../../instrumentation/grafana/Dockerfile) as `ENV` lines, so the local stack and Render run the same settings from one place. The disabled list keeps only `prometheus`, the one data source Flick provisions.
 
 ## Why Grafana downloads plugins at every boot
 
@@ -37,14 +31,14 @@ Every container ran the repo's `instrumentation/grafana` image with `--memory=51
 
 | Variant (env added to the base image) | `memory.current` | `anon` | Plugin processes | Install log lines |
 | --- | --- | --- | --- | --- |
-| None (today's production config) | 511.5 MiB (at limit) | 257 MiB | 13 | 22 |
+| None (the config before #269) | 511.5 MiB (at limit) | 257 MiB | 13 | 22 |
 | `GF_PLUGINS_PREINSTALL_DISABLED=true` | 291 MiB | 269 MiB | 13 | 0 |
 | plus `GF_PLUGINS_DISABLE_PLUGINS` (17 ids) | 179 MiB | 169 MiB | 1 | 0 |
 | plus alerting, Live, news, analytics, and public dashboards off | 168 MiB | 161 MiB | 1 | 0 |
 
 In the default variant, 241 MB of the charge was file cache from the downloaded plugins. That cache is reclaimable, but reclaiming it at the limit costs time on every allocation. This is a plausible cause of the slow `/api/health` responses that made Render restart the service, but it is unverified. Render's docs do not say whether its memory graph counts page cache. Render's production graph for `flick-grafana` swung between 274 MiB and 510 MiB from 15:49 to 16:06 UTC on 2026-10-09, which matches a container held near its limit.
 
-To simulate the Phoenix dashboard open, a script sent each panel query of the Phoenix and BEAM dashboards (56 queries) to `/api/ds/query` at once, every 5 seconds for 150 seconds. All 1,568 requests returned 200. The queries ran against the local Prometheus, which held about 530 series, so production responses may be larger.
+To simulate an open Phoenix dashboard, a script sent each panel query of the Phoenix and BEAM dashboards (56 queries) to `/api/ds/query` at once, every 5 seconds for about 150 seconds. All 1,568 requests (28 rounds) returned 200. The queries ran against the local Prometheus, which held about 530 series, so production responses may be larger.
 
 | Variant under load | Peak `memory.current` |
 | --- | --- |
@@ -63,7 +57,7 @@ The defaults below come from [`conf/defaults.ini` at v13.2.3](https://github.com
 - `[dashboards] min_refresh_interval` defaults to `5s`. [`SaveProvisionedDashboard`](https://github.com/grafana/grafana/blob/v13.2.3/pkg/services/dashboards/service/dashboard_service.go) sets a provisioned dashboard's refresh to the minimum when it is lower and logs "Changing refresh interval for provisioned dashboard to minimum refresh interval."
 - `[dashboards] default_preload` defaults to false, so panels load only as they scroll into view. The top of the Phoenix dashboard still loads its 24-hour stat panels on open.
 - `[live] max_connections` defaults to 100, and 0 disables Live. Flick's dashboards do not use streaming, so Live costs little.
-- `[unified_alerting] enabled`, `[news] news_feed_enabled`, `[analytics] reporting_enabled`, `check_for_updates`, `check_for_plugin_updates`, and `[public_dashboards] enabled` all default to on. Turning them off measured within noise.
+- `[unified_alerting] enabled`, `[news] news_feed_enabled`, `[analytics] reporting_enabled`, `check_for_updates`, `check_for_plugin_updates`, and `[public_dashboards] enabled` all default to on. Turning them all off changed memory by less than run-to-run noise.
 - `[datasources] concurrent_query_count` applies only to Loki and InfluxDB, so it does not limit Prometheus queries.
 - Grafana does not set `GOMEMLIMIT`. Its [`go.mod`](https://github.com/grafana/grafana/blob/v13.2.3/go.mod) has no `automemlimit` dependency, and the image's `/run.sh` sets no Go variables.
 - Image rendering is not installed, so there is no server-side rendering memory to reduce.
@@ -72,11 +66,11 @@ The defaults below come from [`conf/defaults.ini` at v13.2.3](https://github.com
 
 Prometheus 3.15.0 imports `automemlimit` and exposes `--auto-gomemlimit` with a ratio flag in [`cmd/prometheus/main.go`](https://github.com/prometheus/prometheus/blob/v3.15.0/cmd/prometheus/main.go). The local container reported `GOMEMLIMIT` at 90% of the memory it could see, and `GOGC` at 75. Render's metrics put `flick-prometheus` at 28 to 34 MiB from 15:50 to 16:05 UTC on 2026-10-09.
 
-The local Prometheus held 528 head series for Flick. The largest groups are Ecto query histograms (56 series each) and LiveView mount histograms (48). PromEx's `drop_metrics_groups` option and Prometheus's `metric_relabel_configs` could trim these, but Prometheus has more than 450 MiB of headroom, so neither is worth doing now.
+The local Prometheus held 528 head series for Flick. The largest groups are the Ecto query histograms, at 56 series per histogram, and the LiveView mount histogram, at 48 series. PromEx's `drop_metrics_groups` option and Prometheus's `metric_relabel_configs` could trim these, but Prometheus has more than 450 MiB of headroom, so neither is worth doing now.
 
 ## Alternatives to self-hosted Grafana
 
-Grafana Cloud's [pricing page](https://grafana.com/pricing/) (read 2026-10-09) lists the free tier at 10k active metrics series, 14-day retention, and 3 active Grafana users. Pro starts at $19 a month plus usage. The [metrics invoice docs](https://grafana.com/docs/grafana-cloud/cost-management-and-billing/manage-invoices/understand-your-invoice/metrics-invoice/) say Pro includes 1 data point per minute per series, and a 15-second scrape sends 4. The free tier's allowance is unverified. A 60-second scrape keeps Flick at 1 DPM in either case.
+Grafana Cloud's [pricing page](https://grafana.com/pricing/) (read 2026-10-09) lists the free tier at 10k active metrics series, 14-day retention, and 3 active Grafana users. Pro starts at $19 a month plus usage. The [metrics invoice docs](https://grafana.com/docs/grafana-cloud/cost-management-and-billing/manage-invoices/understand-your-invoice/metrics-invoice/) say Pro includes 1 data point per minute per series, and a 15-second scrape sends 4. The free tier's data-points-per-minute allowance is unverified. A 60-second scrape keeps Flick at 1 data point per minute in either case.
 
 The [Metrics Endpoint integration](https://grafana.com/docs/grafana-cloud/monitor-infrastructure/integrations/integration-reference/integration-metrics-endpoint/) scrapes a public HTTPS URL that requires basic or bearer auth, with a 1-minute default interval. `https://rankedvote.app/metrics` already fits: it returns 401 without credentials. Whether the integration is available on the free tier is unverified.
 
