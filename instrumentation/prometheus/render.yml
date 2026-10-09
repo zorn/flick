@@ -1,15 +1,14 @@
-# Scrapes Flick over Render's private network. Port 10000 always reaches a
-# web service's HTTP server there.
+# Scrapes Flick over Render's private network.
 
 global:
   scrape_interval: 15s
 
 scrape_configs:
   - job_name: flick
+    # Prometheus can't read environment variables here, so the entrypoint
+    # writes these files from the service's environment.
     basic_auth:
-      username: flick-metrics
-      # Prometheus can't read environment variables here, so the entrypoint
-      # writes METRICS_AUTH_PASSWORD to this file.
+      username_file: /tmp/metrics_auth_username
       password_file: /tmp/metrics_auth_password
-    static_configs:
-      - targets: ["flick-ysjm:10000"]
+    file_sd_configs:
+      - files: [/tmp/flick_targets.json]

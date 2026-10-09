@@ -21,11 +21,8 @@ defmodule FlickWeb.PromEx do
     ]
   end
 
+  # `mix prom_ex.dashboard.export` reads this. PromEx has no default for
+  # `datasource_id`, and Grafana provisions the data source with this uid.
   @impl PromEx
-  def dashboard_assigns do
-    [datasource_id: "prometheus", default_selected_interval: "30s"]
-  end
-
-  @impl PromEx
-  def dashboards, do: []
+  def dashboard_assigns, do: [datasource_id: "prometheus"]
 end

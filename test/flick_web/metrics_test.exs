@@ -19,7 +19,12 @@ defmodule FlickWeb.MetricsTest do
     assert response(conn, 401)
   end
 
-  test "serves Prometheus metrics with the right credentials", %{conn: conn} do
+  test "serves Flick's own metrics with the right credentials", %{conn: conn} do
+    ballot = published_ballot_fixture(%{possible_answers: ["Pizza", "Tacos"]})
+
+    {:ok, _vote} =
+      Flick.RankedVoting.create_vote(ballot, %{"ranked_answers" => [%{"value" => "Pizza"}]})
+
     conn =
       conn
       |> put_req_header(
@@ -28,6 +33,8 @@ defmodule FlickWeb.MetricsTest do
       )
       |> get("/metrics")
 
-    assert response(conn, 200) =~ "# TYPE flick_prom_ex_"
+    # PromEx aggregates across async tests, so assert the series exists, not its count.
+    assert response(conn, 200) =~
+             ~s(flick_ranked_voting_create_vote_duration_milliseconds_count{result="ok"})
   end
 end

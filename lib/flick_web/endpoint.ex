@@ -21,9 +21,8 @@ defmodule FlickWeb.Endpoint do
     websocket: [connect_info: [session: @session_options], max_frame_size: 1_000_000],
     longpoll: [connect_info: [session: @session_options]]
 
-  # Serve Prometheus metrics at "/metrics". It comes before the code reloader
-  # and `Plug.Telemetry`, so requests to it don't trigger repo checks or show
-  # up in the HTTP metrics.
+  # This plug runs before the code reloader and `Plug.Telemetry`, so scrapes
+  # skip the repo checks and stay out of the HTTP metrics.
   plug :prom_ex_metrics
 
   # Serve at "/" the static files from "priv/static" directory.
@@ -64,7 +63,7 @@ defmodule FlickWeb.Endpoint do
   plug Plug.Session, @session_options
   plug FlickWeb.Router
 
-  # A function plug, so the endpoint refers to `FlickWeb.PromEx` only at
+  # This is a function plug, so the endpoint refers to `FlickWeb.PromEx` only at
   # runtime. As an option to `plug PromEx.Plug`, the alias would become a
   # compile-time dependency, which `mix precommit`'s xref check rejects.
   #

@@ -35,7 +35,7 @@ config :flick, :basic_auth,
   password: System.get_env("BASIC_AUTH_ADMIN_PASSWORD", "unsafe-password")
 
 # Basic auth for `/metrics`. Production requires these environment variables
-# in `config/runtime.exs`. Elsewhere, we put in some defaults.
+# in `config/runtime.exs`. Other environments fall back to these defaults.
 config :flick, :metrics_auth,
   username: System.get_env("METRICS_AUTH_USERNAME", "flick-metrics"),
   password: System.get_env("METRICS_AUTH_PASSWORD", "unsafe-metrics-password")

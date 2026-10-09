@@ -67,7 +67,8 @@ services:
   - www.rankedvote.app
   - rankedvote.app
   autoDeployTrigger: commit
-# Flick's metrics stack. Same Dockerfiles as local dev (instrumentation/compose.yml).
+# Flick's metrics stack. It builds the same Dockerfiles as local development
+# (instrumentation/compose.yml).
 - type: pserv
   name: flick-prometheus
   runtime: docker
@@ -78,6 +79,16 @@ services:
   envVars:
   - key: PROMETHEUS_CONFIG
     value: render.yml
+  - key: FLICK_HOST
+    fromService:
+      type: web
+      name: flick
+      property: host
+  - key: METRICS_AUTH_USERNAME
+    fromService:
+      type: web
+      name: flick
+      envVarKey: METRICS_AUTH_USERNAME
   - key: METRICS_AUTH_PASSWORD
     fromService:
       type: web
@@ -103,8 +114,9 @@ services:
   # Render routes to port 10000 by default.
   - key: GF_SERVER_HTTP_PORT
     value: "10000"
-  # A random password from the first sync on. Find it in the service's
-  # Environment page. Grafana has no volume, so it resets to this on every deploy.
+  # Render generates the admin password on the first sync. Find it on the
+  # service's Environment page. Grafana has no volume, so the admin password
+  # resets to this value on every deploy.
   - key: GF_SECURITY_ADMIN_PASSWORD
     generateValue: true
   - key: PROMETHEUS_HOST

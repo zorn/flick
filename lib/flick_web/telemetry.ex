@@ -1,4 +1,11 @@
 defmodule FlickWeb.Telemetry do
+  @moduledoc """
+  Defines the metrics that LiveDashboard shows at `/dev/dashboard`.
+
+  `FlickWeb.PromEx` measures many of the same events for Prometheus. The two
+  stay separate because LiveDashboard reads `metrics/0` and PromEx does not.
+  """
+
   use Supervisor
   import Telemetry.Metrics
 

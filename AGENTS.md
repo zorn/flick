@@ -46,9 +46,9 @@ Grafana runs at `http://localhost:3001` with no login. Its data source and dashb
 curl -s localhost:3001/api/dashboards/uid/UID | jq '.dashboard | del(.id)' > instrumentation/grafana/dashboards/NAME.json
 ```
 
-The uid is the part of the dashboard's URL after `/d/`. Keep `uid`, so the dashboard's URL stays the same across rebuilds and machines. Remove `id`, because it belongs to one Grafana database. To add a panel without the UI, edit the JSON file and rebuild. Point panels at the data source uid `prometheus`, and use `[$__rate_interval]` as the rate window instead of a fixed one.
+The uid is the part of the dashboard's URL after `/d/`. Keep `uid` so the dashboard's URL stays the same across rebuilds and machines. Remove `id`, because it belongs to one Grafana database. To add a panel without the UI, edit the JSON file and rebuild. Point panels at the data source uid `prometheus`, and use `[$__rate_interval]` as the rate window instead of a fixed one.
 
-On Render, the same images run as `flick-prometheus`, a private service with no public URL, and `flick-grafana`, which requires a login. Verify changes against the local stack. Production data needs a person with the Grafana login.
+On Render, the same images run as `flick-prometheus`, a private service with no public URL, and `flick-grafana`, which requires a login. Verify changes against the local stack. Only a person with the Grafana login can view production data.
 
 ## Flick domain knowledge
 
