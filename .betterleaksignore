@@ -25,3 +25,6 @@ b73d809a29ff5cb7014f31432b237a484f68c12c:config/test.exs:generic-password:36
 
 # Example in the `phx.new`-generated `DataCase` moduledoc (`password: "short"`).
 37d0a8750f511488f1a55b9cd534e68679f147b9:test/support/data_case.ex:generic-password:46
+
+# Local Prometheus scrape password for dev `/metrics` (`unsafe-metrics-password`).
+7a3b522a91ac77a401a4b9b21f9eef1e35fc10fa:instrumentation/prometheus/local.yml:generic-password:10

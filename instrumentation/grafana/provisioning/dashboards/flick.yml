@@ -1,0 +1,7 @@
+apiVersion: 1
+
+providers:
+  - name: flick
+    type: file
+    options:
+      path: /etc/grafana/dashboards

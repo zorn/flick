@@ -32,6 +32,10 @@ services:
     sync: false
   - key: BASIC_AUTH_ADMIN_USERNAME
     sync: false
+  - key: METRICS_AUTH_USERNAME
+    value: flick-metrics
+  - key: METRICS_AUTH_PASSWORD
+    sync: false
   - key: DATABASE_URL
     fromDatabase:
       name: flick_prod
@@ -55,11 +59,73 @@ services:
     - ux-discovery/**
     - .credo.exs
     - compose.yml
+    - instrumentation/**
     - "*.md"
   startCommand: _build/prod/rel/flick/bin/flick eval "Flick.Release.migrate" && _build/prod/rel/flick/bin/flick
     start
   domains:
   - www.rankedvote.app
   - rankedvote.app
+  autoDeployTrigger: commit
+# Flick's metrics stack. It builds the same Dockerfiles as local development
+# (instrumentation/compose.yml).
+- type: pserv
+  name: flick-prometheus
+  runtime: docker
+  plan: starter
+  region: oregon
+  dockerfilePath: ./instrumentation/prometheus/Dockerfile
+  dockerContext: ./instrumentation/prometheus
+  envVars:
+  - key: PROMETHEUS_CONFIG
+    value: render.yml
+  - key: FLICK_HOST
+    fromService:
+      type: web
+      name: flick
+      property: host
+  - key: METRICS_AUTH_USERNAME
+    fromService:
+      type: web
+      name: flick
+      envVarKey: METRICS_AUTH_USERNAME
+  - key: METRICS_AUTH_PASSWORD
+    fromService:
+      type: web
+      name: flick
+      envVarKey: METRICS_AUTH_PASSWORD
+  disk:
+    name: prometheus-data
+    mountPath: /prometheus
+    sizeGB: 1
+  buildFilter:
+    paths:
+    - instrumentation/prometheus/**
+  autoDeployTrigger: commit
+- type: web
+  name: flick-grafana
+  runtime: docker
+  plan: starter
+  region: oregon
+  dockerfilePath: ./instrumentation/grafana/Dockerfile
+  dockerContext: ./instrumentation/grafana
+  healthCheckPath: /api/health
+  envVars:
+  # Render routes to port 10000 by default.
+  - key: GF_SERVER_HTTP_PORT
+    value: "10000"
+  # Render generates the admin password on the first sync. Find it on the
+  # service's Environment page. Grafana has no volume, so the admin password
+  # resets to this value on every deploy.
+  - key: GF_SECURITY_ADMIN_PASSWORD
+    generateValue: true
+  - key: PROMETHEUS_HOST
+    fromService:
+      type: pserv
+      name: flick-prometheus
+      property: host
+  buildFilter:
+    paths:
+    - instrumentation/grafana/**
   autoDeployTrigger: commit
 version: "1"

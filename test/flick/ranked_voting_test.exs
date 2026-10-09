@@ -765,6 +765,30 @@ defmodule Flick.RankedVotingTest do
       assert {:error, changeset} = RankedVoting.create_vote(unpublished_ballot, %{})
       assert "ballot must be published" in errors_on(changeset).ballot_id
     end
+
+    test "success: reports the vote's duration with an `:ok` result", ~M{published_ballot} do
+      attach_create_vote_handler()
+
+      assert {:ok, _vote} =
+               RankedVoting.create_vote(published_ballot, %{
+                 "ranked_answers" => [%{"value" => "Pizza"}]
+               })
+
+      assert_receive {:create_vote_stop, %{duration: duration}, %{result: :ok}}
+      assert is_integer(duration)
+    end
+
+    test "failure: reports the vote's duration with an `:error` result", ~M{published_ballot} do
+      attach_create_vote_handler()
+
+      assert {:error, _changeset} =
+               RankedVoting.create_vote(published_ballot, %{
+                 "ranked_answers" => [%{"value" => "Forbidden Hot Dogs"}]
+               })
+
+      assert_receive {:create_vote_stop, %{duration: duration}, %{result: :error}}
+      assert is_integer(duration)
+    end
   end
 
   describe "update_vote/2" do
@@ -972,6 +996,37 @@ defmodule Flick.RankedVotingTest do
              ] =
                RankedVoting.get_ballot_results_report(ballot.id)
     end
+  end
+
+  # Telemetry handlers are global, so the handler forwards only the events
+  # that this test's process emits. That keeps it safe beside async tests.
+  defp attach_create_vote_handler do
+    handler_id = {__MODULE__, self()}
+
+    :ok =
+      :telemetry.attach(
+        handler_id,
+        [:flick, :ranked_voting, :create_vote, :stop],
+        &__MODULE__.forward_create_vote_stop/4,
+        self()
+      )
+
+    on_exit(fn -> :telemetry.detach(handler_id) end)
+  end
+
+  @doc false
+  @spec forward_create_vote_stop(
+          :telemetry.event_name(),
+          :telemetry.event_measurements(),
+          :telemetry.event_metadata(),
+          pid()
+        ) :: :ok
+  def forward_create_vote_stop(_event, measurements, metadata, test_pid) do
+    if self() == test_pid do
+      send(test_pid, {:create_vote_stop, measurements, metadata})
+    end
+
+    :ok
   end
 
   defp uuid_string?(value) when byte_size(value) > 16 do

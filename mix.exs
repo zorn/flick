@@ -143,6 +143,11 @@ defmodule Flick.MixProject do
       # To help with making test scenarios easy to describe and maintain.
       {:parameterized_test, "~> 0.6", only: [:dev, :test]},
 
+      # Observability
+      {:prom_ex, "~> 1.12"},
+      {:telemetry_metrics, "~> 1.0"},
+      {:telemetry_poller, "~> 1.0"},
+
       # Unorganized
       {:bandit, "~> 1.2"},
       {:dns_cluster, "~> 0.2"},
@@ -171,9 +176,7 @@ defmodule Flick.MixProject do
       {:lazy_html, ">= 0.1.0", only: :test},
       {:postgrex, ">= 0.0.0"},
       {:swoosh, "~> 1.5"},
-      {:tailwind, "~> 0.2", runtime: Mix.env() == :dev},
-      {:telemetry_metrics, "~> 1.0"},
-      {:telemetry_poller, "~> 1.0"}
+      {:tailwind, "~> 0.2", runtime: Mix.env() == :dev}
     ]
   end
 

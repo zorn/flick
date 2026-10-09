@@ -21,6 +21,10 @@ defmodule FlickWeb.Endpoint do
     websocket: [connect_info: [session: @session_options], max_frame_size: 1_000_000],
     longpoll: [connect_info: [session: @session_options]]
 
+  # This plug runs before the code reloader and `Plug.Telemetry`, so scrapes
+  # skip the repo checks and stay out of the HTTP metrics.
+  plug :prom_ex_metrics
+
   # Serve at "/" the static files from "priv/static" directory.
   #
   # When code reloading is disabled (e.g., in production),
@@ -58,4 +62,21 @@ defmodule FlickWeb.Endpoint do
   plug Plug.Head
   plug Plug.Session, @session_options
   plug FlickWeb.Router
+
+  # This is a function plug, so the endpoint refers to `FlickWeb.PromEx` only at
+  # runtime. As an option to `plug PromEx.Plug`, the alias would become a
+  # compile-time dependency, which `mix precommit`'s xref check rejects.
+  #
+  # Basic auth guards the page, because Flick's public hosts serve it too.
+  defp prom_ex_metrics(%Plug.Conn{request_path: "/metrics"} = conn, _opts) do
+    conn = Plug.BasicAuth.basic_auth(conn, Application.fetch_env!(:flick, :metrics_auth))
+
+    if conn.halted do
+      conn
+    else
+      PromEx.Plug.call(conn, PromEx.Plug.init(prom_ex_module: FlickWeb.PromEx))
+    end
+  end
+
+  defp prom_ex_metrics(conn, _opts), do: conn
 end

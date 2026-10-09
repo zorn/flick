@@ -1,0 +1,14 @@
+apiVersion: 1
+
+datasources:
+  - name: prometheus
+    # The PromEx dashboards refer to this data source as "prometheus".
+    uid: prometheus
+    type: prometheus
+    # Compose sets this to prometheus. Render sets it to the private
+    # service's internal hostname.
+    url: http://$PROMETHEUS_HOST:9090
+    isDefault: true
+    jsonData:
+      # Matches the scrape interval, so `$__rate_interval` stays correct.
+      timeInterval: 15s

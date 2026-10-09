@@ -21,7 +21,7 @@ Every module belongs to exactly one boundary, chosen by its name. Each boundary 
 | `Flick.Repo` | `lib/flick/repo.ex` | — | — |
 | `Flick.Markdown` | `lib/flick/markdown.ex` | — | — |
 | `Flick.DateTimeFormatter` | `lib/flick/date_time_formatter.ex` | — | — |
-| `FlickWeb` | `lib/flick_web.ex` | `Endpoint`, `Telemetry` | `Flick.RankedVoting`, `Flick.Markdown`, `Flick.DateTimeFormatter` |
+| `FlickWeb` | `lib/flick_web.ex` | `Endpoint`, `PromEx`, `Telemetry` | `Flick.RankedVoting`, `Flick.Markdown`, `Flick.DateTimeFormatter` |
 | `Flick.Application` | `lib/flick/application.ex` | — | `Flick.Repo`, `FlickWeb` |
 | `Storybook` | `lib/storybook.ex` | (checks off) | (checks off) |
 
@@ -69,7 +69,7 @@ Follow the `Flick.RankedVoting` pattern.
    ```elixir
    use Boundary,
      deps: [Flick.RankedVoting, Flick.Accounts, Flick.Markdown, Flick.DateTimeFormatter],
-     exports: [Endpoint, Telemetry]
+     exports: [Endpoint, PromEx, Telemetry]
    ```
 
 4. If the context needs a module from the root `Flick` boundary, such as `Flick.Mailer`, promote that module to a top-level leaf boundary instead of exporting it from `Flick`.

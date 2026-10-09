@@ -1,0 +1,39 @@
+# Flick's observability stack for local development. It builds the same
+# images that run on Render, so a change verified here behaves the same in
+# production. From the project root:
+#
+#   docker compose -f instrumentation/compose.yml up -d --build
+#
+# Prometheus: http://localhost:9091
+# Grafana:    http://localhost:3001
+#
+# Flick must be running on port 4000 for Prometheus to scrape it.
+
+name: flick-instrumentation
+
+services:
+  prometheus:
+    build: ./prometheus
+    ports:
+      - "9091:9090"
+    volumes:
+      - prometheus_data:/prometheus
+    # Docker Desktop defines host.docker.internal. Linux Docker Engine needs this.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  grafana:
+    build: ./grafana
+    ports:
+      - "3001:3000"
+    environment:
+      PROMETHEUS_HOST: prometheus
+      # Local only: every visitor is an admin, with no login.
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
+      GF_AUTH_DISABLE_LOGIN_FORM: "true"
+    depends_on:
+      - prometheus
+
+volumes:
+  prometheus_data:

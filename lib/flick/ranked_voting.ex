@@ -200,11 +200,16 @@ defmodule Flick.RankedVoting do
   """
   @spec create_vote(Ballot.t(), map()) :: {:ok, Vote.t()} | {:error, Ecto.Changeset.t(Vote.t())}
   def create_vote(ballot, attrs) do
-    attrs = Map.put(attrs, "ballot_id", ballot.id)
+    :telemetry.span([:flick, :ranked_voting, :create_vote], %{}, fn ->
+      attrs = Map.put(attrs, "ballot_id", ballot.id)
 
-    %Vote{}
-    |> Vote.create_changeset(attrs)
-    |> Repo.insert()
+      result =
+        %Vote{}
+        |> Vote.create_changeset(attrs)
+        |> Repo.insert()
+
+      {result, %{result: elem(result, 0)}}
+    end)
   end
 
   @doc """

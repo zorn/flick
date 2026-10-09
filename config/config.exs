@@ -34,6 +34,12 @@ config :flick, :basic_auth,
   username: System.get_env("BASIC_AUTH_ADMIN_USERNAME", "flick-admin"),
   password: System.get_env("BASIC_AUTH_ADMIN_PASSWORD", "unsafe-password")
 
+# Basic auth for `/metrics`. Production requires these environment variables
+# in `config/runtime.exs`. Other environments fall back to these defaults.
+config :flick, :metrics_auth,
+  username: System.get_env("METRICS_AUTH_USERNAME", "flick-metrics"),
+  password: System.get_env("METRICS_AUTH_PASSWORD", "unsafe-metrics-password")
+
 # Configures the mailer
 #
 # By default it uses the "Local" adapter which stores the emails
@@ -42,6 +48,13 @@ config :flick, :basic_auth,
 # For production it's recommended to configure a different adapter
 # at the `config/runtime.exs`.
 config :flick, Flick.Mailer, adapter: Swoosh.Adapters.Local
+
+config :flick, FlickWeb.PromEx,
+  disabled: false,
+  manual_metrics_start_delay: :no_delay,
+  drop_metrics_groups: [],
+  grafana: :disabled,
+  metrics_server: :disabled
 
 # Configure esbuild (the version is required)
 config :esbuild,
