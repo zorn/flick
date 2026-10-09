@@ -9,7 +9,9 @@ config :flick, FlickWeb.Endpoint,
   force_ssl: [
     rewrite_on: [:x_forwarded_proto],
     exclude: [
-      # paths: ["/health"],
+      # Prometheus scrapes over plain HTTP on Render's private network. Render
+      # redirects public HTTP to HTTPS before it reaches Flick.
+      paths: ["/metrics"],
       hosts: ["localhost", "127.0.0.1"]
     ]
   ],
