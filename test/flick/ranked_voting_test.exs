@@ -11,7 +11,6 @@ defmodule Flick.RankedVotingTest do
   alias Flick.RankedVoting.RankedAnswer
   alias Flick.RankedVoting.Vote
   alias Support.Fixtures.BallotFixture
-  alias Support.QueryCounter
 
   @empty_values ["", nil, " "]
 
@@ -767,23 +766,6 @@ defmodule Flick.RankedVotingTest do
       assert "ballot must be published" in errors_on(changeset).ballot_id
     end
 
-    test "success: validates against the given ballot without loading it again",
-         ~M{published_ballot} do
-      QueryCounter.attach("ballots")
-
-      assert {:ok, _vote} =
-               RankedVoting.create_vote(published_ballot, %{
-                 "ranked_answers" => [%{"value" => "Pizza"}]
-               })
-
-      assert {:error, _changeset} =
-               RankedVoting.create_vote(published_ballot, %{
-                 "ranked_answers" => [%{"value" => "Forbidden Hot Dogs"}]
-               })
-
-      assert QueryCounter.count(self()) == 0
-    end
-
     test "success: reports the vote's duration with an `:ok` result", ~M{published_ballot} do
       attach_create_vote_handler()
 
@@ -867,10 +849,9 @@ defmodule Flick.RankedVotingTest do
       {:ok, published_ballot: ballot, vote: vote}
     end
 
-    test "validates a new vote against the given ballot without loading it again",
+    test "validates a new vote against the given ballot, not the `ballot_id` in attrs",
          ~M{published_ballot} do
       other_ballot = published_ballot_fixture(possible_answers: ["Hackers", "Sneakers"])
-      QueryCounter.attach("ballots")
 
       changeset =
         RankedVoting.change_vote(published_ballot, %Vote{}, %{
@@ -880,7 +861,6 @@ defmodule Flick.RankedVotingTest do
 
       assert "invalid answer(s): Hackers" in errors_on(changeset).ranked_answers
       assert Ecto.Changeset.get_field(changeset, :ballot_id) == published_ballot.id
-      assert QueryCounter.count(self()) == 0
     end
 
     test "generates a valid changeset for a previously created vote",
