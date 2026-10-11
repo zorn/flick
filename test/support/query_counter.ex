@@ -32,11 +32,21 @@ defmodule Support.QueryCounter do
   @doc """
   Returns how many queries `pid` has made since the last count. Each count
   consumes the queries it reports.
+
+  For another process, `pid` must be a `GenServer`, such as a LiveView.
   """
   @spec count(pid()) :: non_neg_integer()
   def count(pid) do
+    # Erlang orders messages between one sender and one receiver. Once `pid`
+    # replies here, every query message it sent earlier has arrived.
+    if pid != self(), do: :sys.get_state(pid)
+
+    drain(pid)
+  end
+
+  defp drain(pid) do
     receive do
-      {__MODULE__, ^pid} -> 1 + count(pid)
+      {__MODULE__, ^pid} -> 1 + drain(pid)
     after
       0 -> 0
     end

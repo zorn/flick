@@ -232,7 +232,7 @@ defmodule Flick.RankedVoting do
   for the given `Flick.RankedVoting.Ballot`.
 
   A vote with an `id` gets an update changeset. Otherwise it gets a create
-  changeset. See `Flick.RankedVoting.Vote.create_changeset/3` and
+  changeset. A persisted vote from another ballot does not match. See `Flick.RankedVoting.Vote.create_changeset/3` and
   `Flick.RankedVoting.Vote.update_changeset/2` for more details.
 
   ## Options
@@ -242,7 +242,8 @@ defmodule Flick.RankedVoting do
   """
   @spec change_vote(Ballot.t(), Vote.t() | Vote.struct_t(), map(), keyword()) ::
           Ecto.Changeset.t(Vote.t())
-  def change_vote(%Ballot{} = ballot, %Vote{} = vote, attrs, opts \\ []) do
+  def change_vote(%Ballot{} = ballot, %Vote{} = vote, attrs, opts \\ [])
+      when is_nil(vote.id) or vote.ballot_id == ballot.id do
     opts = Keyword.validate!(opts, action: nil)
 
     changeset =

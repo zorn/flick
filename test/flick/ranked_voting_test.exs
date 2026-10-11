@@ -897,6 +897,14 @@ defmodule Flick.RankedVotingTest do
       assert %Ecto.Changeset{valid?: true} = changeset
     end
 
+    test "does not match a previously created vote from another ballot", ~M{vote} do
+      other_ballot = published_ballot_fixture()
+
+      assert_raise FunctionClauseError, fn ->
+        RankedVoting.change_vote(other_ballot, vote, %{weight: "2.0"})
+      end
+    end
+
     test "generates an invalid changeset for a previously created vote",
          ~M{published_ballot, vote} do
       changeset = RankedVoting.change_vote(published_ballot, vote, %{weight: "-1.0"})
