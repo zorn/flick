@@ -51,26 +51,28 @@ defmodule Flick.RankedVoting.Vote do
 
   @doc """
   Returns an `Ecto.Changeset` value appropriate for creating a
-  `Flick.RankedVoting.Vote` entity.
+  `Flick.RankedVoting.Vote` entity for the given `Flick.RankedVoting.Ballot`.
+
+  The vote belongs to the given ballot, whatever `ballot_id` the attributes
+  carry. The validations read the given ballot rather than loading it again.
 
   The `weight` field can not be set during creation and will default to `1.0`.
   """
-  @spec create_changeset(struct_t(), map()) :: Changeset.t(struct_t())
-  def create_changeset(vote, attrs) do
+  @spec create_changeset(struct_t(), Ballot.t(), map()) :: Changeset.t(struct_t())
+  def create_changeset(vote, %Ballot{} = ballot, attrs) do
     attrs = EmbedParams.cap(attrs, "ranked_answers", @max_ranked_answers)
 
-    vote
-    |> cast(attrs, [:ballot_id, :full_name])
-    |> validate_required([:ballot_id])
+    %{vote | ballot_id: ballot.id}
+    |> cast(attrs, [:full_name])
     # Postgres measures `varchar(255)` in code points, not graphemes.
     |> validate_length(:full_name, max: @max_full_name_length, count: :codepoints)
     |> cast_embed(:ranked_answers,
       with: &RankedAnswer.changeset/2,
       required: true
     )
-    |> validate_ballot_is_published()
-    |> validate_ranked_answer_count()
-    |> validate_ranked_answers_are_present_in_ballot()
+    |> validate_ballot_is_published(ballot)
+    |> validate_ranked_answer_count(ballot)
+    |> validate_ranked_answers_are_present_in_ballot(ballot)
     |> validate_ranked_answers_are_not_duplicated()
     |> validate_first_ranked_answers_has_valid_value()
   end
@@ -89,20 +91,15 @@ defmodule Flick.RankedVoting.Vote do
     |> validate_number(:weight, greater_than_or_equal_to: 0.0)
   end
 
-  defp validate_ballot_is_published(changeset) do
-    ballot = Flick.RankedVoting.get_ballot!(get_field(changeset, :ballot_id))
-
-    validate_change(changeset, :ballot_id, fn :ballot_id, _ ->
-      if is_nil(ballot.published_at) do
-        [ballot_id: "ballot must be published"]
-      else
-        []
-      end
-    end)
+  defp validate_ballot_is_published(changeset, ballot) do
+    if is_nil(ballot.published_at) do
+      add_error(changeset, :ballot_id, "ballot must be published")
+    else
+      changeset
+    end
   end
 
-  defp validate_ranked_answer_count(changeset) do
-    ballot = Flick.RankedVoting.get_ballot!(get_field(changeset, :ballot_id))
+  defp validate_ranked_answer_count(changeset, ballot) do
     allowed_count = Flick.RankedVoting.allowed_answer_count_for_ballot(ballot)
 
     if length(get_field(changeset, :ranked_answers)) > allowed_count do
@@ -117,11 +114,11 @@ defmodule Flick.RankedVoting.Vote do
     end
   end
 
-  defp validate_ranked_answers_are_present_in_ballot(changeset) do
+  defp validate_ranked_answers_are_present_in_ballot(changeset, ballot) do
     validate_change(changeset, :ranked_answers, fn :ranked_answers, new_ranked_answers ->
       # For each of the `ranked_answers`, make sure the answer value is present
       # in the ballot's possible answers.
-      invalid_answers = invalid_answers(changeset, new_ranked_answers)
+      invalid_answers = invalid_answers(ballot, new_ranked_answers)
 
       if Enum.empty?(invalid_answers) do
         []
@@ -135,9 +132,8 @@ defmodule Flick.RankedVoting.Vote do
     end)
   end
 
-  @spec invalid_answers(Changeset.t(t()), [Changeset.t(RankedAnswer.t())]) :: [String.t()]
-  defp invalid_answers(changeset, new_ranked_answers) do
-    ballot = Flick.RankedVoting.get_ballot!(get_field(changeset, :ballot_id))
+  @spec invalid_answers(Ballot.t(), [Changeset.t(RankedAnswer.t())]) :: [String.t()]
+  defp invalid_answers(ballot, new_ranked_answers) do
     possible_answers = Ballot.possible_answer_values(ballot) ++ ["", nil]
 
     new_ranked_answers

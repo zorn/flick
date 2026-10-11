@@ -7,6 +7,8 @@ defmodule FlickWeb.Vote.VoteCaptureLiveTest do
 
   use FlickWeb.ConnCase, async: true
 
+  alias Support.QueryCounter
+
   setup ~M{conn} do
     prepublished_ballot =
       ballot_fixture(%{
@@ -75,6 +77,26 @@ defmodule FlickWeb.Vote.VoteCaptureLiveTest do
 
     # FIXME: Test the vote was created. Will require the creation of a
     # `list_votes_for_ballot/1` function.
+  end
+
+  test "loads the ballot once per mount and not again to validate", ~M{conn} do
+    QueryCounter.attach("ballots")
+
+    # The HTTP render runs in the test process.
+    conn = get(conn, ~p"/ballot/movie-night")
+    assert QueryCounter.count(self()) == 1
+
+    # The connected mount runs in the LiveView process.
+    {:ok, view, _html} = live(conn)
+    assert QueryCounter.count(view.pid) == 1
+
+    view
+    |> form("#vote-form",
+      vote: %{"ranked_answers" => %{"0" => %{"_persistent_id" => "0", "value" => "Tron"}}}
+    )
+    |> render_change()
+
+    assert QueryCounter.count(view.pid) == 0
   end
 
   test "redirects when ballot is an unpublished draft", ~M{conn} do

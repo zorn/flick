@@ -201,11 +201,9 @@ defmodule Flick.RankedVoting do
   @spec create_vote(Ballot.t(), map()) :: {:ok, Vote.t()} | {:error, Ecto.Changeset.t(Vote.t())}
   def create_vote(ballot, attrs) do
     :telemetry.span([:flick, :ranked_voting, :create_vote], %{}, fn ->
-      attrs = Map.put(attrs, "ballot_id", ballot.id)
-
       result =
         %Vote{}
-        |> Vote.create_changeset(attrs)
+        |> Vote.create_changeset(ballot, attrs)
         |> Repo.insert()
 
       {result, %{result: elem(result, 0)}}
@@ -230,10 +228,11 @@ defmodule Flick.RankedVoting do
   end
 
   @doc """
-  Returns an `Ecto.Changeset` to changes to a `Flick.RankedVoting.Vote` value.
+  Returns an `Ecto.Changeset` to changes to a `Flick.RankedVoting.Vote` value
+  for the given `Flick.RankedVoting.Ballot`.
 
   If the incoming `vote` struct has an `id`, the changeset will be created for
-  updating, else creation. See `Flick.RankedVoting.Vote.create_changeset/2` and
+  updating, else creation. See `Flick.RankedVoting.Vote.create_changeset/3` and
   `Flick.RankedVoting.Vote.update_changeset/2` for more details.
 
   ## Options
@@ -241,15 +240,16 @@ defmodule Flick.RankedVoting do
   * `:action` - An optional atom applied to the changeset, useful for forms that
     look to a changeset's action to influence form behavior.
   """
-  @spec change_vote(Vote.t() | Vote.struct_t(), map(), keyword()) :: Ecto.Changeset.t(Vote.t())
-  def change_vote(%Vote{} = vote, attrs, opts \\ []) do
+  @spec change_vote(Ballot.t(), Vote.t() | Vote.struct_t(), map(), keyword()) ::
+          Ecto.Changeset.t(Vote.t())
+  def change_vote(%Ballot{} = ballot, %Vote{} = vote, attrs, opts \\ []) do
     opts = Keyword.validate!(opts, action: nil)
 
     changeset =
       if vote.id do
         Vote.update_changeset(vote, attrs)
       else
-        Vote.create_changeset(vote, attrs)
+        Vote.create_changeset(vote, ballot, attrs)
       end
 
     if opts[:action] do
