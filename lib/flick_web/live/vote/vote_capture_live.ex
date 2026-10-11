@@ -66,6 +66,12 @@ defmodule FlickWeb.Vote.VoteCaptureLive do
         |> redirect(to: ~p"/")
         |> noreply()
 
+      {:error, :ballot_closed} ->
+        socket
+        |> put_flash(:error, "This ballot closed before your vote was recorded.")
+        |> redirect(to: ~p"/ballot/#{ballot.url_slug}/results")
+        |> noreply()
+
       {:error, changeset} ->
         socket
         |> assign(form: to_form(changeset))
