@@ -95,6 +95,20 @@ defmodule FlickWeb.Vote.VoteCaptureLiveTest do
     assert flash["error"] == "This ballot closed before your vote was recorded."
   end
 
+  test "shows the form's errors when an open ballot rejects a vote", ~M{view} do
+    payload = %{
+      "ranked_answers" => %{
+        "0" => %{"_persistent_id" => "0", "value" => ""}
+      }
+    }
+
+    view
+    |> form("#vote-form", vote: payload)
+    |> render_submit()
+
+    assert has_element?(view, "#{ranked_answer_selector(0)} p", "can't be blank")
+  end
+
   test "redirects when ballot is an unpublished draft", ~M{conn} do
     ballot_fixture(%{url_slug: "red-car"})
     assert {:error, {:redirect, %{to: "/", flash: flash}}} = live(conn, ~p"/ballot/red-car")

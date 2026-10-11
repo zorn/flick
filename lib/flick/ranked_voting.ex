@@ -198,26 +198,32 @@ defmodule Flick.RankedVoting do
   @doc """
   Records a vote for the given `Flick.RankedVoting.Ballot` entity.
 
-  The vote is validated against the ballot as currently stored, not the given
-  struct, so a ballot that closed after it was loaded rejects the vote.
+  It checks the stored ballot, not the given struct. It returns
+  `{:error, :ballot_closed}` when the ballot has closed, even if the struct
+  still shows it as published.
   """
-  @spec create_vote(Ballot.t(), map()) :: {:ok, Vote.t()} | {:error, Ecto.Changeset.t(Vote.t())}
+  @spec create_vote(Ballot.t(), map()) ::
+          {:ok, Vote.t()} | {:error, Ecto.Changeset.t(Vote.t())} | {:error, :ballot_closed}
   def create_vote(%Ballot{id: ballot_id}, attrs) do
     :telemetry.span([:flick, :ranked_voting, :create_vote], %{}, fn ->
-      result =
-        Repo.transact(fn ->
-          # The share lock makes a concurrent `close_ballot/2` wait for this
-          # insert to commit, so no vote lands after the ballot closes. Votes
-          # do not block each other.
-          ballot = Ballot |> lock("FOR SHARE") |> Repo.get!(ballot_id)
-
-          %Vote{}
-          |> Vote.create_changeset(ballot, attrs)
-          |> Repo.insert()
-        end)
-
+      result = Repo.transact(fn -> insert_vote_unless_closed(ballot_id, attrs) end)
       {result, %{result: elem(result, 0)}}
     end)
+  end
+
+  defp insert_vote_unless_closed(ballot_id, attrs) do
+    # A concurrent `close_ballot/2` waits on this share lock until the insert
+    # commits. No vote can land after the ballot closes. Votes do not block
+    # each other.
+    ballot = Ballot |> lock("FOR SHARE") |> Repo.get!(ballot_id)
+
+    if ballot.closed_at do
+      {:error, :ballot_closed}
+    else
+      %Vote{}
+      |> Vote.create_changeset(ballot, attrs)
+      |> Repo.insert()
+    end
   end
 
   @doc """
