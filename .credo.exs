@@ -197,6 +197,7 @@
            min_assert_receive_timeout: 1_000, max_refute_receive_timeout: 100},
           {Jump.CredoChecks.AvoidFunctionLevelElse, []},
           {Jump.CredoChecks.AvoidLoggerConfigureInTest, []},
+          {Jump.CredoChecks.AvoidModifyingStructBeforeChangeset, []},
           {Jump.CredoChecks.AvoidSocketAssignsInTest, []},
           {Jump.CredoChecks.ConditionalAssertion, []},
           {Jump.CredoChecks.DoctestIExExamples,
