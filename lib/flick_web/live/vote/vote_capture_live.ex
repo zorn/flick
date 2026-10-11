@@ -44,14 +44,15 @@ defmodule FlickWeb.Vote.VoteCaptureLive do
     ranked_answer_count = RankedVoting.allowed_answer_count_for_ballot(ballot)
     ranked_answers = Enum.map(1..ranked_answer_count, fn _ -> %{value: nil} end)
 
-    vote_params = %{ballot_id: ballot.id, ranked_answers: ranked_answers}
-    changeset = RankedVoting.change_vote(%Vote{}, vote_params)
+    vote_params = %{ranked_answers: ranked_answers}
+    changeset = RankedVoting.change_vote(ballot, %Vote{}, vote_params)
     assign(socket, form: to_form(changeset))
   end
 
   @impl Phoenix.LiveView
   def handle_event("validate", %{"vote" => vote_params}, socket) do
-    changeset = RankedVoting.change_vote(%Vote{}, vote_params, action: :validate)
+    %{ballot: ballot} = socket.assigns
+    changeset = RankedVoting.change_vote(ballot, %Vote{}, vote_params, action: :validate)
     {:noreply, assign(socket, form: to_form(changeset))}
   end
 
@@ -82,8 +83,6 @@ defmodule FlickWeb.Vote.VoteCaptureLive do
         </div>
 
         <.simple_form for={@form} id="vote-form" phx-change="validate" phx-submit="save">
-          <%!-- I wonder if we should drop this hidden and just inject the id manually? --%>
-          <.input type="hidden" field={@form[:ballot_id]} value={@ballot.id} />
           <.input field={@form[:full_name]} label="Name (Optional)" />
 
           <div id="question-title" class="prose">

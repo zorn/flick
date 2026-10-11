@@ -829,7 +829,7 @@ defmodule Flick.RankedVotingTest do
     end
   end
 
-  describe "change_vote/2" do
+  describe "change_vote/4" do
     setup do
       ballot =
         published_ballot_fixture(
@@ -849,20 +849,45 @@ defmodule Flick.RankedVotingTest do
       {:ok, published_ballot: ballot, vote: vote}
     end
 
-    test "generates a valid changeset for a previously created vote", ~M{vote} do
-      assert %Ecto.Changeset{valid?: true} = RankedVoting.change_vote(vote, %{})
+    test "validates a new vote against the given ballot, not the `ballot_id` in attrs",
+         ~M{published_ballot} do
+      other_ballot = published_ballot_fixture(possible_answers: ["Hackers", "Sneakers"])
+
+      changeset =
+        RankedVoting.change_vote(published_ballot, %Vote{}, %{
+          "ballot_id" => other_ballot.id,
+          "ranked_answers" => [%{"value" => "Hackers"}]
+        })
+
+      assert "invalid answer(s): Hackers" in errors_on(changeset).ranked_answers
+      assert Ecto.Changeset.get_field(changeset, :ballot_id) == published_ballot.id
     end
 
-    test "generates a valid changeset when the `weight` change is an empty string", ~M{vote} do
+    test "generates a valid changeset for a previously created vote",
+         ~M{published_ballot, vote} do
+      assert %Ecto.Changeset{valid?: true} = RankedVoting.change_vote(published_ballot, vote, %{})
+    end
+
+    test "generates a valid changeset when the `weight` change is an empty string",
+         ~M{published_ballot, vote} do
       # This is because "Empty values are always replaced by the default value
       # of the respective field."
       # https://hexdocs.pm/ecto/Ecto.Changeset.html#cast/4-options
-      changeset = RankedVoting.change_vote(vote, %{weight: ""})
+      changeset = RankedVoting.change_vote(published_ballot, vote, %{weight: ""})
       assert %Ecto.Changeset{valid?: true} = changeset
     end
 
-    test "generates an invalid changeset for a previously created vote", ~M{vote} do
-      changeset = RankedVoting.change_vote(vote, %{weight: "-1.0"})
+    test "does not match a previously created vote from another ballot", ~M{vote} do
+      other_ballot = published_ballot_fixture()
+
+      assert_raise FunctionClauseError, fn ->
+        RankedVoting.change_vote(other_ballot, vote, %{weight: "2.0"})
+      end
+    end
+
+    test "generates an invalid changeset for a previously created vote",
+         ~M{published_ballot, vote} do
+      changeset = RankedVoting.change_vote(published_ballot, vote, %{weight: "-1.0"})
       assert %Ecto.Changeset{valid?: false} = changeset
       assert "must be greater than or equal to 0.0" in errors_on(changeset).weight
     end

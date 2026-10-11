@@ -63,13 +63,14 @@ defmodule FlickWeb.Ballots.ViewerLive do
   end
 
   def handle_event("present-inline-editor", %{"vote-id" => vote_id}, socket) do
+    %{ballot: ballot} = socket.assigns
     vote = assert_vote_id(socket, vote_id)
 
     # To present the inline editor we need only create the form and store it in
     # the assigns.
     socket
     |> update(:vote_forms, fn current_vote_forms ->
-      vote_form = to_form(RankedVoting.change_vote(vote, %{}))
+      vote_form = to_form(RankedVoting.change_vote(ballot, vote, %{}))
       Map.put(current_vote_forms, vote_id, vote_form)
     end)
     |> noreply()
@@ -88,12 +89,13 @@ defmodule FlickWeb.Ballots.ViewerLive do
 
   def handle_event("validate", params, socket) do
     %{"vote_id" => vote_id, "weight" => weight} = params
+    %{ballot: ballot} = socket.assigns
     vote = assert_vote_id(socket, vote_id)
 
     socket
     |> update(:vote_forms, fn current_vote_forms ->
       change = %{weight: weight}
-      vote_form = to_form(RankedVoting.change_vote(vote, change, action: :validate))
+      vote_form = to_form(RankedVoting.change_vote(ballot, vote, change, action: :validate))
       Map.put(current_vote_forms, vote_id, vote_form)
     end)
     |> noreply()
