@@ -53,8 +53,8 @@ defmodule Flick.RankedVoting.Vote do
   Returns an `Ecto.Changeset` value appropriate for creating a
   `Flick.RankedVoting.Vote` entity for the given `Flick.RankedVoting.Ballot`.
 
-  The vote belongs to the given ballot, whatever `ballot_id` the attributes
-  carry. The validations read the given ballot rather than loading it again.
+  The vote belongs to the given ballot. The changeset ignores any `ballot_id`
+  in `attrs`.
 
   The `weight` field can not be set during creation and will default to `1.0`.
   """

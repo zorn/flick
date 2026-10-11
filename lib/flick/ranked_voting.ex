@@ -228,11 +228,11 @@ defmodule Flick.RankedVoting do
   end
 
   @doc """
-  Returns an `Ecto.Changeset` to changes to a `Flick.RankedVoting.Vote` value
+  Returns an `Ecto.Changeset` for changes to a `Flick.RankedVoting.Vote` value
   for the given `Flick.RankedVoting.Ballot`.
 
-  If the incoming `vote` struct has an `id`, the changeset will be created for
-  updating, else creation. See `Flick.RankedVoting.Vote.create_changeset/3` and
+  A vote with an `id` gets an update changeset. Otherwise it gets a create
+  changeset. See `Flick.RankedVoting.Vote.create_changeset/3` and
   `Flick.RankedVoting.Vote.update_changeset/2` for more details.
 
   ## Options

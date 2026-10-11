@@ -2,9 +2,9 @@ defmodule Support.QueryCounter do
   @moduledoc """
   Counts the `Flick.Repo` queries that a process makes against one table.
 
-  Telemetry handlers are global, so the handler forwards every query against
-  the table along with the process that made it. A test then counts only the
-  queries from the processes it owns, which keeps it safe beside async tests.
+  Telemetry handlers are global. The handler sends the test process every query
+  against the table, tagged with the process that made it. A test counts only
+  the queries of its own processes, so async tests do not interfere.
   """
 
   use Boundary, top_level?: true, deps: []
@@ -12,7 +12,7 @@ defmodule Support.QueryCounter do
   import ExUnit.Callbacks, only: [on_exit: 1]
 
   @doc """
-  Starts forwarding the test process every `Flick.Repo` query against `source`.
+  Sends the test process a message for each `Flick.Repo` query against `source`.
   """
   @spec attach(String.t()) :: :ok
   def attach(source) do
@@ -30,8 +30,8 @@ defmodule Support.QueryCounter do
   end
 
   @doc """
-  Returns how many queries `pid` has made since the last count, and forgets
-  them so that the next count starts from zero.
+  Returns how many queries `pid` has made since the last count. Each count
+  consumes the queries it reports.
   """
   @spec count(pid()) :: non_neg_integer()
   def count(pid) do

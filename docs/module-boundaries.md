@@ -48,6 +48,7 @@ The test helpers in `test/support/` are top-level boundaries with their own `dep
 | `Flick.DataCase` | `Flick.Repo` |
 | `FlickWeb.ConnCase` | `Flick.DataCase` |
 | `Support.Fixtures.BallotFixture` | `Flick.RankedVoting` |
+| `Support.QueryCounter` | — |
 
 These modules exist only in the `:test` build, so `mix boundary.spec` in `:dev` does not show them. Test files (`*_test.exs`) are not compiled into the project, so Boundary does not check them.
 
