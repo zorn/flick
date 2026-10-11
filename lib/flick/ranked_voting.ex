@@ -207,9 +207,13 @@ defmodule Flick.RankedVoting do
   def create_vote(%Ballot{id: ballot_id}, attrs) do
     :telemetry.span([:flick, :ranked_voting, :create_vote], %{}, fn ->
       result = Repo.transact(fn -> insert_vote_unless_closed(ballot_id, attrs) end)
-      {result, %{result: elem(result, 0)}}
+      {result, %{result: create_vote_result_tag(result)}}
     end)
   end
+
+  # Tags a closed-ballot rejection apart from an invalid form in the metrics.
+  defp create_vote_result_tag({:error, :ballot_closed}), do: :ballot_closed
+  defp create_vote_result_tag({status, _value}), do: status
 
   defp insert_vote_unless_closed(ballot_id, attrs) do
     # A concurrent `close_ballot/2` waits on this share lock until the insert

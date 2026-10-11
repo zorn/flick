@@ -804,6 +804,16 @@ defmodule Flick.RankedVotingTest do
       assert_receive {:create_vote_stop, %{duration: duration}, %{result: :error}}
       assert is_integer(duration)
     end
+
+    test "failure: reports a vote on a closed ballot with a `:ballot_closed` result" do
+      ballot = closed_ballot_fixture()
+      attach_create_vote_handler()
+
+      assert {:error, :ballot_closed} = RankedVoting.create_vote(ballot, %{})
+
+      assert_receive {:create_vote_stop, %{duration: duration}, %{result: :ballot_closed}}
+      assert is_integer(duration)
+    end
   end
 
   describe "update_vote/2" do
