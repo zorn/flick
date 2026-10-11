@@ -634,6 +634,23 @@ defmodule Flick.RankedVotingTest do
                })
     end
 
+    test "failure: a closed ballot rejects a vote" do
+      ballot = closed_ballot_fixture(%{possible_answers: ["Pizza", "Tacos"]})
+      attrs = %{"ranked_answers" => [%{"value" => "Pizza"}]}
+
+      assert {:error, changeset} = RankedVoting.create_vote(ballot, attrs)
+      assert {"ballot is closed", [validation: :ballot_closed]} = changeset.errors[:ballot_id]
+    end
+
+    test "failure: a vote is rejected when the ballot closed after it was loaded",
+         ~M{published_ballot} do
+      {:ok, _closed_ballot} = RankedVoting.close_ballot(published_ballot)
+      attrs = %{"ranked_answers" => [%{"value" => "Pizza"}]}
+
+      assert {:error, changeset} = RankedVoting.create_vote(published_ballot, attrs)
+      assert {"ballot is closed", [validation: :ballot_closed]} = changeset.errors[:ballot_id]
+    end
+
     test "failure: a vote's `full_name` can't be longer than 255 characters",
          ~M{published_ballot} do
       attrs = %{

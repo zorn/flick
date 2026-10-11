@@ -197,14 +197,24 @@ defmodule Flick.RankedVoting do
 
   @doc """
   Records a vote for the given `Flick.RankedVoting.Ballot` entity.
+
+  The vote is validated against the ballot as currently stored, not the given
+  struct, so a ballot that closed after it was loaded rejects the vote.
   """
   @spec create_vote(Ballot.t(), map()) :: {:ok, Vote.t()} | {:error, Ecto.Changeset.t(Vote.t())}
-  def create_vote(ballot, attrs) do
+  def create_vote(%Ballot{id: ballot_id}, attrs) do
     :telemetry.span([:flick, :ranked_voting, :create_vote], %{}, fn ->
       result =
-        %Vote{}
-        |> Vote.create_changeset(ballot, attrs)
-        |> Repo.insert()
+        Repo.transact(fn ->
+          # The share lock makes a concurrent `close_ballot/2` wait for this
+          # insert to commit, so no vote lands after the ballot closes. Votes
+          # do not block each other.
+          ballot = Ballot |> lock("FOR SHARE") |> Repo.get!(ballot_id)
+
+          %Vote{}
+          |> Vote.create_changeset(ballot, attrs)
+          |> Repo.insert()
+        end)
 
       {result, %{result: elem(result, 0)}}
     end)

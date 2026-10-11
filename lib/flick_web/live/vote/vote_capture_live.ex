@@ -67,10 +67,21 @@ defmodule FlickWeb.Vote.VoteCaptureLive do
         |> noreply()
 
       {:error, changeset} ->
-        socket
-        |> assign(form: to_form(changeset))
-        |> noreply()
+        if ballot_closed?(changeset) do
+          socket
+          |> put_flash(:error, "This ballot closed before your vote was recorded.")
+          |> redirect(to: ~p"/ballot/#{ballot.url_slug}/results")
+          |> noreply()
+        else
+          socket
+          |> assign(form: to_form(changeset))
+          |> noreply()
+        end
     end
+  end
+
+  defp ballot_closed?(changeset) do
+    Enum.any?(changeset.errors, &match?({:ballot_id, {_, [validation: :ballot_closed]}}, &1))
   end
 
   @impl Phoenix.LiveView

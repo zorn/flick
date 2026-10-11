@@ -77,6 +77,24 @@ defmodule FlickWeb.Vote.VoteCaptureLiveTest do
     # `list_votes_for_ballot/1` function.
   end
 
+  test "redirects to the results page when the ballot closes before the vote is submitted",
+       ~M{view, ballot} do
+    {:ok, _closed_ballot} = Flick.RankedVoting.close_ballot(ballot)
+
+    payload = %{
+      "ranked_answers" => %{
+        "0" => %{"_persistent_id" => "0", "value" => "The Matrix"}
+      }
+    }
+
+    view
+    |> form("#vote-form", vote: payload)
+    |> render_submit()
+
+    flash = assert_redirected(view, ~p"/ballot/movie-night/results")
+    assert flash["error"] == "This ballot closed before your vote was recorded."
+  end
+
   test "redirects when ballot is an unpublished draft", ~M{conn} do
     ballot_fixture(%{url_slug: "red-car"})
     assert {:error, {:redirect, %{to: "/", flash: flash}}} = live(conn, ~p"/ballot/red-car")

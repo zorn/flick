@@ -71,6 +71,7 @@ defmodule Flick.RankedVoting.Vote do
       required: true
     )
     |> validate_ballot_is_published(ballot)
+    |> validate_ballot_is_open(ballot)
     |> validate_ranked_answer_count(ballot)
     |> validate_ranked_answers_are_present_in_ballot(ballot)
     |> validate_ranked_answers_are_not_duplicated()
@@ -96,6 +97,14 @@ defmodule Flick.RankedVoting.Vote do
       add_error(changeset, :ballot_id, "ballot must be published")
     else
       changeset
+    end
+  end
+
+  defp validate_ballot_is_open(changeset, ballot) do
+    if is_nil(ballot.closed_at) do
+      changeset
+    else
+      add_error(changeset, :ballot_id, "ballot is closed", validation: :ballot_closed)
     end
   end
 
