@@ -1,0 +1,55 @@
+# Flick's alerts. Grafana evaluates the rules against Prometheus and sends
+# notifications to ntfy. Provisioned resources are read-only in the UI: change
+# them here and rebuild.
+
+apiVersion: 1
+
+contactPoints:
+  - orgId: 1
+    name: ntfy
+    receivers:
+      - uid: ntfy
+        type: webhook
+        settings:
+          # Compose sets this locally. Render sets it in production.
+          url: $NTFY_URL
+
+policies:
+  - orgId: 1
+    receiver: ntfy
+    group_by: [grafana_folder, alertname]
+    # The 5m default delays the "resolved" notification.
+    group_interval: 1m
+
+groups:
+  - orgId: 1
+    name: flick
+    folder: Flick
+    interval: 30s
+    rules:
+      - uid: flick-not-scraped
+        title: Flick not scraped
+        condition: down
+        data:
+          - refId: up
+            datasourceUid: prometheus
+            relativeTimeRange: {from: 300, to: 0}
+            model:
+              refId: up
+              expr: up{job="flick"}
+              instant: true
+          - refId: down
+            datasourceUid: __expr__
+            model:
+              refId: down
+              type: threshold
+              expression: up
+              conditions:
+                - evaluator: {type: lt, params: [1]}
+        for: 1m
+        # No series means Prometheus has no target for Flick. A failed query
+        # means Grafana can't reach Prometheus. Both hide an outage, so both alert.
+        noDataState: Alerting
+        execErrState: Alerting
+        annotations:
+          summary: Flick may be down. Prometheus has not scraped it for over a minute, or Grafana can't reach Prometheus.

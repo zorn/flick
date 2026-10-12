@@ -6,6 +6,7 @@
 #
 # Prometheus: http://localhost:9091
 # Grafana:    http://localhost:3001
+# ntfy:       http://localhost:8081
 #
 # Flick must be running on port 4000 for Prometheus to scrape it.
 
@@ -28,12 +29,25 @@ services:
       - "3001:3000"
     environment:
       PROMETHEUS_HOST: prometheus
+      # Where alerts go.
+      NTFY_URL: http://ntfy/flick-alerts?template=grafana
+      # Links in alerts point here.
+      GF_SERVER_ROOT_URL: http://localhost:3001
       # Local only: every visitor is an admin, with no login.
       GF_AUTH_ANONYMOUS_ENABLED: "true"
       GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
       GF_AUTH_DISABLE_LOGIN_FORM: "true"
     depends_on:
       - prometheus
+      - ntfy
+
+  # Receives Grafana's alerts locally. Open http://localhost:8081 and subscribe
+  # to flick-alerts to read them.
+  ntfy:
+    image: binwiederhier/ntfy:v2.29.0
+    command: serve
+    ports:
+      - "8081:80"
 
 volumes:
   prometheus_data:

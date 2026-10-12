@@ -50,6 +50,8 @@ The uid is the part of the dashboard's URL after `/d/`. Keep `uid` so the dashbo
 
 On Render, the same images run as `flick-prometheus`, a private service with no public URL, and `flick-grafana`, which requires a login. Verify changes against the local stack. Only a person with the Grafana login can view production data.
 
+Alert rules live in `instrumentation/grafana/provisioning/alerting/alerting.yml` and are read-only in the Grafana UI. Locally, alerts go to the ntfy container: read them at `http://localhost:8081` on the `flick-alerts` topic. To test a rule, cause its condition locally and wait for the alert. For example, stop Flick to fire "Flick not scraped". In production, alerts go to the ntfy.sh topic URL in `NTFY_URL` on Render. Never write that topic into the repo.
+
 ## Flick domain knowledge
 
 ### Ballot state machine
