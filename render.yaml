@@ -124,6 +124,14 @@ services:
       type: pserv
       name: flick-prometheus
       property: host
+  # The ntfy.sh topic URL for alerts. Set it by hand. Anyone who knows the
+  # topic can read it. Render also ignores a new `sync: false` variable in an
+  # existing Blueprint.
+  - key: NTFY_URL
+    sync: false
+  # Links in alerts point here.
+  - key: GF_SERVER_ROOT_URL
+    value: https://flick-grafana.onrender.com
   buildFilter:
     paths:
     - instrumentation/grafana/**
