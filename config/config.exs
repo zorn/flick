@@ -98,6 +98,10 @@ if config_env() in [:dev, :test] do
   config :excellent_migrations, start_after: "20260927221423"
 end
 
+config :opentelemetry,
+  resource: %{service: %{name: "flick"}},
+  sampler: {:parent_based, %{root: {FlickWeb.TraceSampler, []}}}
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"

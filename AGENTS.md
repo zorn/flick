@@ -52,6 +52,20 @@ On Render, the same images run as `flick-prometheus`, a private service with no 
 
 Alert rules live in `instrumentation/grafana/provisioning/alerting/alerting.yml` and are read-only in the Grafana UI. Locally, alerts go to the ntfy container: read them at `http://localhost:8081` on the `flick-alerts` topic. To test a rule, cause its condition locally and wait for the alert. For example, stop Flick to fire "Flick not scraped". In production, alerts go to the ntfy.sh topic URL in `NTFY_URL` on Render. Never write that topic into the repo.
 
+Flick sends OpenTelemetry traces to Tempo, which the same stack runs. Each HTTP request, LiveView callback, and Ecto query becomes a span. A LiveView event is its own trace, because it arrives over the WebSocket. Query Tempo at `http://localhost:3200`. Search leaves out the newest 30 seconds, so wait at least 40 seconds after causing the request you want. Always pass `start` and `end`:
+
+```sh
+# The last 20 vote saves in the past hour.
+curl -sG localhost:3200/api/search \
+  --data-urlencode 'q={ name = "FlickWeb.Vote.VoteCaptureLive.handle_event#save" }' \
+  --data-urlencode "start=$(($(date +%s) - 3600))" --data-urlencode "end=$(date +%s)" | jq '.traces'
+
+# One trace, with its spans in a compact form.
+curl -s -H 'Accept: application/vnd.grafana.llm' localhost:3200/api/v2/traces/TRACE_ID | jq
+```
+
+Spans never hold SQL text, LiveView params, IP addresses, or ballot secrets. Keep it that way: `FlickWeb.Endpoint` redacts request attributes, and `FlickWeb.TraceSampler` drops `/metrics` and `/live/websocket`.
+
 ## Flick domain knowledge
 
 ### Ballot state machine

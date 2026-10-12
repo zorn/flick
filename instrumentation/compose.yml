@@ -29,6 +29,7 @@ services:
       - "3001:3000"
     environment:
       PROMETHEUS_HOST: prometheus
+      TEMPO_HOST: tempo
       # Where alerts go.
       NTFY_URL: http://ntfy/flick-alerts?template=grafana
       # Links in alerts point here.
@@ -40,6 +41,7 @@ services:
     depends_on:
       - prometheus
       - ntfy
+      - tempo
 
   # Receives Grafana's alerts locally. Open http://localhost:8081 and subscribe
   # to flick-alerts to read them.
@@ -49,5 +51,15 @@ services:
     ports:
       - "8081:80"
 
+  # Stores Flick's traces. Flick sends spans to 4318, and Grafana and agents query 3200.
+  tempo:
+    build: ./tempo
+    ports:
+      - "3200:3200"
+      - "4318:4318"
+    volumes:
+      - tempo_data:/var/tempo
+
 volumes:
   prometheus_data:
+  tempo_data:

@@ -12,3 +12,9 @@ datasources:
     jsonData:
       # Matches the scrape interval, so `$__rate_interval` stays correct.
       timeInterval: 15s
+  - name: tempo
+    uid: tempo
+    type: tempo
+    # Compose sets this to tempo. Render sets it to the private service's
+    # internal hostname.
+    url: http://$TEMPO_HOST:3200

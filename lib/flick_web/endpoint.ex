@@ -21,6 +21,8 @@ defmodule FlickWeb.Endpoint do
     websocket: [connect_info: [session: @session_options], max_frame_size: 1_000_000],
     longpoll: [connect_info: [session: @session_options]]
 
+  plug :redact_trace_attributes
+
   # This plug runs before the code reloader and `Plug.Telemetry`, so scrapes
   # skip the repo checks and stay out of the HTTP metrics.
   plug :prom_ex_metrics
@@ -79,4 +81,22 @@ defmodule FlickWeb.Endpoint do
   end
 
   defp prom_ex_metrics(conn, _opts), do: conn
+
+  # Bandit's request span records the voter's IP address, the full path, and
+  # the query string. Ballot URLs carry the ballot's secret, and LiveView's
+  # socket URL carries a CSRF token. Overwrite all three before they reach Tempo.
+  @uuid ~r/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i
+
+  defp redact_trace_attributes(conn, _opts) do
+    OpenTelemetry.Tracer.set_attributes(%{
+      "client.address": "redacted",
+      "url.path": String.replace(conn.request_path, @uuid, ":uuid")
+    })
+
+    if conn.query_string != "" do
+      OpenTelemetry.Tracer.set_attribute(:"url.query", "redacted")
+    end
+
+    conn
+  end
 end
