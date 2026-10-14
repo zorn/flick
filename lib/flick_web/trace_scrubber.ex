@@ -5,8 +5,9 @@ defmodule FlickWeb.TraceScrubber do
 
   Bandit records the voter's IP address, user agent, path, and query string
   on each request span. Ballot paths carry the ballot's secret. Exception
-  messages and stacktraces can quote a path or a LiveView event's params.
-  This module removes all of them, and replaces any UUID with `:uuid`.
+  messages, stacktraces, and error statuses can quote a path, a LiveView
+  event's params, or a row's values. This module removes all of them, and
+  replaces any UUID with `:uuid`.
 
   The scrubbing happens here, not in a span processor, because the SDK hands
   every processor the same unchanged span. The exporter is the one place that
@@ -22,6 +23,11 @@ defmodule FlickWeb.TraceScrubber do
   Record.defrecordp(
     :event,
     Record.extract(:event, from_lib: "opentelemetry/include/otel_span.hrl")
+  )
+
+  Record.defrecordp(
+    :status,
+    Record.extract(:status, from_lib: "opentelemetry_api/include/opentelemetry.hrl")
   )
 
   # The SDK keeps these two records private, in `otel_events.erl` and
@@ -82,9 +88,15 @@ defmodule FlickWeb.TraceScrubber do
 
     span(span,
       attributes: scrub_attributes(span(span, :attributes)),
-      events: events(events, list: scrubbed_events)
+      events: events(events, list: scrubbed_events),
+      status: scrub_status(span(span, :status))
     )
   end
+
+  # Ecto sets a failed query's status message to the Postgres error, which
+  # quotes the row's values.
+  defp scrub_status(status(code: code)), do: status(code: code)
+  defp scrub_status(status), do: status
 
   defp scrub_event(event) do
     event(event, attributes: scrub_attributes(event(event, :attributes)))
@@ -101,5 +113,6 @@ defmodule FlickWeb.TraceScrubber do
   end
 
   defp scrub_value(value) when is_binary(value), do: String.replace(value, @uuid, ":uuid")
+  defp scrub_value(values) when is_list(values), do: Enum.map(values, &scrub_value/1)
   defp scrub_value(value), do: value
 end

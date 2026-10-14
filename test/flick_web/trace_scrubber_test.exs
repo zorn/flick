@@ -39,6 +39,26 @@ defmodule FlickWeb.TraceScrubberTest do
     assert attributes[:"url.path"] == "/ballot/lunch/:uuid/edit"
   end
 
+  test "replaces the ballot's secret inside a list of values" do
+    attributes = export_span(%{"http.request.header.referer": ["/ballot/lunch/#{@secret}/edit"]})
+
+    assert attributes[:"http.request.header.referer"] == ["/ballot/lunch/:uuid/edit"]
+  end
+
+  test "keeps an error status but drops its message" do
+    span_id =
+      OpenTelemetry.Tracer.with_span "query" do
+        OpenTelemetry.Tracer.set_status(
+          OpenTelemetry.status(:error, "Key (secret)=(#{@secret}) already exists.")
+        )
+
+        OpenTelemetry.Span.span_id(OpenTelemetry.Tracer.current_span_ctx())
+      end
+
+    assert_receive {:span, span(span_id: ^span_id, status: status)}
+    assert status == OpenTelemetry.status(:error, "")
+  end
+
   test "keeps an exception's type but drops its message and stacktrace" do
     exception = %RuntimeError{message: "no route found for GET /ballot/lunch/#{@secret}/edits"}
 
