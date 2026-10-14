@@ -100,7 +100,8 @@ end
 
 config :opentelemetry,
   resource: %{service: %{name: "flick"}},
-  sampler: {:parent_based, %{root: {FlickWeb.TraceSampler, []}}}
+  sampler: {:parent_based, %{root: {FlickWeb.TraceSampler, []}}},
+  traces_exporter: {FlickWeb.TraceScrubber, {:opentelemetry_exporter, %{}}}
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

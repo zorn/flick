@@ -64,7 +64,7 @@ curl -sG localhost:3200/api/search \
 curl -s -H 'Accept: application/vnd.grafana.llm' localhost:3200/api/v2/traces/TRACE_ID | jq
 ```
 
-Spans never hold SQL text, LiveView params, IP addresses, or ballot secrets. Keep it that way: `FlickWeb.Endpoint` redacts request attributes, and `FlickWeb.TraceSampler` drops `/metrics` and `/live/websocket`.
+Spans never hold SQL text, LiveView params, IP addresses, user agents, or ballot secrets. Keep it that way. `FlickWeb.TraceScrubber` wraps the exporter and scrubs every span, exception events included. `FlickWeb.TraceSampler` drops `/metrics`, the LiveView socket transports, and static files. Never set `OTEL_TRACES_EXPORTER` or `OTEL_TRACES_SAMPLER`, because they replace those modules. Flick refuses to boot when one is set.
 
 ## Flick domain knowledge
 

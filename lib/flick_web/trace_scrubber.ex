@@ -1,0 +1,105 @@
+defmodule FlickWeb.TraceScrubber do
+  @moduledoc """
+  Wraps the trace exporter and strips voter data from every span before it
+  leaves Flick.
+
+  Bandit records the voter's IP address, user agent, path, and query string
+  on each request span. Ballot paths carry the ballot's secret. Exception
+  messages and stacktraces can quote a path or a LiveView event's params.
+  This module removes all of them, and replaces any UUID with `:uuid`.
+
+  The scrubbing happens here, not in a span processor, because the SDK hands
+  every processor the same unchanged span. The exporter is the one place that
+  can change what Tempo receives.
+  """
+
+  @behaviour :otel_exporter_traces
+
+  require Record
+
+  Record.defrecordp(:span, Record.extract(:span, from_lib: "opentelemetry/include/otel_span.hrl"))
+
+  Record.defrecordp(
+    :event,
+    Record.extract(:event, from_lib: "opentelemetry/include/otel_span.hrl")
+  )
+
+  # The SDK keeps these two records private, in `otel_events.erl` and
+  # `otel_attributes.erl`, so `Record.extract/2` can't read them. The tests
+  # fail if their shape changes.
+  Record.defrecordp(:events, [
+    :count_limit,
+    :attribute_per_event_limit,
+    :attribute_value_length_limit,
+    :dropped,
+    :list
+  ])
+
+  Record.defrecordp(:attributes, [:count_limit, :value_length_limit, :dropped, :map])
+
+  @dropped_keys ~w(
+    client.address
+    client.port
+    network.peer.address
+    network.peer.port
+    user_agent.original
+    url.query
+    exception.message
+    exception.stacktrace
+  )
+
+  @uuid ~r/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i
+
+  @impl :otel_exporter_traces
+  def init(exporter) do
+    case :otel_exporter.init(exporter) do
+      :undefined -> :ignore
+      inner -> {:ok, inner}
+    end
+  end
+
+  @impl :otel_exporter_traces
+  def export(spans_tid, resource, inner) do
+    # The SDK's table is a duplicate bag keyed by instrumentation scope. A set
+    # would keep only one span per library.
+    scrubbed =
+      :ets.new(__MODULE__, [:ets.info(spans_tid, :type), keypos: :ets.info(spans_tid, :keypos)])
+
+    try do
+      :ets.foldl(fn span, _acc -> :ets.insert(scrubbed, scrub(span)) end, true, spans_tid)
+      :otel_exporter_traces.export(inner, scrubbed, resource)
+    after
+      :ets.delete(scrubbed)
+    end
+  end
+
+  @impl :otel_exporter_traces
+  def shutdown(inner), do: :otel_exporter.shutdown(inner)
+
+  defp scrub(span) do
+    events = span(span, :events)
+    scrubbed_events = for event <- events(events, :list), do: scrub_event(event)
+
+    span(span,
+      attributes: scrub_attributes(span(span, :attributes)),
+      events: events(events, list: scrubbed_events)
+    )
+  end
+
+  defp scrub_event(event) do
+    event(event, attributes: scrub_attributes(event(event, :attributes)))
+  end
+
+  defp scrub_attributes(attributes) do
+    map =
+      for {key, value} <- attributes(attributes, :map),
+          to_string(key) not in @dropped_keys,
+          into: %{},
+          do: {key, scrub_value(value)}
+
+    attributes(attributes, map: map)
+  end
+
+  defp scrub_value(value) when is_binary(value), do: String.replace(value, @uuid, ":uuid")
+  defp scrub_value(value), do: value
+end

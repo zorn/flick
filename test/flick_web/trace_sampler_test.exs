@@ -3,14 +3,22 @@ defmodule FlickWeb.TraceSamplerTest do
 
   alias FlickWeb.TraceSampler
 
-  for path <- ["/metrics", "/live/websocket", "/live/longpoll"] do
+  for path <- [
+        "/metrics",
+        "/live/websocket",
+        "/live/longpoll",
+        "/assets/app.js",
+        "/favicon.ico"
+      ] do
     test "drops a trace that starts at #{path}" do
       assert {:drop, [], _tracestate} = sample(unquote(path))
     end
   end
 
-  test "keeps a trace that starts at a ballot page" do
-    assert {:record_and_sample, [], _tracestate} = sample("/ballot/lunch")
+  for path <- ["/", "/ballot/lunch"] do
+    test "keeps a trace that starts at #{path}" do
+      assert {:record_and_sample, [], _tracestate} = sample(unquote(path))
+    end
   end
 
   defp sample(path) do
