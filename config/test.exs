@@ -40,4 +40,8 @@ config :phoenix_live_view,
 config :phoenix,
   sort_verified_routes_query_params: true
 
-config :opentelemetry, traces_exporter: :none
+# Spans export one at a time and go nowhere by default. A test that checks
+# span attributes points the exporter at its own process.
+config :opentelemetry,
+  processors: [otel_simple_processor: %{}],
+  traces_exporter: :none

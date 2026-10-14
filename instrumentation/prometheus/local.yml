@@ -1,4 +1,4 @@
-# Scrapes Flick running on the host in development.
+# Scrapes Flick running on the host in development, plus Prometheus and Tempo.
 
 global:
   scrape_interval: 15s
@@ -10,8 +10,8 @@ scrape_configs:
       password: unsafe-metrics-password
     static_configs:
       - targets: ["host.docker.internal:4000"]
-  # Prometheus and Tempo report their own disk use. Each exposes over a
-  # thousand series, so keep only the few the stack dashboard reads.
+  # Prometheus and Tempo report their own disk and memory use. Each exposes
+  # over a thousand series, so keep only the few the stack dashboard reads.
   - job_name: prometheus
     static_configs:
       - targets: ["localhost:9090"]
@@ -25,5 +25,5 @@ scrape_configs:
       - targets: ["tempo:3200"]
     metric_relabel_configs:
       - source_labels: [__name__]
-        regex: tempodb_backend_bytes_total|tempodb_blocklist_length|process_resident_memory_bytes
+        regex: tempodb_backend_bytes_total|process_resident_memory_bytes
         action: keep

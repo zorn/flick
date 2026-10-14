@@ -36,16 +36,16 @@ services:
     value: flick-metrics
   - key: METRICS_AUTH_PASSWORD
     sync: false
+  - key: DATABASE_URL
+    fromDatabase:
+      name: flick_prod
+      property: connectionString
   # Where Flick sends traces, over the private network.
   - key: TEMPO_HOST
     fromService:
       type: pserv
       name: flick-tempo
       property: host
-  - key: DATABASE_URL
-    fromDatabase:
-      name: flick_prod
-      property: connectionString
   region: oregon
   buildCommand: ./bin/build.sh
   # None of these paths reach the release, so a push that changes only them
@@ -100,6 +100,12 @@ services:
       type: web
       name: flick
       envVarKey: METRICS_AUTH_PASSWORD
+  # Prometheus scrapes Tempo's own metrics.
+  - key: TEMPO_HOST
+    fromService:
+      type: pserv
+      name: flick-tempo
+      property: host
   disk:
     name: prometheus-data
     mountPath: /prometheus
@@ -129,6 +135,12 @@ services:
     fromService:
       type: pserv
       name: flick-prometheus
+      property: host
+  # Grafana's Tempo data source.
+  - key: TEMPO_HOST
+    fromService:
+      type: pserv
+      name: flick-tempo
       property: host
   # The ntfy.sh topic URL for alerts. Set it by hand. Anyone who knows the
   # topic can read it. Render also ignores a new `sync: false` variable in an

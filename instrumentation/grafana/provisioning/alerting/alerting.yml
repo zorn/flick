@@ -53,6 +53,32 @@ groups:
         execErrState: Alerting
         annotations:
           summary: Flick may be down. Prometheus has not scraped it for over a minute, or Grafana can't reach Prometheus.
+      - uid: tempo-not-scraped
+        title: Tempo not scraped
+        condition: down
+        data:
+          - refId: up
+            datasourceUid: prometheus
+            relativeTimeRange: {from: 300, to: 0}
+            model:
+              refId: up
+              expr: up{job="tempo"}
+              instant: true
+          - refId: down
+            datasourceUid: __expr__
+            model:
+              refId: down
+              type: threshold
+              expression: up
+              conditions:
+                - evaluator: {type: lt, params: [1]}
+        for: 1m
+        # No series means Prometheus has no target for Tempo. A failed query
+        # means Grafana can't reach Prometheus. Both hide an outage, so both alert.
+        noDataState: Alerting
+        execErrState: Alerting
+        annotations:
+          summary: Tempo may be down, so Flick's traces may be lost. Prometheus has not scraped Tempo for over a minute, or Grafana can't reach Prometheus.
       - uid: tempo-disk-filling
         title: Tempo disk filling
         condition: full
@@ -83,9 +109,9 @@ groups:
         # A burst of traffic bends a six-hour trend for a while. Wait for it
         # to hold.
         for: 30m
-        # No series means Prometheus isn't scraping Tempo, which says nothing
-        # about the disk. "Flick not scraped" already pages when Grafana can't
-        # reach Prometheus.
+        # No series means Prometheus isn't scraping Tempo. "Tempo not scraped"
+        # covers that. A failed query means Grafana can't reach Prometheus.
+        # "Flick not scraped" covers that.
         noDataState: OK
         execErrState: OK
         annotations:

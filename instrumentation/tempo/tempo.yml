@@ -15,14 +15,14 @@ distributor:
           endpoint: 0.0.0.0:4318
 
 live_store:
-  # Recent traces held in memory. The 250 MB default is too much for a
-  # 512 MiB instance.
+  # Recent traces held in memory, capped at 32 MiB. The 250 MB default is too
+  # much for a 512 MiB instance.
   max_live_traces_bytes: 33554432
 
 backend_worker:
   compaction:
     # Keep traces for 7 days, half the default, until we measure how fast
-    # they fill the disk. Raise it once the growth rate is known.
+    # they fill the disk.
     block_retention: 168h
 
 storage:
@@ -34,8 +34,8 @@ storage:
       path: /var/tempo/blocks
 
 memory:
-  # Sets Go's memory limit to 80% of the container's (512 MiB on Render), so
-  # the garbage collector works harder before Render restarts the service.
+  # Sets Go's memory limit to 80% of the container's (512 MiB on Render). Near
+  # that limit the garbage collector works harder, so Render doesn't kill Tempo.
   automemlimit_enabled: true
 
 usage_report:

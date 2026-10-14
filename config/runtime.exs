@@ -175,8 +175,7 @@ if config_env() == :prod do
     username: metrics_auth_username,
     password: metrics_auth_password
 
-  # Flick sends traces to Tempo over Render's private network. Without a host,
-  # Flick still serves requests but records no traces.
+  # Without a Tempo host, Flick still serves requests but sends no traces.
   if tempo_host = System.get_env("TEMPO_HOST") do
     config :opentelemetry_exporter, otlp_endpoint: "http://#{tempo_host}:4318"
   else

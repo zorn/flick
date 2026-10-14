@@ -155,7 +155,7 @@
       "id": 3,
       "type": "timeseries",
       "title": "Tempo trace data",
-      "description": "Bytes of live trace blocks in Tempo's backend, and a linear forecast three days out from the last six hours. The red line marks 800 MB.",
+      "description": "Bytes of live trace blocks in Tempo's backend, and a forecast for three days from now, based on the last six hours. The red line marks 800 MB.",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"

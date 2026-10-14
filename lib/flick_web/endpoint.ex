@@ -82,14 +82,15 @@ defmodule FlickWeb.Endpoint do
 
   defp prom_ex_metrics(conn, _opts), do: conn
 
-  # Bandit's request span records the voter's IP address, the full path, and
-  # the query string. Ballot URLs carry the ballot's secret, and LiveView's
-  # socket URL carries a CSRF token. Overwrite all three before they reach Tempo.
   @uuid ~r/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i
 
+  # Bandit's request span records the voter's IP address, the full path, and
+  # the query string. Ballot paths carry the ballot's secret. Overwrite them
+  # all before they reach Tempo.
   defp redact_trace_attributes(conn, _opts) do
     OpenTelemetry.Tracer.set_attributes(%{
       "client.address": "redacted",
+      "network.peer.address": "redacted",
       "url.path": String.replace(conn.request_path, @uuid, ":uuid")
     })
 
