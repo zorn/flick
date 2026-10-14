@@ -53,3 +53,40 @@ groups:
         execErrState: Alerting
         annotations:
           summary: Flick may be down. Prometheus has not scraped it for over a minute, or Grafana can't reach Prometheus.
+      - uid: tempo-disk-filling
+        title: Tempo disk filling
+        condition: full
+        data:
+          - refId: forecast
+            datasourceUid: prometheus
+            relativeTimeRange:
+              from: 21600
+              to: 0
+            model:
+              refId: forecast
+              # Trace data three days from now, if the last six hours' trend holds.
+              expr: predict_linear(tempodb_backend_bytes_total{status="live"}[6h], 3 * 86400)
+              instant: true
+          - refId: full
+            datasourceUid: __expr__
+            model:
+              refId: full
+              type: threshold
+              expression: forecast
+              conditions:
+                - evaluator:
+                    type: gt
+                    # 800 MB of the 1 GB disk. Tempo's index files, recent
+                    # traces, and write-ahead log take the rest.
+                    params:
+                      - 800000000
+        # A burst of traffic bends a six-hour trend for a while. Wait for it
+        # to hold.
+        for: 30m
+        # No series means Prometheus isn't scraping Tempo, which says nothing
+        # about the disk. "Flick not scraped" already pages when Grafana can't
+        # reach Prometheus.
+        noDataState: OK
+        execErrState: OK
+        annotations:
+          summary: At the last six hours' rate, Tempo's trace data passes 800 MB of its 1 GB disk within three days.

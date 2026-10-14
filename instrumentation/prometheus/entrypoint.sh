@@ -17,12 +17,14 @@ if [ "${PROMETHEUS_CONFIG:-local.yml}" = render.yml ]; then
   : "${FLICK_HOST:?must be set for render.yml}"
   : "${METRICS_AUTH_USERNAME:?must be set for render.yml}"
   : "${METRICS_AUTH_PASSWORD:?must be set for render.yml}"
+  : "${TEMPO_HOST:?must be set for render.yml}"
 
   write_private /tmp/metrics_auth_username "$METRICS_AUTH_USERNAME"
   write_private /tmp/metrics_auth_password "$METRICS_AUTH_PASSWORD"
 
   # Render's private network reaches a web service's HTTP server on port 10000.
   printf '[{"targets": ["%s:10000"]}]\n' "$FLICK_HOST" > /tmp/flick_targets.json
+  printf '[{"targets": ["%s:3200"]}]\n' "$TEMPO_HOST" > /tmp/tempo_targets.json
 fi
 
 chown -R nobody:nobody /prometheus

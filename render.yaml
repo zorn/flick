@@ -36,6 +36,12 @@ services:
     value: flick-metrics
   - key: METRICS_AUTH_PASSWORD
     sync: false
+  # Where Flick sends traces, over the private network.
+  - key: TEMPO_HOST
+    fromService:
+      type: pserv
+      name: flick-tempo
+      property: host
   - key: DATABASE_URL
     fromDatabase:
       name: flick_prod
@@ -135,5 +141,22 @@ services:
   buildFilter:
     paths:
     - instrumentation/grafana/**
+  autoDeployTrigger: commit
+- type: pserv
+  name: flick-tempo
+  runtime: docker
+  plan: starter
+  region: oregon
+  dockerfilePath: ./instrumentation/tempo/Dockerfile
+  dockerContext: ./instrumentation/tempo
+  # Tempo deletes traces by age only, so this disk can fill. The "Tempo disk
+  # filling" alert warns first.
+  disk:
+    name: tempo-data
+    mountPath: /var/tempo
+    sizeGB: 1
+  buildFilter:
+    paths:
+    - instrumentation/tempo/**
   autoDeployTrigger: commit
 version: "1"
