@@ -39,3 +39,9 @@ config :phoenix_live_view,
 # Sort query params output of verified routes for robust url comparisons
 config :phoenix,
   sort_verified_routes_query_params: true
+
+# Spans export one at a time and go nowhere by default. A test that checks
+# span attributes points the exporter at its own process.
+config :opentelemetry,
+  processors: [otel_simple_processor: %{}],
+  traces_exporter: :none

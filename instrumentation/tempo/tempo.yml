@@ -1,0 +1,42 @@
+# Tempo stores Flick's traces. One process receives spans over OTLP, keeps
+# recent traces in memory, writes blocks to /var/tempo, and answers queries
+# on port 3200.
+
+server:
+  http_listen_port: 3200
+
+distributor:
+  receivers:
+    otlp:
+      protocols:
+        # Flick's exporter sends OTLP over HTTP. The default listens only on
+        # localhost, which other containers can't reach.
+        http:
+          endpoint: 0.0.0.0:4318
+
+live_store:
+  # Recent traces held in memory, capped at 32 MiB. The 250 MB default is too
+  # much for a 512 MiB instance.
+  max_live_traces_bytes: 33554432
+
+backend_worker:
+  compaction:
+    # Keep traces for 7 days, half the default, until we measure how fast
+    # they fill the disk.
+    block_retention: 168h
+
+storage:
+  trace:
+    backend: local
+    wal:
+      path: /var/tempo/wal
+    local:
+      path: /var/tempo/blocks
+
+memory:
+  # Sets Go's memory limit to 80% of the container's (512 MiB on Render). Near
+  # that limit the garbage collector works harder, so Render doesn't kill Tempo.
+  automemlimit_enabled: true
+
+usage_report:
+  reporting_enabled: false

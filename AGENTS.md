@@ -48,9 +48,23 @@ curl -s localhost:3001/api/dashboards/uid/UID | jq '.dashboard | del(.id)' > ins
 
 The uid is the part of the dashboard's URL after `/d/`. Keep `uid` so the dashboard's URL stays the same across rebuilds and machines. Remove `id`, because it belongs to one Grafana database. To add a panel without the UI, edit the JSON file and rebuild. Point panels at the data source uid `prometheus`, and use `[$__rate_interval]` as the rate window instead of a fixed one.
 
-On Render, the same images run as `flick-prometheus`, a private service with no public URL, and `flick-grafana`, which requires a login. Verify changes against the local stack. Only a person with the Grafana login can view production data.
+On Render, the same images run as `flick-prometheus` and `flick-tempo`, which are private services with no public URL. Grafana runs as `flick-grafana`, which requires a login. Verify changes against the local stack. Only a person with the Grafana login can view production data. Prometheus also scrapes itself and Tempo (jobs `prometheus` and `tempo`), keeping only their disk and memory series. The "Flick stack" dashboard shows them, and the "Tempo disk filling" rule warns three days before Tempo's trace data would pass 800 MB.
 
 Alert rules live in `instrumentation/grafana/provisioning/alerting/alerting.yml` and are read-only in the Grafana UI. Locally, alerts go to the ntfy container: read them at `http://localhost:8081` on the `flick-alerts` topic. To test a rule, cause its condition locally and wait for the alert. For example, stop Flick to fire "Flick not scraped". In production, alerts go to the ntfy.sh topic URL in `NTFY_URL` on Render. Never write that topic into the repo.
+
+Flick sends OpenTelemetry traces to Tempo, which the same stack runs. Each HTTP request, LiveView callback, and Ecto query becomes a span. A LiveView event is its own trace, because it arrives over the WebSocket. Query Tempo at `http://localhost:3200`. Search leaves out the newest 30 seconds, so wait at least 40 seconds after causing the request you want. Always pass `start` and `end`:
+
+```sh
+# The last 20 vote saves in the past hour.
+curl -sG localhost:3200/api/search \
+  --data-urlencode 'q={ name = "FlickWeb.Vote.VoteCaptureLive.handle_event#save" }' \
+  --data-urlencode "start=$(($(date +%s) - 3600))" --data-urlencode "end=$(date +%s)" | jq '.traces'
+
+# One trace, with its spans in a compact form.
+curl -s -H 'Accept: application/vnd.grafana.llm' localhost:3200/api/v2/traces/TRACE_ID | jq
+```
+
+Spans never hold SQL text, LiveView params, IP addresses, user agents, or ballot secrets. Keep it that way. `FlickWeb.TraceScrubber` wraps the exporter and scrubs every span, exception events included. `FlickWeb.TraceSampler` drops `/metrics`, the LiveView socket transports, and static files. Never set `OTEL_TRACES_EXPORTER` or `OTEL_TRACES_SAMPLER`, because they replace those modules. Flick refuses to boot when one is set.
 
 ## Flick domain knowledge
 

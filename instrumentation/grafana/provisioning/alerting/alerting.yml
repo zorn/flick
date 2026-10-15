@@ -53,3 +53,66 @@ groups:
         execErrState: Alerting
         annotations:
           summary: Flick may be down. Prometheus has not scraped it for over a minute, or Grafana can't reach Prometheus.
+      - uid: tempo-not-scraped
+        title: Tempo not scraped
+        condition: down
+        data:
+          - refId: up
+            datasourceUid: prometheus
+            relativeTimeRange: {from: 300, to: 0}
+            model:
+              refId: up
+              expr: up{job="tempo"}
+              instant: true
+          - refId: down
+            datasourceUid: __expr__
+            model:
+              refId: down
+              type: threshold
+              expression: up
+              conditions:
+                - evaluator: {type: lt, params: [1]}
+        for: 1m
+        # No series means Prometheus has no target for Tempo. A failed query
+        # means Grafana can't reach Prometheus. Both hide an outage, so both alert.
+        noDataState: Alerting
+        execErrState: Alerting
+        annotations:
+          summary: Tempo may be down, so Flick's traces may be lost. Prometheus has not scraped Tempo for over a minute, or Grafana can't reach Prometheus.
+      - uid: tempo-disk-filling
+        title: Tempo disk filling
+        condition: full
+        data:
+          - refId: forecast
+            datasourceUid: prometheus
+            relativeTimeRange:
+              from: 21600
+              to: 0
+            model:
+              refId: forecast
+              # Trace data three days from now, if the last six hours' trend holds.
+              expr: predict_linear(tempodb_backend_bytes_total{status="live"}[6h], 3 * 86400)
+              instant: true
+          - refId: full
+            datasourceUid: __expr__
+            model:
+              refId: full
+              type: threshold
+              expression: forecast
+              conditions:
+                - evaluator:
+                    type: gt
+                    # 800 MB of the 1 GB disk. Tempo's index files, recent
+                    # traces, and write-ahead log take the rest.
+                    params:
+                      - 800000000
+        # A burst of traffic bends a six-hour trend for a while. Wait for it
+        # to hold.
+        for: 30m
+        # No series means Prometheus isn't scraping Tempo. "Tempo not scraped"
+        # covers that. A failed query means Grafana can't reach Prometheus.
+        # "Flick not scraped" covers that.
+        noDataState: OK
+        execErrState: OK
+        annotations:
+          summary: At the last six hours' rate, Tempo's trace data passes 800 MB of its 1 GB disk within three days.

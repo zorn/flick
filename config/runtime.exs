@@ -20,6 +20,18 @@ if System.get_env("PHX_SERVER") do
   config :flick, FlickWeb.Endpoint, server: true
 end
 
+# OpenTelemetry lets these variables override Flick's config. That would
+# replace FlickWeb.TraceScrubber or FlickWeb.TraceSampler, and voter data
+# would reach Tempo without any error. Refuse to boot instead.
+otel_overrides = Enum.filter(["OTEL_TRACES_EXPORTER", "OTEL_TRACES_SAMPLER"], &System.get_env/1)
+
+if otel_overrides != [] do
+  raise """
+  Unset #{Enum.join(otel_overrides, ", ")}. Flick's trace exporter and \
+  sampler keep voter data out of traces, and these variables replace them.
+  """
+end
+
 # A git worktree made with worktrunk gets its own port and databases. The
 # hooks in github.com/zorn/dotfiles write them to .env.worktree. The primary
 # checkout has no such file, so it keeps the defaults in dev.exs and test.exs.
@@ -174,6 +186,13 @@ if config_env() == :prod do
   config :flick, :metrics_auth,
     username: metrics_auth_username,
     password: metrics_auth_password
+
+  # Without a Tempo host, Flick still serves requests but sends no traces.
+  if tempo_host = System.get_env("TEMPO_HOST") do
+    config :opentelemetry_exporter, otlp_endpoint: "http://#{tempo_host}:4318"
+  else
+    config :opentelemetry, traces_exporter: :none
+  end
 
   # ## SSL Support
   #

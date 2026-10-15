@@ -1,4 +1,4 @@
-# Scrapes Flick over Render's private network.
+# Scrapes Flick, Prometheus, and Tempo over Render's private network.
 
 global:
   scrape_interval: 15s
@@ -12,3 +12,21 @@ scrape_configs:
       password_file: /tmp/metrics_auth_password
     file_sd_configs:
       - files: [/tmp/flick_targets.json]
+
+  # Prometheus and Tempo report their own disk and memory use. Each exposes
+  # over a thousand series, so keep only the few the stack dashboard reads.
+  - job_name: prometheus
+    static_configs:
+      - targets: ["localhost:9090"]
+    metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: prometheus_tsdb_(storage_blocks_bytes|wal_storage_size_bytes|head_chunks_storage_size_bytes|lowest_timestamp_seconds|retention_limit_bytes)|process_resident_memory_bytes
+        action: keep
+
+  - job_name: tempo
+    file_sd_configs:
+      - files: [/tmp/tempo_targets.json]
+    metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: tempodb_backend_bytes_total|process_resident_memory_bytes
+        action: keep
