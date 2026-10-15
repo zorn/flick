@@ -39,6 +39,17 @@ defmodule FlickWeb.TraceScrubberTest do
     assert attributes[:"url.path"] == "/ballot/lunch/:uuid/edit"
   end
 
+  test "replaces a secret with some or all of its characters percent-encoded" do
+    mixed = String.replace(@secret, "-", "%2D")
+    encoded = @secret |> String.to_charlist() |> Enum.map_join(&"%#{Integer.to_string(&1, 16)}")
+
+    for secret <- [mixed, String.downcase(mixed), encoded] do
+      attributes = export_span(%{"url.path": "/ballot/lunch/#{secret}/edit"})
+
+      assert attributes[:"url.path"] == "/ballot/lunch/:uuid/edit"
+    end
+  end
+
   test "replaces the ballot's secret inside a list of values" do
     attributes = export_span(%{"http.request.header.referer": ["/ballot/lunch/#{@secret}/edit"]})
 

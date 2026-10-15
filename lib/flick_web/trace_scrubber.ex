@@ -54,7 +54,16 @@ defmodule FlickWeb.TraceScrubber do
     exception.stacktrace
   )
 
-  @uuid ~r/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i
+  # Bandit records the raw path, and Phoenix decodes it before routing, so a
+  # secret still works with any of its characters percent-encoded. Each
+  # character here matches itself or its `%XX` form.
+  hex = "(?:[0-9a-f]|%3[0-9]|%[46][1-6])"
+  dash = "(?:-|%2d)"
+
+  @uuid Regex.compile!(
+          "#{hex}{8}#{dash}#{hex}{4}#{dash}#{hex}{4}#{dash}#{hex}{4}#{dash}#{hex}{12}",
+          "i"
+        )
 
   @impl :otel_exporter_traces
   def init(exporter) do

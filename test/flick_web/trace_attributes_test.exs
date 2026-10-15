@@ -26,8 +26,7 @@ defmodule FlickWeb.TraceAttributesTest do
     # After the fixture, so its queries stay out of the export.
     :otel_simple_processor.set_exporter(FlickWeb.TraceScrubber, {:otel_exporter_pid, self()})
 
-    server = start_supervised!({Bandit, plug: FlickWeb.Endpoint, port: 0, startup_log: false})
-    {:ok, {_address, port}} = ThousandIsland.listener_info(server)
+    port = start_server()
 
     assert %{status: 200} = Req.get!("http://localhost:#{port}/ballot/#{ballot.url_slug}")
 
@@ -40,6 +39,27 @@ defmodule FlickWeb.TraceAttributesTest do
     # database password.
     assert attributes |> Enum.map(& &1[:"db.url"]) |> Enum.reject(&is_nil/1) |> Enum.uniq() ==
              ["ecto://localhost"]
+  end
+
+  test "an admin path with a percent-encoded secret exports no secret" do
+    ballot = ballot_fixture()
+    :otel_simple_processor.set_exporter(FlickWeb.TraceScrubber, {:otel_exporter_pid, self()})
+    port = start_server()
+
+    # Phoenix decodes the path before routing, so this reaches the editor.
+    secret = String.replace(ballot.secret, "-", "%2D")
+    url = "http://localhost:#{port}/ballot/#{ballot.url_slug}/#{secret}/edit"
+    assert %{status: 200} = Req.get!(url)
+
+    paths = receive_spans() |> Enum.map(& &1[:"url.path"]) |> Enum.reject(&is_nil/1)
+
+    assert paths == ["/ballot/#{ballot.url_slug}/:uuid/edit"]
+  end
+
+  defp start_server do
+    server = start_supervised!({Bandit, plug: FlickWeb.Endpoint, port: 0, startup_log: false})
+    {:ok, {_address, port}} = ThousandIsland.listener_info(server)
+    port
   end
 
   # Bandit's request span is the root, and it ends after every span inside it.
