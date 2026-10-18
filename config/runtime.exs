@@ -102,14 +102,10 @@ if config_env() in [:dev, :test] do
   end
 end
 
-# Without a key the Paraxial agent stays off, so a dev machine without one
-# sends no App Audit upload.
-config :paraxial, paraxial_api_key: System.get_env("PARAXIAL_API_KEY")
-
 if config_env() == :prod do
-  # Exploit Guard alerts when :erlang.binary_to_term builds a function, the
-  # usual sign of a deserialization exploit. Monitor mode alerts without
-  # killing the process.
+  # Exploit Guard alerts when :erlang.binary_to_term decodes a term that
+  # contains a function, the usual sign of a deserialization exploit. Monitor
+  # mode alerts without killing the process.
   config :paraxial, exploit_guard: :monitor
 
   database_url =
