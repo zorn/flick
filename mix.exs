@@ -129,10 +129,17 @@ defmodule Flick.MixProject do
       {:ex_doc, "~> 0.40.4", only: :dev, runtime: false, warn_if_outdated: true},
 
       # For security scans.
-      {:sobelow, "~> 0.16", only: [:dev, :test], runtime: false},
+      # Paraxial requires these in every environment and lists them as its own
+      # applications, so they ship in the release. Neither has a callback
+      # module, so nothing of theirs runs there.
+      {:sobelow, "~> 0.16", runtime: false},
 
       # To check locked dependencies against known security advisories.
-      {:mix_audit, "~> 2.1", only: [:dev, :test], runtime: false},
+      {:mix_audit, "~> 2.1", runtime: false},
+
+      # For Paraxial.io's Exploit Guard and App Audit. Left out of :test because
+      # the agent calls paraxial.io on every boot, even without an API key.
+      {:paraxial, "~> 2.12", only: [:dev, :prod]},
 
       # For UI component documentation.
       {:phoenix_storybook, "~> 1.0"},
