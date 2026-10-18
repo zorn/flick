@@ -66,6 +66,14 @@ curl -s -H 'Accept: application/vnd.grafana.llm' localhost:3200/api/v2/traces/TR
 
 Spans never hold SQL text, LiveView params, IP addresses, user agents, or ballot secrets. Keep it that way. `FlickWeb.TraceScrubber` wraps the exporter and scrubs every span, exception events included. `FlickWeb.TraceSampler` drops `/metrics`, the LiveView socket transports, and static files. Never set `OTEL_TRACES_EXPORTER` or `OTEL_TRACES_SAMPLER`, because they replace those modules. Flick refuses to boot when one is set.
 
+## Paraxial
+
+Flick runs the Paraxial agent in dev and prod, on the free tier. In prod it runs Exploit Guard in monitor mode, and its alerts appear in Paraxial's dashboard, not in ntfy. The agent reads `PARAXIAL_API_KEY` from the environment. Never commit that key.
+
+Each boot calls paraxial.io from a background task, even without a key. A failed call is silent and never blocks boot, so working offline is fine. With a key set, each boot also uploads an App Audit, and a failed upload logs `[Paraxial] App Audit upload failed`. The dependency leaves out `:test`, so tests and CI make no network call.
+
+The free tier allows five code scans a month, and `mix paraxial.scan` spends one each time. CI already runs the same three tools, so don't add the scan to CI or run it without being asked.
+
 ## Flick domain knowledge
 
 ### Ballot state machine

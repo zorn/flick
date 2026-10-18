@@ -103,6 +103,11 @@ if config_env() in [:dev, :test] do
 end
 
 if config_env() == :prod do
+  # Exploit Guard alerts when :erlang.binary_to_term decodes a term that
+  # contains a function, the usual sign of a deserialization exploit. Monitor
+  # mode alerts without killing the process.
+  config :paraxial, exploit_guard: :monitor
+
   database_url =
     System.get_env("DATABASE_URL") ||
       raise """

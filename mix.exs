@@ -128,11 +128,19 @@ defmodule Flick.MixProject do
       # For generating HTML documentation.
       {:ex_doc, "~> 0.40.4", only: :dev, runtime: false, warn_if_outdated: true},
 
-      # For security scans.
-      {:sobelow, "~> 0.16", only: [:dev, :test], runtime: false},
+      # For security scans. Paraxial requires this and mix_audit in every
+      # environment and lists both as its own applications, so they ship in the
+      # release. Neither defines an application callback (`mod`), so the
+      # release starts no process of theirs.
+      {:sobelow, "~> 0.16", runtime: false},
 
       # To check locked dependencies against known security advisories.
-      {:mix_audit, "~> 2.1", only: [:dev, :test], runtime: false},
+      {:mix_audit, "~> 2.1", runtime: false},
+
+      # For Paraxial's Exploit Guard and App Audit. The agent calls paraxial.io
+      # on every boot, even without an API key, so it is left out of :test.
+      # Dev keeps it for `mix paraxial.scan` and a local check of the agent.
+      {:paraxial, "~> 2.12", only: [:dev, :prod]},
 
       # For UI component documentation.
       {:phoenix_storybook, "~> 1.0"},
