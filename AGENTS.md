@@ -66,7 +66,7 @@ curl -s -H 'Accept: application/vnd.grafana.llm' localhost:3200/api/v2/traces/TR
 
 Spans never hold SQL text, LiveView params, IP addresses, user agents, or ballot secrets. Keep it that way. `FlickWeb.TraceScrubber` wraps the exporter and scrubs every span, exception events included. `FlickWeb.TraceSampler` drops `/metrics`, the LiveView socket transports, and static files. Never set `OTEL_TRACES_EXPORTER` or `OTEL_TRACES_SAMPLER`, because they replace those modules. Flick refuses to boot when one is set.
 
-To inspect a live node, open a remote IEx shell and start observer_cli. It shows memory, scheduler use, and the processes with the most memory or the longest mailboxes. Metrics and traces do not show these. In production, open the Shell tab of the `flick` service in the Render dashboard, then attach to the running release:
+To inspect a live node, open a remote IEx shell and start observer_cli. It shows memory, scheduler use, and the processes with the most memory or the longest mailboxes. Metrics and traces do not show these. `remote` starts a second VM on the same 512 MB instance, so when memory is already near the limit, prefer a single `:recon` call to leaving observer_cli open. In production, open the Shell tab of the `flick` service in the Render dashboard, then attach to the running release:
 
 ```sh
 _build/prod/rel/flick/bin/flick remote
@@ -74,7 +74,7 @@ _build/prod/rel/flick/bin/flick remote
 
 In that shell, run `:observer_cli.start()`. Press `q` and then Enter to quit observer_cli. Quitting leaves the node running. Never run `System.stop/0` or `:init.stop/0` in the remote shell, because they stop production. Leave the shell with Ctrl+C and then `a`, which closes only the remote shell. The release also includes `:recon` for one-off queries such as `:recon.proc_count(:memory, 10)`.
 
-Keep Erlang distribution inside the container. Never expose it on Render's network, and never set a custom release cookie. The default cookie never leaves the container. A custom cookie would sit in Render's environment variables, and its only use is connecting from outside, where a cookie grants full code execution on the node.
+`rel/env.sh.eex` binds EPMD and Erlang distribution to loopback and names the node `flick@localhost`, so only a shell inside the container can reach it. Keep it that way. Never expose distribution on Render's network, and never set a custom release cookie. The default cookie never leaves the container. A custom cookie would sit in Render's environment variables, and its only use is connecting from outside, where a cookie grants full code execution on the node.
 
 ## Paraxial
 
