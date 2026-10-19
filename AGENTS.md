@@ -66,6 +66,16 @@ curl -s -H 'Accept: application/vnd.grafana.llm' localhost:3200/api/v2/traces/TR
 
 Spans never hold SQL text, LiveView params, IP addresses, user agents, or ballot secrets. Keep it that way. `FlickWeb.TraceScrubber` wraps the exporter and scrubs every span, exception events included. `FlickWeb.TraceSampler` drops `/metrics`, the LiveView socket transports, and static files. Never set `OTEL_TRACES_EXPORTER` or `OTEL_TRACES_SAMPLER`, because they replace those modules. Flick refuses to boot when one is set.
 
+To see a live node, open a remote IEx shell and start observer_cli. It shows memory, scheduler use, and the processes with the most memory or the longest mailboxes, which metrics and traces do not. In production, open the Shell tab of the `flick` service in the Render dashboard, then attach to the running release:
+
+```sh
+_build/prod/rel/flick/bin/flick remote
+```
+
+In that shell, run `:observer_cli.start()`. Press `q` and then Enter to quit observer_cli. Quitting leaves the node running, but `System.stop/0` or `:init.stop/0` in the remote shell stops production. Leave the shell with Ctrl+C and then `a`, which closes only the remote shell. `:recon` is also loaded, for one-off queries such as `:recon.proc_count(:memory, 10)`.
+
+Keep Erlang distribution inside the container. Don't expose it on Render's network, and don't set a custom release cookie, because a cookie grants full code execution on the node.
+
 ## Paraxial
 
 Flick runs the Paraxial agent in dev and prod, on the free tier. In prod it runs Exploit Guard in monitor mode, and its alerts appear in Paraxial's dashboard, not in ntfy. The agent reads `PARAXIAL_API_KEY` from the environment. Never commit that key.
