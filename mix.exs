@@ -161,9 +161,7 @@ defmodule Flick.MixProject do
       {:opentelemetry_phoenix, "~> 2.0"},
       {:opentelemetry_bandit, "~> 0.3"},
       {:opentelemetry_ecto, "~> 1.2"},
-
-      # To inspect a running node from a remote IEx shell. It ships in the
-      # release so `:observer_cli.start()` works on production.
+      # Ships in the release for `:observer_cli.start()` in a production remote shell.
       {:observer_cli, "~> 2.0"},
 
       # Unorganized
