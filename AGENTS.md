@@ -12,11 +12,11 @@ Flick runs on Render, in workspace `tea-cr5894tumphs73e1ml0g` as the web service
 
 These IDs are identifiers, not credentials. Never commit a Render API key or the service's deploy hook URL, since the hook URL embeds a key that triggers deploys.
 
-The database `flick_prod` accepts no external connections, because `render.yaml` sets an empty IP allow list. Services in the workspace connect over the private network, so they are not affected. The Render tool `query_render_postgres` and `render psql` connect over the external URL, so they fail. To reach production data, use one of these, in order of preference:
+The database `flick_prod` accepts no external connections, because `render.yaml` sets an empty IP allow list. Services in the workspace connect over the private network, so they are not affected. The Render MCP tool `query_render_postgres` and `render psql` connect over the external URL, so they fail. A temporary entry restores `render psql`, but not the MCP tool, because the hosted MCP server connects from an address we do not control. To reach production data, use one of these, in order of preference:
 
 - Open a remote IEx shell (see Observability) and query through `Flick.Repo`, for example `Flick.Repo.query!("SELECT count(*) FROM ballots")`. This uses the private network.
 - For a local copy, download a backup from the database's Recovery page in the Render dashboard. The download does not go through the allow list.
-- For `psql` or a GUI client, add your current IP in the database's Networking settings, connect, and remove the IP when you finish. Do not wait for a Blueprint sync to remove it, because a sync may not run for weeks. Never commit an IP address to `render.yaml`, because the repo is public.
+- For `psql`, `render psql`, or a GUI client, add an entry for your current IP in the database's Networking settings, connect, and remove the entry when you finish. Do not wait for a Blueprint sync to remove it. A sync overwrites dashboard changes, but Render's docs do not say whether a sync runs when `render.yaml` is unchanged. Never commit an entry to `render.yaml`, because the repo is public.
 
 ## Observability
 

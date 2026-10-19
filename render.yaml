@@ -5,9 +5,7 @@ databases:
   user: flick_prod_user
   plan: basic-256mb
   region: oregon
-  # No external connections. Services reach the database over the private
-  # network, which this list does not govern. Keep the field explicit: an
-  # omitted field keeps the database's existing entries.
+  # Keep this explicit, because an omitted field keeps the existing entries.
   # docs/decisions/7-closed-database-allow-list.md
   ipAllowList: []
   # NOTE: Updating postgresMajorVersion here does not upgrade an existing Render database in-place; use Render's manual/in-place upgrade tooling.
