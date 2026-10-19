@@ -162,7 +162,7 @@ defmodule Flick.MixProject do
       {:opentelemetry_bandit, "~> 0.3"},
       {:opentelemetry_ecto, "~> 1.2"},
       # Ships in the release for `:observer_cli.start()` in a production remote shell.
-      {:observer_cli, "~> 2.0.0"},
+      {:observer_cli, "~> 2.0"},
 
       # Unorganized
       {:bandit, "~> 1.2"},
