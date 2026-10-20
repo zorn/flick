@@ -44,7 +44,7 @@ curl -s localhost:9091/api/v1/query --data-urlencode 'query=histogram_quantile(0
 curl -s localhost:9091/api/v1/query --data-urlencode 'query=sum by (source) (rate(flick_prom_ex_ecto_repo_query_total_time_milliseconds_count[5m]))' | jq '.data.result'
 ```
 
-To list every metric name, run `curl -s localhost:9091/api/v1/label/__name__/values | jq`. An empty result means no event happened in the window, not that the value is zero. In development, every request also shows `schema_migrations` queries from Phoenix's pending-migration check, so subtract that noise when you count a page's queries.
+To list every metric name, run `curl -s localhost:9091/api/v1/label/__name__/values | jq`. An empty result means no event happened in the window, not that the value is zero. In development, every request also shows `schema_migrations` queries from Phoenix's pending-migration check, so subtract that noise when you count a page's queries. Render's health check runs `SELECT 1` through `/health` every few seconds, which shows up as a series with an empty `source`.
 
 Grafana runs at `http://localhost:3001` with no login. Its data source and dashboards are provisioned from `instrumentation/grafana/`, and Grafana keeps no state between restarts. A dashboard created or edited only in the UI is lost when the container is recreated. To keep one, save its JSON model and rebuild:
 

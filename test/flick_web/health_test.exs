@@ -7,6 +7,12 @@ defmodule FlickWeb.HealthTest do
     assert response(conn, 200)
   end
 
+  test "leaves methods other than GET and HEAD to the router", %{conn: conn} do
+    conn = post(conn, "/health")
+
+    assert response(conn, 404)
+  end
+
   @tag :capture_log
   test "answers 503 when the database is unreachable", %{conn: conn} do
     # `ConnTest` runs the endpoint in this process, so the dynamic repo applies

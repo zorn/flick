@@ -84,7 +84,8 @@ defmodule FlickWeb.Endpoint do
 
   defp prom_ex_metrics(conn, _opts), do: conn
 
-  defp health(%Plug.Conn{request_path: "/health"} = conn, _opts) do
+  defp health(%Plug.Conn{method: method, request_path: "/health"} = conn, _opts)
+       when method in ["GET", "HEAD"] do
     conn =
       if Flick.Health.database_reachable?() do
         send_resp(conn, 200, "ok")
