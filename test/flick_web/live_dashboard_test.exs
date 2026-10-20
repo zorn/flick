@@ -7,39 +7,35 @@ defmodule FlickWeb.LiveDashboardTest do
     assert response(conn, 401)
   end
 
-  test "shows database stats for Flick.Repo", ~M{conn} do
-    conn =
-      conn
-      |> put_req_header(
-        "authorization",
-        Plug.BasicAuth.encode_basic_auth("flick-admin", "unsafe-password")
-      )
-      |> get("/admin/dashboard/ecto_stats?repo=Flick.Repo")
+  describe "with admin authentication" do
+    setup ~M{conn} do
+      basic_auth = Plug.BasicAuth.encode_basic_auth("flick-admin", "unsafe-password")
+      conn = put_req_header(conn, "authorization", basic_auth)
+      {:ok, conn: conn}
+    end
 
-    document = conn |> html_response(200) |> LazyHTML.from_document()
+    test "shows database stats for Flick.Repo", ~M{conn} do
+      conn = get(conn, "/admin/dashboard/ecto_stats?repo=Flick.Repo")
 
-    # Each ecto_psql_extras query gets a tab; without the library the page shows an error instead.
-    assert document |> LazyHTML.query("a[href*='nav=table_size']") |> Enum.count() == 1
-  end
+      document = conn |> html_response(200) |> LazyHTML.from_document()
 
-  test "serves the dashboard with scripts that satisfy the CSP nonce", ~M{conn} do
-    conn =
-      conn
-      |> put_req_header(
-        "authorization",
-        Plug.BasicAuth.encode_basic_auth("flick-admin", "unsafe-password")
-      )
-      |> get("/admin/dashboard/home")
+      # Each ecto_psql_extras query gets a tab. Without the library, the page shows an error.
+      assert document |> LazyHTML.query("a[href*='nav=table_size']") |> Enum.count() == 1
+    end
 
-    html = html_response(conn, 200)
-    [csp] = get_resp_header(conn, "content-security-policy")
-    [_, nonce] = Regex.run(~r/script-src 'nonce-([^']+)'/, csp)
+    test "serves the dashboard with scripts that satisfy the CSP nonce", ~M{conn} do
+      conn = get(conn, "/admin/dashboard/home")
 
-    scripts = html |> LazyHTML.from_document() |> LazyHTML.query("script")
-    refute Enum.empty?(scripts)
+      html = html_response(conn, 200)
+      [csp] = get_resp_header(conn, "content-security-policy")
+      [_, nonce] = Regex.run(~r/script-src 'nonce-([^']+)'/, csp)
 
-    for script <- scripts do
-      assert LazyHTML.attribute(script, "nonce") == [nonce]
+      scripts = html |> LazyHTML.from_document() |> LazyHTML.query("script")
+      refute Enum.empty?(scripts)
+
+      for script <- scripts do
+        assert LazyHTML.attribute(script, "nonce") == [nonce]
+      end
     end
   end
 end
