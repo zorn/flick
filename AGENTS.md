@@ -72,6 +72,8 @@ curl -s -H 'Accept: application/vnd.grafana.llm' localhost:3200/api/v2/traces/TR
 
 Spans never hold SQL text, LiveView params, IP addresses, user agents, or ballot secrets. Keep it that way. `FlickWeb.TraceScrubber` wraps the exporter and scrubs every span, exception events included. `FlickWeb.TraceSampler` drops `/metrics`, the LiveView socket transports, and static files. Never set `OTEL_TRACES_EXPORTER` or `OTEL_TRACES_SAMPLER`, because they replace those modules. Flick refuses to boot when one is set.
 
+Phoenix LiveDashboard runs at `/admin/dashboard`, behind the same basic auth as `/admin/ballots`. In development, the credentials are `flick-admin` / `unsafe-password`. In production, they come from `BASIC_AUTH_ADMIN_USERNAME` and `BASIC_AUTH_ADMIN_PASSWORD`. The dashboard can show any process's state, including LiveView assigns that hold ballot secrets, so never move it out of the `/admin` scope. Its Ecto Stats page reads table sizes, index usage, locks, and similar stats through `ecto_psql_extras`, over the private network. It needs no Render Shell and starts no second VM, so try it before observer_cli. Use observer_cli when the web endpoint is too sick to serve a LiveView.
+
 To inspect a live node, open a remote IEx shell and start observer_cli. It shows memory, scheduler use, and the processes with the most memory or the longest mailboxes. Metrics and traces do not show these. `remote` starts a second VM on the same 512 MB instance, so when memory is already near the limit, prefer a single `:recon` call to leaving observer_cli open. In production, open the Shell tab of the `flick` service in the Render dashboard, then attach to the running release:
 
 ```sh
