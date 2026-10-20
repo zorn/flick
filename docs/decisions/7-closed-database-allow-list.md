@@ -16,6 +16,7 @@ Render's docs do not say whether a sync runs when `render.yaml` is unchanged.
 The cost is tooling that connects over the external URL. A temporary entry
 restores `render psql`. It does not restore the Render MCP tool
 `query_render_postgres`, because the hosted MCP server connects from an address
-we do not control. AGENTS.md lists the preferred ways to reach the data.
+we do not control. `docs/agents/hosting.md` lists the preferred ways to reach
+the data.
 
 Context: [#296](https://github.com/zorn/flick/issues/296).

@@ -23,27 +23,8 @@ The files under `docs/agents/` hold guidance that only some tasks need. Read the
 - Before you change a schema, a changeset, a query, or a migration, read [`docs/agents/ecto.md`](docs/agents/ecto.md).
 - Before you change the router, a controller, or an HTML view module, read [`docs/agents/phoenix.md`](docs/agents/phoenix.md). For a `live` route, also read [`docs/agents/liveview.md`](docs/agents/liveview.md). For a route under `/admin`, also read [`docs/agents/observability.md`](docs/agents/observability.md), which says where LiveDashboard must stay.
 - Before you change CSS, JavaScript under `assets/`, or the look of a page, read [`docs/agents/frontend.md`](docs/agents/frontend.md).
+- Before you change `render.yaml` or anything about deploys, use the Render tools, reach production data, or touch Paraxial, read [`docs/agents/hosting.md`](docs/agents/hosting.md).
 - Before you change metrics, traces, alerts, `instrumentation/`, or `rel/env.sh.eex`, read [`docs/agents/observability.md`](docs/agents/observability.md). Also read it before you inspect a running node, or to check how a change affects latency or query counts.
-
-## Hosting
-
-Flick runs on Render, in workspace `tea-cr5894tumphs73e1ml0g` as the web service `flick` (`srv-cr590j08fa8c73acf5u0`). Pass that workspace ID to the Render tools rather than asking which workspace to use. The service is managed by a Blueprint, so `render.yaml` is the source of truth for its settings. A dashboard change that `render.yaml` does not carry is overwritten on the next sync.
-
-These IDs are identifiers, not credentials. Never commit a Render API key or the service's deploy hook URL, since the hook URL embeds a key that triggers deploys.
-
-The database `flick_prod` accepts no external connections, because `render.yaml` sets an empty IP allow list. Services in the workspace connect over the private network, so they are not affected. The Render MCP tool `query_render_postgres` and `render psql` connect over the external URL, so they fail. A temporary entry restores `render psql`, but not the MCP tool, because the hosted MCP server connects from an address we do not control. To reach production data, use one of these, in order of preference:
-
-- Open a remote IEx shell (see [`docs/agents/observability.md`](docs/agents/observability.md)) and query through `Flick.Repo`, for example `Flick.Repo.query!("SELECT count(*) FROM ballots")`. This uses the private network.
-- For a local copy, download a backup from the database's Recovery page in the Render dashboard. The download does not go through the allow list.
-- For `psql`, `render psql`, or a GUI client, add an entry for your current IP in the database's Networking settings, connect, and remove the entry when you finish. Do not wait for a Blueprint sync to remove it. A sync overwrites dashboard changes, but Render's docs do not say whether a sync runs when `render.yaml` is unchanged. Never commit an entry to `render.yaml`, because the repo is public.
-
-## Paraxial
-
-Flick runs the Paraxial agent in dev and prod, on the free tier. In prod it runs Exploit Guard in monitor mode, and its alerts appear in Paraxial's dashboard, not in ntfy, where Grafana's alerts go. The agent reads `PARAXIAL_API_KEY` from the environment. Never commit that key.
-
-Each boot calls paraxial.io from a background task, even without a key. A failed call is silent and never blocks boot, so working offline is fine. With a key set, each boot also uploads an App Audit, and a failed upload logs `[Paraxial] App Audit upload failed`. The dependency leaves out `:test`, so tests and CI make no network call.
-
-The free tier allows five code scans a month, and `mix paraxial.scan` spends one each time. CI already runs the same three tools, so don't add the scan to CI or run it without being asked.
 
 ## Flick domain knowledge
 
