@@ -18,10 +18,11 @@ Every module belongs to exactly one boundary, chosen by its name. Each boundary 
 |---|---|---|---|
 | `Flick` | `lib/flick.ex` | — | — |
 | `Flick.RankedVoting` | `lib/flick/ranked_voting.ex` | `Ballot`, `Vote`, `PossibleAnswer`, `RankedAnswer` | `Flick.Repo` |
+| `Flick.Health` | `lib/flick/health.ex` | — | `Flick.Repo` |
 | `Flick.Repo` | `lib/flick/repo.ex` | — | — |
 | `Flick.Markdown` | `lib/flick/markdown.ex` | — | — |
 | `Flick.DateTimeFormatter` | `lib/flick/date_time_formatter.ex` | — | — |
-| `FlickWeb` | `lib/flick_web.ex` | `Endpoint`, `PromEx`, `Telemetry` | `Flick.RankedVoting`, `Flick.Markdown`, `Flick.DateTimeFormatter` |
+| `FlickWeb` | `lib/flick_web.ex` | `Endpoint`, `PromEx`, `Telemetry` | `Flick.RankedVoting`, `Flick.Health`, `Flick.Markdown`, `Flick.DateTimeFormatter` |
 | `Flick.Application` | `lib/flick/application.ex` | — | `Flick.Repo`, `FlickWeb` |
 | `Storybook` | `lib/storybook.ex` | (checks off) | (checks off) |
 
