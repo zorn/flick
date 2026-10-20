@@ -1,22 +1,24 @@
 defmodule Flick.Repo.Migrations.EnablePgStatStatements do
   use Ecto.Migration
 
-  # LiveDashboard's Ecto Stats reads this extension for its "outliers" and
-  # "calls" tabs. Its view raises an error unless the server preloads the
-  # library, and local and CI Postgres do not. So the migration creates the
-  # extension only where the library is preloaded, and Ecto Stats elsewhere
-  # keeps reporting it as not enabled.
+  # LiveDashboard's Ecto Stats needs this extension for its "outliers" and
+  # "calls" tabs. The extension's view raises an error unless the server
+  # preloads the library. Local and CI Postgres do not preload it.
+  #
+  # Only a superuser can read `shared_preload_libraries`, so the block creates
+  # the extension and reads the view once. On an error, the block rolls back
+  # and leaves no extension. A diagnostics extension must never block a deploy.
   def change do
-    # The raw SQL touches no table, and the down step reverses it.
+    # The raw SQL touches no table. The down step reverses it.
     # excellent_migrations:safety-assured-for-next-line raw_sql_executed
     execute """
             DO $$
             BEGIN
-              IF 'pg_stat_statements' = ANY (
-                string_to_array(replace(current_setting('shared_preload_libraries'), ' ', ''), ',')
-              ) THEN
-                CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
-              END IF;
+              CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
+              PERFORM 1 FROM pg_stat_statements LIMIT 1;
+            EXCEPTION
+              WHEN object_not_in_prerequisite_state OR insufficient_privilege THEN
+                RAISE NOTICE 'pg_stat_statements skipped: %', SQLERRM;
             END
             $$
             """,
