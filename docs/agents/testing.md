@@ -1,28 +1,22 @@
 # Testing
 
-## Test guidelines
+## Test data and processes
 
-- **Always use `start_supervised!/1`** to start processes in tests as it guarantees cleanup between tests
-- **Avoid** `Process.sleep/1` and `Process.alive?/1` in tests
-  - Instead of sleeping to wait for a process to finish, **always** use `Process.monitor/1` and assert on the DOWN message:
+- Set up ballots with the fixtures in `test/support/fixtures/ballot_fixture.ex`: `ballot_fixture/1` for a draft, `published_ballot_fixture/1`, and `closed_ballot_fixture/1`.
+- Start processes with `start_supervised!/1`, which cleans them up between tests.
+- Synchronize on messages, not time. To wait for a process to finish, monitor it and assert on its `DOWN` message:
 
-        ref = Process.monitor(pid)
-        assert_receive {:DOWN, ^ref, :process, ^pid, :normal}
+      ref = Process.monitor(pid)
+      assert_receive {:DOWN, ^ref, :process, ^pid, :normal}
 
-  - Instead of sleeping to synchronize before the next call, **always** use `_ = :sys.get_state/1` to ensure the process has handled prior messages
-- To debug test failures, run tests in a specific file with `mix test test/my_test.exs` or run all previously failed tests with `mix test --failed`
+  To make sure a process has handled earlier messages, call `_ = :sys.get_state(pid)`.
+- To debug a failure, run one file with `mix test test/my_test.exs`, or rerun only the failures with `mix test --failed`.
 
 ## LiveView tests
 
-- `Phoenix.LiveViewTest` module and `LazyHTML` (included) for making your assertions
-- Form tests are driven by `Phoenix.LiveViewTest`'s `render_submit/2` and `render_change/2` functions
-- Come up with a step-by-step test plan that splits major test cases into small, isolated files. You may start with simpler tests that verify content exists, gradually add interaction tests
-- **Always reference the key element IDs you added in the LiveView templates in your tests** for `Phoenix.LiveViewTest` functions like `element/2`, `has_element/2`, selectors, etc
-- **Never** test against raw HTML, **always** use `element/2`, `has_element/2`, and similar: `assert has_element?(view, "#my-form")`
-- Instead of relying on testing text content, which can change, favor testing for the presence of key elements
-- Focus on testing outcomes rather than implementation details
-- Be aware that `Phoenix.Component` functions like `<.form>` might produce different HTML than expected. Test against the output HTML structure, not your mental model of what you expect it to be
-- When facing test failures with element selectors, add debug statements to print the actual HTML, but use `LazyHTML` selectors to limit the output, ie:
+- Drive LiveViews with `Phoenix.LiveViewTest`: `render_change/2` and `render_submit/2` for forms, `element/2` and `has_element?/2` for assertions.
+- Select elements by the DOM IDs in the template, such as `has_element?(view, "#ballot-form")`. Assert on the presence of elements rather than on raw HTML or text, which change more often.
+- To see the HTML behind a failing selector, filter it with `LazyHTML` so the output stays short:
 
       html = render(view)
       document = LazyHTML.from_fragment(html)

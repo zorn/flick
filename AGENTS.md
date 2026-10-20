@@ -6,14 +6,21 @@ Flick is a ranked voting web application built with Elixir and Phoenix LiveView.
 - Add every new CI check to the `precommit` alias in `mix.exs`, unless it needs a tool that isn't a Mix task. `precommit` mirrors CI's Mix checks, so a green local run predicts a green pull request
 - Use the already included and available `:req` (`Req`) library for HTTP requests, **avoid** `:httpoison`, `:tesla`, and `:httpc`. Req is included by default and is the preferred HTTP client for Phoenix apps
 
+## Elixir
+
+- To use the result of an `if`, `case`, or `cond`, bind the whole expression: `socket = if connected?(socket), do: assign(socket, :val, val), else: socket`. A variable rebound inside the block is lost when the block ends.
+- Put one module in each file.
+- Read struct fields with dot syntax, such as `ballot.question_title`. Structs do not implement `Access`, so `ballot[:question_title]` fails.
+- Use Elixir's `Date`, `Time`, `DateTime`, and `Calendar` for date and time work. Add a dependency only when asked.
+- When one dependency misbehaves, clean only that one with `mix deps.clean <name>`. A full `--all` clean is almost never needed.
+
 ## Task guides
 
 The files under `docs/agents/` hold guidance that only some tasks need. Read the matching file before you start the work it covers. When a task spans several areas, read each file that applies.
 
 - Before you change a LiveView, a function component, a HEEx template, or a form, read [`docs/agents/liveview.md`](docs/agents/liveview.md).
 - Before you write or change a test, read [`docs/agents/testing.md`](docs/agents/testing.md).
-- Before you write or change Elixir code, or run an unfamiliar Mix task, read [`docs/agents/elixir.md`](docs/agents/elixir.md).
-- Before you change a schema, a changeset, a query, a migration, or `seeds.exs`, read [`docs/agents/ecto.md`](docs/agents/ecto.md).
+- Before you change a schema, a changeset, a query, or a migration, read [`docs/agents/ecto.md`](docs/agents/ecto.md).
 - Before you change the router, a controller, or an HTML view module, read [`docs/agents/phoenix.md`](docs/agents/phoenix.md). For a `live` route, also read [`docs/agents/liveview.md`](docs/agents/liveview.md). For a route under `/admin`, also read [`docs/agents/observability.md`](docs/agents/observability.md), which says where LiveDashboard must stay.
 - Before you change CSS, JavaScript under `assets/`, or the look of a page, read [`docs/agents/frontend.md`](docs/agents/frontend.md).
 - Before you change metrics, traces, alerts, `instrumentation/`, or `rel/env.sh.eex`, read [`docs/agents/observability.md`](docs/agents/observability.md). Also read it before you inspect a running node, or to check how a change affects latency or query counts.
@@ -77,29 +84,4 @@ Flick displays timestamps in the user's local timezone. The timezone string is c
 
 ## Project structure
 
-### Business logic — `lib/flick/`
-
-- `ranked_voting/` — Core domain schemas: `Ballot`, `PossibleAnswer`, `Vote`, `RankedAnswer`
-- `ranked_voting.ex` — Context module; all ballot and vote operations go through here
-- `markdown.ex` — Renders Markdown to sanitized HTML
-- `date_time_formatter.ex` — Formats `DateTime` values with timezone support
-- `health.ex` — Checks that the database is reachable, for Render's health check at `/health`
-
-### Web layer — `lib/flick_web/`
-
-- `live/index_live.ex` — Root LiveView/home page that redirects to the ballots index
-- `live/ballots/editor_live.ex` — Create/edit ballot (draft state only)
-- `live/ballots/viewer_live.ex` — Ballot admin view (publish, close, inline vote editing)
-- `live/ballots/index_live.ex` — Admin index (basic auth protected)
-- `live/vote/vote_capture_live.ex` — Voter ranking interface
-- `live/vote/results_live.ex` — Public results display
-- `components/core_components.ex` — Shared UI components (modal, button, form helpers)
-
-### Tests — `test/`
-
-- `test/flick/` — Unit tests for business logic
-- `test/flick_web/` — LiveView integration tests
-- `test/support/fixtures/ballot_fixture.ex` — Use these helpers to set up test data:
-  - `ballot_fixture/1` — Creates a draft ballot
-  - `published_ballot_fixture/1` — Creates and publishes
-  - `closed_ballot_fixture/1` — Creates, publishes, and closes
+Each module's `@moduledoc` says what it does. All ballot and vote operations go through the context module `Flick.RankedVoting`, in `lib/flick/ranked_voting.ex`.

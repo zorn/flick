@@ -1,9 +1,7 @@
 # Ecto
 
-- **Always** preload Ecto associations in queries when they'll be accessed in templates, ie a message that needs to reference the `message.user.email`
-- Remember `import Ecto.Query` and other supporting modules when you write `seeds.exs`
-- `Ecto.Schema` fields always use the `:string` type, even for `:text` columns, ie: `field :name, :string`
-- `Ecto.Changeset.validate_number/2` **DOES NOT SUPPORT the `:allow_nil` option**. By default, Ecto validations only run if a change for the given field exists and the change value is not nil, so such an option is never needed
-- You **must** use `Ecto.Changeset.get_field(changeset, :field)` to access changeset fields
-- Fields which are set programmatically, such as `user_id`, must not be listed in `cast` calls or similar for security purposes. Instead they must be explicitly set when creating the struct
-- **Always** invoke `mix ecto.gen.migration migration_name_using_underscores` when generating migration files, so the correct timestamp and conventions are applied
+- Preload every association a template reads, in the query that loads the record.
+- Read a changeset's fields with `Ecto.Changeset.get_field/2`.
+- List in `cast/3` only the fields a user may set. Set fields the server controls directly on the struct, as `Flick.RankedVoting.Vote` does with `ballot_id`.
+- `validate_number/3` already skips a nil value, so pass it only the bounds.
+- Create a migration with `mix ecto.gen.migration migration_name_using_underscores`, which sets the timestamp and file name.

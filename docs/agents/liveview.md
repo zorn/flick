@@ -1,75 +1,14 @@
 # LiveView and HEEx
 
-## Phoenix v1.8 guidelines
+## Layout and core components
 
-- **Always** begin your LiveView templates with `<Layouts.app flash={@flash} ...>` which wraps all inner content
-- The `FlickWeb.Layouts` module is aliased in the `flick_web.ex` file, so you can use it without needing to alias it again
-- Phoenix v1.8 moved the `<.flash_group>` component to the `Layouts` module. You are **forbidden** from calling `<.flash_group>` outside of the `layouts.ex` module
-- Out of the box, `core_components.ex` imports an `<.icon name="hero-x-mark" class="w-5 h-5"/>` component for hero icons. **Always** use the `<.icon>` component for icons, **never** use `Heroicons` modules or similar
-- **Always** use the imported `<.input>` component for form inputs from `core_components.ex` when available. `<.input>` is imported and using it will save steps and prevent errors
-- If you override the default input classes (`<.input class="myclass px-2 py-1 rounded-lg">`) with your own values, no default classes are inherited, so your custom classes must fully style the input
+- Begin every LiveView template with `<Layouts.app flash={@flash} ...>`, which wraps all inner content and renders flash messages. `<.flash_group>` belongs to `layouts.ex` alone.
+- Render icons with `<.icon name="hero-x-mark" class="w-5 h-5" />`.
+- Build form inputs with `<.input>` from `core_components.ex`. A `class` you pass replaces the default classes rather than adding to them, so your classes must fully style the input.
 
-## Phoenix HTML guidelines
+## HEEx
 
-- Phoenix templates **always** use `~H` or .html.heex files (known as HEEx), **never** use `~E`
-- **Always** use the imported `Phoenix.Component.form/1` and `Phoenix.Component.inputs_for/1` function to build forms. **Never** use `Phoenix.HTML.form_for` or `Phoenix.HTML.inputs_for` as they are outdated
-- When building forms **always** use the already imported `Phoenix.Component.to_form/2` (`assign(socket, form: to_form(...))` and `<.form for={@form} id="msg-form">`), then access those forms in the template via `@form[:field]`
-- **Always** add unique DOM IDs to key elements (like forms, buttons, etc) when writing templates, these IDs can later be used in tests (`<.form for={@form} id="product-form">`)
-- For "app wide" template imports, you can import/alias into `flick_web.ex`'s `html_helpers` block, so they will be available to all LiveViews, LiveComponents, and all modules that do `use FlickWeb, :html`
-
-- Elixir supports `if/else` but **does NOT support `if/else if` or `if/elsif`**. **Never use `else if` or `elseif` in Elixir**, **always** use `cond` or `case` for multiple conditionals.
-
-  **Never do this (invalid)**:
-
-      <%= if condition do %>
-        ...
-      <% else if other_condition %>
-        ...
-      <% end %>
-
-  Instead **always** do this:
-
-      <%= cond do %>
-        <% condition -> %>
-          ...
-        <% condition2 -> %>
-          ...
-        <% true -> %>
-          ...
-      <% end %>
-
-- HEEx requires a special tag annotation if you want to insert literal curly braces like `{` or `}`. If you want to show a textual code snippet on the page in a `<pre>` or `<code>` block you *must* annotate the parent tag with `phx-no-curly-interpolation`:
-
-      <code phx-no-curly-interpolation>
-        let obj = {key: "val"}
-      </code>
-
-  Within `phx-no-curly-interpolation` annotated tags, you can use `{` and `}` without escaping them, and dynamic Elixir expressions can still be used with `<%= ... %>` syntax
-
-- HEEx class attrs support lists, but you must **always** use list `[...]` syntax. You can use the class list syntax to conditionally add classes, **always do this for multiple class values**:
-
-      <a class={[
-        "px-2 text-white",
-        @some_flag && "py-5",
-        if(@other_condition, do: "border-red-500", else: "border-blue-100"),
-        ...
-      ]}>Text</a>
-
-  and **always** wrap `if`'s inside `{...}` expressions with parens, like done above (`if(@other_condition, do: "...", else: "...")`)
-
-  and **never** do this, since it's invalid (note the missing `[` and `]`):
-
-      <a class={
-        "px-2 text-white",
-        @some_flag && "py-5"
-      }> ...
-      => Raises compile syntax error on invalid HEEx attr syntax
-
-- **Never** use `<% Enum.each %>` or non-for comprehensions for generating template content, instead **always** use `<%= for item <- @collection do %>`
-- HEEx HTML comments use `<%!-- comment --%>`. **Always** use the HEEx HTML comment syntax for template comments (`<%!-- comment --%>`)
-- HEEx allows interpolation via `{...}` and `<%= ... %>`, but the `<%= %>` **only** works within tag bodies. **Always** use the `{...}` syntax for interpolation within tag attributes, and for interpolation of values within tag bodies. **Always** interpolate block constructs (if, cond, case, for) within tag bodies using `<%= ... %>`.
-
-  **Always** do this:
+- Interpolate values with `{...}`, both in attributes and in tag bodies. Use `<%= ... %>` only for block constructs (`if`, `cond`, `case`, `for`) in tag bodies:
 
       <div id={@id}>
         {@my_assign}
@@ -78,30 +17,31 @@
         <% end %>
       </div>
 
-  and **Never** do this – the program will terminate with a syntax error:
+- Write a class attribute with several values as a list, and wrap an inline `if` in parentheses:
 
-      <%!-- THIS IS INVALID NEVER EVER DO THIS --%>
-      <div id="<%= @invalid_interpolation %>">
-        {if @invalid_block_construct do}
-        {end}
-      </div>
+      <a class={[
+        "px-2 text-white",
+        @some_flag && "py-5",
+        if(@other_condition, do: "border-red-500", else: "border-blue-100")
+      ]}>Text</a>
 
+- Generate repeated content with `:for` or `<%= for item <- @collection do %>`.
+- Branch three or more ways with `cond` or `case`. Elixir has no `else if`.
+- Write template comments as `<%!-- comment --%>`.
+- To show literal `{` or `}`, such as a code snippet, add `phx-no-curly-interpolation` to the parent tag. Inside it, `<%= ... %>` still interpolates.
+- Give key elements, such as forms and buttons, a unique DOM `id`. Tests select elements by these IDs.
 
-## Phoenix LiveView guidelines
+## LiveViews
 
-- **Never** use the deprecated `live_redirect` and `live_patch` functions, instead **always** use the `<.link navigate={href}>` and `<.link patch={href}>` in templates, and the `push_navigate` and `push_patch` functions in LiveViews
-- **Avoid LiveComponents** unless you have a strong, specific need for them
-- LiveViews should be named with a `Live` suffix, grouped under a namespace that matches their domain (e.g. `FlickWeb.Ballots.IndexLive`, `FlickWeb.Vote.ResultsLive`). When you go to add LiveView routes to the router, the default `:browser` scope is **already aliased** with the `FlickWeb` module, so you can just do `live "/ballots", Ballots.IndexLive`
+- Name a LiveView with a `Live` suffix, under a namespace that matches its domain, such as `FlickWeb.Ballots.IndexLive` or `FlickWeb.Vote.ResultsLive`.
+- Navigate with `<.link navigate={href}>` and `<.link patch={href}>` in templates, and with `push_navigate/2` and `push_patch/2` in LiveViews.
+- Build UI from function components. Reach for a LiveComponent only when part of a page needs its own state and event handling.
 
-### LiveView streams
+## Streams
 
-- **Always** use LiveView streams for collections for assigning regular lists to avoid memory ballooning and runtime termination with the following operations:
-  - basic append of N items - `stream(socket, :messages, [new_msg])`
-  - resetting stream with new items - `stream(socket, :messages, [new_msg], reset: true)` (e.g. for filtering items)
-  - prepend to stream - `stream(socket, :messages, [new_msg], at: -1)`
-  - deleting items - `stream_delete(socket, :messages, msg)`
+Flick assigns its collections as plain lists today, because each list is small. Use a stream when a collection can grow without bound. A stream works like this:
 
-- When using the `stream/3` interfaces in the LiveView, the LiveView template must 1) always set `phx-update="stream"` on the parent element, with a DOM id on the parent element like `id="messages"` and 2) consume the `@streams.stream_name` collection and use the id as the DOM id for each child. For a call like `stream(socket, :messages, [new_msg])` in the LiveView, the template would be:
+- The parent element needs `phx-update="stream"` and a DOM `id`. Each child takes its `id` from the stream:
 
       <div id="messages" phx-update="stream">
         <div :for={{id, msg} <- @streams.messages} id={id}>
@@ -109,190 +49,29 @@
         </div>
       </div>
 
-- LiveView streams are *not* enumerable, so you cannot use `Enum.filter/2` or `Enum.reject/2` on them. Instead, if you want to filter, prune, or refresh a list of items on the UI, you **must refetch the data and re-stream the entire stream collection, passing reset: true**:
+- Add items with `stream/4` (`at: -1` prepends), and remove them with `stream_delete/3`.
+- A stream is not enumerable. To filter or refresh it, refetch the data and call `stream(socket, :messages, messages, reset: true)`.
+- A stream keeps no count. Track a count or an empty flag in a separate assign. An empty state can also be a sibling `<div class="hidden only:block">`, when it is the only other child.
+- When an assign changes what a streamed item shows, re-insert that item with `stream_insert/3`.
 
-      def handle_event("filter", %{"filter" => filter}, socket) do
-        # re-fetch the messages based on the filter
-        messages = list_messages(filter)
+## JavaScript hooks
 
-        {:noreply,
-         socket
-         |> assign(:messages_empty?, messages == [])
-         # reset the stream with the new messages
-         |> stream(:messages, messages, reset: true)}
-      end
+- Write a hook that lives with its template as a colocated hook. Its name starts with a `.`:
 
-- LiveView streams *do not support counting or empty states*. If you need to display a count, you must track it using a separate assign. For empty states, you can use Tailwind classes:
-
-      <div id="tasks" phx-update="stream">
-        <div class="hidden only:block">No tasks yet</div>
-        <div :for={{id, task} <- @streams.tasks} id={id}>
-          {task.name}
-        </div>
-      </div>
-
-  The above only works if the empty state is the only HTML block alongside the stream for-comprehension.
-
-- When updating an assign that should change content inside any streamed item(s), you MUST re-stream the items along with the updated assign:
-
-      def handle_event("edit_message", %{"message_id" => message_id}, socket) do
-        message = Chat.get_message!(message_id)
-        edit_form = to_form(Chat.change_message(message, %{content: message.content}))
-
-        # re-insert message so @editing_message_id toggle logic takes effect for that stream item
-        {:noreply,
-         socket
-         |> stream_insert(:messages, message)
-         |> assign(:editing_message_id, String.to_integer(message_id))
-         |> assign(:edit_form, edit_form)}
-      end
-
-  And in the template:
-
-      <div id="messages" phx-update="stream">
-        <div :for={{id, message} <- @streams.messages} id={id} class="flex group">
-          {message.username}
-          <%= if @editing_message_id == message.id do %>
-            <%!-- Edit mode --%>
-            <.form for={@edit_form} id="edit-form-#{message.id}" phx-submit="save_edit">
-              ...
-            </.form>
-          <% end %>
-        </div>
-      </div>
-
-- **Never** use the deprecated `phx-update="append"` or `phx-update="prepend"` for collections
-
-### LiveView JavaScript interop
-
-- Remember anytime you use `phx-hook="MyHook"` and that JS hook manages its own DOM, you **must** also set the `phx-update="ignore"` attribute
-- **Always** provide a unique DOM id alongside `phx-hook` otherwise a compiler error will be raised
-
-LiveView hooks come in two flavors, 1) colocated js hooks for "inline" scripts defined inside HEEx, and 2) external `phx-hook` annotations where JavaScript object literals are defined and passed to the `LiveSocket` constructor.
-
-#### Inline colocated js hooks
-
-**Never** write raw embedded `<script>` tags in heex as they are incompatible with LiveView. Instead, **always use a colocated js hook script tag (`:type={Phoenix.LiveView.ColocatedHook}`) when writing scripts inside the template**:
-
-    <input type="text" name="user[phone_number]" id="user-phone-number" phx-hook=".PhoneNumber" />
-    <script :type={Phoenix.LiveView.ColocatedHook} name=".PhoneNumber">
-      export default {
-        mounted() {
-          this.el.addEventListener("input", e => {
-            let match = this.el.value.replace(/\D/g, "").match(/^(\d{3})(\d{3})(\d{4})$/)
-            if(match) {
-              this.el.value = `${match[1]}-${match[2]}-${match[3]}`
-            }
-          })
+      <input type="text" id="user-phone-number" phx-hook=".PhoneNumber" />
+      <script :type={Phoenix.LiveView.ColocatedHook} name=".PhoneNumber">
+        export default {
+          mounted() { ... }
         }
-      }
-    </script>
+      </script>
 
-- colocated hooks are automatically integrated into the app.js bundle
-- colocated hooks names **MUST ALWAYS** start with a `.` prefix, i.e. `.PhoneNumber`
+- Put a shared hook in `assets/js/hooks/` and register it in `assets/js/app.js`, as `SortableInputsFor` is.
+- When a hook manages its own DOM, also set `phx-update="ignore"` on its element.
+- `push_event/3` returns a new socket. Return it, or rebind it, so the event is sent.
 
-#### External phx-hook
+## Forms
 
-External JS hooks (`<div id="myhook" phx-hook="MyHook">`) must be placed in `assets/js/` and passed to the LiveSocket constructor:
-
-    const MyHook = {
-      mounted() { ... }
-    }
-    let liveSocket = new LiveSocket("/live", Socket, {
-      hooks: { MyHook }
-    });
-
-#### Pushing events between client and server
-
-Use LiveView's `push_event/3` when you need to push events/data to the client for a phx-hook to handle. **Always** return or rebind the socket on `push_event/3` when pushing events:
-
-    # re-bind socket so we maintain event state to be pushed
-    socket = push_event(socket, "my_event", %{...})
-
-    # or return the modified socket directly:
-    def handle_event("some_event", _, socket) do
-      {:noreply, push_event(socket, "my_event", %{...})}
-    end
-
-Pushed events can then be picked up in a JS hook with `this.handleEvent`:
-
-    mounted() {
-      this.handleEvent("my_event", data => console.log("from server:", data));
-    }
-
-Clients can also push an event to the server and receive a reply with `this.pushEvent`:
-
-    mounted() {
-      this.el.addEventListener("click", e => {
-        this.pushEvent("my_event", { one: 1 }, reply => console.log("got reply from server:", reply));
-      })
-    }
-
-Where the server handled it via:
-
-    def handle_event("my_event", %{"one" => 1}, socket) do
-      {:reply, %{two: 2}, socket}
-    end
-
-
-### Form handling
-
-#### Creating a form from params
-
-If you want to create a form based on `handle_event` params:
-
-    def handle_event("submitted", params, socket) do
-      {:noreply, assign(socket, form: to_form(params))}
-    end
-
-When you pass a map to `to_form/1`, it assumes said map contains the form params, which are expected to have string keys.
-
-You can also specify a name to nest the params:
-
-    def handle_event("submitted", %{"user" => user_params}, socket) do
-      {:noreply, assign(socket, form: to_form(user_params, as: :user))}
-    end
-
-#### Creating a form from changesets
-
-When using changesets, the underlying data, form params, and errors are retrieved from it. The `:as` option is automatically computed too. E.g. if you have a ballot schema:
-
-    defmodule Flick.RankedVoting.Ballot do
-      use Ecto.Schema
-      ...
-    end
-
-And then you create a changeset that you pass to `to_form`:
-
-    %Flick.RankedVoting.Ballot{}
-    |> Ecto.Changeset.change()
-    |> to_form()
-
-Once the form is submitted, the params will be available under `%{"ballot" => ballot_params}`.
-
-In the template, the form assign can be passed to the `<.form>` function component:
-
-    <.form for={@form} id="todo-form" phx-change="validate" phx-submit="save">
-      <.input field={@form[:field]} type="text" />
-    </.form>
-
-Always give the form an explicit, unique DOM ID, like `id="todo-form"`.
-
-#### Avoiding form errors
-
-**Always** use a form assigned via `to_form/2` in the LiveView, and the `<.input>` component in the template. In the template **always access forms this way**:
-
-    <%!-- ALWAYS do this (valid) --%>
-    <.form for={@form} id="my-form">
-      <.input field={@form[:field]} type="text" />
-    </.form>
-
-And **never** do this:
-
-    <%!-- NEVER do this (invalid) --%>
-    <.form for={@changeset} id="my-form">
-      <.input field={@changeset[:field]} type="text" />
-    </.form>
-
-- You are FORBIDDEN from accessing the changeset in the template as it will cause errors
-- **Never** use `<.form let={f} ...>` in the template, instead **always use `<.form for={@form} ...>`**, then drive all form references from the form assign as in `@form[:field]`. The UI should **always** be driven by a `to_form/2` assigned in the LiveView module that is derived from a changeset
+- Build every form from `to_form/2`, assigned in the LiveView, and render it with `<.simple_form for={@form} id="...">` from `core_components.ex`, which wraps `<.form>`. Read fields as `@form[:field]`. The changeset stays in the LiveView.
+- From a changeset, `to_form/1` takes the data, params, and errors, and names the params after the schema. A `Ballot` form submits `%{"ballot" => ballot_params}`.
+- From `handle_event` params, `to_form/2` expects string keys. Pass `as: :user` to nest them under a name.
+- Nest a form with `<.inputs_for>`.

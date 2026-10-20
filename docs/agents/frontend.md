@@ -1,26 +1,6 @@
 # Frontend
 
-## JS and CSS guidelines
-
-- **Use Tailwind CSS classes and custom CSS rules** to create polished, responsive, and visually stunning interfaces.
-- Tailwind CSS v4 **no longer needs a tailwind.config.js** and uses a new import syntax in `app.css`:
-
-      @import "tailwindcss" source(none);
-      @source "../css";
-      @source "../js";
-      @source "../../lib/flick_web";
-
-- **Always use and maintain this import syntax** in the app.css file for projects generated with `phx.new`
-- **Never** use `@apply` when writing raw css
-- **Always** manually write your own tailwind-based components instead of using daisyUI for a unique, world-class design
-- Out of the box **only the app.js and app.css bundles are supported**
-  - You cannot reference an external vendor'd script `src` or link `href` in the layouts
-  - You must import the vendor deps into app.js and app.css to use them
-  - **Never write inline <script>custom js</script> tags within templates**
-
-## UI/UX & design guidelines
-
-- **Produce world-class UI designs** with a focus on usability, aesthetics, and modern design principles
-- Implement **subtle micro-interactions** (e.g., button hover effects, and smooth transitions)
-- Ensure **clean typography, spacing, and layout balance** for a refined, premium look
-- Focus on **delightful details** like hover effects, loading states, and smooth page transitions
+- Tailwind CSS v4 reads its configuration from `assets/css/app.css`. Flick has no `tailwind.config.js`.
+- Style elements with Tailwind utility classes in templates. Keep `@apply` out of CSS.
+- Build components by hand with Tailwind. Flick does not use daisyUI.
+- Bring in a third-party script or stylesheet by importing it into `app.js` or `app.css`, as `assets/vendor/` does. The layouts load only those two bundles.
