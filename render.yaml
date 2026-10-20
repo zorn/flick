@@ -75,8 +75,8 @@ services:
   domains:
   - www.rankedvote.app
   - rankedvote.app
-  # Render routes traffic to a new deploy only after this path answers 2xx, and
-  # restarts an instance that fails it for 60 seconds.
+  # Render routes traffic to a new deploy only after this path answers 2xx.
+  # It restarts an instance that fails the check for 60 seconds.
   # https://render.com/docs/health-checks
   healthCheckPath: /health
   autoDeployTrigger: commit

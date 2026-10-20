@@ -12,8 +12,8 @@ config :flick, FlickWeb.Endpoint,
       # Prometheus scrapes over plain HTTP on Render's private network. Render
       # redirects public HTTP to HTTPS before it reaches Flick.
       #
-      # Render's health check also uses plain HTTP, and it counts a 301 as
-      # healthy, so a redirect would pass without checking anything.
+      # Render's health check also uses plain HTTP. It counts a 301 as healthy,
+      # so a redirect would pass without checking anything.
       paths: ["/metrics", "/health"],
       hosts: ["localhost", "127.0.0.1"]
     ]

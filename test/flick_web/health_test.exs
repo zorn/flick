@@ -10,7 +10,7 @@ defmodule FlickWeb.HealthTest do
   @tag :capture_log
   test "answers 503 when the database is unreachable", %{conn: conn} do
     # `ConnTest` runs the endpoint in this process, so the dynamic repo applies
-    # to the request. It points at a port where nothing listens.
+    # to the request. The dynamic repo points at a port where nothing listens.
     {:ok, socket} = :gen_tcp.listen(0, [])
     {:ok, closed_port} = :inet.port(socket)
     :ok = :gen_tcp.close(socket)

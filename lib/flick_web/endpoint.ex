@@ -84,7 +84,6 @@ defmodule FlickWeb.Endpoint do
 
   defp prom_ex_metrics(conn, _opts), do: conn
 
-  # Render counts a 2xx as healthy and a 5xx as unhealthy.
   defp health(%Plug.Conn{request_path: "/health"} = conn, _opts) do
     conn =
       if Flick.Health.database_reachable?() do
