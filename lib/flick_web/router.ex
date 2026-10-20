@@ -2,6 +2,7 @@
 defmodule FlickWeb.Router do
   use FlickWeb, :router
 
+  import Phoenix.LiveDashboard.Router
   import PhoenixStorybook.Router
   import Plug.BasicAuth
 
@@ -16,6 +17,8 @@ defmodule FlickWeb.Router do
     #
     # - `img-src` allows `data:` URLs because Tailwind uses SVG data URLs for
     #   icons.
+    # - `font-src` allows `data:` URLs because LiveDashboard's CSS embeds its
+    #   font as one.
     # - `style-src` allows `'unsafe-inline'` to avoid web console issues with
     #   Phoenix Storybook.
     #
@@ -28,7 +31,7 @@ defmodule FlickWeb.Router do
     # https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
     plug :put_secure_browser_headers, %{
       "content-security-policy" =>
-        "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' https://plausible.io; connect-src 'self' https://plausible.io"
+        "default-src 'self'; img-src 'self' data:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' https://plausible.io; connect-src 'self' https://plausible.io"
     }
 
     plug :put_csp_nonce
@@ -63,6 +66,11 @@ defmodule FlickWeb.Router do
     pipe_through [:browser, :admin]
 
     live "/ballots", Ballots.IndexLive, :index
+
+    # `put_csp_nonce` adds its nonce to `script-src` only, so only scripts need it.
+    live_dashboard "/dashboard",
+      metrics: FlickWeb.Telemetry,
+      csp_nonce_assign_key: %{script: :csp_nonce}
   end
 
   scope "/", FlickWeb do
@@ -78,19 +86,11 @@ defmodule FlickWeb.Router do
     live_storybook "/storybook", backend_module: FlickWeb.Storybook
   end
 
-  # Enable LiveDashboard and Swoosh mailbox preview in development
+  # Enable Swoosh mailbox preview in development
   if Application.compile_env(:flick, :dev_routes) do
-    # If you want to use the LiveDashboard in production, you should put
-    # it behind authentication and allow only admins to access it.
-    # If your application does not have an admins-only section yet,
-    # you can use Plug.BasicAuth to set up some basic authentication
-    # as long as you are also using SSL (which you should anyway).
-    import Phoenix.LiveDashboard.Router
-
     scope "/dev" do
       pipe_through :browser
 
-      live_dashboard "/dashboard", metrics: FlickWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
     end
   end

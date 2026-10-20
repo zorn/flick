@@ -163,6 +163,8 @@ defmodule Flick.MixProject do
       {:opentelemetry_ecto, "~> 1.2"},
       # Ships in the release for `:observer_cli.start()` in a production remote shell.
       {:observer_cli, "~> 2.0"},
+      # Backs LiveDashboard's Ecto Stats page at `/admin/dashboard`.
+      {:ecto_psql_extras, "~> 0.8.8"},
 
       # Unorganized
       {:bandit, "~> 1.2"},
