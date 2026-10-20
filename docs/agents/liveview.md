@@ -10,8 +10,7 @@
 - Phoenix v1.8 moved the `<.flash_group>` component to the `Layouts` module. You are **forbidden** from calling `<.flash_group>` outside of the `layouts.ex` module
 - Out of the box, `core_components.ex` imports an `<.icon name="hero-x-mark" class="w-5 h-5"/>` component for hero icons. **Always** use the `<.icon>` component for icons, **never** use `Heroicons` modules or similar
 - **Always** use the imported `<.input>` component for form inputs from `core_components.ex` when available. `<.input>` is imported and using it will save steps and prevent errors
-- If you override the default input classes (`<.input class="myclass px-2 py-1 rounded-lg">)`) class with your own values, no default classes are inherited, so your
-custom classes must fully style the input
+- If you override the default input classes (`<.input class="myclass px-2 py-1 rounded-lg">`) with your own values, no default classes are inherited, so your custom classes must fully style the input
 
 ## Phoenix HTML guidelines
 
@@ -171,7 +170,7 @@ custom classes must fully style the input
 ### LiveView JavaScript interop
 
 - Remember anytime you use `phx-hook="MyHook"` and that JS hook manages its own DOM, you **must** also set the `phx-update="ignore"` attribute
-- **Always** provide an unique DOM id alongside `phx-hook` otherwise a compiler error will be raised
+- **Always** provide a unique DOM id alongside `phx-hook` otherwise a compiler error will be raised
 
 LiveView hooks come in two flavors, 1) colocated js hooks for "inline" scripts defined inside HEEx,
 and 2) external `phx-hook` annotations where JavaScript object literals are defined and passed to the `LiveSocket` constructor.
@@ -280,7 +279,7 @@ And then you create a changeset that you pass to `to_form`:
 
 Once the form is submitted, the params will be available under `%{"ballot" => ballot_params}`.
 
-In the template, the form form assign can be passed to the `<.form>` function component:
+In the template, the form assign can be passed to the `<.form>` function component:
 
     <.form for={@form} id="todo-form" phx-change="validate" phx-submit="save">
       <.input field={@form[:field]} type="text" />

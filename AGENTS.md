@@ -10,13 +10,13 @@ Flick is a ranked voting web application built with Elixir and Phoenix LiveView.
 
 The files under `docs/agents/` hold guidance that only some tasks need. Read the matching file before you start the work it covers. When a task spans several areas, read each file that applies.
 
-- Before you edit a LiveView, a function component, a HEEx template, or a form, read [`docs/agents/liveview.md`](docs/agents/liveview.md).
+- Before you change a LiveView, a function component, a HEEx template, or a form, read [`docs/agents/liveview.md`](docs/agents/liveview.md).
 - Before you write or change a test, read [`docs/agents/testing.md`](docs/agents/testing.md).
 - Before you write or change Elixir code, or run an unfamiliar Mix task, read [`docs/agents/elixir.md`](docs/agents/elixir.md).
 - Before you change a schema, a changeset, a query, or a migration, read [`docs/agents/ecto.md`](docs/agents/ecto.md).
-- Before you change the router, read [`docs/agents/phoenix.md`](docs/agents/phoenix.md).
+- Before you change the router, a controller, or an HTML view module, read [`docs/agents/phoenix.md`](docs/agents/phoenix.md). For a `live` route, also read [`docs/agents/liveview.md`](docs/agents/liveview.md). For a route under `/admin`, also read [`docs/agents/observability.md`](docs/agents/observability.md), which says where LiveDashboard must stay.
 - Before you change CSS, JavaScript under `assets/`, or the look of a page, read [`docs/agents/frontend.md`](docs/agents/frontend.md).
-- Before you change metrics, traces, alerts, `instrumentation/`, or `rel/env.sh.eex`, or inspect a running node, read [`docs/agents/observability.md`](docs/agents/observability.md). Read it also to check how a change affects latency or query counts.
+- Before you change metrics, traces, alerts, `instrumentation/`, or `rel/env.sh.eex`, read [`docs/agents/observability.md`](docs/agents/observability.md). Also read it before you inspect a running node, or to check how a change affects latency or query counts.
 
 ## Hosting
 
@@ -32,7 +32,7 @@ The database `flick_prod` accepts no external connections, because `render.yaml`
 
 ## Paraxial
 
-Flick runs the Paraxial agent in dev and prod, on the free tier. In prod it runs Exploit Guard in monitor mode, and its alerts appear in Paraxial's dashboard, not in ntfy. The agent reads `PARAXIAL_API_KEY` from the environment. Never commit that key.
+Flick runs the Paraxial agent in dev and prod, on the free tier. In prod it runs Exploit Guard in monitor mode, and its alerts appear in Paraxial's dashboard, not in ntfy, where Grafana's alerts go. The agent reads `PARAXIAL_API_KEY` from the environment. Never commit that key.
 
 Each boot calls paraxial.io from a background task, even without a key. A failed call is silent and never blocks boot, so working offline is fine. With a key set, each boot also uploads an App Audit, and a failed upload logs `[Paraxial] App Audit upload failed`. The dependency leaves out `:test`, so tests and CI make no network call.
 

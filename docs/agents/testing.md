@@ -17,7 +17,7 @@
 - Form tests are driven by `Phoenix.LiveViewTest`'s `render_submit/2` and `render_change/2` functions
 - Come up with a step-by-step test plan that splits major test cases into small, isolated files. You may start with simpler tests that verify content exists, gradually add interaction tests
 - **Always reference the key element IDs you added in the LiveView templates in your tests** for `Phoenix.LiveViewTest` functions like `element/2`, `has_element/2`, selectors, etc
-- **Never** tests again raw HTML, **always** use `element/2`, `has_element/2`, and similar: `assert has_element?(view, "#my-form")`
+- **Never** test against raw HTML, **always** use `element/2`, `has_element/2`, and similar: `assert has_element?(view, "#my-form")`
 - Instead of relying on testing text content, which can change, favor testing for the presence of key elements
 - Focus on testing outcomes rather than implementation details
 - Be aware that `Phoenix.Component` functions like `<.form>` might produce different HTML than expected. Test against the output HTML structure, not your mental model of what you expect it to be
