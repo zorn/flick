@@ -2,9 +2,9 @@
 
 ## Layout and core components
 
-- Begin every LiveView template with `<Layouts.app flash={@flash} ...>`, which wraps all inner content and renders flash messages. `<.flash_group>` belongs to `layouts.ex` alone.
+- Begin every LiveView template with `<Layouts.app flash={@flash} ...>`, which wraps all inner content and renders flash messages. Call `<.flash_group>` only from `layouts.ex`.
 - Render icons with `<.icon name="hero-x-mark" class="w-5 h-5" />`.
-- Build form inputs with `<.input>` from `core_components.ex`. A `class` you pass replaces the default classes rather than adding to them, so your classes must fully style the input.
+- Build form inputs with `<.input>` from `core_components.ex`. It takes no `class` attribute: a passed `class` lands after the default one, and the browser keeps the first, so it has no effect. To restyle inputs, change `input/1` itself.
 
 ## HEEx
 
@@ -41,7 +41,7 @@
 
 Flick assigns its collections as plain lists today, because each list is small. Use a stream when a collection can grow without bound. A stream works like this:
 
-- The parent element needs `phx-update="stream"` and a DOM `id`. Each child takes its `id` from the stream:
+- The parent element needs `phx-update="stream"`, which replaces the old `append` and `prepend` modes, and a DOM `id`. Each child takes its `id` from the stream:
 
       <div id="messages" phx-update="stream">
         <div :for={{id, msg} <- @streams.messages} id={id}>
@@ -66,12 +66,12 @@ Flick assigns its collections as plain lists today, because each list is small. 
       </script>
 
 - Put a shared hook in `assets/js/hooks/` and register it in `assets/js/app.js`, as `SortableInputsFor` is.
-- When a hook manages its own DOM, also set `phx-update="ignore"` on its element.
+- When a hook owns its element's content, also set `phx-update="ignore"` on that element. A hook that only reorders children the server still patches leaves it off, as `SortableInputsFor` does in `editor_live.ex`.
 - `push_event/3` returns a new socket. Return it, or rebind it, so the event is sent.
 
 ## Forms
 
-- Build every form from `to_form/2`, assigned in the LiveView, and render it with `<.simple_form for={@form} id="...">` from `core_components.ex`, which wraps `<.form>`. Read fields as `@form[:field]`. The changeset stays in the LiveView.
+- Build every form from `to_form/2`, assigned in the LiveView, and render it with `<.simple_form for={@form} id="...">` from `core_components.ex`. A small inline form, such as the vote weight form in `viewer_live.ex`, can use `<.form>` directly. Read fields as `@form[:field]`. The changeset stays in the LiveView.
 - From a changeset, `to_form/1` takes the data, params, and errors, and names the params after the schema. A `Ballot` form submits `%{"ballot" => ballot_params}`.
 - From `handle_event` params, `to_form/2` expects string keys. Pass `as: :user` to nest them under a name.
 - Nest a form with `<.inputs_for>`.

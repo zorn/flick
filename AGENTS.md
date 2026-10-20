@@ -10,8 +10,8 @@ Flick is a ranked voting web application built with Elixir and Phoenix LiveView.
 
 - To use the result of an `if`, `case`, or `cond`, bind the whole expression: `socket = if connected?(socket), do: assign(socket, :val, val), else: socket`. A variable rebound inside the block is lost when the block ends.
 - Put one module in each file.
-- Read struct fields with dot syntax, such as `ballot.question_title`. Structs do not implement `Access`, so `ballot[:question_title]` fails.
-- Use Elixir's `Date`, `Time`, `DateTime`, and `Calendar` for date and time work. Add a dependency only when asked.
+- Read struct fields with dot syntax, such as `ballot.question_title`, because structs do not implement `Access`.
+- Use Elixir's `Date`, `Time`, `DateTime`, and `Calendar` for date and time work. Add a date or time library only when asked.
 - When one dependency misbehaves, clean only that one with `mix deps.clean <name>`. A full `--all` clean is almost never needed.
 
 ## Task guides
@@ -84,4 +84,4 @@ Flick displays timestamps in the user's local timezone. The timezone string is c
 
 ## Project structure
 
-Each module's `@moduledoc` says what it does. All ballot and vote operations go through the context module `Flick.RankedVoting`, in `lib/flick/ranked_voting.ex`.
+Each domain module and LiveView has a `@moduledoc` that says what it does. All ballot and vote operations go through the context module `Flick.RankedVoting`, in `lib/flick/ranked_voting.ex`.
