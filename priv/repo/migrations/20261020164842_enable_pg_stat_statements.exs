@@ -17,7 +17,7 @@ defmodule Flick.Repo.Migrations.EnablePgStatStatements do
               CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
               PERFORM 1 FROM pg_stat_statements LIMIT 1;
             EXCEPTION
-              WHEN object_not_in_prerequisite_state OR insufficient_privilege THEN
+              WHEN OTHERS THEN
                 RAISE NOTICE 'pg_stat_statements skipped: %', SQLERRM;
             END
             $$
