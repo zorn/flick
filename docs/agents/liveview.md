@@ -4,9 +4,6 @@
 
 - **Always** begin your LiveView templates with `<Layouts.app flash={@flash} ...>` which wraps all inner content
 - The `FlickWeb.Layouts` module is aliased in the `flick_web.ex` file, so you can use it without needing to alias it again
-- Anytime you run into errors with no `current_scope` assign:
-  - You failed to follow the Authenticated Routes guidelines, or you failed to pass `current_scope` to `<Layouts.app>`
-  - **Always** fix the `current_scope` error by moving your routes to the proper `live_session` and ensure you pass `current_scope` as needed
 - Phoenix v1.8 moved the `<.flash_group>` component to the `Layouts` module. You are **forbidden** from calling `<.flash_group>` outside of the `layouts.ex` module
 - Out of the box, `core_components.ex` imports an `<.icon name="hero-x-mark" class="w-5 h-5"/>` component for hero icons. **Always** use the `<.icon>` component for icons, **never** use `Heroicons` modules or similar
 - **Always** use the imported `<.input>` component for form inputs from `core_components.ex` when available. `<.input>` is imported and using it will save steps and prevent errors
@@ -41,7 +38,7 @@
           ...
       <% end %>
 
-- HEEx require special tag annotation if you want to insert literal curly's like `{` or `}`. If you want to show a textual code snippet on the page in a `<pre>` or `<code>` block you *must* annotate the parent tag with `phx-no-curly-interpolation`:
+- HEEx requires a special tag annotation if you want to insert literal curly braces like `{` or `}`. If you want to show a textual code snippet on the page in a `<pre>` or `<code>` block you *must* annotate the parent tag with `phx-no-curly-interpolation`:
 
       <code phx-no-curly-interpolation>
         let obj = {key: "val"}
@@ -92,8 +89,8 @@
 
 ## Phoenix LiveView guidelines
 
-- **Never** use the deprecated `live_redirect` and `live_patch` functions, instead **always** use the `<.link navigate={href}>` and  `<.link patch={href}>` in templates, and `push_navigate` and `push_patch` functions LiveViews
-- **Avoid LiveComponent's** unless you have a strong, specific need for them
+- **Never** use the deprecated `live_redirect` and `live_patch` functions, instead **always** use the `<.link navigate={href}>` and `<.link patch={href}>` in templates, and the `push_navigate` and `push_patch` functions in LiveViews
+- **Avoid LiveComponents** unless you have a strong, specific need for them
 - LiveViews should be named with a `Live` suffix, grouped under a namespace that matches their domain (e.g. `FlickWeb.Ballots.IndexLive`, `FlickWeb.Vote.ResultsLive`). When you go to add LiveView routes to the router, the default `:browser` scope is **already aliased** with the `FlickWeb` module, so you can just do `live "/ballots", Ballots.IndexLive`
 
 ### LiveView streams
@@ -136,8 +133,7 @@
 
   The above only works if the empty state is the only HTML block alongside the stream for-comprehension.
 
-- When updating an assign that should change content inside any streamed item(s), you MUST re-stream the items
-  along with the updated assign:
+- When updating an assign that should change content inside any streamed item(s), you MUST re-stream the items along with the updated assign:
 
       def handle_event("edit_message", %{"message_id" => message_id}, socket) do
         message = Chat.get_message!(message_id)
@@ -172,14 +168,11 @@
 - Remember anytime you use `phx-hook="MyHook"` and that JS hook manages its own DOM, you **must** also set the `phx-update="ignore"` attribute
 - **Always** provide a unique DOM id alongside `phx-hook` otherwise a compiler error will be raised
 
-LiveView hooks come in two flavors, 1) colocated js hooks for "inline" scripts defined inside HEEx,
-and 2) external `phx-hook` annotations where JavaScript object literals are defined and passed to the `LiveSocket` constructor.
+LiveView hooks come in two flavors, 1) colocated js hooks for "inline" scripts defined inside HEEx, and 2) external `phx-hook` annotations where JavaScript object literals are defined and passed to the `LiveSocket` constructor.
 
 #### Inline colocated js hooks
 
-**Never** write raw embedded `<script>` tags in heex as they are incompatible with LiveView.
-Instead, **always use a colocated js hook script tag (`:type={Phoenix.LiveView.ColocatedHook}`)
-when writing scripts inside the template**:
+**Never** write raw embedded `<script>` tags in heex as they are incompatible with LiveView. Instead, **always use a colocated js hook script tag (`:type={Phoenix.LiveView.ColocatedHook}`) when writing scripts inside the template**:
 
     <input type="text" name="user[phone_number]" id="user-phone-number" phx-hook=".PhoneNumber" />
     <script :type={Phoenix.LiveView.ColocatedHook} name=".PhoneNumber">
@@ -200,8 +193,7 @@ when writing scripts inside the template**:
 
 #### External phx-hook
 
-External JS hooks (`<div id="myhook" phx-hook="MyHook">`) must be placed in `assets/js/` and passed to the
-LiveSocket constructor:
+External JS hooks (`<div id="myhook" phx-hook="MyHook">`) must be placed in `assets/js/` and passed to the LiveSocket constructor:
 
     const MyHook = {
       mounted() { ... }
@@ -212,8 +204,7 @@ LiveSocket constructor:
 
 #### Pushing events between client and server
 
-Use LiveView's `push_event/3` when you need to push events/data to the client for a phx-hook to handle.
-**Always** return or rebind the socket on `push_event/3` when pushing events:
+Use LiveView's `push_event/3` when you need to push events/data to the client for a phx-hook to handle. **Always** return or rebind the socket on `push_event/3` when pushing events:
 
     # re-bind socket so we maintain event state to be pushed
     socket = push_event(socket, "my_event", %{...})
@@ -289,7 +280,7 @@ Always give the form an explicit, unique DOM ID, like `id="todo-form"`.
 
 #### Avoiding form errors
 
-**Always** use a form assigned via `to_form/2` in the LiveView, and the `<.input>` component in the template. In the template **always access forms this**:
+**Always** use a form assigned via `to_form/2` in the LiveView, and the `<.input>` component in the template. In the template **always access forms this way**:
 
     <%!-- ALWAYS do this (valid) --%>
     <.form for={@form} id="my-form">

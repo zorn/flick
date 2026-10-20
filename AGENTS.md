@@ -13,7 +13,7 @@ The files under `docs/agents/` hold guidance that only some tasks need. Read the
 - Before you change a LiveView, a function component, a HEEx template, or a form, read [`docs/agents/liveview.md`](docs/agents/liveview.md).
 - Before you write or change a test, read [`docs/agents/testing.md`](docs/agents/testing.md).
 - Before you write or change Elixir code, or run an unfamiliar Mix task, read [`docs/agents/elixir.md`](docs/agents/elixir.md).
-- Before you change a schema, a changeset, a query, or a migration, read [`docs/agents/ecto.md`](docs/agents/ecto.md).
+- Before you change a schema, a changeset, a query, a migration, or `seeds.exs`, read [`docs/agents/ecto.md`](docs/agents/ecto.md).
 - Before you change the router, a controller, or an HTML view module, read [`docs/agents/phoenix.md`](docs/agents/phoenix.md). For a `live` route, also read [`docs/agents/liveview.md`](docs/agents/liveview.md). For a route under `/admin`, also read [`docs/agents/observability.md`](docs/agents/observability.md), which says where LiveDashboard must stay.
 - Before you change CSS, JavaScript under `assets/`, or the look of a page, read [`docs/agents/frontend.md`](docs/agents/frontend.md).
 - Before you change metrics, traces, alerts, `instrumentation/`, or `rel/env.sh.eex`, read [`docs/agents/observability.md`](docs/agents/observability.md). Also read it before you inspect a running node, or to check how a change affects latency or query counts.
