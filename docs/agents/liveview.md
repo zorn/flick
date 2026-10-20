@@ -49,7 +49,7 @@ Flick assigns its collections as plain lists today, because each list is small. 
         </div>
       </div>
 
-- Add items with `stream/4` (`at: -1` prepends), and remove them with `stream_delete/3`.
+- Add items with `stream/4`, which appends by default (`at: -1`). Pass `at: 0` to prepend. Remove items with `stream_delete/3`.
 - A stream is not enumerable. To filter or refresh it, refetch the data and call `stream(socket, :messages, messages, reset: true)`.
 - A stream keeps no count. Track a count or an empty flag in a separate assign. An empty state can also be a sibling `<div class="hidden only:block">`, when it is the only other child.
 - When an assign changes what a streamed item shows, re-insert that item with `stream_insert/3`.
