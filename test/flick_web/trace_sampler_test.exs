@@ -5,6 +5,7 @@ defmodule FlickWeb.TraceSamplerTest do
 
   for path <- [
         "/metrics",
+        "/health",
         "/live/websocket",
         "/live/longpoll",
         "/assets/app.js",

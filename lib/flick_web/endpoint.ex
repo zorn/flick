@@ -25,6 +25,10 @@ defmodule FlickWeb.Endpoint do
   # skip the repo checks and stay out of the HTTP metrics.
   plug :prom_ex_metrics
 
+  # Render checks this path every few seconds. It runs before `Plug.Telemetry`
+  # for the same reason as `:prom_ex_metrics`.
+  plug :health
+
   # Serve at "/" the static files from "priv/static" directory.
   #
   # When code reloading is disabled (e.g., in production),
@@ -79,4 +83,18 @@ defmodule FlickWeb.Endpoint do
   end
 
   defp prom_ex_metrics(conn, _opts), do: conn
+
+  # Render counts a 2xx as healthy and a 5xx as unhealthy.
+  defp health(%Plug.Conn{request_path: "/health"} = conn, _opts) do
+    conn =
+      if Flick.Health.database_reachable?() do
+        send_resp(conn, 200, "ok")
+      else
+        send_resp(conn, 503, "database unreachable")
+      end
+
+    halt(conn)
+  end
+
+  defp health(conn, _opts), do: conn
 end

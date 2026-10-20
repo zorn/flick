@@ -75,6 +75,10 @@ services:
   domains:
   - www.rankedvote.app
   - rankedvote.app
+  # Render routes traffic to a new deploy only after this path answers 2xx, and
+  # restarts an instance that fails it for 60 seconds.
+  # https://render.com/docs/health-checks
+  healthCheckPath: /health
   autoDeployTrigger: commit
 # Flick's metrics stack. It builds the same Dockerfiles as local development
 # (instrumentation/compose.yml).
