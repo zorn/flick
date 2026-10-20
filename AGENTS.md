@@ -44,7 +44,7 @@ curl -s localhost:9091/api/v1/query --data-urlencode 'query=histogram_quantile(0
 curl -s localhost:9091/api/v1/query --data-urlencode 'query=sum by (source) (rate(flick_prom_ex_ecto_repo_query_total_time_milliseconds_count[5m]))' | jq '.data.result'
 ```
 
-To list every metric name, run `curl -s localhost:9091/api/v1/label/__name__/values | jq`. An empty result means no event happened in the window, not that the value is zero. In development, every request also shows `schema_migrations` queries from Phoenix's pending-migration check, so subtract that noise when you count a page's queries.
+To list every metric name, run `curl -s localhost:9091/api/v1/label/__name__/values | jq`. An empty result means no event happened in the window, not that the value is zero. In development, every request also shows `schema_migrations` queries from Phoenix's pending-migration check, so subtract that noise when you count a page's queries. Render's health check runs `SELECT 1` through `/health` every few seconds, which shows up as a series with an empty `source`.
 
 Grafana runs at `http://localhost:3001` with no login. Its data source and dashboards are provisioned from `instrumentation/grafana/`, and Grafana keeps no state between restarts. A dashboard created or edited only in the UI is lost when the container is recreated. To keep one, save its JSON model and rebuild:
 
@@ -70,7 +70,7 @@ curl -sG localhost:3200/api/search \
 curl -s -H 'Accept: application/vnd.grafana.llm' localhost:3200/api/v2/traces/TRACE_ID | jq
 ```
 
-Spans never hold SQL text, LiveView params, IP addresses, user agents, or ballot secrets. Keep it that way. `FlickWeb.TraceScrubber` wraps the exporter and scrubs every span, exception events included. `FlickWeb.TraceSampler` drops `/metrics`, the LiveView socket transports, and static files. Never set `OTEL_TRACES_EXPORTER` or `OTEL_TRACES_SAMPLER`, because they replace those modules. Flick refuses to boot when one is set.
+Spans never hold SQL text, LiveView params, IP addresses, user agents, or ballot secrets. Keep it that way. `FlickWeb.TraceScrubber` wraps the exporter and scrubs every span, exception events included. `FlickWeb.TraceSampler` drops `/metrics`, `/health`, the LiveView socket transports, and static files. Never set `OTEL_TRACES_EXPORTER` or `OTEL_TRACES_SAMPLER`, because they replace those modules. Flick refuses to boot when one is set.
 
 To inspect a live node, open a remote IEx shell and start observer_cli. It shows memory, scheduler use, and the processes with the most memory or the longest mailboxes. Metrics and traces do not show these. `remote` starts a second VM on the same 512 MB instance, so when memory is already near the limit, prefer a single `:recon` call to leaving observer_cli open. In production, open the Shell tab of the `flick` service in the Render dashboard, then attach to the running release:
 
@@ -137,6 +137,7 @@ Flick displays timestamps in the user's local timezone. The timezone string is c
 - `ranked_voting.ex` — Context module; all ballot and vote operations go through here
 - `markdown.ex` — Renders Markdown to sanitized HTML
 - `date_time_formatter.ex` — Formats `DateTime` values with timezone support
+- `health.ex` — Checks that the database is reachable, for Render's health check at `/health`
 
 ### Web layer — `lib/flick_web/`
 

@@ -19,7 +19,7 @@ defmodule FlickWeb do
   """
 
   use Boundary,
-    deps: [Flick.RankedVoting, Flick.Markdown, Flick.DateTimeFormatter],
+    deps: [Flick.RankedVoting, Flick.Health, Flick.Markdown, Flick.DateTimeFormatter],
     exports: [Endpoint, PromEx, Telemetry]
 
   @spec static_paths() :: [String.t()]

@@ -6,6 +6,7 @@ defmodule FlickWeb.TraceSampler do
   everything else:
 
   * `/metrics`, because Prometheus scrapes it every 15 seconds.
+  * `/health`, because Render checks it every few seconds.
   * `/live/websocket` and `/live/longpoll`, LiveView's socket transports. The
     LiveView spans that follow on the socket still get traced.
   * Static files, such as `/assets/app.js` and `/favicon.ico`.
@@ -13,7 +14,7 @@ defmodule FlickWeb.TraceSampler do
 
   @behaviour :otel_sampler
 
-  @dropped_paths ["/metrics", "/live/websocket", "/live/longpoll"]
+  @dropped_paths ["/metrics", "/health", "/live/websocket", "/live/longpoll"]
 
   @impl :otel_sampler
   def setup(_opts), do: []
