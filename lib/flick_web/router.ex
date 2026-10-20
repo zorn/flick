@@ -17,6 +17,8 @@ defmodule FlickWeb.Router do
     #
     # - `img-src` allows `data:` URLs because Tailwind uses SVG data URLs for
     #   icons.
+    # - `font-src` allows `data:` URLs because LiveDashboard's CSS embeds its
+    #   font as one.
     # - `style-src` allows `'unsafe-inline'` to avoid web console issues with
     #   Phoenix Storybook.
     #
@@ -29,7 +31,7 @@ defmodule FlickWeb.Router do
     # https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
     plug :put_secure_browser_headers, %{
       "content-security-policy" =>
-        "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' https://plausible.io; connect-src 'self' https://plausible.io"
+        "default-src 'self'; img-src 'self' data:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' https://plausible.io; connect-src 'self' https://plausible.io"
     }
 
     plug :put_csp_nonce
