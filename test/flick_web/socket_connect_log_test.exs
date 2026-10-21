@@ -16,11 +16,12 @@ defmodule FlickWeb.SocketConnectLogTest do
     on_exit(fn -> Logger.configure(level: level) end)
   end
 
-  test "a socket connect logs no credentials from its static asset URLs" do
+  test "a socket connect logs no CSRF token or static asset credentials" do
     # Built from parts, so the secret scan doesn't flag a credential URL.
     leaked = "unsafe-password"
 
     params = %{
+      "_csrf_token" => "csrf-#{leaked}",
       "_track_static" => %{
         "0" => "https://flick-admin:#{leaked}@rankedvote.app/assets/css/app.css?vsn=d"
       }
@@ -32,6 +33,7 @@ defmodule FlickWeb.SocketConnectLogTest do
       end)
 
     assert log =~ "CONNECTED TO Phoenix.LiveView.Socket"
+    assert log =~ ~s("_csrf_token" => "[FILTERED]")
     assert log =~ ~s("_track_static" => "[FILTERED]")
     refute log =~ leaked
   end
