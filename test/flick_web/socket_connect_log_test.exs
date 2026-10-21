@@ -20,12 +20,13 @@ defmodule FlickWeb.SocketConnectLogTest do
     # Built from parts, so the secret scan doesn't flag a credential URL.
     leaked = "unsafe-password"
 
-    params = %{
-      "_csrf_token" => "csrf-#{leaked}",
-      "_track_static" => %{
-        "0" => "https://flick-admin:#{leaked}@rankedvote.app/assets/css/app.css?vsn=d"
-      }
-    }
+    params =
+      Map.merge(phoenix_default_params(leaked), %{
+        "_csrf_token" => "csrf-#{leaked}",
+        "_track_static" => %{
+          "0" => "https://flick-admin:#{leaked}@rankedvote.app/assets/css/app.css?vsn=d"
+        }
+      })
 
     log =
       capture_log([level: :info], fn ->
@@ -36,5 +37,15 @@ defmodule FlickWeb.SocketConnectLogTest do
     assert log =~ ~s("_csrf_token" => "[FILTERED]")
     assert log =~ ~s("_track_static" => "[FILTERED]")
     refute log =~ leaked
+  end
+
+  # Setting `:filter_parameters` replaces Phoenix's default rather than adding
+  # to it. One param per default term catches a term the list leaves out,
+  # including one a Phoenix upgrade adds.
+  defp phoenix_default_params(value) do
+    {:ok, [{:application, :phoenix, properties}]} =
+      :file.consult(Application.app_dir(:phoenix, "ebin/phoenix.app"))
+
+    Map.new(properties[:env][:filter_parameters], &{&1, value})
   end
 end
