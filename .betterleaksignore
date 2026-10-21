@@ -30,3 +30,7 @@ b73d809a29ff5cb7014f31432b237a484f68c12c:config/test.exs:generic-password:36
 # in the PR #267 branch commit and in its squash merge on `main`.
 7a3b522a91ac77a401a4b9b21f9eef1e35fc10fa:instrumentation/prometheus/local.yml:generic-password:10
 3230745fc84c3787da5ab02ace68c640dd659520:instrumentation/prometheus/local.yml:generic-password:10
+
+# Dev admin password (`unsafe-password`) in a credential URL, from a commit
+# before the test built the URL from parts. The squash merge doesn't carry it.
+cc8da1fd2971180082db83de1f2a3028c02aef6c:test/flick_web/log_scrubber_test.exs:generic-credential-uri:22
