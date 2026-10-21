@@ -1,5 +1,5 @@
 defmodule FlickWeb.LogScrubberTest do
-  # The test raises the global log level, which would let other tests' logs
+  # The test logs at `info` globally, which would let other tests' logs
   # through.
   use ExUnit.Case, async: false
 
