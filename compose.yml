@@ -12,10 +12,9 @@
 #   version of the database image to better align with what will be seen in
 #   production on Render.
 
-# A fixed project name makes every worktree share this one container, which
-# holds a database per worktree. Without it, Compose names the project after
-# the directory, and each worktree would start its own container on the same
-# port.
+# A fixed project name lets every worktree share this container, which holds a
+# database per worktree. Without it, each worktree directory starts its own
+# container on the same port.
 name: flick
 
 services:
@@ -36,8 +35,8 @@ services:
         condition: on-failure
     environment:
       POSTGRES_PASSWORD: postgres
-    # 5418 rather than 5432, so Flick never reaches another project's server by
-    # accident. `config/dev.exs` and `config/test.exs` read the same variable.
+    # Flick uses 5418 rather than 5432, so it never reaches another project's
+    # server by accident.
     ports:
       - "${POSTGRES_PORT:-5418}:5432"
     # Postgres 18 images refuse a mount at /var/lib/postgresql/data. See

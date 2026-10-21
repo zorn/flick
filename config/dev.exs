@@ -5,7 +5,7 @@ config :flick, Flick.Repo,
   username: "postgres",
   password: "postgres",
   hostname: "localhost",
-  # The Compose database from `compose.yml`, which maps the same variable.
+  # Matches the host port that `compose.yml` publishes.
   port: String.to_integer(System.get_env("POSTGRES_PORT", "5418")),
   database: "flick_dev",
   stacktrace: true,

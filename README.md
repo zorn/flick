@@ -52,7 +52,7 @@ mix setup              # fetch deps, create and seed the database, build assets
 mix phx.server         # or `iex -S mix phx.server`
 ```
 
-Visit [`localhost:4000`](http://localhost:4000). The seeds in `priv/repo/seeds.exs` create a few sample ballots. The admin pages under [`/admin`](http://localhost:4000/admin/ballots) use the basic auth credentials `flick-admin` / `unsafe-password`.
+Visit [`localhost:4000`](http://localhost:4000). The seeds in `priv/repo/seeds.exs` create a few sample ballots. The admin pages under [`/admin`](http://localhost:4000/admin/ballots) use the HTTP Basic Auth credentials `flick-admin` / `unsafe-password`.
 
 Run the tests with `mix test`, and run every check CI runs with `mix precommit`.
 
@@ -62,7 +62,7 @@ Run the tests with `mix test`, and run every check CI runs with `mix precommit`.
 
 Dev and test refuse to start when the server is not Postgres 18, so a stray server cannot stand in for the container unnoticed.
 
-- `bin/psql` opens `psql` on the dev database inside the container. Extra arguments go to `psql`, as in `bin/psql -c "select count(*) from ballots"`. Any `psql` 18 client on your machine also works, with `psql -h localhost -p 5418 -U postgres flick_dev` and the password `postgres`.
+- `bin/psql` opens `psql` on the dev database inside the container. Extra arguments go to `psql`, as in `bin/psql -c "select count(*) from ballots"`. Any `psql` 18 client on your machine also works, such as the one in Homebrew's `libpq`, with `psql -h localhost -p 5418 -U postgres flick_dev` and the password `postgres`.
 - `mix ecto.reset` drops the dev database and rebuilds it from the seeds.
 - `docker compose down` stops the container and keeps its data. `docker compose down -v` also deletes the data.
 
@@ -91,7 +91,7 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
 
 Flick is set up for [worktrunk](https://worktrunk.dev) (`wt`), which creates git worktrees so that several copies of the app, or several coding agents, can run side by side. Nothing above depends on it. A normal checkout ignores these files and keeps port 4000 and the `flick_dev` database.
 
-A worktree made with `wt` gets its own copy of `_build` and `deps`, its own port, and its own dev and test databases. Every worktree shares the one Compose container, because `compose.yml` fixes the project name, so start it once with `docker compose up -d` from any checkout. The port and database names are in the worktree's `.env.worktree`, which `config/runtime.exs` reads.
+A worktree made with `wt` gets its own copy of `_build` and `deps`, its own port, and its own dev and test databases. Every worktree shares one Compose container, because `compose.yml` fixes the project name. Start it once with `docker compose up -d` from any checkout. The port and database names are in the worktree's `.env.worktree`, which `config/runtime.exs` reads.
 
 Set up each machine once with [the runbook's setup steps](https://github.com/zorn/dotfiles/blob/main/worktrunk/README.md#set-up-each-machine-once). Flick's `.config/wt.toml` calls a hook script installed by those steps. Without it, `wt` reports an error and leaves the worktree without its databases, and `mix` in that worktree refuses to start rather than fall back to `flick_dev`.
 

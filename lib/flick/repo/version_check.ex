@@ -3,15 +3,13 @@ defmodule Flick.Repo.VersionCheck do
   Refuses to boot when `Flick.Repo` reaches a Postgres server on a major
   version other than `:postgres_major_version`.
 
-  Dev and test connect to whatever server answers on the configured port, so
-  without this check they can run on an older Postgres than production without
-  anything noticing. Prod sets no expected version, so the check does nothing
-  there.
+  Dev and test connect to whatever server answers on the configured port.
+  Without this check, they can run unnoticed on an older Postgres than
+  production. Prod sets no expected version, so the check does nothing there.
 
-  It runs as a child after `Flick.Repo` in the application's supervision tree.
-  Its start function raises on a mismatch, which stops the application before
-  the endpoint starts, and otherwise returns `:ignore`, so no process is left
-  running.
+  It runs as a child after `Flick.Repo`, so a mismatch stops the application
+  before the endpoint starts. On a match, its start function returns `:ignore`,
+  and no process stays running.
   """
 
   @doc false
@@ -24,18 +22,32 @@ defmodule Flick.Repo.VersionCheck do
   @spec run() :: :ignore
   def run do
     if expected_major = Application.get_env(:flick, :postgres_major_version) do
-      %{rows: [[server_version_num]]} =
-        Flick.Repo.query!("SHOW server_version_num", [], log: false)
-
-      verify!(server_version_num, expected_major)
+      verify!(server_version_num!(), expected_major)
     end
 
     :ignore
   end
 
+  defp server_version_num! do
+    %{rows: [[server_version_num]]} =
+      Flick.Repo.query!("SHOW server_version_num", [], log: false)
+
+    server_version_num
+  rescue
+    # Postgrex already logs why each connection failed, so the pool's own
+    # message would only bury the hint.
+    DBConnection.ConnectionError ->
+      reraise """
+              Flick.Repo could not reach Postgres on port #{port()}.
+
+              Start the database with `docker compose up -d`. Create it with `mix ecto.setup`.
+              """,
+              __STACKTRACE__
+  end
+
   @doc """
-  Returns `:ok` when `server_version_num`, as Postgres reports it, is on
-  `expected_major`, and raises otherwise.
+  Returns `:ok` when `server_version_num` has the major version
+  `expected_major`. Raises otherwise.
   """
   @spec verify!(String.t(), pos_integer()) :: :ok
   def verify!(server_version_num, expected_major) do
@@ -47,10 +59,12 @@ defmodule Flick.Repo.VersionCheck do
         raise """
         Flick.Repo reached Postgres #{actual_major}, but Flick expects Postgres #{expected_major}.
 
-        Another server is probably answering on the configured port. Start the \
-        project's own database with `docker compose up -d`, which listens on \
-        port 5418, and check that POSTGRES_PORT is unset or points at it.
+        Another server is probably answering on port #{port()}. Start the \
+        project's own database with `docker compose up -d`. Check that \
+        POSTGRES_PORT matches the port it publishes.
         """
     end
   end
+
+  defp port, do: Flick.Repo.config()[:port]
 end
