@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+#
+# Opens psql inside the Compose database container, so the client always
+# matches the server and no host install of Postgres is needed. Compose scopes
+# the command to this repo's container, so it never reaches another project's.
+#
+# It opens the dev database: DEV_DATABASE_NAME from the shell or from a
+# worktree's .env.worktree, else flick_dev. Extra arguments go to psql:
+#
+#   bin/psql -c "select 1"
+
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+database="${DEV_DATABASE_NAME:-}"
+if [ -z "$database" ] && [ -f .env.worktree ]; then
+  database="$(sed -n 's/^DEV_DATABASE_NAME=//p' .env.worktree | head -n 1)"
+fi
+database="${database:-flick_dev}"
+
+# Without a terminal on stdin, such as when piping in SQL, exec must not
+# allocate one.
+exec_args=(exec)
+[ -t 0 ] || exec_args+=(-T)
+
+exec docker compose "${exec_args[@]}" db psql --username=postgres --dbname="$database" "$@"
