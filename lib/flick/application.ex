@@ -20,6 +20,7 @@ defmodule Flick.Application do
       FlickWeb.PromEx,
       FlickWeb.Telemetry,
       Flick.Repo,
+      Flick.Repo.VersionCheck,
       {DNSCluster, query: Application.get_env(:flick, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Flick.PubSub},
       # Start a worker by calling: Flick.Worker.start_link(arg)
