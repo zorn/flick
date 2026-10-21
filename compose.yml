@@ -19,8 +19,6 @@ name: flick
 
 services:
   db:
-    # The major version must match `:postgres_major_version` in
-    # `config/config.exs`.
     image: postgres:18
     healthcheck:
       test:
@@ -39,8 +37,6 @@ services:
     # server by accident.
     ports:
       - "${POSTGRES_PORT:-5418}:5432"
-    # Postgres 18 images refuse a mount at /var/lib/postgresql/data. See
-    # https://github.com/docker-library/postgres/issues/37.
     volumes:
       - db_data:/var/lib/postgresql
 
