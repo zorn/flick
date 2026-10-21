@@ -5,6 +5,7 @@ Flick is a ranked voting web application built with Elixir and Phoenix LiveView.
 - Use `mix precommit` alias when you are done with all changes and fix any pending issues
 - Add every new CI check to the `precommit` alias in `mix.exs`, unless it needs a tool that isn't a Mix task. `precommit` mirrors CI's Mix checks, so a green local run predicts a green pull request
 - Use the already included and available `:req` (`Req`) library for HTTP requests, **avoid** `:httpoison`, `:tesla`, and `:httpc`. Req is included by default and is the preferred HTTP client for Phoenix apps
+- To check how the app behaves, use local data, such as `mix run priv/repo/seeds.exs`, rather than the production database. When a task needs production data, ask the user for a copy of the database
 
 ## Elixir
 
