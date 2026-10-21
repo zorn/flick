@@ -1,0 +1,35 @@
+defmodule FlickWeb.LogScrubberTest do
+  # The test raises the global log level, which would let other tests' logs
+  # through.
+  use ExUnit.Case, async: false
+
+  import ExUnit.CaptureLog
+  import Phoenix.ChannelTest
+
+  @endpoint FlickWeb.Endpoint
+
+  setup do
+    # Test config logs at `warning`, and Phoenix logs socket connects at `info`.
+    # `capture_log/2` never captures below the global level.
+    level = Logger.level()
+    Logger.configure(level: :info)
+    on_exit(fn -> Logger.configure(level: level) end)
+  end
+
+  test "a socket connect logs its static asset URLs without their credentials" do
+    params = %{
+      "_track_static" => %{
+        "0" => "https://flick-admin:unsafe-password@rankedvote.app/assets/css/app.css?vsn=d"
+      }
+    }
+
+    log =
+      capture_log([level: :info], fn ->
+        assert {:ok, _socket} = connect(Phoenix.LiveView.Socket, params)
+      end)
+
+    assert log =~ "CONNECTED TO Phoenix.LiveView.Socket"
+    assert log =~ "https://[FILTERED]@rankedvote.app/assets/css/app.css?vsn=d"
+    refute log =~ "unsafe-password"
+  end
+end

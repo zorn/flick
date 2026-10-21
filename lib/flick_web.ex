@@ -20,7 +20,7 @@ defmodule FlickWeb do
 
   use Boundary,
     deps: [Flick.RankedVoting, Flick.Health, Flick.Markdown, Flick.DateTimeFormatter],
-    exports: [Endpoint, PromEx, Telemetry]
+    exports: [Endpoint, LogScrubber, PromEx, Telemetry]
 
   @spec static_paths() :: [String.t()]
   def static_paths, do: ~w(assets fonts images favicon.ico robots.txt)
