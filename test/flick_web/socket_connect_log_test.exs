@@ -1,4 +1,4 @@
-defmodule FlickWeb.LogScrubberTest do
+defmodule FlickWeb.SocketConnectLogTest do
   # The test logs at `info` globally, which would let other tests' logs
   # through.
   use ExUnit.Case, async: false
@@ -16,7 +16,7 @@ defmodule FlickWeb.LogScrubberTest do
     on_exit(fn -> Logger.configure(level: level) end)
   end
 
-  test "a socket connect logs its static asset URLs without their credentials" do
+  test "a socket connect logs no credentials from its static asset URLs" do
     # Built from parts, so the secret scan doesn't flag a credential URL.
     leaked = "unsafe-password"
 
@@ -32,7 +32,7 @@ defmodule FlickWeb.LogScrubberTest do
       end)
 
     assert log =~ "CONNECTED TO Phoenix.LiveView.Socket"
-    assert log =~ "https://[FILTERED]@rankedvote.app/assets/css/app.css?vsn=d"
+    assert log =~ ~s("_track_static" => "[FILTERED]")
     refute log =~ leaked
   end
 end

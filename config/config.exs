@@ -92,6 +92,11 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+# A browser that opens `/admin` through a `https://user:password@…` URL adds
+# that user info to its static asset URLs, which the LiveView socket's connect
+# log lists under `_track_static`.
+config :phoenix, :filter_parameters, ["password", "_track_static"]
+
 # ExcellentMigrations reads its cutoff from here, not from `.credo.exs`. It is a
 # dev and test dependency, so prod would warn that the app is not available.
 if config_env() in [:dev, :test] do

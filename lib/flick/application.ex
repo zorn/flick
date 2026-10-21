@@ -10,8 +10,6 @@ defmodule Flick.Application do
 
   @impl Application
   def start(_type, _args) do
-    FlickWeb.LogScrubber.install()
-
     # Flick is public, so a request's own trace header starts a linked trace
     # rather than continuing it.
     OpentelemetryBandit.setup(public_endpoint: true)
