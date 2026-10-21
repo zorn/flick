@@ -5,15 +5,23 @@
 #
 # $ docker compose up -d
 #
-# $ docker compose down -d
+# $ docker compose down
 #
 # FUTURE ENHANCEMENTS IDEAS:
 # - We could consider using a `https://hub.docker.com/r/postgis/postgis/`
 #   version of the database image to better align with what will be seen in
 #   production on Render.
 
+# A fixed project name makes every worktree share this one container, which
+# holds a database per worktree. Without it, Compose names the project after
+# the directory, and each worktree would start its own container on the same
+# port.
+name: flick
+
 services:
   db:
+    # The major version must match `:postgres_major_version` in
+    # `config/config.exs`.
     image: postgres:18
     healthcheck:
       test:
@@ -28,10 +36,14 @@ services:
         condition: on-failure
     environment:
       POSTGRES_PASSWORD: postgres
+    # 5418 rather than 5432, so Flick never reaches another project's server by
+    # accident. `config/dev.exs` and `config/test.exs` read the same variable.
     ports:
-      - "${POSTGRES_PORT:-5432}:5432"
+      - "${POSTGRES_PORT:-5418}:5432"
+    # Postgres 18 images refuse a mount at /var/lib/postgresql/data. See
+    # https://github.com/docker-library/postgres/issues/37.
     volumes:
-      - db_data:/var/lib/postgresql/data
+      - db_data:/var/lib/postgresql
 
 volumes:
   db_data:
