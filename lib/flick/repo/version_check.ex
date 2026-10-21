@@ -38,9 +38,10 @@ defmodule Flick.Repo.VersionCheck do
     # message would only bury the hint.
     DBConnection.ConnectionError ->
       reraise """
-              Flick.Repo could not reach Postgres on port #{port()}.
+              Flick.Repo could not connect to Postgres on port #{port()}. The Postgrex errors above say why.
 
-              Start the database with `docker compose up -d`. Create it with `mix ecto.setup`.
+              If the server is down, start it with `docker compose up -d --wait`.
+              If the database does not exist, create it with `mix ecto.setup`.
               """,
               __STACKTRACE__
   end

@@ -15,7 +15,16 @@ cd "$(dirname "$0")/.."
 
 database="${DEV_DATABASE_NAME:-}"
 if [ -z "$database" ] && [ -f .env.worktree ]; then
-  database="$(sed -n 's/^DEV_DATABASE_NAME=//p' .env.worktree | head -n 1)"
+  # Trim like config/runtime.exs does, so both pick the same database.
+  database="$(sed -n 's/^[[:space:]]*DEV_DATABASE_NAME[[:space:]]*=[[:space:]]*//p' .env.worktree | head -n 1 | tr -d '\r' | sed 's/[[:space:]]*$//')"
+fi
+# A worktree without a name means its setup stopped partway. Like
+# config/runtime.exs, refuse rather than open the primary checkout's database.
+if [ -z "$database" ] && [ -f .env.worktree ]; then
+  # The backticks are literal, marking the command to run.
+  # shellcheck disable=SC2016
+  printf 'bin/psql: .env.worktree has no DEV_DATABASE_NAME. Re-run the worktree setup with `wt hook pre-start`.\n' >&2
+  exit 1
 fi
 database="${database:-flick_dev}"
 

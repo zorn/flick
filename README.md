@@ -46,10 +46,10 @@ You do not need Postgres installed on your machine.
 From the project root:
 
 ```bash
-asdf install           # install Erlang and Elixir
-docker compose up -d   # start Postgres 18 on port 5418
-mix setup              # fetch deps, create and seed the database, build assets
-mix phx.server         # or `iex -S mix phx.server`
+asdf install                  # install Erlang and Elixir
+docker compose up -d --wait   # start Postgres 18 on port 5418
+mix setup                     # fetch deps, create and seed the database, build assets
+mix phx.server                # or `iex -S mix phx.server`
 ```
 
 Visit [`localhost:4000`](http://localhost:4000). The seeds in `priv/repo/seeds.exs` create a few sample ballots. The admin pages under [`/admin`](http://localhost:4000/admin/ballots) use the HTTP Basic Auth credentials `flick-admin` / `unsafe-password`.

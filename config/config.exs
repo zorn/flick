@@ -108,7 +108,7 @@ if config_env() in [:dev, :test] do
   # Dev and test refuse to boot on another Postgres major; see
   # `Flick.Repo.VersionCheck`. When you change it, also change the image in
   # `compose.yml` and `.github/workflows/build-and-test.yaml`, and
-  # `postgresMajorVersion` in `render.yaml`.
+  # `postgresMajorVersion` in `render.yaml`. A test fails until all four match.
   config :flick, :postgres_major_version, 18
 end
 
