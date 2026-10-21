@@ -1,5 +1,5 @@
 defmodule Flick.Repo do
-  use Boundary, top_level?: true, deps: []
+  use Boundary, top_level?: true, deps: [], exports: [VersionCheck]
 
   use Ecto.Repo,
     otp_app: :flick,

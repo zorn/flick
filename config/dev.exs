@@ -5,6 +5,8 @@ config :flick, Flick.Repo,
   username: "postgres",
   password: "postgres",
   hostname: "localhost",
+  # Matches the host port that `compose.yml` publishes.
+  port: String.to_integer(System.get_env("POSTGRES_PORT", "5418")),
   database: "flick_dev",
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,

@@ -3,14 +3,19 @@
 #
 # From the root of the project run:
 #
-# $ docker compose up -d
+# $ docker compose up -d --wait
 #
-# $ docker compose down -d
+# $ docker compose down
 #
 # FUTURE ENHANCEMENTS IDEAS:
 # - We could consider using a `https://hub.docker.com/r/postgis/postgis/`
 #   version of the database image to better align with what will be seen in
 #   production on Render.
+
+# A fixed project name lets every worktree share this container, which holds a
+# database per worktree. Without it, each worktree directory starts its own
+# container on the same port.
+name: flick
 
 services:
   db:
@@ -28,10 +33,12 @@ services:
         condition: on-failure
     environment:
       POSTGRES_PASSWORD: postgres
+    # Flick uses 5418 rather than 5432, so it never reaches another project's
+    # server by accident.
     ports:
-      - "${POSTGRES_PORT:-5432}:5432"
+      - "${POSTGRES_PORT:-5418}:5432"
     volumes:
-      - db_data:/var/lib/postgresql/data
+      - db_data:/var/lib/postgresql
 
 volumes:
   db_data:

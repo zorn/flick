@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+#
+# Opens psql inside the Compose database container, so the client always
+# matches the server and no host install of Postgres is needed. Compose scopes
+# the command to this repo's container, so it never reaches another project's.
+#
+# It opens the dev database: DEV_DATABASE_NAME from the shell or from a
+# worktree's .env.worktree, else flick_dev. Extra arguments go to psql:
+#
+#   bin/psql -c "select 1"
+
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+database="${DEV_DATABASE_NAME:-}"
+if [ -z "$database" ] && [ -f .env.worktree ]; then
+  # Trim like config/runtime.exs does, so both pick the same database.
+  database="$(sed -n 's/^[[:space:]]*DEV_DATABASE_NAME[[:space:]]*=[[:space:]]*//p' .env.worktree | head -n 1 | tr -d '\r' | sed 's/[[:space:]]*$//')"
+fi
+# A worktree without a name means its setup stopped partway. Like
+# config/runtime.exs, refuse rather than open the primary checkout's database.
+if [ -z "$database" ] && [ -f .env.worktree ]; then
+  # The backticks are literal, marking the command to run.
+  # shellcheck disable=SC2016
+  printf 'bin/psql: .env.worktree has no DEV_DATABASE_NAME. Re-run the worktree setup with `wt hook pre-start`.\n' >&2
+  exit 1
+fi
+database="${database:-flick_dev}"
+
+# Without a terminal on stdin, such as when piping in SQL, exec must not
+# allocate one.
+exec_args=(exec)
+[ -t 0 ] || exec_args+=(-T)
+
+exec docker compose "${exec_args[@]}" db psql --username=postgres --dbname="$database" "$@"

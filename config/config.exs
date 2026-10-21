@@ -104,6 +104,14 @@ if config_env() in [:dev, :test] do
   config :excellent_migrations, start_after: "20260927221423"
 end
 
+if config_env() in [:dev, :test] do
+  # Dev and test refuse to boot on another Postgres major; see
+  # `Flick.Repo.VersionCheck`. When you change it, also change the image in
+  # `compose.yml` and `.github/workflows/build-and-test.yaml`, and
+  # `postgresMajorVersion` in `render.yaml`. A test fails until all four match.
+  config :flick, :postgres_major_version, 18
+end
+
 config :opentelemetry,
   resource: %{service: %{name: "flick"}},
   sampler: {:parent_based, %{root: {FlickWeb.TraceSampler, []}}},
