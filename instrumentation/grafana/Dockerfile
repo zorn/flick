@@ -5,10 +5,10 @@ FROM grafana/grafana:13.2.3
 # intercept those alerts. Alpine's 20261020 packages remove those
 # intermediates. Drop this step once a Grafana tag ships those packages.
 # See https://github.com/zorn/flick/issues/317
+# The version floor fails the build if the fixed packages are missing.
 USER root
-RUN apk upgrade --no-cache ca-certificates ca-certificates-bundle
-# 472 is the base image's grafana user.
-USER 472
+RUN apk add --no-cache --upgrade 'ca-certificates>=20261020' 'ca-certificates-bundle>=20261020'
+USER grafana
 
 # Render's Starter plan gives Grafana 512 MiB. These settings keep it well
 # under that. See docs/research/grafana-memory-on-render.md.
