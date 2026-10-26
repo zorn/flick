@@ -115,7 +115,7 @@ defmodule Flick.MixProject do
       {:boundary, "~> 0.11.0", runtime: false},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
-      {:jump_credo_checks, "~> 0.5", only: [:dev, :test], runtime: false},
+      {:jump_credo_checks, "~> 0.7", only: [:dev, :test], runtime: false},
       {:oeditus_credo, "~> 0.11", only: [:dev, :test], runtime: false},
       {:excellent_migrations, "~> 0.1", only: [:dev, :test], runtime: false},
 

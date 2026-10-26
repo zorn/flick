@@ -214,6 +214,7 @@
           {Jump.CredoChecks.LiveViewFormCanBeRehydrated, []},
           {Jump.CredoChecks.LiveViewPubSubRequiresConnected, []},
           {Jump.CredoChecks.NoManualContentDisposition, []},
+          {Jump.CredoChecks.NoWordSigilInterpolation, []},
           {Jump.CredoChecks.SafeBinaryToTerm, []},
           {Jump.CredoChecks.TestHasNoAssertions, []},
           {Jump.CredoChecks.TooManyAssertions, max_assertions: 20},
