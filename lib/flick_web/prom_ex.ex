@@ -12,7 +12,7 @@ defmodule FlickWeb.PromEx do
   @impl PromEx
   def plugins do
     [
-      Plugins.Application,
+      {Plugins.Application, git_sha_mfa: {__MODULE__, :git_sha, []}},
       Plugins.Beam,
       {Plugins.Phoenix, router: FlickWeb.Router, endpoint: FlickWeb.Endpoint},
       Plugins.Ecto,
@@ -25,4 +25,13 @@ defmodule FlickWeb.PromEx do
   # `datasource_id`, and Grafana provisions the data source with this uid.
   @impl PromEx
   def dashboard_assigns, do: [datasource_id: "prometheus"]
+
+  @doc """
+  Returns the running commit for `application_git_sha_info`.
+
+  Render sets `RENDER_GIT_COMMIT` on every deploy. Outside Render, this
+  returns `"unknown"`.
+  """
+  @spec git_sha() :: String.t()
+  def git_sha, do: System.get_env("RENDER_GIT_COMMIT", "unknown")
 end
