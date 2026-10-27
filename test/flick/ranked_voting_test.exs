@@ -384,7 +384,7 @@ defmodule Flick.RankedVotingTest do
       assert {:error, :ballot_already_published} = RankedVoting.publish_ballot(published_ballot)
     end
 
-    test "failure: a ballot that published after it was loaded keeps its first `published_at`" do
+    test "failure: a ballot published after it was loaded keeps its first `published_at`" do
       ballot = ballot_fixture()
       first_published_at = ~U[2026-01-01 12:00:00.000000Z]
       later_published_at = ~U[2026-01-01 13:00:00.000000Z]

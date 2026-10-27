@@ -71,8 +71,8 @@ defmodule Flick.RankedVoting do
   Only a published ballot can be voted on.
 
   It checks the stored ballot, not the given struct. It returns
-  `{:error, :ballot_already_published}` when the ballot has published, even if
-  the struct still shows it as a draft, so `published_at` is only ever set once.
+  `{:error, :ballot_already_published}` when the ballot is already published,
+  even if the struct shows a draft. This sets `published_at` only once.
   """
   @spec publish_ballot(Ballot.t(), DateTime.t()) ::
           {:ok, Ballot.t()} | {:error, :ballot_already_published}
@@ -96,8 +96,8 @@ defmodule Flick.RankedVoting do
   and no more votes can be cast.
 
   It checks the stored ballot, not the given struct. It returns
-  `{:error, :ballot_already_closed}` when the ballot has closed, even if the
-  struct still shows it as published, so `closed_at` is only ever set once.
+  `{:error, :ballot_already_closed}` when the ballot is already closed, even if
+  the struct shows it as published. This sets `closed_at` only once.
   """
   @spec close_ballot(Ballot.t(), DateTime.t()) ::
           {:ok, Ballot.t()}
@@ -105,8 +105,8 @@ defmodule Flick.RankedVoting do
           | {:error, :ballot_already_closed}
   def close_ballot(ballot, closed_at \\ DateTime.utc_now())
 
-  # A ballot can not be unpublished, so a struct that shows it as published
-  # can be trusted on that point.
+  # A ballot cannot be unpublished, so the struct's `published_at` is safe to
+  # trust.
   def close_ballot(%Ballot{published_at: nil}, _closed_at) do
     {:error, :ballot_not_published}
   end
