@@ -210,7 +210,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "Share of routed requests that returned a 5xx. It leaves out requests that match no route (path=\"Unknown\"), which are mostly scanner traffic.",
+      "description": "Share of routed requests that returned a 5xx. It leaves out requests that match no route (path=\"Unknown\"), which are mostly scanner traffic. PromEx creates each counter at 1 on its first request, and increase() ignores that first sample. So the query counts a series that is new in the window by its whole value, or a route's first 500 after a deploy would read 0%.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -295,7 +295,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "(sum(increase(flick_prom_ex_phoenix_http_requests_total{job=\"flick\", status=~\"5..\", path!=\"Unknown\"}[$__rate_interval])) or vector(0))\n/ sum(increase(flick_prom_ex_phoenix_http_requests_total{job=\"flick\", path!=\"Unknown\"}[$__rate_interval]))",
+          "expr": "(sum(\n  (increase(flick_prom_ex_phoenix_http_requests_total{job=\"flick\", status=~\"5..\", path!=\"Unknown\"}[$__rate_interval]) and flick_prom_ex_phoenix_http_requests_total{job=\"flick\", status=~\"5..\", path!=\"Unknown\"} offset $__rate_interval)\n  or (flick_prom_ex_phoenix_http_requests_total{job=\"flick\", status=~\"5..\", path!=\"Unknown\"} unless flick_prom_ex_phoenix_http_requests_total{job=\"flick\", status=~\"5..\", path!=\"Unknown\"} offset $__rate_interval)\n) or vector(0))\n/ sum(\n  (increase(flick_prom_ex_phoenix_http_requests_total{job=\"flick\", path!=\"Unknown\"}[$__rate_interval]) and flick_prom_ex_phoenix_http_requests_total{job=\"flick\", path!=\"Unknown\"} offset $__rate_interval)\n  or (flick_prom_ex_phoenix_http_requests_total{job=\"flick\", path!=\"Unknown\"} unless flick_prom_ex_phoenix_http_requests_total{job=\"flick\", path!=\"Unknown\"} offset $__rate_interval)\n)",
           "legendFormat": "5xx",
           "range": true,
           "refId": "A"
