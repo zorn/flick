@@ -17,7 +17,9 @@ contactPoints:
 policies:
   - orgId: 1
     receiver: ntfy
-    group_by: [grafana_folder, alertname]
+    group_by:
+      - grafana_folder
+      - alertname
     # The 5m default delays the "resolved" notification.
     group_interval: 1m
 
