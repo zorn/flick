@@ -25,16 +25,24 @@ defmodule FlickWeb.MetricsTest do
     {:ok, _vote} =
       Flick.RankedVoting.create_vote(ballot, %{"ranked_answers" => [%{"value" => "Pizza"}]})
 
-    conn =
-      conn
-      |> put_req_header(
-        "authorization",
-        Plug.BasicAuth.encode_basic_auth("flick-metrics", "unsafe-metrics-password")
-      )
-      |> get("/metrics")
+    conn = conn |> authorize() |> get("/metrics")
 
     # PromEx aggregates across async tests, so assert the series exists, not its count.
     assert response(conn, 200) =~
              ~s(flick_ranked_voting_create_vote_duration_milliseconds_count{result="ok"})
+  end
+
+  test "reports the fallback commit off Render", %{conn: conn} do
+    conn = conn |> authorize() |> get("/metrics")
+
+    assert response(conn, 200) =~ ~s(flick_prom_ex_application_git_sha_info{sha="unknown"})
+  end
+
+  defp authorize(conn) do
+    put_req_header(
+      conn,
+      "authorization",
+      Plug.BasicAuth.encode_basic_auth("flick-metrics", "unsafe-metrics-password")
+    )
   end
 end
