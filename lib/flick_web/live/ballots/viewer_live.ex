@@ -45,7 +45,7 @@ defmodule FlickWeb.Ballots.ViewerLive do
       {:ok, ballot} ->
         {:noreply, assign(socket, :ballot, ballot)}
 
-      {:error, _changeset} ->
+      {:error, _reason} ->
         {:noreply, put_flash(socket, :error, "Could not publish ballot.")}
     end
   end
@@ -57,7 +57,7 @@ defmodule FlickWeb.Ballots.ViewerLive do
       {:ok, ballot} ->
         {:noreply, assign(socket, :ballot, ballot)}
 
-      {:error, _changeset} ->
+      {:error, _reason} ->
         {:noreply, put_flash(socket, :error, "Could not close ballot.")}
     end
   end

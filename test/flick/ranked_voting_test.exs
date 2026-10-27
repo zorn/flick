@@ -383,6 +383,19 @@ defmodule Flick.RankedVotingTest do
       assert {:ok, published_ballot} = RankedVoting.publish_ballot(ballot, published_at)
       assert {:error, :ballot_already_published} = RankedVoting.publish_ballot(published_ballot)
     end
+
+    test "failure: a ballot published after it was loaded keeps its first `published_at`" do
+      ballot = ballot_fixture()
+      first_published_at = ~U[2026-01-01 12:00:00.000000Z]
+      later_published_at = ~U[2026-01-01 13:00:00.000000Z]
+
+      assert {:ok, _published_ballot} = RankedVoting.publish_ballot(ballot, first_published_at)
+
+      assert {:error, :ballot_already_published} =
+               RankedVoting.publish_ballot(ballot, later_published_at)
+
+      assert %Ballot{published_at: ^first_published_at} = RankedVoting.get_ballot!(ballot.id)
+    end
   end
 
   describe "close_ballot/2" do
@@ -401,6 +414,19 @@ defmodule Flick.RankedVotingTest do
     test "failure: can not close a closed ballot" do
       ballot = closed_ballot_fixture()
       assert {:error, :ballot_already_closed} = RankedVoting.close_ballot(ballot)
+    end
+
+    test "failure: a ballot that closed after it was loaded keeps its first `closed_at`" do
+      ballot = published_ballot_fixture()
+      first_closed_at = ~U[2026-01-01 12:00:00.000000Z]
+      later_closed_at = ~U[2026-01-01 13:00:00.000000Z]
+
+      assert {:ok, _closed_ballot} = RankedVoting.close_ballot(ballot, first_closed_at)
+
+      assert {:error, :ballot_already_closed} =
+               RankedVoting.close_ballot(ballot, later_closed_at)
+
+      assert %Ballot{closed_at: ^first_closed_at} = RankedVoting.get_ballot!(ballot.id)
     end
   end
 
