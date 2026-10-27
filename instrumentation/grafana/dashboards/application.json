@@ -221,7 +221,7 @@
         ]
       },
       "gridPos": {
-        "h": 36,
+        "h": 30,
         "w": 16,
         "x": 8,
         "y": 0
@@ -396,62 +396,6 @@
     },
     {
       "datasource": "prometheus",
-      "description": "The author of the application's last Git commit.",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {},
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 8,
-        "x": 0,
-        "y": 18
-      },
-      "id": 12,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "last"
-          ],
-          "fields": "/^author$/",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "7.1.3",
-      "targets": [
-        {
-          "expr": "flick_prom_ex_application_git_author_info{job=\"$job\", instance=\"$instance\"}",
-          "format": "table",
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Application Git Author",
-      "type": "stat"
-    },
-    {
-      "datasource": "prometheus",
       "description": "The version of the primary application that is running.",
       "fieldConfig": {
         "defaults": {
@@ -473,7 +417,7 @@
         "h": 6,
         "w": 8,
         "x": 0,
-        "y": 24
+        "y": 18
       },
       "id": 7,
       "options": {
@@ -529,7 +473,7 @@
         "h": 6,
         "w": 8,
         "x": 0,
-        "y": 30
+        "y": 24
       },
       "id": 9,
       "options": {
