@@ -69,21 +69,24 @@ defmodule Flick.RankedVoting do
 
   Once a `Flick.RankedVoting.Ballot` entity is published, it can no longer be updated.
   Only a published ballot can be voted on.
+
+  It checks the stored ballot, not the given struct. It returns
+  `{:error, :ballot_already_published}` when the ballot is already published,
+  even if the struct shows a draft. This sets `published_at` only once.
   """
   @spec publish_ballot(Ballot.t(), DateTime.t()) ::
-          {:ok, Ballot.t()}
-          | {:error, Ballot.changeset()}
-          | {:error, :ballot_already_published}
-  def publish_ballot(ballot, published_at \\ DateTime.utc_now())
+          {:ok, Ballot.t()} | {:error, :ballot_already_published}
+  def publish_ballot(%Ballot{id: ballot_id}, published_at \\ DateTime.utc_now()) do
+    result =
+      Ballot
+      |> where([ballot], ballot.id == ^ballot_id and is_nil(ballot.published_at))
+      |> select([ballot], ballot)
+      |> Repo.update_all(set: [published_at: published_at, updated_at: DateTime.utc_now()])
 
-  def publish_ballot(%Ballot{published_at: nil} = ballot, published_at) do
-    ballot
-    |> Ecto.Changeset.cast(%{published_at: published_at}, [:published_at])
-    |> Repo.update()
-  end
-
-  def publish_ballot(_ballot, _published_at) do
-    {:error, :ballot_already_published}
+    case result do
+      {1, [published_ballot]} -> {:ok, published_ballot}
+      {0, []} -> {:error, :ballot_already_published}
+    end
   end
 
   @doc """
@@ -91,25 +94,34 @@ defmodule Flick.RankedVoting do
 
   Once a `Flick.RankedVoting.Ballot` entity is closed, it can no longer be updated
   and no more votes can be cast.
+
+  It checks the stored ballot, not the given struct. It returns
+  `{:error, :ballot_already_closed}` when the ballot is already closed, even if
+  the struct shows it as published. This sets `closed_at` only once.
   """
   @spec close_ballot(Ballot.t(), DateTime.t()) ::
           {:ok, Ballot.t()}
-          | {:error, Ballot.changeset()}
           | {:error, :ballot_not_published}
+          | {:error, :ballot_already_closed}
   def close_ballot(ballot, closed_at \\ DateTime.utc_now())
 
+  # A ballot cannot be unpublished, so the struct's `published_at` is safe to
+  # trust.
   def close_ballot(%Ballot{published_at: nil}, _closed_at) do
     {:error, :ballot_not_published}
   end
 
-  def close_ballot(%Ballot{closed_at: nil} = ballot, closed_at) do
-    ballot
-    |> Ecto.Changeset.cast(%{closed_at: closed_at}, [:closed_at])
-    |> Repo.update()
-  end
+  def close_ballot(%Ballot{id: ballot_id}, closed_at) do
+    result =
+      Ballot
+      |> where([ballot], ballot.id == ^ballot_id and is_nil(ballot.closed_at))
+      |> select([ballot], ballot)
+      |> Repo.update_all(set: [closed_at: closed_at, updated_at: DateTime.utc_now()])
 
-  def close_ballot(%Ballot{closed_at: _non_nil_value}, _closed_at) do
-    {:error, :ballot_already_closed}
+    case result do
+      {1, [closed_ballot]} -> {:ok, closed_ballot}
+      {0, []} -> {:error, :ballot_already_closed}
+    end
   end
 
   @typedoc """
