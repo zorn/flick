@@ -127,7 +127,20 @@ defmodule FlickWeb.Ballots.EditorLive do
       {:ok, ballot} ->
         {:noreply, redirect(socket, to: ~p"/ballot/#{ballot.url_slug}/#{ballot.secret}")}
 
+      # The ballot was published after this editor loaded it. Reload it, since
+      # its slug may have changed too.
+      {:error, :can_only_update_draft_ballot} ->
+        ballot = RankedVoting.get_ballot!(ballot.id)
+
+        {:noreply,
+         socket
+         |> put_flash(:error, "This ballot was published, so your edits were not saved.")
+         |> redirect(to: ~p"/ballot/#{ballot.url_slug}/#{ballot.secret}")}
+
+      # The changeset is built from the stored ballot, which may be newer than
+      # this editor's. Keep it, so later validations use the same base.
       {:error, changeset} ->
+        socket = assign(socket, :ballot, changeset.data)
         {:noreply, assign_form(socket, pad_possible_answers(changeset))}
     end
   end
