@@ -8,6 +8,15 @@ Flick exposes Prometheus metrics at `/metrics` through PromEx (`FlickWeb.PromEx`
 docker compose -f instrumentation/compose.yml up -d --build
 ```
 
+The stack watches only the primary checkout. In a worktrunk worktree, Flick serves on the `PORT` in `.env.worktree`, but Prometheus scrapes only port 4000, so a worktree's metrics never reach Prometheus or Grafana. There is no supported way yet to point the stack at a worktree. Do not run the compose command from a worktree: the compose project name is fixed, so it replaces the shared containers with the worktree's builds. Instead, read the worktree's raw counters straight from its `/metrics` endpoint:
+
+```sh
+source .env.worktree
+curl -s -u flick-metrics:unsafe-metrics-password "localhost:$PORT/metrics" | grep flick_prom_ex_phoenix_http_requests_total
+```
+
+These are cumulative counts with no rates, so read them before and after the change you want to measure. A series appears only after its first event, so `flick_ranked_voting` metrics stay absent until someone votes. Traces still work from a worktree, because every checkout sends spans to Tempo on port 4318. Tempo mixes the spans of every running checkout, so search a narrow time window around your own requests.
+
 Query Prometheus at `http://localhost:9091` through its HTTP API. Prometheus scrapes every 15 seconds, so wait at least that long after a change, and use a rate window of at least `[1m]`:
 
 ```sh
