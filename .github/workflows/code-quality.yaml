@@ -90,9 +90,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
         with:
-          # The full history gives a pull request's range a merge base to start
-          # from. It also fetches every other branch, so the scan below names
-          # its range rather than scanning the whole clone.
+          # A pull request's scan range needs the base branch's history to find
+          # a merge base.
           fetch-depth: 0
 
       - name: Install Betterleaks
@@ -106,7 +105,8 @@ jobs:
 
       # A pull request scans only the commits it adds. A push to `main` scans
       # the history reachable from `main`. Without a range, Betterleaks scans
-      # every branch, so one branch's finding fails every other branch's run.
+      # every fetched branch. One branch's finding then fails every other
+      # branch's run.
       - name: Scan git history for secrets
         env:
           BASE_REF: ${{ github.base_ref }}
