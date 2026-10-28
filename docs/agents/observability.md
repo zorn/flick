@@ -12,7 +12,7 @@ The stack watches only the primary checkout. In a worktrunk worktree, Flick serv
 
 ```sh
 source .env.worktree
-curl -s -u flick-metrics:unsafe-metrics-password "localhost:$PORT/metrics" | grep flick_prom_ex_phoenix_http_requests_total
+curl -s "http://flick-metrics:unsafe-metrics-password@localhost:$PORT/metrics" | grep flick_prom_ex_phoenix_http_requests_total
 ```
 
 These metrics are cumulative, with no rates, so read them before and after the change you want to measure. Traces still work from a worktree while the primary checkout's stack runs, because every checkout sends spans to Tempo on port 4318. Tempo mixes the spans of every running checkout, so search a narrow time window around your own requests.
