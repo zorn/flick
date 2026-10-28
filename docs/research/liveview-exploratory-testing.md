@@ -54,7 +54,7 @@ When the LiveView raises, the test client exits with the exception and stack tra
 2. The server-side stack trace from the log, and the matching PromEx exception metric.
 3. A failing test that the agent writes from those steps, in `Phoenix.LiveViewTest` or [PhoenixTest](https://hex.pm/packages/phoenix_test). The test is the durable artifact. Add [PhoenixTest.Playwright](https://hexdocs.pm/phoenix_test_playwright/PhoenixTest.Playwright.html) only when the bug needs a real browser, such as a JS hook.
 
-The repository is public, so the agent should not open a public issue with a stack trace for a security-relevant crash. Post it where only the owner reads it, or keep it in the workflow log.
+The repository is public, so the stack trace for a security-relevant crash must not go anywhere public. That rules out a public issue, and it rules out the GitHub Actions log too, because anyone can read the workflow logs of a public repository. The agent should post the trace where only the owner reads it and keep it out of its own workflow output. Which private channel to use is open in [#289](https://github.com/zorn/flick/issues/289).
 
 **The other browser options.**
 
