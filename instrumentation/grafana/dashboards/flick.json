@@ -405,7 +405,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "LiveView callbacks that raised, by module and event. Votes and ballot edits run over the WebSocket, so these crashes never reach the server error rate. A mount that raises during the first HTTP render shows here and as a 5xx there. PromEx exports no counter for handle_params, so a crash there is missing. PromEx creates each counter at 1 on its first crash, and increase() ignores that first sample. So the query counts a series that is new in the window by its whole value, as the error rate does.",
+      "description": "LiveView callbacks that raised, by module and event. Votes and ballot edits run over the WebSocket, so their crashes never reach Server error rate. A mount that raises during the first HTTP render also counts as a 5xx in Server error rate. PromEx exports no handle_params counter, so this panel does not show handle_params crashes. The query counts new series the way Server error rate does, or a callback's first crash would read 0.",
       "fieldConfig": {
         "defaults": {
           "color": {
