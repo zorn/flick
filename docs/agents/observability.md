@@ -63,6 +63,13 @@ curl -s -H 'Accept: application/vnd.grafana.llm' localhost:3200/api/v2/traces/TR
 
 Spans hold no SQL text, LiveView params, IP addresses, user agents, or ballot secrets, and a new span attribute must keep it that way. `FlickWeb.TraceScrubber` wraps the exporter and scrubs every span, exception events included. `FlickWeb.TraceSampler` drops `/metrics`, `/health`, the LiveView socket transports, and static files. Change export or sampling in those two modules. Leave `OTEL_TRACES_EXPORTER` and `OTEL_TRACES_SAMPLER` unset, because they replace those modules, and Flick refuses to boot when one is set.
 
+Dependabot opens one PR a month for each image tag in `instrumentation/prometheus/`, `instrumentation/grafana/`, and `instrumentation/tempo/`, major versions included. A merged bump deploys at once, because each service auto-deploys through its Blueprint `buildFilter` path. Prometheus and Tempo have disks, so Render stops the old instance before it starts the new one, and each bump loses a minute or two of samples or spans. Before you merge an image bump, check these:
+
+- Check out the PR's branch in the primary checkout and rebuild the local stack. Check that the provisioned dashboards load and the alert rules still evaluate.
+- Grafana: recheck `GF_PLUGINS_DISABLE_PLUGINS` against `/usr/share/grafana/data/plugins-bundled` in the new image.
+- Grafana: if the new tag ships `ca-certificates` 20261020 or later, drop the `apk add` step from the Dockerfile. See issue #317.
+- Tempo: read the release notes for changes to the `tempo.yml` config.
+
 To inspect a live node, open a remote IEx shell and start observer_cli. It shows memory, scheduler use, and the processes with the most memory or the longest mailboxes. Metrics and traces do not show these. `remote` starts a second VM on the same 512 MB instance, so when memory is already near the limit, prefer a single `:recon` call to leaving observer_cli open. In production, open the Shell tab of the `flick` service in the Render dashboard, then attach to the running release:
 
 ```sh
