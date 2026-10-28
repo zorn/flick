@@ -127,6 +127,13 @@ defmodule FlickWeb.Ballots.EditorLive do
       {:ok, ballot} ->
         {:noreply, redirect(socket, to: ~p"/ballot/#{ballot.url_slug}/#{ballot.secret}")}
 
+      # Another tab published the ballot after this editor loaded it.
+      {:error, :can_only_update_draft_ballot} ->
+        socket
+        |> put_flash(:error, "This ballot was published before your edits were saved.")
+        |> redirect(to: ~p"/ballot/#{ballot.url_slug}/#{ballot.secret}")
+        |> noreply()
+
       {:error, changeset} ->
         {:noreply, assign_form(socket, pad_possible_answers(changeset))}
     end

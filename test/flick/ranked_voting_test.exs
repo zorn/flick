@@ -367,6 +367,16 @@ defmodule Flick.RankedVotingTest do
       assert {:error, :can_only_update_draft_ballot} =
                RankedVoting.update_ballot(ballot, %{title: "some new title"})
     end
+
+    test "failure: can not update a ballot published after the struct was loaded" do
+      stale_ballot = ballot_fixture(%{question_title: "Original title"})
+      {:ok, _published_ballot} = RankedVoting.publish_ballot(stale_ballot)
+
+      assert {:error, :can_only_update_draft_ballot} =
+               RankedVoting.update_ballot(stale_ballot, %{"question_title" => "New title"})
+
+      assert RankedVoting.get_ballot!(stale_ballot.id).question_title == "Original title"
+    end
   end
 
   describe "publish_ballot/2" do
