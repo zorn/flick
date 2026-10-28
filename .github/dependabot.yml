@@ -18,8 +18,8 @@ updates:
         patterns:
           - "*"
 
-  # Each observability image deploys its own Render service on merge, so it
-  # gets its own PR. Read docs/agents/observability.md before merging one.
+  # Leave this entry ungrouped: each image deploys its own Render service on
+  # merge. Read docs/agents/observability.md before merging a bump.
   - package-ecosystem: "docker"
     directories:
       - "/instrumentation/*"
