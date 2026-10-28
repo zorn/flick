@@ -1,12 +1,14 @@
 defmodule Flick.Repo.Migrations.TrimVoteFullNames do
   @moduledoc """
-  Trims surrounding whitespace from `votes.full_name`, which
-  `Flick.RankedVoting.Vote.create_changeset/3` now does for new votes. See
-  https://github.com/zorn/flick/issues/260.
+  Trims surrounding whitespace from `votes.full_name`.
+  `Flick.RankedVoting.Vote.create_changeset/3` now trims new votes the same way.
+  See https://github.com/zorn/flick/issues/260.
 
-  The trim runs in Elixir rather than SQL because Postgres `trim/1` strips only
-  spaces, while `String.trim/1` also strips tabs, newlines, and other Unicode
-  whitespace. A name that trims to nothing becomes `NULL`, as it would on cast.
+  The trim runs in Elixir, not SQL. Postgres `trim()` strips only spaces.
+  `String.trim/1` also strips tabs, newlines, and other Unicode whitespace.
+
+  A name that trims to nothing becomes `NULL`, because `cast` turns a blank name
+  into `nil`.
   """
 
   use Ecto.Migration

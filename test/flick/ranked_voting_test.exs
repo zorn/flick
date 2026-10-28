@@ -656,6 +656,14 @@ defmodule Flick.RankedVotingTest do
                })
     end
 
+    test "success: a whitespace-only `full_name` is stored as nil", ~M{published_ballot} do
+      assert {:ok, %Vote{full_name: nil}} =
+               RankedVoting.create_vote(published_ballot, %{
+                 "ranked_answers" => [%{"value" => "Sushi"}],
+                 "full_name" => "  \n"
+               })
+    end
+
     test "success: a vote's `full_name` length is measured after trimming",
          ~M{published_ballot} do
       full_name = String.duplicate("a", 255)
