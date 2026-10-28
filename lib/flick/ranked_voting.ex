@@ -17,8 +17,8 @@ defmodule Flick.RankedVoting do
   @doc """
   Creates a new `Flick.RankedVoting.Ballot` entity with the given `title` and `questions`.
 
-  Attempts to pass in `published_at` or `closed_at` will raise an `ArgumentError`
-  Please look to `published_ballot/2` and `close_ballot/2` for those lifecycle needs.
+  Attempts to pass in `published_at` or `closed_at` raise an `ArgumentError`.
+  Use `publish_ballot/2` and `close_ballot/2` instead.
   """
   @spec create_ballot(map()) :: {:ok, Ballot.t()} | {:error, Ballot.changeset()}
   def create_ballot(attrs) when is_map(attrs) do
@@ -37,8 +37,8 @@ defmodule Flick.RankedVoting do
   `{:error, :can_only_update_draft_ballot}` when the ballot is published, even
   if the struct shows a draft.
 
-  Attempts to pass in `published_at` or `closed_at` will raise an `ArgumentError`
-  Please look to `published_ballot/2` and `close_ballot/2` for those lifecycle needs.
+  Attempts to pass in `published_at` or `closed_at` raise an `ArgumentError`.
+  Use `publish_ballot/2` and `close_ballot/2` instead.
   """
   @spec update_ballot(Ballot.t(), map()) ::
           {:ok, Ballot.t()}

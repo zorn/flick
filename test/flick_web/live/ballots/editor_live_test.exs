@@ -420,11 +420,11 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
       {:ok, _published_ballot} = RankedVoting.publish_ballot(ballot)
 
       view
-      |> form("form", ballot: %{question_title: "new-title"})
+      |> form("#ballot-form", ballot: %{question_title: "new-title"})
       |> render_submit()
 
       flash = assert_redirected(view, ~p"/ballot/#{ballot.url_slug}/#{ballot.secret}")
-      assert flash["error"] == "This ballot was published before your edits were saved."
+      assert flash["error"] == "This ballot was published, so your edits were not saved."
       assert RankedVoting.get_ballot!(ballot.id).question_title == ballot.question_title
     end
 
