@@ -17,3 +17,11 @@ updates:
       github-actions:
         patterns:
           - "*"
+
+  # Leave this entry ungrouped: each image deploys its own Render service on
+  # merge. Read docs/agents/observability.md before merging a bump.
+  - package-ecosystem: "docker"
+    directories:
+      - "/instrumentation/*"
+    schedule:
+      interval: "monthly"
