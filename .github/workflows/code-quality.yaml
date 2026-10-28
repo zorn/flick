@@ -90,8 +90,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
         with:
-          # A pull request's scan range needs the base branch's history to find
-          # a merge base.
+          # Both ranges need the full history. A pull request excludes
+          # everything reachable from its base, and `main` scans everything
+          # reachable from `HEAD`.
           fetch-depth: 0
 
       - name: Install Betterleaks
