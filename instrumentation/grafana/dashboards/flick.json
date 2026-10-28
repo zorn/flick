@@ -399,6 +399,114 @@
       ],
       "title": "Unmatched-route requests",
       "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "LiveView callbacks that raised, by module and event. Votes and ballot edits run over the WebSocket, so these crashes never reach the server error rate. A mount that raises during the first HTTP render shows here and as a 5xx there. PromEx exports no counter for handle_params, so a crash there is missing. PromEx creates each counter at 1 on its first crash, and increase() ignores that first sample. So the query counts a series that is new in the window by its whole value, as the error rate does.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisSoftMin": 0,
+            "axisSoftMax": 5,
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "noValue": "No crashes",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "short"
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 16
+      },
+      "id": 5,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "13.2.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "sum by (module, event) (\n  (increase(flick_prom_ex_phoenix_live_view_handle_event_exception_duration_milliseconds_count{job=\"flick\"}[$__rate_interval]) and flick_prom_ex_phoenix_live_view_handle_event_exception_duration_milliseconds_count{job=\"flick\"} offset $__rate_interval)\n  or (flick_prom_ex_phoenix_live_view_handle_event_exception_duration_milliseconds_count{job=\"flick\"} unless flick_prom_ex_phoenix_live_view_handle_event_exception_duration_milliseconds_count{job=\"flick\"} offset $__rate_interval)\n)",
+          "legendFormat": "{{module}} {{event}}",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "sum by (module) (\n  (increase(flick_prom_ex_phoenix_live_view_mount_exception_duration_milliseconds_count{job=\"flick\"}[$__rate_interval]) and flick_prom_ex_phoenix_live_view_mount_exception_duration_milliseconds_count{job=\"flick\"} offset $__rate_interval)\n  or (flick_prom_ex_phoenix_live_view_mount_exception_duration_milliseconds_count{job=\"flick\"} unless flick_prom_ex_phoenix_live_view_mount_exception_duration_milliseconds_count{job=\"flick\"} offset $__rate_interval)\n)",
+          "legendFormat": "{{module}} mount",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "LiveView crashes",
+      "type": "timeseries"
     }
   ]
 }
