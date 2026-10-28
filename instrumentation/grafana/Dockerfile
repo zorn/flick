@@ -1,4 +1,4 @@
-FROM grafana/grafana:13.2.3
+FROM grafana/grafana:13.2.4
 
 # Grafana sends alerts to ntfy.sh over TLS. This image's CA bundle still
 # trusts the compromised eMudhra intermediates, so a forged certificate could
