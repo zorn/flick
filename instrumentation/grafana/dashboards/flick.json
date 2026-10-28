@@ -405,7 +405,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "LiveView callbacks that raised, by module and event. Votes and ballot edits run over the WebSocket, so their crashes never reach Server error rate. A mount that raises during the first HTTP render also counts as a 5xx in Server error rate. PromEx exports no handle_params counter, so this panel does not show handle_params crashes. The query counts new series the way Server error rate does, or a callback's first crash would read 0.",
+      "description": "LiveView callbacks that raised, by module and event. Votes and ballot edits run over the WebSocket, so their crashes never reach Server error rate. The mount query leaves out a ballot that is not found, which is a 404 or 400. Any other mount that raises during the first HTTP render also counts as a 5xx in Server error rate. PromEx exports no handle_params counter, so this panel does not show handle_params crashes. The query counts new series the way Server error rate does, or a callback's first crash would read 0.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -499,7 +499,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "sum by (module) (\n  (increase(flick_prom_ex_phoenix_live_view_mount_exception_duration_milliseconds_count{job=\"flick\"}[$__rate_interval]) and flick_prom_ex_phoenix_live_view_mount_exception_duration_milliseconds_count{job=\"flick\"} offset $__rate_interval)\n  or (flick_prom_ex_phoenix_live_view_mount_exception_duration_milliseconds_count{job=\"flick\"} unless flick_prom_ex_phoenix_live_view_mount_exception_duration_milliseconds_count{job=\"flick\"} offset $__rate_interval)\n)",
+          "expr": "sum by (module) (\n  (increase(flick_prom_ex_phoenix_live_view_mount_exception_duration_milliseconds_count{job=\"flick\", reason!~\"Ecto.NoResultsError|Ecto.Query.CastError\"}[$__rate_interval]) and flick_prom_ex_phoenix_live_view_mount_exception_duration_milliseconds_count{job=\"flick\", reason!~\"Ecto.NoResultsError|Ecto.Query.CastError\"} offset $__rate_interval)\n  or (flick_prom_ex_phoenix_live_view_mount_exception_duration_milliseconds_count{job=\"flick\", reason!~\"Ecto.NoResultsError|Ecto.Query.CastError\"} unless flick_prom_ex_phoenix_live_view_mount_exception_duration_milliseconds_count{job=\"flick\", reason!~\"Ecto.NoResultsError|Ecto.Query.CastError\"} offset $__rate_interval)\n)",
           "legendFormat": "{{module}} mount",
           "range": true,
           "refId": "B"
