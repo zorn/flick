@@ -90,7 +90,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
         with:
-          # Scan every commit, not just the tip.
+          # Both ranges need the full history. A pull request excludes
+          # everything reachable from its base, and `main` scans everything
+          # reachable from `HEAD`.
           fetch-depth: 0
 
       - name: Install Betterleaks
@@ -102,5 +104,17 @@ jobs:
           tar --extract --gzip --file "$tarball" betterleaks
           sudo install betterleaks /usr/local/bin/betterleaks
 
+      # A pull request scans only the commits it adds. A push to `main` scans
+      # the history reachable from `main`. Without a range, Betterleaks scans
+      # every fetched branch. One branch's finding then fails every other
+      # branch's run.
       - name: Scan git history for secrets
-        run: betterleaks git . --redact --no-banner --verbose
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          if [ -n "$BASE_REF" ]; then
+            range="origin/${BASE_REF}..HEAD"
+          else
+            range="HEAD"
+          fi
+          betterleaks git . --redact --no-banner --verbose --log-opts="$range"
