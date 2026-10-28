@@ -428,6 +428,18 @@ defmodule FlickWeb.Ballots.EditorLiveTest do
       assert RankedVoting.get_ballot!(ballot.id).question_title == ballot.question_title
     end
 
+    test "failure: a published ballot whose slug changed redirects to its current slug",
+         ~M{view, ballot} do
+      {:ok, renamed_ballot} = RankedVoting.update_ballot(ballot, %{"url_slug" => "renamed-slug"})
+      {:ok, _published_ballot} = RankedVoting.publish_ballot(renamed_ballot)
+
+      view
+      |> form("#ballot-form", ballot: %{question_title: "new-title"})
+      |> render_submit()
+
+      assert_redirected(view, ~p"/ballot/renamed-slug/#{ballot.secret}")
+    end
+
     test "success: clearing an existing answer while typing keeps the editor up", ~M{view} do
       view
       |> form("#ballot-form")

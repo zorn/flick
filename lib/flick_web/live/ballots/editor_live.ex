@@ -127,8 +127,11 @@ defmodule FlickWeb.Ballots.EditorLive do
       {:ok, ballot} ->
         {:noreply, redirect(socket, to: ~p"/ballot/#{ballot.url_slug}/#{ballot.secret}")}
 
-      # The ballot was published after this editor loaded it.
+      # The ballot was published after this editor loaded it. Reload it, since
+      # its slug may have changed too.
       {:error, :can_only_update_draft_ballot} ->
+        ballot = RankedVoting.get_ballot!(ballot.id)
+
         {:noreply,
          socket
          |> put_flash(:error, "This ballot was published, so your edits were not saved.")
