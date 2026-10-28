@@ -7,8 +7,8 @@ defmodule Flick.Repo.Migrations.TrimVoteFullNames do
   The trim runs in Elixir, not SQL. Postgres `trim()` strips only spaces.
   `String.trim/1` also strips tabs, newlines, and other Unicode whitespace.
 
-  A name that trims to nothing becomes `NULL`, because `cast` turns a blank name
-  into `nil`.
+  A name that trims to nothing becomes `NULL`. This matches `cast`, which turns
+  a blank name into `nil` for a new vote.
   """
 
   use Ecto.Migration
