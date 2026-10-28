@@ -9,6 +9,8 @@
 # ntfy:       http://localhost:8081
 #
 # Flick must be running on port 4000 for Prometheus to scrape it.
+# Run this only from the primary checkout. The project name is fixed, so running
+# it from a worktree replaces the shared containers with the worktree's builds.
 
 name: flick-instrumentation
 
