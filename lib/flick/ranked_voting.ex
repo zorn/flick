@@ -48,21 +48,19 @@ defmodule Flick.RankedVoting do
     raise_if_attempting_to_set_published_at(attrs)
     raise_if_attempting_to_set_closed_at(attrs)
 
-    Repo.transact(fn -> update_ballot_if_draft(ballot_id, attrs) end)
-  end
+    Repo.transact(fn ->
+      # A concurrent `publish_ballot/2` waits on this lock until the update
+      # commits. No edit can land after the ballot is published.
+      ballot = Ballot |> lock("FOR UPDATE") |> Repo.get!(ballot_id)
 
-  defp update_ballot_if_draft(ballot_id, attrs) do
-    # A concurrent `publish_ballot/2` waits on this lock until the update
-    # commits. No edit can land after the ballot is published.
-    ballot = Ballot |> lock("FOR UPDATE") |> Repo.get!(ballot_id)
-
-    if ballot.published_at do
-      {:error, :can_only_update_draft_ballot}
-    else
-      ballot
-      |> change_ballot(attrs)
-      |> Repo.update()
-    end
+      if ballot.published_at do
+        {:error, :can_only_update_draft_ballot}
+      else
+        ballot
+        |> change_ballot(attrs)
+        |> Repo.update()
+      end
+    end)
   end
 
   @doc """
