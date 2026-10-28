@@ -1,14 +1,4 @@
-FROM grafana/grafana:13.2.4
-
-# Grafana sends alerts to ntfy.sh over TLS. This image's CA bundle still
-# trusts the compromised eMudhra intermediates, so a forged certificate could
-# intercept those alerts. Alpine's 20261020 packages remove those
-# intermediates. Drop this step once a Grafana tag ships those packages.
-# See https://github.com/zorn/flick/issues/317
-# The version floor fails the build if the fixed packages are missing.
-USER root
-RUN apk add --no-cache --upgrade 'ca-certificates>=20261020' 'ca-certificates-bundle>=20261020'
-USER grafana
+FROM grafana/grafana:13.2.5
 
 # Render's Starter plan gives Grafana 512 MiB. These settings keep it well
 # under that. See docs/research/grafana-memory-on-render.md.
