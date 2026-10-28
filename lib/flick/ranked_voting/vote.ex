@@ -64,6 +64,7 @@ defmodule Flick.RankedVoting.Vote do
 
     %{vote | ballot_id: ballot.id}
     |> cast(attrs, [:full_name])
+    |> update_change(:full_name, &(&1 && String.trim(&1)))
     # Postgres measures `varchar(255)` in code points, not graphemes.
     |> validate_length(:full_name, max: @max_full_name_length, count: :codepoints)
     |> cast_embed(:ranked_answers,

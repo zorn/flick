@@ -647,6 +647,26 @@ defmodule Flick.RankedVotingTest do
                })
     end
 
+    test "success: a vote's `full_name` is trimmed of surrounding whitespace",
+         ~M{published_ballot} do
+      assert {:ok, %Vote{full_name: "John Doe"}} =
+               RankedVoting.create_vote(published_ballot, %{
+                 "ranked_answers" => [%{"value" => "Sushi"}],
+                 "full_name" => "  John Doe\n"
+               })
+    end
+
+    test "success: a vote's `full_name` length is measured after trimming",
+         ~M{published_ballot} do
+      full_name = String.duplicate("a", 255)
+
+      assert {:ok, %Vote{full_name: ^full_name}} =
+               RankedVoting.create_vote(published_ballot, %{
+                 "ranked_answers" => [%{"value" => "Sushi"}],
+                 "full_name" => " #{full_name} "
+               })
+    end
+
     test "success: a vote's `full_name` can be exactly 255 code points of multibyte text",
          ~M{published_ballot} do
       # A precomposed "é" is one code point but two bytes, so a byte count would
