@@ -63,9 +63,9 @@ curl -s -H 'Accept: application/vnd.grafana.llm' localhost:3200/api/v2/traces/TR
 
 Spans hold no SQL text, LiveView params, IP addresses, user agents, or ballot secrets, and a new span attribute must keep it that way. `FlickWeb.TraceScrubber` wraps the exporter and scrubs every span, exception events included. `FlickWeb.TraceSampler` drops `/metrics`, `/health`, the LiveView socket transports, and static files. Change export or sampling in those two modules. Leave `OTEL_TRACES_EXPORTER` and `OTEL_TRACES_SAMPLER` unset, because they replace those modules, and Flick refuses to boot when one is set.
 
-Dependabot opens one PR a month for each image tag in `instrumentation/prometheus/`, `instrumentation/grafana/`, and `instrumentation/tempo/`, major versions included. A merged bump deploys at once, because each service auto-deploys through its Blueprint `buildFilter` path. Prometheus and Tempo have disks, so Render stops the old instance before it starts the new one, and each bump loses a minute or two of samples or spans. Before you merge an image bump, check these:
+Dependabot opens at most one PR a month for each image under `instrumentation/`, when a newer tag exists. It includes major versions. A merged image bump deploys at once, because each service auto-deploys through its Blueprint `buildFilter` path. Prometheus and Tempo have disks, so Render stops the old instance before it starts the new one. Each image bump to those two loses a minute or two of samples or spans. Before you merge an image bump:
 
-- Check out the PR's branch in the primary checkout and rebuild the local stack. Check that the provisioned dashboards load and the alert rules still evaluate.
+- Check out the PR's branch in the primary checkout and run `docker compose -f instrumentation/compose.yml up -d --build`. Confirm that the provisioned dashboards load and the alert rules still evaluate.
 - Grafana: recheck `GF_PLUGINS_DISABLE_PLUGINS` against `/usr/share/grafana/data/plugins-bundled` in the new image.
 - Grafana: if the new tag ships `ca-certificates` 20261020 or later, drop the `apk add` step from the Dockerfile. See issue #317.
 - Tempo: read the release notes for changes to the `tempo.yml` config.

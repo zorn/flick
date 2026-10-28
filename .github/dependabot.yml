@@ -18,13 +18,10 @@ updates:
         patterns:
           - "*"
 
-  # The observability images. Each one deploys its own Render service on
-  # merge, so they get one PR each. Read docs/agents/observability.md
-  # before merging one.
+  # Each observability image deploys its own Render service on merge, so it
+  # gets its own PR. Read docs/agents/observability.md before merging one.
   - package-ecosystem: "docker"
     directories:
-      - "/instrumentation/prometheus"
-      - "/instrumentation/grafana"
-      - "/instrumentation/tempo"
+      - "/instrumentation/*"
     schedule:
       interval: "monthly"
