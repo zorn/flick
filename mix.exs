@@ -112,7 +112,7 @@ defmodule Flick.MixProject do
       {:tiny_maps, "~> 3.0"},
 
       # For code logic style and enforcement.
-      {:boundary, "~> 0.11.0", runtime: false},
+      {:boundary, "~> 0.12.0", runtime: false},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:jump_credo_checks, "~> 0.7", only: [:dev, :test], runtime: false},
