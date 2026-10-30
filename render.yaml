@@ -21,7 +21,7 @@ services:
   - key: ERLANG_VERSION
     value: 29.1.2
   - key: ELIXIR_VERSION
-    value: 1.20.4
+    value: 1.20.5
   - key: PHX_HOSTNAME
     value: rankedvote.app
   - key: SECRET_KEY_BASE
