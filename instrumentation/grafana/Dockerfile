@@ -1,4 +1,4 @@
-FROM grafana/grafana:13.2.5
+FROM grafana/grafana:13.3.0
 
 # Render's Starter plan gives Grafana 512 MiB. These settings keep it well
 # under that. See docs/research/grafana-memory-on-render.md.
