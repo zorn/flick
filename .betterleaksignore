@@ -42,3 +42,4 @@ aa4b6ca6c910d9d3fb7cffe8976662eb1f3e7775:docs/agents/observability.md:curl-auth-
 
 # Local Grafana reader Postgres password (`unsafe-grafana-reader-password`).
 30ca8ac60725b65c9017eaeb425ddce86f876216:instrumentation/compose.yml:generic-password:42
+9d57de64cfd13556b9a4f457ab9ed9d9851d304e:instrumentation/compose.yml:generic-password:42
