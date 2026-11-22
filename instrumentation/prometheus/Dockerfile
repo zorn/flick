@@ -1,4 +1,4 @@
-FROM prom/prometheus:v3.15.1
+FROM prom/prometheus:v3.16.0
 
 # Render's docs don't say who owns a mounted disk, so the entrypoint starts as
 # root to take it over, then runs Prometheus as nobody.
