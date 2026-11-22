@@ -39,3 +39,6 @@ cc8da1fd2971180082db83de1f2a3028c02aef6c:test/flick_web/log_scrubber_test.exs:ge
 # from a PR #338 branch commit. The doc now puts them in the URL, so the squash
 # merge doesn't carry this finding.
 aa4b6ca6c910d9d3fb7cffe8976662eb1f3e7775:docs/agents/observability.md:curl-auth-user:15
+
+# Local Grafana reader Postgres password (`unsafe-grafana-reader-password`).
+30ca8ac60725b65c9017eaeb425ddce86f876216:instrumentation/compose.yml:generic-password:42
