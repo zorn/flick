@@ -34,6 +34,19 @@ defmodule Flick.Repo.Migrations.CreateGrafanaReaderRole do
     execute "GRANT USAGE ON SCHEMA public TO flick_grafana_reader"
     execute "GRANT SELECT ON ALL TABLES IN SCHEMA public TO flick_grafana_reader"
 
+    # A ballot's secret grants admin access to it in the app, so a reader who
+    # could see it could also publish, close, or reweight that ballot. A
+    # table-level grant covers every column, so swap it for column grants that
+    # leave out secret. A column added to ballots later stays unreadable until
+    # a migration grants it.
+    execute "REVOKE SELECT ON ballots FROM flick_grafana_reader"
+
+    execute """
+    GRANT SELECT (id, question_title, url_slug, published_at, inserted_at,
+      updated_at, description, closed_at, possible_answers)
+    ON ballots TO flick_grafana_reader
+    """
+
     # Tables that later migrations create are readable too.
     execute """
     ALTER DEFAULT PRIVILEGES IN SCHEMA public
@@ -47,6 +60,7 @@ defmodule Flick.Repo.Migrations.CreateGrafanaReaderRole do
     REVOKE SELECT ON TABLES FROM flick_grafana_reader
     """
 
+    # A table-level revoke also removes column grants.
     execute "REVOKE SELECT ON ALL TABLES IN SCHEMA public FROM flick_grafana_reader"
     execute "REVOKE USAGE ON SCHEMA public FROM flick_grafana_reader"
 
