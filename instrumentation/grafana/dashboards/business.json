@@ -1,7 +1,7 @@
 {
   "title": "Flick business",
   "uid": "flick-business",
-  "description": "How Flick is used, counted from its database through a read-only role.",
+  "description": "Counts of ballots and votes, read from Flick's database.",
   "schemaVersion": 42,
   "time": {
     "from": "now-90d",
@@ -15,7 +15,7 @@
       "id": 1,
       "type": "stat",
       "title": "All time",
-      "description": "Every ballot and vote in the database, regardless of the time range. Counts only: no titles, answers, or names.",
+      "description": "Every ballot and vote in the database, regardless of the time range.",
       "datasource": {
         "type": "grafana-postgresql-datasource",
         "uid": "postgres"
@@ -184,7 +184,7 @@
       "id": 4,
       "type": "stat",
       "title": "Votes per published ballot",
-      "description": "For ballots published in the time range: how many votes each one received.",
+      "description": "Votes per ballot, for ballots published in the time range: the median, mean, and most, and how many ballots got no votes.",
       "datasource": {
         "type": "grafana-postgresql-datasource",
         "uid": "postgres"

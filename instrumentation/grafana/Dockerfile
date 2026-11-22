@@ -5,7 +5,7 @@ FROM grafana/grafana:13.3.1
 #
 # With no disk, Grafana downloads 18 plugins at every boot. Flick needs only
 # the bundled Prometheus, Tempo, and Postgres data sources. Plugin fixes,
-# security fixes included, now arrive only when the image tag changes.
+# including security fixes, now arrive only when the image tag changes.
 ENV GF_PLUGINS_PREINSTALL_DISABLED=true
 # Each bundled plugin runs as its own process, even when unused. On every tag
 # bump, recheck this list against /usr/share/grafana/data/plugins-bundled.

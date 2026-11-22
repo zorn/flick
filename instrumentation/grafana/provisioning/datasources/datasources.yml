@@ -26,7 +26,7 @@ datasources:
     url: $FLICK_DB_HOST:$FLICK_DB_PORT
     user: flick_grafana_reader
     secureJsonData:
-      # Set by hand on Render. Never committed.
+      # Render's value is set by hand and never committed.
       password: $FLICK_DB_PASSWORD
     jsonData:
       database: $FLICK_DB_NAME

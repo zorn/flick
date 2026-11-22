@@ -174,7 +174,7 @@ services:
   # Render's private network offers TLS with a self-signed certificate.
   - key: FLICK_DB_SSLMODE
     value: require
-  # The reader's password. Set it by hand, after setting it in psql.
+  # Set this by hand to the password you gave the role in psql.
   - key: FLICK_DB_PASSWORD
     sync: false
   buildFilter:
