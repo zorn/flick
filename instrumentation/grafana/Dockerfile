@@ -4,12 +4,12 @@ FROM grafana/grafana:13.3.1
 # under that. See docs/research/grafana-memory-on-render.md.
 #
 # With no disk, Grafana downloads 18 plugins at every boot. Flick needs only
-# the bundled Prometheus data source. Plugin fixes, security fixes included,
-# now arrive only when the image tag changes.
+# the bundled Prometheus, Tempo, and Postgres data sources. Plugin fixes,
+# including security fixes, now arrive only when the image tag changes.
 ENV GF_PLUGINS_PREINSTALL_DISABLED=true
 # Each bundled plugin runs as its own process, even when unused. On every tag
 # bump, recheck this list against /usr/share/grafana/data/plugins-bundled.
-ENV GF_PLUGINS_DISABLE_PLUGINS=elasticsearch,grafana-postgresql-datasource,grafana-pyroscope-datasource,influxdb,jaeger,loki,mssql,mysql,opentsdb,stackdriver,zipkin,grafana-advisor-app,grafana-exploretraces-app,grafana-lokiexplore-app,grafana-metricsdrilldown-app,grafana-pyroscope-app
+ENV GF_PLUGINS_DISABLE_PLUGINS=cloudwatch,elasticsearch,grafana-pyroscope-datasource,influxdb,jaeger,loki,mssql,mysql,opentsdb,stackdriver,zipkin,grafana-advisor-app,grafana-exploretraces-app,grafana-lokiexplore-app,grafana-metricsdrilldown-app,grafana-pyroscope-app
 # The PromEx dashboards refresh every 5 seconds, but Prometheus scrapes every
 # 15. Grafana raises those dashboards to this minimum, and the refresh picker
 # offers nothing faster.

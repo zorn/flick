@@ -41,11 +41,13 @@ Grafana runs at `http://localhost:3001` with no login. Its data source and dashb
 curl -s localhost:3001/api/dashboards/uid/UID | jq '.dashboard | del(.id)' > instrumentation/grafana/dashboards/NAME.json
 ```
 
-The uid is the part of the dashboard's URL after `/d/`. Keep `uid` so the dashboard's URL stays the same across rebuilds and machines. Remove `id`, because it belongs to one Grafana database. To add a panel without the UI, edit the JSON file and rebuild. Point panels at the data source uid `prometheus`, and use `[$__rate_interval]` as the rate window instead of a fixed one.
+The uid is the part of the dashboard's URL after `/d/`. Keep `uid` so the dashboard's URL stays the same across rebuilds and machines. Remove `id`, because it belongs to one Grafana database. To add a panel without the UI, edit the JSON file and rebuild. Point metrics panels at the data source uid `prometheus`, and business panels at `postgres`. In metrics panels, use `[$__rate_interval]` as the rate window instead of a fixed one.
 
 `mix prom_ex.dashboard.export` overwrites hand edits to the PromEx dashboards. After an export, delete the "Application Git Author" panel from `application.json` again. Render sets no author variable, so that panel only ever shows "Git author not available".
 
 On Render, Prometheus and Tempo run as private services with no public URL, and Grafana (`flick-grafana`) requires a login. Only a person with that login can view production data, so verify changes against the local stack.
+
+Grafana also has a `postgres` data source. It logs in as `flick_grafana_reader`, a role that may read only the `ballots` and `votes` columns the "Flick business" dashboard counts, and write nothing. A panel that needs another column needs a migration that grants it. Never grant ballot titles, answers, secrets, or voter names. Locally, the data source reads the primary checkout's `flick_dev` with the dev password `unsafe-grafana-reader-password`. A new database volume has no password for the role, so the data source's "Test" button in Grafana reports "password authentication failed". Set it again from the repo root with `docker compose exec db psql -U postgres -c "ALTER ROLE flick_grafana_reader PASSWORD 'unsafe-grafana-reader-password'"`.
 
 Alert rules live in `instrumentation/grafana/provisioning/alerting/alerting.yml` and are read-only in the Grafana UI. Locally, alerts go to the ntfy container: read them at `http://localhost:8081` on the `flick-alerts` topic. To test a rule, cause its condition locally and wait for the alert. For example, stop Flick to fire "Flick not scraped". In production, alerts go to the ntfy.sh topic URL in `NTFY_URL` on Render. Keep the topic in that variable alone, because anyone who knows it can read the alerts.
 

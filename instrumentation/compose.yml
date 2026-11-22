@@ -32,6 +32,14 @@ services:
     environment:
       PROMETHEUS_HOST: prometheus
       TEMPO_HOST: tempo
+      # The Postgres data source reads the primary checkout's dev database,
+      # through the port that Flick's own compose.yml publishes on the host.
+      FLICK_DB_HOST: host.docker.internal
+      FLICK_DB_PORT: ${POSTGRES_PORT:-5418}
+      FLICK_DB_NAME: flick_dev
+      FLICK_DB_SSLMODE: disable
+      # A dev-only password. docs/agents/observability.md says how to set it.
+      FLICK_DB_PASSWORD: unsafe-grafana-reader-password
       # Where alerts go.
       NTFY_URL: http://ntfy/flick-alerts?template=grafana
       # Links in alerts point here.
@@ -44,6 +52,9 @@ services:
       - prometheus
       - ntfy
       - tempo
+    # Docker Desktop defines host.docker.internal. Linux Docker Engine needs this.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   # Receives Grafana's alerts locally. Open http://localhost:8081 and subscribe
   # to flick-alerts to read them.
