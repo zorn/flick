@@ -174,7 +174,9 @@ services:
   # Render's private network offers TLS with a self-signed certificate.
   - key: FLICK_DB_SSLMODE
     value: require
-  # Set this by hand to the password you gave the role in psql.
+  # Set this by hand to the password you gave the role in psql. Render ignores
+  # a new `sync: false` variable in an existing Blueprint, so add it on the
+  # service's Environment page.
   - key: FLICK_DB_PASSWORD
     sync: false
   buildFilter:

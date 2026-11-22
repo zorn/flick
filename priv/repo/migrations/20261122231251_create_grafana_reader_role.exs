@@ -15,14 +15,17 @@ defmodule Flick.Repo.Migrations.CreateGrafanaReaderRole do
   # excellent_migrations:safety-assured-for-this-file raw_sql_executed
 
   def up do
-    # Roles belong to the whole server, not one database, and flick_dev and
-    # flick_test share a server. Create the role only once.
+    # Roles belong to the whole server, not one database, and every local
+    # database shares one server. Create the role only once. Two databases can
+    # migrate at the same moment, so catch the duplicate rather than check first.
+    # A role that already exists raises duplicate_object. One created by a
+    # concurrent migration can instead raise unique_violation on pg_authid.
     execute """
     DO $$
     BEGIN
-      IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'flick_grafana_reader') THEN
-        CREATE ROLE flick_grafana_reader LOGIN CONNECTION LIMIT 3;
-      END IF;
+      CREATE ROLE flick_grafana_reader LOGIN CONNECTION LIMIT 3;
+    EXCEPTION WHEN duplicate_object OR unique_violation THEN
+      NULL;
     END
     $$
     """
