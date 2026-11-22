@@ -157,6 +157,26 @@ services:
   # Links in alerts point here.
   - key: GF_SERVER_ROOT_URL
     value: https://flick-grafana.onrender.com
+  # Grafana's Postgres data source reads flick_prod over the private network,
+  # as the read-only flick_grafana_reader role.
+  - key: FLICK_DB_HOST
+    fromDatabase:
+      name: flick_prod
+      property: host
+  - key: FLICK_DB_PORT
+    fromDatabase:
+      name: flick_prod
+      property: port
+  - key: FLICK_DB_NAME
+    fromDatabase:
+      name: flick_prod
+      property: database
+  # Render's private network offers TLS with a self-signed certificate.
+  - key: FLICK_DB_SSLMODE
+    value: require
+  # The reader's password. Set it by hand, after setting it in psql.
+  - key: FLICK_DB_PASSWORD
+    sync: false
   buildFilter:
     paths:
     - instrumentation/grafana/**

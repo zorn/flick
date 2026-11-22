@@ -3,5 +3,7 @@ apiVersion: 1
 providers:
   - name: flick
     type: file
+    # The alert rules live in this folder too.
+    folder: Flick
     options:
       path: /etc/grafana/dashboards

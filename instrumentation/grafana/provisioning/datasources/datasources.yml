@@ -18,3 +18,18 @@ datasources:
     # Compose sets this to tempo. Render sets it to the private service's
     # internal hostname.
     url: http://$TEMPO_HOST:3200
+  - name: postgres
+    uid: postgres
+    type: grafana-postgresql-datasource
+    # Compose points this at the dev database on the host. Render points it
+    # at flick_prod over the private network.
+    url: $FLICK_DB_HOST:$FLICK_DB_PORT
+    user: flick_grafana_reader
+    secureJsonData:
+      # Set by hand on Render. Never committed.
+      password: $FLICK_DB_PASSWORD
+    jsonData:
+      database: $FLICK_DB_NAME
+      sslmode: $FLICK_DB_SSLMODE
+      # Flick's own pool holds 10 of the database's 100 connections.
+      maxOpenConns: 2
