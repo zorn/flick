@@ -68,7 +68,7 @@
       "id": 2,
       "type": "barchart",
       "title": "Ballots per day",
-      "description": "Ballots created, published, and closed each day (UTC), side by side.",
+      "description": "Ballots created, published, and closed each day (UTC).",
       "datasource": {
         "type": "grafana-postgresql-datasource",
         "uid": "postgres"
@@ -243,7 +243,7 @@
       "id": 5,
       "type": "stat",
       "title": "Time to publish",
-      "description": "Median time from creating a ballot to publishing it, for ballots created in the time range. Drafts have no time to publish, so the count shows how many of those ballots are published.",
+      "description": "Median time from creating a ballot to publishing it, for ballots created in the time range. Drafts are left out. Published counts the ballots that have a time to publish.",
       "datasource": {
         "type": "grafana-postgresql-datasource",
         "uid": "postgres"
