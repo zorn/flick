@@ -7,6 +7,7 @@
     "from": "now-90d",
     "to": "now"
   },
+  "timezone": "utc",
   "refresh": "",
   "tags": [],
   "editable": true,
@@ -124,7 +125,7 @@
           "editorMode": "code",
           "rawQuery": true,
           "format": "table",
-          "rawSql": "WITH days AS (\n  SELECT generate_series(\n    date_trunc('day', $__timeFrom()::timestamp),\n    date_trunc('day', $__timeTo()::timestamp),\n    interval '1 day'\n  ) AS day\n),\nevents AS (\n  SELECT inserted_at AS ts, 'created' AS event FROM ballots\n  UNION ALL SELECT published_at, 'published' FROM ballots WHERE published_at IS NOT NULL\n  UNION ALL SELECT closed_at, 'closed' FROM ballots WHERE closed_at IS NOT NULL\n)\nSELECT\n  days.day AS \"time\",\n  count(*) FILTER (WHERE events.event = 'created') AS \"created\",\n  count(*) FILTER (WHERE events.event = 'published') AS \"published\",\n  count(*) FILTER (WHERE events.event = 'closed') AS \"closed\"\nFROM days\nLEFT JOIN events\n  ON date_trunc('day', events.ts) = days.day AND $__timeFilter(events.ts)\nGROUP BY 1\nORDER BY 1"
+          "rawSql": "WITH days AS (\n  SELECT generate_series(\n    date_trunc('day', $__timeFrom()::timestamp),\n    date_trunc('day', $__timeTo()::timestamp),\n    interval '1 day'\n  ) AS day\n),\nevents AS (\n  SELECT inserted_at AS ts, 'created' AS event FROM ballots\n  UNION ALL SELECT published_at, 'published' FROM ballots WHERE published_at IS NOT NULL\n  UNION ALL SELECT closed_at, 'closed' FROM ballots WHERE closed_at IS NOT NULL\n)\nSELECT\n  days.day AS \"time\",\n  count(*) FILTER (WHERE events.event = 'created') AS \"created\",\n  count(*) FILTER (WHERE events.event = 'published') AS \"published\",\n  count(*) FILTER (WHERE events.event = 'closed') AS \"closed\"\nFROM days\nLEFT JOIN events\n  ON date_trunc('day', events.ts) = days.day\nGROUP BY 1\nORDER BY 1"
         }
       ]
     },
