@@ -7,6 +7,7 @@
     "from": "now-90d",
     "to": "now"
   },
+  "timezone": "utc",
   "refresh": "",
   "tags": [],
   "editable": true,
@@ -66,7 +67,7 @@
     },
     {
       "id": 2,
-      "type": "timeseries",
+      "type": "barchart",
       "title": "Ballots per day",
       "description": "Ballots created, published, and closed each day (UTC).",
       "datasource": {
@@ -88,16 +89,22 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "drawStyle": "bars",
             "fillOpacity": 80,
             "lineWidth": 1,
-            "showPoints": "never",
-            "barAlignment": 0
+            "gradientMode": "none"
           }
         },
         "overrides": []
       },
       "options": {
+        "xField": "time",
+        "orientation": "vertical",
+        "stacking": "none",
+        "groupWidth": 0.9,
+        "barWidth": 0.97,
+        "showValue": "never",
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 100,
         "legend": {
           "displayMode": "list",
           "placement": "bottom",
@@ -117,8 +124,8 @@
           },
           "editorMode": "code",
           "rawQuery": true,
-          "format": "time_series",
-          "rawSql": "SELECT $__timeGroupAlias(ts, '1d', 0), event AS metric, count(*) AS value\nFROM (\n  SELECT inserted_at AS ts, 'created' AS event FROM ballots\n  UNION ALL SELECT published_at, 'published' FROM ballots WHERE published_at IS NOT NULL\n  UNION ALL SELECT closed_at, 'closed' FROM ballots WHERE closed_at IS NOT NULL\n) events\nWHERE $__timeFilter(ts)\nGROUP BY 1, 2\nORDER BY 1"
+          "format": "table",
+          "rawSql": "WITH days AS (\n  SELECT generate_series(\n    date_trunc('day', $__timeFrom()::timestamp),\n    date_trunc('day', $__timeTo()::timestamp),\n    interval '1 day'\n  ) AS day\n),\nevents AS (\n  SELECT ts, event FROM (\n    SELECT inserted_at AS ts, 'created' AS event FROM ballots\n    UNION ALL SELECT published_at, 'published' FROM ballots WHERE published_at IS NOT NULL\n    UNION ALL SELECT closed_at, 'closed' FROM ballots WHERE closed_at IS NOT NULL\n  ) all_events\n  WHERE ts >= date_trunc('day', $__timeFrom()::timestamp)\n    AND ts < date_trunc('day', $__timeTo()::timestamp) + interval '1 day'\n)\nSELECT\n  days.day AS \"time\",\n  count(*) FILTER (WHERE events.event = 'created') AS \"created\",\n  count(*) FILTER (WHERE events.event = 'published') AS \"published\",\n  count(*) FILTER (WHERE events.event = 'closed') AS \"closed\"\nFROM days\nLEFT JOIN events\n  ON date_trunc('day', events.ts) = days.day\nGROUP BY 1\nORDER BY 1"
         }
       ]
     },
@@ -230,6 +237,76 @@
           "rawQuery": true,
           "format": "table",
           "rawSql": "SELECT\n  percentile_cont(0.5) WITHIN GROUP (ORDER BY n) AS \"Median\",\n  round(avg(n), 1) AS \"Mean\",\n  max(n) AS \"Most\",\n  count(*) FILTER (WHERE n = 0) AS \"Ballots with no votes\"\nFROM (\n  SELECT ballots.id, count(votes.id) AS n\n  FROM ballots\n  LEFT JOIN votes ON votes.ballot_id = ballots.id\n  WHERE ballots.published_at IS NOT NULL AND $__timeFilter(ballots.published_at)\n  GROUP BY ballots.id\n) per_ballot"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "type": "stat",
+      "title": "Time to publish",
+      "description": "Median time from creating a ballot to publishing it, for ballots created in the time range. Drafts are left out. Published counts the ballots that have a time to publish.",
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "postgres"
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 24,
+        "x": 0,
+        "y": 19
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "text"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Published"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value_and_name",
+        "colorMode": "none",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "postgres"
+          },
+          "editorMode": "code",
+          "rawQuery": true,
+          "format": "table",
+          "rawSql": "SELECT\n  percentile_cont(0.5) WITHIN GROUP (ORDER BY extract(epoch FROM published_at - inserted_at)) AS \"Median\",\n  count(published_at) AS \"Published\"\nFROM ballots\nWHERE $__timeFilter(inserted_at)"
         }
       ]
     }
