@@ -100,7 +100,7 @@
         "xField": "time",
         "orientation": "vertical",
         "stacking": "none",
-        "groupWidth": 0.7,
+        "groupWidth": 0.9,
         "barWidth": 0.97,
         "showValue": "never",
         "xTickLabelRotation": 0,
